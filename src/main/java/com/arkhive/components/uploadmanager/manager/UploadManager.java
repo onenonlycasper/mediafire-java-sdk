@@ -44,7 +44,6 @@ public class UploadManager implements UploadListenerManager {
      * Use this method when you do not want to explicitely set the starting thread count.
      * @param sessionManager
      * @param maximumThreadCount
-     * @param paused
      */
     public UploadManager(SessionManager sessionManager, int maximumThreadCount) {
       this.sessionManager = sessionManager;

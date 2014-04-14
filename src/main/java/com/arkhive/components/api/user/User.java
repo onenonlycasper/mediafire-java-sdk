@@ -50,8 +50,26 @@ public class User {
     parameters.put("email", email);
     parameters.put("password", password);
     parameters.put("application_id", appId);
+
+    try {
+        for (Entry<String, String> e : parameters.entrySet()) {
+            e.setValue(URLEncoder.encode(e.getValue(), "UTF-8"));
+        }
+    } catch (UnsupportedEncodingException e) {
+        throw new IllegalStateException(e);
+    }
+    ApiRequestBuilder builder = new ApiRequestBuilder();
+    builder.domain(sessionManager.getDomain().replace("http://", "https://"));
+    builder.sessionManager(sessionManager);
+    builder.httpInterface(sessionManager.getHttpInterface());
+    builder.parameters(parameters);
+    builder.uri(REGISTER_URI);
+
+    ApiRequest request = builder.build();
+
+    String responseString = request.submitRequestSync();
     
-    JsonElement jsonResponse = sendRequest(parameters, REGISTER_URI, sessionManager);
+    JsonElement jsonResponse = Utility.getResponseElement(responseString);
     return new Gson().fromJson(jsonResponse, UserRegisterResponse.class);
   }
 
