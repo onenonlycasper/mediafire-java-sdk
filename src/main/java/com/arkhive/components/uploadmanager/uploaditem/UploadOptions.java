@@ -69,8 +69,12 @@ public class UploadOptions {
      * @return the upload folder key.
      */
     public String getUploadFolderKey() {
-        if (uploadFolderKey == null) { setUploadFolderKey(""); }
-        return uploadFolderKey;
+      if (uploadFolderKey == null) {
+        uploadFolderKey = "myfiles";
+      } else if (uploadFolderKey.isEmpty()) {
+        uploadFolderKey = "myfiles";
+      }
+      return uploadFolderKey;
     }
     
     /**
@@ -113,7 +117,14 @@ public class UploadOptions {
      * sets the upload folder key for this Upload Item. this is the destination folder key.
      * @param uploadFolderKey
      */
-    public void setUploadFolderKey(String uploadFolderKey) { this.uploadFolderKey = uploadFolderKey; }
+    public void setUploadFolderKey(String uploadFolderKey) { 
+      if (uploadFolderKey == null) {
+        uploadFolderKey = "myfiles";
+      } else if (uploadFolderKey.isEmpty()) {
+        uploadFolderKey = "myfiles";
+      }
+      this.uploadFolderKey = uploadFolderKey; 
+    }
     
     /*============================
      * private setters

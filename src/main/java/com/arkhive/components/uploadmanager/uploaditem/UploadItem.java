@@ -30,7 +30,7 @@ public class UploadItem {
     private ChunkData chunkData;
     private ResumableBitmap bitmap;
     private String pollUploadKey;
-    private int imageId;
+    private String imageId;
     private UploadListenerDatabase dbListener;
     private List<UploadListenerUI> uiListeners;
     private UploadListenerManager mgrListener;    
@@ -42,7 +42,7 @@ public class UploadItem {
      * @param path - file path on the device
      * Should use the single or dual argument constructor for the most part.
      */
-    public UploadItem(String path, int imageId, UploadOptions uploadData) {
+    public UploadItem(String path, String imageId, UploadOptions uploadData) {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
@@ -72,10 +72,10 @@ public class UploadItem {
      * Constructor which takes a path and an image id
      * Use this method when you want to use default upload options for this UploadItem.
      * @param path - path to data
-     * @param imageId - unique image id
+     * @param id - unique image id
      */
-    public UploadItem(String path, int imageId) {
-        this(path, imageId, null);
+    public UploadItem(String path, String id) {
+        this(path, id, null);
     }
 
     /*============================
@@ -103,7 +103,7 @@ public class UploadItem {
      * Called to get the image id (MediaStore column _ID).
      * @return
      */
-    public int getImageId() { return imageId; }
+    public String getImageId() { return imageId; }
     /**
      * Called to get the quick key.
      * @return
@@ -138,7 +138,7 @@ public class UploadItem {
      * Called to get the UploadItemFileUploadOptions.
      * @return
      */
-    public UploadOptions getFileUploadOptions() { return options; }
+    public UploadOptions getUploadOptions() { return options; }
 
     /**
      * Called to get the UploadItemChunkData.

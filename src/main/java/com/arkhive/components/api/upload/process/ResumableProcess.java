@@ -212,10 +212,10 @@ public class ResumableProcess implements Runnable {
   private HashMap<String, String> generateGetParameters() {
     HashMap<String, String> parameters = new HashMap<String, String>();
     parameters.put("session_token", sessionManager.requestUploadActionToken().getSessionToken());
-    parameters.put("action_on_duplicate", uploadItem.getFileUploadOptions().getActionOnDuplicate());
+    parameters.put("action_on_duplicate", uploadItem.getUploadOptions().getActionOnDuplicate());
     parameters.put("response_format", "json");
-    parameters.put("version_control", uploadItem.getFileUploadOptions().getVersionControl());
-    parameters.put("upload_folder_key", uploadItem.getFileUploadOptions().getUploadFolderKey());
+    parameters.put("version_control", uploadItem.getUploadOptions().getVersionControl());
+    parameters.put("upload_folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
     return parameters;
   }
   

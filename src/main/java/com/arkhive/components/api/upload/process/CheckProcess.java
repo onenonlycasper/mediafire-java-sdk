@@ -111,9 +111,9 @@ public class CheckProcess implements Runnable {
     keyValue.put("filename", filename);
     keyValue.put("hash", uploadItem.getFileData().getFileHash());
     keyValue.put("size", Long.toString(uploadItem.getFileData().getFileSize()));
-    keyValue.put("resumable", uploadItem.getFileUploadOptions().isResumable());
+    keyValue.put("resumable", uploadItem.getUploadOptions().isResumable());
     keyValue.put("response_format", "json");
-    keyValue.put("upload_folder_key", uploadItem.getFileUploadOptions().getUploadFolderKey());
+    keyValue.put("upload_folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
     return keyValue;
   }
   
