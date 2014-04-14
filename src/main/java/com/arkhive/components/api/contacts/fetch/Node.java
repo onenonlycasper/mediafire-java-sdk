@@ -11,12 +11,12 @@ import java.util.List;
 public class Node {
   private String data;
   private List<Node> children;
-  
+
   public Node(String data) {
     this.data = data;
     children = new LinkedList<Node>();
   }
-  
+
   /**
    * gets the data value stored in this node.
    * @return
@@ -24,7 +24,7 @@ public class Node {
   public String getData() {
     return data;
   }
-  
+
   /**
    * gets the children of this node.
    * @return
@@ -32,23 +32,20 @@ public class Node {
   public List<Node> getChildren() {
     return children;
   }
-  
+
   /**
    * adds a child node to this node.
    * @param node
    * @return
    */
   public boolean addChild(Node node) {
-    if (!children.contains(node)) {
-      return children.add(node);
-    }
-    return false;
+      return !children.contains(node) && children.add(node);
   }
-    
+
   public String toString() {
     return "[" + data + "] [" + children.size() + "]";
   }
-  
+
   /**
    * returns this node data as an integer.
    * @return
@@ -60,9 +57,9 @@ public class Node {
 //    System.out.println("getDataAsInteger() called");
     String cleaned = data.replace("[", "");
     cleaned = cleaned.replace("]", "");
-    
+
     double dbl = Double.valueOf(cleaned);
-    
+
     return (int) dbl;
   }
 }
