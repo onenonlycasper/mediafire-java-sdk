@@ -89,7 +89,7 @@ public class Session {
         String keyModulus = String.valueOf(secretKey.mod(BigInteger.valueOf(256)));
         String timeString = time;
         String signatureBase = keyModulus + timeString + queryString;
-       
+
         // Get the signature string.
         String signature = calculateMD5Hash(signatureBase);
         this.updateSession();
@@ -98,8 +98,7 @@ public class Session {
 
     private void updateSession() {
         BigInteger tempKey = this.getSecretKey().multiply(BigInteger.valueOf(MULTIPLIER));
-        BigInteger newSecretKey = tempKey.mod(BigInteger.valueOf(DIVISOR));
-        this.secretKey = newSecretKey;
+        this.secretKey = tempKey.mod(BigInteger.valueOf(DIVISOR));
     }
 
     /** Calculate the MD5 of the signature.

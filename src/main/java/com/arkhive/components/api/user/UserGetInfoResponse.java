@@ -5,9 +5,7 @@ import com.arkhive.components.api.ApiResponse;
 /** Stores a response from user/get_info. */
 public class UserGetInfoResponse extends ApiResponse {
 
-    // CHECKSTYLE:OFF
     private UserInfo user_info;
-    // CHECKSTYLE:ON
     private FacebookInfo facebook;
     private TwitterInfo twitter;
 
@@ -28,7 +26,6 @@ public class UserGetInfoResponse extends ApiResponse {
 
     /** Holds the user information returned from get_info. */
     public class UserInfo {
-        // CHECKSTYLE:OFF
         private String first_name;
         private String last_name;
         private String display_name;
@@ -36,7 +33,6 @@ public class UserGetInfoResponse extends ApiResponse {
         private String max_instant_upload_size;
         private String storage_limit;
         private String storage_limit_exceeded;
-        // CHECKSTYLE:ON
         private String email;
         private String gender;
         private String location;
@@ -118,11 +114,9 @@ public class UserGetInfoResponse extends ApiResponse {
 
     /** Holds the facebook information returned from get_info. */
     public class FacebookInfo {
-        // CHECKSTYLE:OFF
         private String facebook_id;
         private String date_created;
         private String facebook_url;
-        // CHECKSTYLE:ON
         private String email;
         private String firstname;
         private String lastname;
@@ -184,16 +178,14 @@ public class UserGetInfoResponse extends ApiResponse {
 
         public boolean isLinked() {
           if (linked == null) { linked = "no"; }
-            return !linked.equals("no");
+            return "yes".equals(linked);
       }
     }
 
     /** Holds the twitter information returned from get_info. */
     public class TwitterInfo {
-        // CHECKSTYLE:OFF
         private String twitter_id;
         private String date_created;
-        // CHECKSTYLE:ON
         private String name;
         private String i18n;
         private String linked;
@@ -219,12 +211,7 @@ public class UserGetInfoResponse extends ApiResponse {
         }
 
         public boolean isLinked() {
-            if (linked == null) { linked = "no"; }
-            if (linked.equals("no")) {
-              return false;
-            } else {
-              return true;
-            }
+            return "yes".equals(linked);
         }
     }
 }

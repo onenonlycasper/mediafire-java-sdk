@@ -23,22 +23,20 @@ public class Device {
   public static DeviceGetChangesResponse getChanges(FileSystemItem folder, SessionManager sm) {
     Map<String, String> map = new HashMap<String, String>();
     map.put("revision", String.valueOf(folder.getRevision()));
-    
+
     ApiRequestBuilder builder = new ApiRequestBuilder();
     builder.domain(sm.getDomain());
     builder.uri(GET_CHANGES_URI);
     builder.sessionManager(sm);
     builder.httpInterface(sm.getHttpInterface());
     builder.parameters(map);
-    
+
     ApiRequest request = builder.build();
-    
+
     String responseString = request.submitRequestSync();
-    
+
     Gson gson = new Gson();
-    DeviceGetChangesResponse response = 
-        gson.fromJson(Utility.getResponseString(responseString), DeviceGetChangesResponse.class);
-    
-    return response;
+
+      return gson.fromJson(Utility.getResponseString(responseString), DeviceGetChangesResponse.class);
   }
 }

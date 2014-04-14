@@ -76,8 +76,7 @@ public class SessionRequest implements HttpRequestHandler {
         String call = domain + URI + queryString;
         String response = httpInterface.sendGetRequest(call);
 
-        Session session = prepareSession(response);
-        return session;
+        return prepareSession(response);
     }
 
     /** Handle the response from a request for a Session.
