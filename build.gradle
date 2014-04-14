@@ -11,7 +11,6 @@ def getVersionName = { ->
     return stdout.toString().trim()
 }
 
-
 version = getVersionName()
 buildscript {
     repositories {
