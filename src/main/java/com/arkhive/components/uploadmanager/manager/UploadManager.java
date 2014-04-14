@@ -351,18 +351,15 @@ public class UploadManager implements UploadListenerManager {
       // if the check says there is not an instant upload available, and all units are not ready then
       // let's start the resumable process
       // first we set the chunk data we received
-      if (!response.getHashExists() && !response.getResumableUpload().getAllUnitsReady()){
+      if (response.getResumableUpload().getAllUnitsReady()){
         uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
         uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
         ResumableProcess process = new ResumableProcess(sessionManager, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
-        return;
-      }
-
+      }  else {
       // if the check says there is not an instant upload available, but all units are ready, then we start polling.
       // first we set the chunk data we received
-      if (!response.getHashExists() && response.getResumableUpload().getAllUnitsReady()){
         uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
         uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
         PollProcess process = new PollProcess(sessionManager, uploadItem);

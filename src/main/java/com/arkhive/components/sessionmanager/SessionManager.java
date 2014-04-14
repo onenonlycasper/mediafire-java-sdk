@@ -200,7 +200,7 @@ public class SessionManager implements SessionRequestHandler {
      */
     public boolean authenticate() {
         Session session = new SessionRequest(this, null).executeSync();
-        if (session.getSessionToken() != "") {
+        if (!"".equals(session.getSessionToken())) {
             this.sessionList.add(session);
             this.isAuthenticated = true;
             return true;

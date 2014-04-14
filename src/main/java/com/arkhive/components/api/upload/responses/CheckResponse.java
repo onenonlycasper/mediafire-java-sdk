@@ -11,29 +11,29 @@ import com.arkhive.components.api.ApiResponse;
  *
  */
 public class CheckResponse extends ApiResponse {
-  private String hash_exists;
-  private String in_account;
-  private String in_folder;
-  private String file_exists;
-  private String different_hash;
-  private String duplicate_quickkey;
-  private String available_space;
-  private String used_storage_size;
-  private String storage_limit;
-  private String storage_limit_exceeded;
-  ResumableUpload resumable_upload;
+    private final String hash_exists = "";
+    private String in_account;
+    private String in_folder;
+    private String file_exists;
+    private String different_hash;
+    private String duplicate_quickkey;
+    private String available_space;
+    private String used_storage_size;
+    private String storage_limit;
+    private String storage_limit_exceeded;
+    ResumableUpload resumable_upload;
 
-  /**This class represents part of the data structure for the pre-upload response.
-   * @author Chris Najar
-   */
-  public class ResumableUpload {
-    private String all_units_ready;
-    private String number_of_units;
-    private String unit_size;
-    private Bitmap bitmap;
+    /**This class represents part of the data structure for the pre-upload response.
+     * @author Chris Najar
+     */
+    public class ResumableUpload {
+        private String all_units_ready;
+        private String number_of_units;
+        private String unit_size;
+        private Bitmap bitmap;
 
-    public boolean getAllUnitsReady() {
-        return "yes".equals(all_units_ready);
+        public boolean getAllUnitsReady() {
+            return "yes".equals(all_units_ready);
     }
     public int getNumberOfUnits() {
       if (number_of_units == null || number_of_units.equals("")) { return 0; }
