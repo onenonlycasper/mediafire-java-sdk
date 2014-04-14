@@ -184,11 +184,7 @@ public class UserGetInfoResponse extends ApiResponse {
 
         public boolean isLinked() {
           if (linked == null) { linked = "no"; }
-          if (linked.equals("no")) {
-            return false;
-          } else {
-            return true;
-          }
+            return !linked.equals("no");
       }
     }
 

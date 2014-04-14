@@ -15,7 +15,7 @@ public class FolderSearchResponse extends ApiResponse {
   private String results_count;
   //CHECKSTYLE:ON
   private List<Result> results;
-  
+
   public int getResultsCount() {
     if (this.results_count == null) {
       this.results_count = "0";
@@ -29,7 +29,7 @@ public class FolderSearchResponse extends ApiResponse {
     }
     return results;
   }
-    
+
     /**
      * result from folder search.
      * @author John Moore
@@ -47,7 +47,7 @@ public class FolderSearchResponse extends ApiResponse {
     private String privacy;
     private String flag;
     private String relevancy;
-    
+
     private String folderkey;
     private String name;
     //CHECKSTYLE:OFF
@@ -60,7 +60,7 @@ public class FolderSearchResponse extends ApiResponse {
     private String total_size;
     private String delete_date;
     //CHECKSTYLE:ON
-        
+
     public String getFolderKey() {
       if (this.folderkey == null) {
           this.folderkey = "";
@@ -102,7 +102,7 @@ public class FolderSearchResponse extends ApiResponse {
           this.delete_date = "";
       }
       return this.delete_date;
-    }       
+    }
     public String getType() {
       if (this.type == null) {
           this.type = "";
@@ -167,11 +167,7 @@ public class FolderSearchResponse extends ApiResponse {
       if (this.privacy == null) {
           this.privacy = "private";
       }
-      if (this.privacy.equalsIgnoreCase("public")) {
-          return true;
-      } else {
-          return false;
-      }
+        return "public".equalsIgnoreCase(this.privacy);
     }
     public String getPasswordProtected() {
       if (this.password_protected == null) {

@@ -11,7 +11,6 @@ import com.arkhive.components.api.ApiResponse;
  *
  */
 public class CheckResponse extends ApiResponse {
-  //CHECKSTYLE:OFF field name must match field from API.
   private String hash_exists;
   private String in_account;
   private String in_folder;
@@ -23,26 +22,18 @@ public class CheckResponse extends ApiResponse {
   private String storage_limit;
   private String storage_limit_exceeded;
   ResumableUpload resumable_upload;
-  //CHECKSTYLE:ON
-  
+
   /**This class represents part of the data structure for the pre-upload response.
    * @author Chris Najar
    */
   public class ResumableUpload {
-    //CHECKSTYLE:OFF
     private String all_units_ready;
     private String number_of_units;
     private String unit_size;
-    //CHECKSTYLE:ON
     private Bitmap bitmap;
 
     public boolean getAllUnitsReady() {
-      if (all_units_ready == null) { return false; }
-      if (all_units_ready.equals("yes")) {
-        return true;
-      } else {
-        return false;
-      }
+        return "yes".equals(all_units_ready);
     }
     public int getNumberOfUnits() {
       if (number_of_units == null || number_of_units.equals("")) { return 0; }
@@ -84,26 +75,21 @@ public class CheckResponse extends ApiResponse {
       if (ret.size() == words.length) {
         return ret;
       } else {
-        return ret = new ArrayList<Integer>();
+        return new ArrayList<Integer>();
       }
     }
   }
-  
+
   public long getUsedStorageSize() {
-    if (used_storage_size == null || used_storage_size.equals("")) { return 0; }
+    if ("".equals(used_storage_size)) { return 0; }
     return Long.parseLong(used_storage_size);
   }
   public long getStorageLimit() {
-    if (storage_limit == null || storage_limit.equals("")) { return 0; }
+    if ("".equals(storage_limit)) { return 0; }
     return Long.parseLong(storage_limit);
   }
   public boolean getStorageLimitExceeded() {
-    if (storage_limit_exceeded == null) { return false; }
-    if (storage_limit_exceeded.equals("yes")) {
-      return true;
-    } else {
-      return false;
-    }
+      return "yes".equals(storage_limit_exceeded);
   }
   public ResumableUpload getResumableUpload() {
     if (resumable_upload == null) { return new ResumableUpload(); }
@@ -111,44 +97,19 @@ public class CheckResponse extends ApiResponse {
   }
 
   public boolean getHashExists() {
-    if (hash_exists == null) { return false; }
-    if (hash_exists.equals("yes")) {
-      return true;
-    } else {
-      return false;
-    }
+      return "yes".equals(hash_exists);
   }
-  public boolean getInAccount() {    
-    if (in_account == null) { return false; }
-    if (in_account.equals("yes")) {
-      return true;
-    } else {
-      return false;
-    }
+  public boolean getInAccount() {
+      return "yes".equals(in_account);
   }
   public boolean getInFolder() {
-    if (in_folder == null) { return false; }
-    if (in_folder.equals("yes")) {
-      return true;
-    } else {
-      return false;
-    }
+      return "yes".equals(in_folder);
   }
   public boolean getFileExists() {
-    if (file_exists == null) { return false; }
-    if (file_exists.equals("yes")) {
-      return true;
-    } else {
-      return false;
-    }
+      return "yes".equals(file_exists);
   }
   public boolean getDifferentHash() {
-    if (different_hash == null) { return false; }
-    if (different_hash.equals("yes")) {
-      return true;
-    } else {
-      return false;
-    }
+      return "yes".equals(different_hash);
   }
   public String getDuplicateQuickkey() {
     if (duplicate_quickkey == null) { return  ""; }

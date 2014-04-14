@@ -6,7 +6,7 @@ import java.util.List;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- * 
+ *
  * @author Chris Najar
  *
  */
@@ -18,34 +18,26 @@ public class FolderCopyResponse extends ApiResponse {
   private String new_key;
   //CHECKSTYLE:OFF
 
-  /**Returns the JSON object "asynchronous" as a boolean 
+  /**Returns the JSON object "asynchronous" as a boolean
    * @return true if "yes", false if "no"
    */
   public boolean isNewKey() {
     if (this.new_key == null) {
       this.new_key = "no";
     }
-    
-    if (this.new_key.equalsIgnoreCase("no")) {
-      return false;
-    } else {
-      return true;
-    }
+
+      return !"no".equalsIgnoreCase(this.new_key);
   }
-  
-  /**Returns the JSON object "asynchronous" as a boolean 
+
+  /**Returns the JSON object "asynchronous" as a boolean
    * @return true if "yes", false if "no"
    */
   public boolean isAsynchronous() {
     if (this.asynchronous == null) {
       this.asynchronous = "no";
     }
-    
-    if (this.asynchronous.equalsIgnoreCase("no")) {
-      return false;
-    } else {
-      return true;
-    }
+
+      return !"no".equalsIgnoreCase(this.asynchronous);
   }
   /** Returns the JSON object "new_folderkeys".
    * @return
@@ -56,7 +48,7 @@ public class FolderCopyResponse extends ApiResponse {
     }
     return this.new_folderkeys;
   }
-  
+
   /** Represents the JSON object "device_revision".
    * @return
    */
