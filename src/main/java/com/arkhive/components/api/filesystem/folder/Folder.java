@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 /**
- * 
+ *
  * @author Chris Najar
  *
  */
@@ -38,7 +38,7 @@ public class Folder {
   /*=================================================================================================================
    * FOLDER COPY API
    ==================================================================================================================*/
-  
+
   /**
    * Makes a call to folder/copy.php.
    * <p>
@@ -58,11 +58,11 @@ public class Folder {
     Map<String, String> map = new HashMap<String, String>();
     map.put("folder_key_src", folder.getKey());
     map.put("folder_key_dst", destinationKey);
-    
+
     JsonElement jsonResponse = sendRequest(map, COPY_URI, sm);
     return new Gson().fromJson(jsonResponse, FolderCopyResponse.class);
   }
-  
+
   /**
    * Overloaded method which calls copy(SessionManager, String, String).
    * <p>
@@ -74,7 +74,7 @@ public class Folder {
   public static FolderCopyResponse copy(FileSystemItem folder, SessionManager sm) {
     return copy(folder, null, sm);
   }
-  
+
   /*=================================================================================================================
    * FOLDER MOVE API
    ==================================================================================================================*/
@@ -98,11 +98,11 @@ public class Folder {
     Map<String, String> map = new HashMap<String, String>();
     map.put("folder_key_src", folderKey);
     map.put("folder_key_dst", destinationKey);
-    
+
     JsonElement jsonResponse = sendRequest(map, MOVE_URI, sm);
     return new Gson().fromJson(jsonResponse, FolderMoveResponse.class);
   }
-  
+
   /**
    * Overloaded method which calls move(SessionManager, String, String).
    * <p>
@@ -114,7 +114,7 @@ public class Folder {
   public static FolderMoveResponse move(FileSystemItem folder, SessionManager sm) {
     return move(folder, null, sm);
   }
-  
+
   /*=================================================================================================================
    * FOLDER CREATE API
    ==================================================================================================================*/
@@ -128,7 +128,7 @@ public class Folder {
    * @param sm - sesssion manager.
    * @return a FolderCreateResponse object.
    */
-  public static FolderCreateResponse create(FileSystemItem folder, String name, boolean allowDuplicate, 
+  public static FolderCreateResponse create(FileSystemItem folder, String name, boolean allowDuplicate,
                                             SessionManager sm) {
     String destinationKey;
     if (folder == null) {
@@ -137,14 +137,14 @@ public class Folder {
       destinationKey = folder.getKey();
     }
     Map<String, String> map = new HashMap<String, String>();
-    map.put("foldername", name); 
-    map.put("parent_key", destinationKey);      
+    map.put("foldername", name);
+    map.put("parent_key", destinationKey);
     map.put("allow_duplicate_name", convertBoolean(allowDuplicate));
 
     JsonElement jsonResponse = sendRequest(map, CREATE_URI, sm);
     return new Gson().fromJson(jsonResponse, FolderCreateResponse.class);
   }
-  
+
   /**
    * Overloaded method for calling the create(SessionManager, String, String, boolean) method.
    * <p>
@@ -156,7 +156,7 @@ public class Folder {
   public static FolderCreateResponse create(String name, SessionManager sm) {
     return create(null, name, true, sm);
   }
-  
+
   /**
    * Converts a boolean to a 'yes' or 'no' String.
    * @param b - boolean to convert.
@@ -169,7 +169,7 @@ public class Folder {
       return "no";
     }
   }
-  
+
   /*=================================================================================================================
    * FOLDER DELETE/PURGE API
    ==================================================================================================================*/
@@ -188,7 +188,7 @@ public class Folder {
       key = folder.getKey();
     }
     Map<String, String> map = new HashMap<String, String>();
-    map.put("folder_key", key); 
+    map.put("folder_key", key);
 
     JsonElement jsonResponse;
     if (purge) {
@@ -199,23 +199,23 @@ public class Folder {
 
     return new Gson().fromJson(jsonResponse, FolderDeleteResponse.class);
   }
-  
+
   /*=================================================================================================================
    * FOLDER SEARCH API
    ==================================================================================================================*/
-  
+
   public static FolderSearchResponse search(String searchText, SessionManager sm) {
     if (searchText == null) {
       searchText = "";
     }
-    
+
     Map<String, String> map = new HashMap<String, String>();
     map.put("search_text", searchText);
 
     JsonElement jsonResponse = sendRequest(map, SEARCH_URI, sm);
     return new Gson().fromJson(jsonResponse, FolderSearchResponse.class);
   }
-  
+
   /*=================================================================================================================
    * FOLDER UPDATE API
    ==================================================================================================================*/
@@ -237,14 +237,14 @@ public class Folder {
       optionalParameters = new HashMap<String, String>();
     }
     optionalParameters.put("folder_key", key);
-        
+
     JsonElement jsonResponse = sendRequest(optionalParameters, UPDATE_URI, sm);
     return new Gson().fromJson(jsonResponse, FolderUpdateResponse.class);
   }
-  
+
   /*=================================================================================================================
    * FOLDER GET CONTENTS API
-   ==================================================================================================================*/    
+   ==================================================================================================================*/
   public static FolderGetContentsResponse getContents(FileSystemItem item, SessionManager sm, int chunk, ContentType type) {
     String key;
     if (item == null) {
@@ -252,29 +252,27 @@ public class Folder {
     } else {
        key = item.getKey();
     }
-    
+
     Map<String, String> map = new HashMap<String, String>();
     map.put("folder_key", key);
     map.put("content_type", ContentType.toString(type));
     map.put("chunk", String.valueOf(chunk));
-    
+
     ApiRequestBuilder builder = new ApiRequestBuilder();
     builder.domain(sm.getDomain());
     builder.uri(GET_CONTENTS_URI);
     builder.sessionManager(sm);
     builder.httpInterface(sm.getHttpInterface());
     builder.parameters(map);
-    
+
     ApiRequest request = builder.build();
-    
+
     String responseString = request.submitRequestSync();
     Gson gson = new Gson();
-    FolderGetContentsResponse response = 
-        gson.fromJson(Utility.getResponseString(responseString), FolderGetContentsResponse.class);
-    return response;
+      return gson.fromJson(Utility.getResponseString(responseString), FolderGetContentsResponse.class);
   }
-  
-  public static List<FileSystemItem> getContents(FileSystemItem item, SessionManager sm, 
+
+  public static List<FileSystemItem> getContents(FileSystemItem item, SessionManager sm,
     GetContentsUpdateListener listener) {
     List<FileSystemItem> allItems = new LinkedList<FileSystemItem>();
     //get folders first
@@ -283,49 +281,49 @@ public class Folder {
     do {
       response = getContents(item, sm, chunk, ContentType.FOLDERS);
       // add contents to return value
-      List<FileSystemItem> itemsToAdd = 
+      List<FileSystemItem> itemsToAdd =
           Converter.convertFolders(response.getFolderContents().getFolders(), item.getParentFolderKey());
       allItems.addAll(itemsToAdd);
-      
+
       //give listener some data
       if (listener != null) {
         listener.contentsReceived(itemsToAdd);
       }
-      
+
       //increment next chunk
       chunk++;
     } while (response.getFolderContents().getFolders().size() != 0);
-    
+
     //get folders (reset chunk)
     chunk = 1;
     do {
       response = getContents(item, sm, chunk, ContentType.FILES);
       //add contents to return value
-      List<FileSystemItem> itemsToAdd = 
+      List<FileSystemItem> itemsToAdd =
           Converter.convertFiles(response.getFolderContents().getFiles(), item.getParentFolderKey());
       allItems.addAll(itemsToAdd);
-      
+
       //give listener some data
       if (listener != null) {
         listener.contentsReceived(itemsToAdd);
       }
-      
+
       //increment next chunk
       chunk++;
     } while (response.getFolderContents().getFiles().size() != 0);
-    
+
     if (listener != null) {
       listener.finishedReceivingContents();
     }
     return allItems;
   }
-  
+
   /** Content Type for folder/get_content.php parameter.
    * @author Chris Najar
    */
   public enum ContentType {
     FILES, FOLDERS;
-    
+
     public static String toString(ContentType type) {
       String ret;
       switch(type) {
@@ -358,14 +356,14 @@ public class Folder {
     JsonElement jsonResponse = sendRequest(map, GET_INFO_URI, sm);
     return new Gson().fromJson(jsonResponse, FolderGetInfoResponse.class);
   }
-  
+
   /*=================================================================================================================
    * FOLDER GET REVISION API
    ==================================================================================================================*/
   public static FolderGetRevisionResponse getRevision(FileSystemItem item, SessionManager sm) {
     return getRevision(item, sm, false);
   }
-  
+
   /**
    * Makes a call to folder/get_revision.php.
    * @param item - FileSystemItem to use.
@@ -385,7 +383,7 @@ public class Folder {
     JsonElement jsonResponse = sendRequest(map, GET_REVISION_URI, sm);
     return new Gson().fromJson(jsonResponse, FolderGetRevisionResponse.class);
   }
-  
+
    /** Submit a request to the API.
    *
    * @param  parameters  A Map<String, String> of parameters to pass to the API.
@@ -402,7 +400,7 @@ public class Folder {
     } catch (UnsupportedEncodingException e) {
         throw new IllegalStateException(e);
     }
-    
+
     ApiRequestBuilder builder = new ApiRequestBuilder();
     builder.domain(sm.getDomain());
     builder.sessionManager(sm);

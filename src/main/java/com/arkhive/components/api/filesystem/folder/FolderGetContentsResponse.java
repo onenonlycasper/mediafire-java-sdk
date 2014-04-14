@@ -11,9 +11,7 @@ import com.arkhive.components.api.ApiResponse;
  *
  */
 public class FolderGetContentsResponse extends ApiResponse {
-  //CHECKSTYLE:OFF
   public FolderContents folder_content;
-  //CHECKSTYLE:ON
 
   public FolderContents getFolderContents() {
     if (this.folder_content == null) {
@@ -28,11 +26,9 @@ public class FolderGetContentsResponse extends ApiResponse {
    *
    */
   public class FolderContents {
-    //CHECKSTYLE:OFF
     public String chunk_size;
     public String content_type;
     public String chunk_number;
-    //CHECKSTYLE:ON
     public List<Folder> folders;
     public List<File> files;
 
@@ -89,12 +85,10 @@ public class FolderGetContentsResponse extends ApiResponse {
     private String size;
     private Revision revision;
     private String shared;
-    //CHECKSTYLE:OFF
     private String dropbox_enabled;
     private String folder_count;
     private String file_count;
     private String shared_by_user;
-    //CHECKSTYLE:ON
 
     public Revision getRevision() {
       if (this.revision == null) {
@@ -221,11 +215,8 @@ public class FolderGetContentsResponse extends ApiResponse {
     private String hash;
     private String downloads;
     private String views;
-
-    //CHECKSTYLE:OFF
-            private String shared_by_user;
-            private String password_protected;
-    //CHECKSTYLE:ON
+    private String shared_by_user;
+    private String password_protected;
 
     public int getDownloads() {
       if (this.downloads == null) {
@@ -263,25 +254,11 @@ public class FolderGetContentsResponse extends ApiResponse {
     }
 
     public boolean isPasswordProtected() {
-      if (this.password_protected == null) {
-        this.password_protected = "no";
-      }
-      if (this.privacy.equalsIgnoreCase("yes")) {
-        return true;
-      } else {
-        return false;
-      }
+        return "yes".equalsIgnoreCase(this.privacy);
     }
 
     public boolean isPublic() {
-      if (this.privacy == null) {
-        this.privacy = "public";
-      }
-      if (this.privacy.equalsIgnoreCase("public")) {
-        return true;
-      } else {
-        return false;
-      }
+        return "public".equalsIgnoreCase(this.privacy);
     }
 
     public String getDescription() {
@@ -299,14 +276,7 @@ public class FolderGetContentsResponse extends ApiResponse {
     }
 
     public boolean isSharedByUser() {
-      if (this.shared_by_user == null) {
-        this.shared_by_user = "0";
-      }
-      if (this.shared_by_user.equalsIgnoreCase("0")) {
-        return false;
-      } else {
-        return true;
-      }
+        return "1".equalsIgnoreCase(this.shared_by_user);
     }
 
     public String getQuickKey() {

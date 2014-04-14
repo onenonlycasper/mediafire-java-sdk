@@ -16,7 +16,7 @@ public class Avatar {
     private static final String GET_URI = "/api/user/get_avatar.php";
     private static final String SET_URI = "/api/user/set_avatar.php";
 
-    /** Get the avatar of the currently logged in user. 
+    /** Get the avatar of the currently logged in user.
      *
      * @param  sessionManager  A valid SessionManager.
      *
@@ -33,8 +33,7 @@ public class Avatar {
         String responseString = request.submitRequestSync();
         JsonElement jsonResponse = Utility.getResponseElement(responseString);
         Gson gson = new Gson();
-        GetAvatarResponse avatarResponse = gson.fromJson(jsonResponse, GetAvatarResponse.class);
-        return avatarResponse;
+        return gson.fromJson(jsonResponse, GetAvatarResponse.class);
     }
 
     /** Set the avatar of the logged in user with an image stored on the web.
