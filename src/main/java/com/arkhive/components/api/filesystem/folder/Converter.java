@@ -9,7 +9,7 @@ import com.arkhive.components.api.filesystem.folder.FolderGetContentsResponse.Fi
 import com.arkhive.components.api.filesystem.folder.FolderGetContentsResponse.Folder;
 
 /**
- * 
+ *
  * @author Chris Najar
  *
  */
@@ -22,19 +22,19 @@ public class Converter {
    */
   public static List<FileSystemItem> convertFolders(List<Folder> allFolders, String parentFolderKey) {
     List<FileSystemItem> items = new LinkedList<FileSystemItem>();
-   
+
     for (Folder f : allFolders) {
       FileSystemItem item = makeBuilder(f, parentFolderKey).build();
       items.add(item);
     }
-    
+
     return items;
   }
-  
-  private static Builder makeBuilder(Folder f, String parentFolderKey) { 
+
+  private static Builder makeBuilder(Folder f, String parentFolderKey) {
     Builder builder = new Builder();
     builder.createdDate(f.getCreated());
-    builder.description(f.getDescription().toString());
+    builder.description(f.getDescription());
     builder.isFolder(true);
     builder.isShared(f.isSharedFromOther());
     builder.key(f.getFolderkey());
@@ -45,7 +45,7 @@ public class Converter {
     builder.revision(f.getRevision().getRevision());
     builder.revisionEpoch((int) f.getRevision().getEpoch());
     builder.size((int) f.getSize());
-    
+
     return builder;
   }
 
@@ -56,12 +56,12 @@ public class Converter {
    */
   public static List<FileSystemItem> convertFiles(List<File> allFiles, String parentFolderKey) {
     List<FileSystemItem> items = new LinkedList<FileSystemItem>();
-    
+
     for (File f : allFiles) {
       FileSystemItem item = makeBuilder(f, parentFolderKey).build();
       items.add(item);
     }
-    
+
     return items;
   }
 
@@ -78,7 +78,7 @@ public class Converter {
     builder.size((int) f.getSize());
     builder.hash(f.getHash());
     return builder;
-    
+
   }
 
 }
