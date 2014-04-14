@@ -25,7 +25,7 @@ import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**Runnable for making api call to upload/resumable.php. * 
+/**Runnable for making api call to upload/resumable.php. *
  * @author Chris Najar
  */
 public class ResumableProcess implements Runnable {
@@ -62,10 +62,10 @@ public class ResumableProcess implements Runnable {
     int numChunks = uploadItem.getChunkData().getNumberOfUnits();
     int unitSize = uploadItem.getChunkData().getUnitSize();
     long fileSize = uploadItem.getFileData().getFileSize();
-    // loop through our chunks and create http post with header data and send after we are done looping, 
+    // loop through our chunks and create http post with header data and send after we are done looping,
     // let the listener know we are completed
 
-    for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {      
+    for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {
       // if the bitmap says this chunk number is uploaded then we can just skip it, if not, we upload it.
       if (!uploadItem.getBitmap().isUploaded(chunkNumber)) {
         // get the chunk size for this chunk
@@ -93,54 +93,54 @@ public class ResumableProcess implements Runnable {
           this.exceptionHandler(e); return;
         } catch (IOException e) {
           this.exceptionHandler(e); return;
-        } 
-        
+        }
+
         // generate the post headers
-        HashMap<String, String> headers = 
+        HashMap<String, String> headers =
             generatePostHeaders(encodedShortFileName, fileSize, chunkNumber, chunkHash, chunkSize);
 
         // generate the get parameters
-        HashMap<String, String> parameters = 
+        HashMap<String, String> parameters =
             generateGetParameters();
-        
+
         // now send the http post request
-        String jsonResponse = 
+        String jsonResponse =
             sessionManager.getHttpInterface().
             sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, chunkData);
-        
+
         // if jsonResponse is empty, then HttpInterface.sendGetRequest() has no internet connectivity so we
         // call lostInternetConnectivity() and UploadManager will move this item to the backlog queue.
         if (jsonResponse.isEmpty()) {
           notifyManagerLostConnection();
           return;
         }
-        
+
         // generate the ResumableResponse object
-        response = 
+        response =
             gson.fromJson(getResponseString(jsonResponse), ResumableResponse.class);
-        
+
         // set poll upload key if possible
         if (shouldSetPollUploadKey(response)) {
           uploadItem.setPollUploadKey(response.getDoUpload().getKey());
         }
-        
+
         // if API response code OR Upload Response Result code have an error then we need to terminate the process
         if (response.hasError()) {
           notifyManagerCancelled(response);
           return;
         }
-        
-        if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR 
-            && response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) { 
+
+        if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR
+            && response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
           // let the listeners know we are done with this process (because there was an error in this case)
           notifyManagerCancelled(response);
           return;
         }
       }
-      
+
       // update listeners on progress each loop
       notifyListenersProgressUpdate(chunkNumber, numChunks);
-      
+
       // check if we need to cancel upload because another entitiy changes the UploadItem status to CANCELLED
       switch(uploadItem.getStatus()) {
         case CANCELLED: //paused, cancel upload
@@ -155,21 +155,20 @@ public class ResumableProcess implements Runnable {
           break;
       }
     } // end loop
-      
+
     // let the listeners know that upload has attempted to upload all chunks.
     notifyManagerCompleted(response);
   }
-  
+
   private void exceptionHandler(Exception e) {
     logger.warn(TAG + " Exception: " + e);
     e.printStackTrace();
-    // if we catch FileNotFoundException, NoSuchAlgorithmException, 
-    // or UnsupportedEncoding Exception, notify manager and listeners 
+    // if we catch FileNotFoundException, NoSuchAlgorithmException,
+    // or UnsupportedEncoding Exception, notify manager and listeners
     // that exception was caught and process has been cancelled
     notifyManagerException(e);
-    return;
   }
-  
+
   /**
    * gives the listeners a progress update of the number of chunks completed.
    */
@@ -183,7 +182,7 @@ public class ResumableProcess implements Runnable {
       listener.onProgressUpdate(uploadItem, (int) percentCompleted);
     }
   }
-  
+
   /**
    * notifies the upload manager attached to the upload item that this process has finished.
    * @param response
@@ -193,7 +192,7 @@ public class ResumableProcess implements Runnable {
       uploadItem.getUploadManagerListener().onResumableCompleted(uploadItem);
     }
   }
-  
+
   /**
    * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
    */
@@ -204,7 +203,7 @@ public class ResumableProcess implements Runnable {
     }
     notifyListenersCancelled();
   }
-  
+
   /**
    * generates a HashMap of the GET parameters.
    * @return
@@ -218,7 +217,7 @@ public class ResumableProcess implements Runnable {
     parameters.put("upload_folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
     return parameters;
   }
-  
+
   /**
    * generates a HashMap of the POST headers.
    * @param encodedShortFileName
@@ -228,7 +227,7 @@ public class ResumableProcess implements Runnable {
    * @param chunkSize
    * @return
    */
-  private HashMap<String, String> generatePostHeaders(String encodedShortFileName, 
+  private HashMap<String, String> generatePostHeaders(String encodedShortFileName,
                                     long fileSize, int chunkNumber, String chunkHash, int chunkSize) {
     HashMap<String, String> headers = new HashMap<String, String>();
     // these headers are related to the entire file
@@ -241,7 +240,7 @@ public class ResumableProcess implements Runnable {
     headers.put("x-unit-size", Integer.toString(chunkSize));
     return headers;
   }
-  
+
   /**
    * lets listeners know that this process has been cancelled for the upload item.
    */
@@ -255,7 +254,7 @@ public class ResumableProcess implements Runnable {
       uploadItem.getDatabaseListener().onCancelled(uploadItem);
     }
   }
-    
+
   /**
    * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
    * @param e
@@ -268,7 +267,7 @@ public class ResumableProcess implements Runnable {
 
     notifyListenersCancelled();
   }
-  
+
   /**
    * notifies the upload manager that the process has been cancelled and then notifies other listeners.
    * @param uploadItem
@@ -280,7 +279,7 @@ public class ResumableProcess implements Runnable {
     }
     notifyListenersCancelled();
   }
-    
+
   /**
    * calculates the chunk size.
    * @param chunkNumber
@@ -289,20 +288,20 @@ public class ResumableProcess implements Runnable {
    * @param unitSize
    * @return
    */
-  private int getChunkSize(int chunkNumber, int numChunks, long fileSize, int unitSize) {        
+  private int getChunkSize(int chunkNumber, int numChunks, long fileSize, int unitSize) {
     if (chunkNumber >= numChunks) {
       return 0; // represents bad size
     }
-    
+
     if (fileSize % unitSize == 0) { // all units will be of unitSize
       return unitSize;
     } else if (chunkNumber < numChunks - 1){ // this unit is of unitSize
         return unitSize;
     } else { // this unit is "special" and is the modulo of fileSize and unitSize
-      return (int) (fileSize %  unitSize); 
+      return (int) (fileSize %  unitSize);
     }
   }
-    
+
   /**
    * only set the upload key for the upload item if response/doupload/result is 14 or 0.
    * @param response

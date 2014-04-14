@@ -69,7 +69,7 @@ public class UploadManager implements UploadListenerManager {
      * @return number of items in the backlog queue.
      */
     public synchronized int getBacklogSize() { return backlog.size(); }
-    
+
     /** Returns the current thread count.
      * @return number of items in thread pool.
      */
@@ -89,7 +89,7 @@ public class UploadManager implements UploadListenerManager {
       }
       return items;
     }
-    
+
     /*============================
      * public setters
      *============================*/
@@ -117,13 +117,13 @@ public class UploadManager implements UploadListenerManager {
         logger.info(TAG, "  UploadItem is null");
         return;
       }
-      
+
       //don't add the item to the backlog queue if max attempts has been exceeded
       if (uploadItem.exceedsMaximumUploadAttempts()) {
         logger.info(TAG, "  UploadItem exceeded it's maximum upload attempts");
         return;
       }
-      
+
       synchronized (backlog) {
         //don't add the item to the backlog queue if it is already in the backlog queue
         for (UploadItem item : backlog) {
@@ -133,10 +133,10 @@ public class UploadManager implements UploadListenerManager {
           }
         }
       }
-      
+
       //set the upload manager for the item to this class
       uploadItem.setUploadManagerListener(this);
-      
+
       //adding to the backlog queue means we eventually attempt to upload this item, so increase the upload attempts
       uploadItem.increaseCurrentUploadAttempt();
       synchronized (backlog) {
@@ -153,7 +153,7 @@ public class UploadManager implements UploadListenerManager {
       logger.info(TAG + " pause() called");
       this.paused = true;
     }
-    
+
     /**
      * Resume moving backlog items to the thread queue.
      * <p>
@@ -164,7 +164,7 @@ public class UploadManager implements UploadListenerManager {
       this.paused = false;
       moveBacklogToThread();
     }
-    
+
     /**
      * Returns whether or not UploadManager is paused or not.
      * @return true if paused (not moving backlog to queue), false otherwise.
@@ -186,9 +186,9 @@ public class UploadManager implements UploadListenerManager {
       if (getCurrentThreadCount() > 0) {
         currentThreadCount--;
       }
-      
+
       removeUploadFromPool(uploadItem);
-      
+
       moveBacklogToThread();
     }
 
@@ -215,9 +215,9 @@ public class UploadManager implements UploadListenerManager {
         }
       }
     }
-    
+
     /**
-     * removes an UploadRequest from the backlog queue, if it exists. 
+     * removes an UploadRequest from the backlog queue, if it exists.
      * This method will also remove any UploadItem which has a UploadStatus of CANCELLED.
      * @param uploadItem
      */
@@ -256,8 +256,8 @@ public class UploadManager implements UploadListenerManager {
     }
 
     /**
-     * attempts to move all backlog UploadItems into active threads up to the maximumThreadCount we iterate over the 
-     * items in the UploadItem collection and then for each item we check whether or not we have exceeded the 
+     * attempts to move all backlog UploadItems into active threads up to the maximumThreadCount we iterate over the
+     * items in the UploadItem collection and then for each item we check whether or not we have exceeded the
      * maximumThreadCount. Items that do not have an UploadStatus of READY will not be added to the thread pool because
      * they are either in status CANCELLED or PAUSED.
      * If we have not, we start upload.
@@ -267,8 +267,8 @@ public class UploadManager implements UploadListenerManager {
       logger.info(TAG + " moveBacklogToThread() called");
       if (isPaused()) {
         return;
-      } 
-      
+      }
+
       Iterator<UploadItem> iterator = backlog.iterator();
       while (iterator.hasNext()){
         UploadItem item = iterator.next();
@@ -284,9 +284,9 @@ public class UploadManager implements UploadListenerManager {
               Thread thread = new Thread(runnable);
               // also let's add the item to the thread pool collection.
               synchronized (pool) {
-               pool.add(item); 
+               pool.add(item);
               }
-              
+
               removeUploadRequest(item);
               increaseCurrentThreadCount(thread);
             } else {
@@ -298,7 +298,7 @@ public class UploadManager implements UploadListenerManager {
         }
       }
     }
-        
+
     /*============================
      * interface methods
      *============================*/
@@ -321,14 +321,14 @@ public class UploadManager implements UploadListenerManager {
         default: // this should never happen.
           break;
       }
-      
+
       // if the check says the user has run out of space, let's decrease the current thread count, and drop this
       // item from the backlog queue
       if (response.getStorageLimitExceeded()) {
         decreaseCurrentThreadCount(uploadItem);
         return;
       }
-      
+
       // if the check says an instant upload is available let's start an instant upload
       // for now, we don't care if the item is already in the users account
       if (response.getHashExists()) {
@@ -346,8 +346,8 @@ public class UploadManager implements UploadListenerManager {
           }
           return;
         }
-      } 
-      
+      }
+
       // if the check says there is not an instant upload available, and all units are not ready then
       // let's start the resumable process
       // first we set the chunk data we received
@@ -359,7 +359,7 @@ public class UploadManager implements UploadListenerManager {
         thread.start();
         return;
       }
-      
+
       // if the check says there is not an instant upload available, but all units are ready, then we start polling.
       // first we set the chunk data we received
       if (!response.getHashExists() && response.getResumableUpload().getAllUnitsReady()){
@@ -368,7 +368,6 @@ public class UploadManager implements UploadListenerManager {
         PollProcess process = new PollProcess(sessionManager, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
-        return;
       }
     }
 
@@ -397,7 +396,7 @@ public class UploadManager implements UploadListenerManager {
         default: // this should never happen.
           break;
       }
-      
+
       // if everything is ok with the response we want to call upload/check to make sure all units are ready
       CheckProcess process = new CheckProcess(sessionManager, uploadItem);
       Thread thread = new Thread(process);
@@ -420,13 +419,13 @@ public class UploadManager implements UploadListenerManager {
         default: // this should never happen.
           break;
       }
-      
+
       // if this method is called then filerror and result codes are fine,
-      // but we may not have received status 99 so check status code and 
+      // but we may not have received status 99 so check status code and
       // then possibly senditem to the backlog queue.
       if (response.getDoUpload().getStatusCode() != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY) {
         addUploadRequest(uploadItem);
-      } 
+      }
 
       decreaseCurrentThreadCount(uploadItem);
     }
@@ -455,13 +454,13 @@ public class UploadManager implements UploadListenerManager {
         default: // this should never happen.
           break;
       }
-      
+
       //pause upload manager
       pause();
-      
+
       //add item to backlog
       addUploadRequest(uploadItem);
-      
+
       //decrease current thread count
       decreaseCurrentThreadCount(uploadItem);
     }
@@ -481,26 +480,26 @@ public class UploadManager implements UploadListenerManager {
         default: // this should never happen.
           break;
       }
-      
+
       // if there is an api error then add this item to the backlog queue and decrease current thread count
       if (response.hasError()) {
         addUploadRequest(uploadItem);
         decreaseCurrentThreadCount(uploadItem);
         return;
       }
-      
+
       // if the response does not have an api error, then onCancelled was called by PollProcess or ResumableProcess
       if (response instanceof PollResponse) {
         PollResponse castResponse = (PollResponse) response;
         // if poll upload called onCancelled() because it ran past its attempts, add this to the backlog queue
-        // if poll upload called onCancelled() because of a filerror code or a result error code then drop it from 
+        // if poll upload called onCancelled() because of a filerror code or a result error code then drop it from
         // the queue (via not adding it back to the queue)
         if (castResponse.getDoUpload().getFileErrorCode() == PollFileErrorCode.NO_ERROR &&
             castResponse.getDoUpload().getResultCode() == PollResultCode.SUCCESS) {
           addUploadRequest(uploadItem);
         }
-      } 
-      
+      }
+
       decreaseCurrentThreadCount(uploadItem);
     }
 }

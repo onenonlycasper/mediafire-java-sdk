@@ -3,49 +3,43 @@ package com.arkhive.components.api.filesystem.folder;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- * 
+ *
  * @author Chris Najar
  *
  */
 public class FolderUpdateResponse extends ApiResponse {
   private String asynchronous;
-  //CHECKSTYLE:OFF
   private MyFilesRevision myfiles_revision;
   private String device_revision;
-  //CHECKSTYLE:ON
-  
+
   public boolean isAsynchronous() {
     if (this.asynchronous == null) {
       this.asynchronous = "no";
     }
-    if (this.asynchronous.equalsIgnoreCase("no")) {
-      return false;
-    } else {
-      return true;
-    }
+      return !"no".equalsIgnoreCase(this.asynchronous);
   }
-  
+
   public int getDeviceRevision() {
     if (this.device_revision == null) {
       this.device_revision = "0";
     }
     return Integer.valueOf(device_revision);
   }
-  
+
   public MyFilesRevision getMyFilesRevision() {
     if (this.myfiles_revision == null) {
       this.myfiles_revision = new MyFilesRevision();
     }
     return this.myfiles_revision;
   }
-  
+
   /** Class representation of "myfiles_revision" JSON object.
    * @author Chris Najar
    */
   public class MyFilesRevision {
     private String revision;
     private String epoch;
-    
+
     /** Returns JSON object "revision".
      * @return String representation of "revision".
      */
@@ -55,7 +49,7 @@ public class FolderUpdateResponse extends ApiResponse {
       }
       return this.revision;
     }
-    
+
     /** Returns JSON object "epoch".
      * @return long representation of "epoch".
      */
