@@ -1,20 +1,20 @@
 apply plugin: 'java'
 apply plugin: 'maven-publish'
-
-
-def getVersionName = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'describe', '--tags'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+apply plugin: 'build-version'
+buildVersion {
+    releaseTagPattern = "^\\d+\\.\\d+"
+    matchGroup = "\$0"
 }
-
-version = getVersionName()
+version = buildVersion.version
 buildscript {
     repositories {
+        maven { url "http://git.site.com:8081/nexus/content/groups/public" }
+        maven { url 'https://geonet.artifactoryonline.com/geonet/public-releases' }
         mavenCentral()
+    }
+
+    dependencies {
+        classpath 'nz.org.geonet:gradle-build-version-plugin:1.0.1'
     }
 }
 repositories {
