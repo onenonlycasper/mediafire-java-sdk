@@ -17,7 +17,6 @@ public class DeviceGetChangesResponse extends ApiResponse {
   //CHECKSTYLE:OFF
   private String device_revision;
   private String changes_list_block;
-  private String new_key;
   //CHECKSTYLE:ON
   
   public int getDeviceRevision() {
@@ -32,17 +31,6 @@ public class DeviceGetChangesResponse extends ApiResponse {
           changes_list_block = "0";
       }
       return Integer.valueOf(changes_list_block);
-  }
-
-  public boolean hasNewKey() {
-      if (new_key == null) {
-          new_key = "no";
-      }
-      if (new_key.equals("no")) {
-          return false;
-      } else {
-          return true;
-      }
   }
   
   public ChangedItems getUpdatedItems() {
