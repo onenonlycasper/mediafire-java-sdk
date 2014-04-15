@@ -42,8 +42,7 @@ public class Converter {
     builder.parentFolderKey(parentFolderKey);
     builder.isSharedFromOther(f.isSharedFromOther());
     builder.isShared(f.isSharedByUser());
-    builder.revision(f.getRevision().getRevision());
-    builder.revisionEpoch((int) f.getRevision().getEpoch());
+    builder.revision(f.getRevision());
     builder.size((int) f.getSize());
 
     return builder;
