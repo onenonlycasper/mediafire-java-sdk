@@ -83,18 +83,18 @@ public class FolderGetContentsResponse extends ApiResponse {
     private String flag;
     private String permissions;
     private String size;
-    private Revision revision;
+    private String revision;
     private String shared;
     private String dropbox_enabled;
     private String folder_count;
     private String file_count;
     private String shared_by_user;
 
-    public Revision getRevision() {
+    public int getRevision() {
       if (this.revision == null) {
-        this.revision = new Revision();
+        this.revision = "0";
       }
-      return this.revision;
+      return Integer.valueOf(this.revision);
     }
 
     public boolean isPublic() {
@@ -314,29 +314,4 @@ public class FolderGetContentsResponse extends ApiResponse {
       return Integer.valueOf(this.flag);
     }
   }
-
-  /**
-   *
-   * @author Chris Najar
-   *
-   */
-  public class Revision {
-    private String revision;
-    private String epoch;
-
-    public long getEpoch() {
-    if (this.epoch == null) {
-      this.epoch = "0";
-    }
-      return Long.valueOf(this.epoch);
-    }
-
-    public int getRevision() {
-      if (this.revision == null) {
-        this.revision = "0";
-      }
-
-      return Integer.valueOf(this.revision);
-      }
-    }
 }
