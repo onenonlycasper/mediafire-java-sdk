@@ -9,13 +9,15 @@ import com.arkhive.components.api.filesystem.FileSystemItem;
 /**
  * Class representing api/device/get_changes.php response.
  * @author Chris Najar
- *
+ *{"response":{"action":"device\/get_changes","updated":{"files":[],"folders":[]},"deleted":{"files":[],"folders":[]},"device_revision":"15260","changes_list_block":"500","result":"Success","new_key":"yes","current_api_version":"2.14"}}
  */
 public class DeviceGetChangesResponse extends ApiResponse {
   private ChangedItems updated;
   private ChangedItems deleted;
   //CHECKSTYLE:OFF
   private String device_revision;
+  private String changes_list_block;
+  private String new_key;
   //CHECKSTYLE:ON
   
   public int getDeviceRevision() {
@@ -23,6 +25,24 @@ public class DeviceGetChangesResponse extends ApiResponse {
       device_revision = "0";
     }
     return Integer.valueOf(device_revision);
+  }
+
+  public int getChangesListBlock() {
+      if (changes_list_block == null) {
+          changes_list_block = "0";
+      }
+      return Integer.valueOf(changes_list_block);
+  }
+
+  public boolean hasNewKey() {
+      if (new_key == null) {
+          new_key = "no";
+      }
+      if (new_key.equals("no")) {
+          return false;
+      } else {
+          return true;
+      }
   }
   
   public ChangedItems getUpdatedItems() {
