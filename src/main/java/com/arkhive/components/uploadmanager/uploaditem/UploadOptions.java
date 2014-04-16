@@ -136,6 +136,12 @@ public class UploadOptions {
       this.uploadFolderKey = uploadFolderKey;
     }
 
+    public void setUploadPath(String path) {
+        if (path != null) {
+            this.uploadPath = path;
+        }
+    }
+
     /*============================
      * private setters
      *============================*/
