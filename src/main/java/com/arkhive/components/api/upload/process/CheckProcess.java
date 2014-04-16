@@ -35,7 +35,7 @@ public class CheckProcess implements Runnable {
     this.uploadItem = uploadItem;
     this.gson = new Gson();
   }
-  
+
   @Override
   public void run() {
     check();
@@ -52,7 +52,7 @@ public class CheckProcess implements Runnable {
   private void check() {
     //notify listeners that check started
     notifyListenersStarted();
-    
+
     // url encode the filename
     String filename;
     try {
@@ -63,17 +63,17 @@ public class CheckProcess implements Runnable {
       notifyManagerException(e);
       return;
     }
-    
+
     // generate map with request parameters
-    Map<String, String> keyValue = 
+    Map<String, String> keyValue =
         generateRequestParameters(filename);
-    
+
     // generate request
-    String request = 
+    String request =
         sessionManager.getDomain() + sessionManager.getSession().getQueryString(CHECK_URI, keyValue);
-    
+
     // receive response
-    String jsonResponse = 
+    String jsonResponse =
         sessionManager.getHttpInterface().sendGetRequest(request);
     //check if we did not get a response (json response string is empty)
     if (jsonResponse.isEmpty()) {
@@ -81,11 +81,11 @@ public class CheckProcess implements Runnable {
       notifyManagerLostConnection();
       return;
     }
-    
+
     // convert response to CheckResponse data structure
-    CheckResponse response = 
+    CheckResponse response =
         gson.fromJson(getResponseString(jsonResponse), CheckResponse.class);
-    
+
     // if there is an error code, cancel the upload
     if (response.hasError()) {
       switch (response.getErrorCode()) {
@@ -95,11 +95,11 @@ public class CheckProcess implements Runnable {
           return;
       }
     }
-    
+
     // notify listeners that check has completed
     notifyListenersCompleted(response);
   }
-  
+
   /**
    * generates the request parameter after we receive a UTF encoded filename.
    * @param filename
@@ -114,9 +114,12 @@ public class CheckProcess implements Runnable {
     keyValue.put("resumable", uploadItem.getUploadOptions().isResumable());
     keyValue.put("response_format", "json");
     keyValue.put("upload_folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
+      if (!uploadItem.getUploadOptions().getUploadPath().isEmpty()) {
+          keyValue.put("path", uploadItem.getUploadOptions().getUploadPath());
+      }
     return keyValue;
   }
-  
+
   /**
    * notifies listeners that this process has completed.
    * @param checkResponse
@@ -126,13 +129,13 @@ public class CheckProcess implements Runnable {
     if (uploadItem.getUploadManagerListener() != null) {
       uploadItem.getUploadManagerListener().onCheckCompleted(uploadItem, checkResponse);
     }
-    
+
     for (UploadListenerUI listener : uploadItem.getUiListeners()) {
       //default start at 5% completed if this process is successful
       listener.onProgressUpdate(uploadItem, 5);
     }
   }
-  
+
   /**
    * lets listeners know that this process has started.
    */
@@ -146,7 +149,7 @@ public class CheckProcess implements Runnable {
       uploadItem.getDatabaseListener().onStarted(uploadItem);
     }
   }
-  
+
   /**
    * lets listeners know that this process has been cancelled for the upload item.
    */
@@ -160,15 +163,15 @@ public class CheckProcess implements Runnable {
       uploadItem.getDatabaseListener().onCancelled(uploadItem);
     }
   }
-  
+
   private void notifyManagerCancelled(CheckResponse response) {
     if (uploadItem.getUploadManagerListener() != null) {
       uploadItem.getUploadManagerListener().onCancelled(uploadItem, response);
     }
-    
+
     notifyListenersCancelled();
   }
-  
+
   /**
    * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
    * @param e
@@ -181,7 +184,7 @@ public class CheckProcess implements Runnable {
 
     notifyListenersCancelled();
   }
-  
+
   /**
    * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
    */
@@ -192,7 +195,7 @@ public class CheckProcess implements Runnable {
     }
     notifyListenersCancelled();
   }
-  
+
   /**
    * converts a String received from JSON format into a response String.
    * @param response - the response received in JSON format
