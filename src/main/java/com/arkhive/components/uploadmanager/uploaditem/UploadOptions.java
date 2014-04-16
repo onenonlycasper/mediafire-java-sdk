@@ -3,7 +3,7 @@ package com.arkhive.components.uploadmanager.uploaditem;
 /**
  * Class which represents the data structure
  * that holds user options when they create an
- * Upload Item. The user does not have to use this 
+ * Upload Item. The user does not have to use this
  * data structure and if they do not then a default
  * constructor is used with 5 max upload attempts,
  * resumable, and mandatory upload.
@@ -31,14 +31,15 @@ public class UploadOptions {
     private String uploadFolderKey;
     private String actionOnDuplicate;
     private String versionControl;
+    private String uploadPath;
 
     /**
      * Constructor for the upload options which takes parameters
      * set by implementor.
      * @param maxUploadAttempts - maximum times to attempt to upload
      * @param curUploadAttempts - current number of upload attempts
-     * @param resumable - upload is resumable or not 
-     * TODO(jmoore): please advise if we should make ALL uploads resumable, 
+     * @param resumable - upload is resumable or not
+     * TODO(jmoore): please advise if we should make ALL uploads resumable,
      * or do we want to implement whether or not the upload is resumable on a per UploadItem basis?
      */
     public UploadOptions(int maxUploadAttempts, int curUploadAttempts, boolean resumable) {
@@ -76,7 +77,7 @@ public class UploadOptions {
       }
       return uploadFolderKey;
     }
-    
+
     /**
      * Gets the ActionOnDuplicate option.
      * @return 'keep', 'skip', 'replace'
@@ -85,7 +86,7 @@ public class UploadOptions {
         if (actionOnDuplicate == null) { setActionOnDuplicate(ActionOnDuplicate.KEEP); }
         return actionOnDuplicate;
     }
-    
+
     /**
      * Gets the version control option.
      * @return create_patches, keep_revision, or none
@@ -94,13 +95,22 @@ public class UploadOptions {
         if (versionControl == null) { setVersionControl(VersionControl.CREATE_PATCHES); }
         return versionControl;
     }
-    
+
     /**
      * Returns whether the resumable option is "yes" or "no".
      * @return "yes" if resumable, "no" otherwise
      */
     public String isResumable() { return resumable; }
-    
+
+    /**
+     * Returns the path relative to myfiles root that will serve as the upload path.
+     * @return  The upload path.
+     */
+    public String getUploadPath() {
+        if (this.uploadPath == null) { return ""; }
+        return this.uploadPath;
+    }
+
     /*============================
      * protected getters
      *============================*/
@@ -117,15 +127,15 @@ public class UploadOptions {
      * sets the upload folder key for this Upload Item. this is the destination folder key.
      * @param uploadFolderKey
      */
-    public void setUploadFolderKey(String uploadFolderKey) { 
+    public void setUploadFolderKey(String uploadFolderKey) {
       if (uploadFolderKey == null) {
         uploadFolderKey = "myfiles";
       } else if (uploadFolderKey.isEmpty()) {
         uploadFolderKey = "myfiles";
       }
-      this.uploadFolderKey = uploadFolderKey; 
+      this.uploadFolderKey = uploadFolderKey;
     }
-    
+
     /*============================
      * private setters
      *============================*/
