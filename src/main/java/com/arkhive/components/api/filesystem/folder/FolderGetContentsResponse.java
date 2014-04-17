@@ -1,9 +1,9 @@
 package com.arkhive.components.api.filesystem.folder;
 
+import com.arkhive.components.api.ApiResponse;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import com.arkhive.components.api.ApiResponse;
 
 /**
  *
@@ -304,7 +304,7 @@ public class FolderGetContentsResponse extends ApiResponse {
       if (this.size == null) {
         this.size = "0";
       }
-      return Integer.valueOf(this.size);
+      return Long.valueOf(this.size);
     }
 
     public int getFlag() {
