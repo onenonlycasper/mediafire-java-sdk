@@ -44,7 +44,7 @@ public class FileSystemItem {
    * @return the key of the items parent.
    */
   public String getParentFolderKey() {
-    if (parentFolderKey == null) { parentFolderKey = ""; }
+    if (parentFolderKey == null) { parentFolderKey = "myfiles"; }
     return parentFolderKey;
   }
 
