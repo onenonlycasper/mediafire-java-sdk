@@ -4,6 +4,7 @@ import com.arkhive.components.httplibrary.HttpInterface;
 import com.arkhive.components.sessionmanager.Session;
 import com.arkhive.components.sessionmanager.SessionManager;
 import com.arkhive.components.sessionmanager.session.SessionRequestHandler;
+import com.google.gson.Gson;
 
 import java.util.Map;
 
@@ -11,12 +12,15 @@ import java.util.Map;
  * Interface for a request to the MediaFire web API.
  */
 public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
+    private static final int RETRY_MAX = 10;
     private final String              domain;
     private final String              uri;
     private final Map<String, String> parameters;
     private final HttpInterface       httpInterface;
     private final ApiRequestHandler   requestHandler;
     private final SessionManager      sessionManager;
+
+    private int retryCount;
 
     private Session session;
 
@@ -52,6 +56,16 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
         Session session = sessionManager.getSession();
         parameters.put("response_format", "json");
         String queryString = session.getQueryString(uri, parameters);
+        String responseString = httpInterface.sendGetRequest(domain + queryString);
+        ApiResponse response = new Gson().fromJson(Utility.getResponseElement(responseString), ApiResponse.class);
+        if (response.hasError() && response.getErrorCode() == ApiResponseCode.ERROR_INVALID_SIGNATURE) {
+            if (retryCount < RETRY_MAX) {
+                retryCount++;
+                this.submitRequestSync();
+            } else {
+                return responseString;
+            }
+        }
         sessionManager.releaseSession(session);
         return httpInterface.sendGetRequest(domain + queryString);
     }
@@ -62,12 +76,20 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
      * Accepts the response from an HTTP request, then releases the session and passes the response to the
      * request handler.
      *
-     * @param response The response from the HTTP request.
+     * @param responseString The response from the HTTP request.
      */
     @Override
-    public void httpRequestHandler(String response) {
-        this.sessionManager.releaseSession(this.session);
-        this.requestHandler.onRequestComplete(response);
+    public void httpRequestHandler(String responseString) {
+        ApiResponse response = new Gson().fromJson(Utility.getResponseElement(responseString), ApiResponse.class);
+        if (response.hasError() && response.getErrorCode() == ApiResponseCode.ERROR_INVALID_SIGNATURE) {
+            if (retryCount < RETRY_MAX) {
+                retryCount++;
+                this.submitRequest();
+            }
+        } else {
+            this.sessionManager.releaseSession(this.session);
+        }
+        this.requestHandler.onRequestComplete(responseString);
     }
 
     /**
