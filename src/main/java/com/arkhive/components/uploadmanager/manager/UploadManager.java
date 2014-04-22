@@ -166,10 +166,12 @@ public class UploadManager implements UploadListenerManager {
         }
 
         for (UploadItem item : backlog) {
+            item.setStatus(UploadStatus.CANCELLED);
             removeUploadRequest(item);
         }
 
         for (UploadItem item : pool) {
+            item.setStatus(UploadStatus.CANCELLED);
             removeUploadFromPool(item);
         }
 
