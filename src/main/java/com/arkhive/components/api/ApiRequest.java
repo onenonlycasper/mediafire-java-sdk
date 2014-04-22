@@ -5,8 +5,6 @@ import com.arkhive.components.sessionmanager.Session;
 import com.arkhive.components.sessionmanager.SessionManager;
 import com.arkhive.components.sessionmanager.session.SessionRequestHandler;
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -23,11 +21,9 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
     private final ApiRequestHandler   requestHandler;
     private final SessionManager      sessionManager;
 
-    private int retryCount;
+    private int retryCount = 0;
 
     private Session session;
-
-    private Logger logger = LoggerFactory.getLogger(ApiRequest.class);
 
     protected ApiRequest(ApiRequestBuilder b) {
         super();
@@ -58,14 +54,12 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
      * @return The response from the MediaFire web API.
      */
     public String submitRequestSync() {
-        logger.error(TAG, "Syncrequest called");
         Session session = sessionManager.getSession();
         parameters.put("response_format", "json");
         String queryString = session.getQueryString(uri, parameters);
         String responseString = httpInterface.sendGetRequest(domain + queryString);
         ApiResponse response = new Gson().fromJson(Utility.getResponseElement(responseString), ApiResponse.class);
         if (response.hasError() && response.getErrorCode() == ApiResponseCode.ERROR_INVALID_SIGNATURE) {
-            logger.error(TAG, "Invalid Session Error");
             if (retryCount < RETRY_MAX) {
                 retryCount++;
                 this.submitRequestSync();
@@ -74,7 +68,7 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
             }
         }
         sessionManager.releaseSession(session);
-        return httpInterface.sendGetRequest(domain + queryString);
+        return responseString;
     }
 
     /**
@@ -87,10 +81,8 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
      */
     @Override
     public void httpRequestHandler(String responseString) {
-        logger.error(TAG, "request returned");
         ApiResponse response = new Gson().fromJson(Utility.getResponseElement(responseString), ApiResponse.class);
         if (response.hasError() && response.getErrorCode() == ApiResponseCode.ERROR_INVALID_SIGNATURE) {
-            logger.error(TAG, "Error occured");
             if (retryCount < RETRY_MAX) {
                 retryCount++;
                 this.submitRequest();
