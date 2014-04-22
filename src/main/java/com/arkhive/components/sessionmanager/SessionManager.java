@@ -210,6 +210,11 @@ public class SessionManager implements SessionRequestHandler {
         }
     }
 
+    /** Clear the existing session queue. */
+    public void clearSessionQueue() {
+        this.sessionList.clear();
+    }
+
     /*    ___                             __  ___     __  __              __    */
     /*   /   |  _______  ______  _____   /  |/  /__  / /_/ /_  ____  ____/ /____*/
     /*  / /| | / ___/ / / / __ \/ ___/  / /|_/ / _ \/ __/ __ \/ __ \/ __  / ___/*/
