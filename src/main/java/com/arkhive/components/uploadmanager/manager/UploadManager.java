@@ -158,6 +158,26 @@ public class UploadManager implements UploadListenerManager {
         moveBacklogToThread();
     }
 
+    public void clearUploadQueue() {
+        logger.info(TAG, " clearUploadQueue() called");
+        boolean startedPaused = isPaused();
+        if (!startedPaused) {
+            pause();
+        }
+
+        for (UploadItem item : backlog) {
+            removeUploadRequest(item);
+        }
+
+        for (UploadItem item : pool) {
+            removeUploadFromPool(item);
+        }
+
+        if(!startedPaused) {
+            resume();
+        }
+    }
+
     /**
      * Pause moving backlog items to the thread queue.
      * <p/>
