@@ -79,7 +79,7 @@ public class User {
    */
   public static ApiResponse linkFacebook(String facebookAccessToken, SessionManager sessionManager) {
     Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put("fb_access_token ", facebookAccessToken);
+    parameters.put("fb_access_token", facebookAccessToken);
     JsonElement jsonResponse = sendRequest(parameters, LINK_FACEBOOK_URI, sessionManager);
     return new Gson().fromJson(jsonResponse, ApiResponse.class);
   }
@@ -91,7 +91,7 @@ public class User {
   public static ApiResponse linkTwitter(String twitterOauthToken, String twitterOauthTokenSecret, 
                                         SessionManager sessionManager) {
     Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put("tw_oauth_token ", twitterOauthToken);
+    parameters.put("tw_oauth_token", twitterOauthToken);
     parameters.put("tw_oauth_token_secret", twitterOauthTokenSecret);
     JsonElement jsonResponse = sendRequest(parameters, LINK_TWITTER_URI, sessionManager);
     return new Gson().fromJson(jsonResponse, ApiResponse.class);
