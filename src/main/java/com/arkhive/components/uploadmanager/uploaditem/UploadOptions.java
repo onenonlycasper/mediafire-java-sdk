@@ -18,6 +18,11 @@ public class UploadOptions {
      *
      */
     public enum ActionOnDuplicate { KEEP, SKIP, REPLACE };
+
+    /**
+     * enum for how to handle when an upload is already in a users account
+     */
+    public enum ActionOnInAccount { UPLOAD_ALWAYS, UPLOAD_IF_NOT_IN_FOLDER, DO_NOT_UPLOAD}
     /**
      * enum for the upload option "version_control"
      * in the POST request to be sent via upload/upload.php.
@@ -25,6 +30,7 @@ public class UploadOptions {
      *
      */
     public enum VersionControl { CREATE_PATCHES, KEEP_REVISION, NONE };
+
     private int currentUploadAttempts;
     private int maximumUploadAttempts;
     private String resumable;
@@ -32,6 +38,7 @@ public class UploadOptions {
     private String actionOnDuplicate;
     private String versionControl;
     private String uploadPath;
+    private ActionOnInAccount actionOnInAccount;
 
     /**
      * Constructor for the upload options which takes parameters
@@ -65,6 +72,23 @@ public class UploadOptions {
      */
     public int getCurrentUploadAttempts() { return currentUploadAttempts; }
 
+    /**
+     * Gets the action on what to do if a file already exists in a users account.
+     * @return the ActionOnInAccount representing how to handle a file already in a user account.
+     */
+    public ActionOnInAccount getActionOnInAccount() {
+        if (actionOnInAccount == null) {
+            actionOnInAccount = ActionOnInAccount.DO_NOT_UPLOAD;
+        }
+        return actionOnInAccount;
+    }
+
+    public void setActionOnInAccount(ActionOnInAccount actionOnInAccount) {
+        if (actionOnInAccount == null) {
+            actionOnInAccount = ActionOnInAccount.DO_NOT_UPLOAD;
+        }
+        this.actionOnInAccount = actionOnInAccount;
+    }
     /**
      * Gets the upload folder key option.
      * @return the upload folder key.
