@@ -11,7 +11,7 @@ import com.arkhive.components.api.ApiResponse;
  *
  */
 public class CheckResponse extends ApiResponse {
-    private final String hash_exists = "";
+    private String hash_exists;
     private String in_account;
     private String in_folder;
     private String file_exists;
@@ -34,19 +34,19 @@ public class CheckResponse extends ApiResponse {
 
         public boolean getAllUnitsReady() {
             return "yes".equals(all_units_ready);
-    }
-    public int getNumberOfUnits() {
-      if (number_of_units == null || number_of_units.equals("")) { return 0; }
-      return Integer.parseInt(number_of_units);
-    }
-    public int getUnitSize() {
-      if (unit_size == null || unit_size.equals("")) { return 0; }
-      return Integer.parseInt(unit_size);
-    }
-    public Bitmap getBitmap() {
-      if (bitmap == null) { return new Bitmap(); }
-      return bitmap;
-    }
+        }
+        public int getNumberOfUnits() {
+            if (number_of_units == null || number_of_units.equals("")) { return 0; }
+            return Integer.parseInt(number_of_units);
+        }
+        public int getUnitSize() {
+            if (unit_size == null || unit_size.equals("")) { return 0; }
+            return Integer.parseInt(unit_size);
+        }
+        public Bitmap getBitmap() {
+            if (bitmap == null) { return new Bitmap(); }
+            return bitmap;
+        }
   }
 
   /**This class represents part of the data structure received from upload/check.php response.
