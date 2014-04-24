@@ -6,22 +6,10 @@ import com.arkhive.components.api.ApiResponse;
 public class UserGetInfoResponse extends ApiResponse {
 
     private UserInfo user_info;
-    private FacebookInfo facebook;
-    private TwitterInfo twitter;
 
     public UserInfo getUserInfo() {
         if (user_info == null) { user_info = new UserInfo(); }
         return user_info;
-    }
-
-    public FacebookInfo getFacebookInfo() {
-        if (facebook == null) { facebook = new FacebookInfo(); }
-        return facebook;
-    }
-
-    public TwitterInfo getTwitterInfo() {
-        if (twitter == null) { twitter = new TwitterInfo(); }
-        return twitter;
     }
 
     /** Holds the user information returned from get_info. */
@@ -40,6 +28,19 @@ public class UserGetInfoResponse extends ApiResponse {
         private String premium;
         private String options;
         private String ekey;
+        private FacebookInfo facebook;
+        private TwitterInfo twitter;
+
+
+        public FacebookInfo getFacebookInfo() {
+            if (facebook == null) { facebook = new FacebookInfo(); }
+            return facebook;
+        }
+
+        public TwitterInfo getTwitterInfo() {
+            if (twitter == null) { twitter = new TwitterInfo(); }
+            return twitter;
+        }
 
         public String getEKey() {
             if (ekey == null) { ekey = ""; }
