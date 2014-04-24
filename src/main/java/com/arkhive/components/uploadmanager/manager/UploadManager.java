@@ -355,12 +355,16 @@ public class UploadManager implements UploadListenerManager {
         }
 
         if (!response.getStorageLimitExceeded()) { //storage limit not exceeded
+            System.out.println("--storage limit not exceeded");
             if (response.getHashExists()) { //hash does exist for the file
+                System.out.println("--hash exists");
                 if (!response.getInAccount()) { // hash which exists is not in the account
+                    System.out.println("--hash not in account");
                     InstantProcess process = new InstantProcess(sessionManager, uploadItem);
                     Thread thread = new Thread(process);
                     thread.start();
                 } else { // hash exists and is in the account
+                    System.out.println("--hash in account");
                     boolean inFolder = response.getInFolder();
                     InstantProcess process = new InstantProcess(sessionManager, uploadItem);
                     Thread thread = new Thread(process);
@@ -387,7 +391,9 @@ public class UploadManager implements UploadListenerManager {
                     }
                 }
             } else { // hash does not exist. call resumable.
+                System.out.println("--hash does not exist");
                 if (response.getResumableUpload().getAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
+                    System.out.println("--all units ready and have a poll upload key");
                     // all units are ready and we have the poll upload key. start polling.
                     uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
                     uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
@@ -395,6 +401,7 @@ public class UploadManager implements UploadListenerManager {
                     Thread thread = new Thread(process);
                     thread.start();
                 } else {
+                    System.out.println("--all units not ready or do not have poll upload key");
                     // either we don't have the poll upload key or all units are not ready
                     uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
                     uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
@@ -404,6 +411,7 @@ public class UploadManager implements UploadListenerManager {
                 }
             }
         } else { //user exceeded storage space.
+            System.out.println("--storage limit is exceeded");
             removeUploadRequest(uploadItem);
             decreaseCurrentThreadCount(uploadItem);
         }
