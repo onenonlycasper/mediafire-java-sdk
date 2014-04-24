@@ -354,49 +354,58 @@ public class UploadManager implements UploadListenerManager {
                 break;
         }
 
-        // if the check says the user has run out of space, let's decrease the current thread count, and drop this
-        // item from the backlog queue
-        if (response.getStorageLimitExceeded()) {
-            decreaseCurrentThreadCount(uploadItem);
-            return;
-        }
-
-        // if the check says an instant upload is available let's start an instant upload
-        // for now, we don't care if the item is already in the users account
-        if (response.getHashExists()) {
-            if (!response.getInAccount()) {
-                InstantProcess process = new InstantProcess(sessionManager, uploadItem);
-                Thread thread = new Thread(process);
-                thread.start();
-                return;
-            } else {
-                for (UploadListenerUI listener : uploadItem.getUiListeners()) {
-                    listener.onCompleted(uploadItem);
+        if (!response.getStorageLimitExceeded()) { //storage limit not exceeded
+            if (response.getHashExists()) { //hash does exist for the file
+                if (!response.getInAccount()) { // hash which exists is not in the account
+                    InstantProcess process = new InstantProcess(sessionManager, uploadItem);
+                    Thread thread = new Thread(process);
+                    thread.start();
+                } else { // hash exists and is in the account
+                    boolean inFolder = response.getInFolder();
+                    InstantProcess process = new InstantProcess(sessionManager, uploadItem);
+                    Thread thread = new Thread(process);
+                    switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
+                        case UPLOAD_ALWAYS:
+                            thread.start();
+                            break;
+                        case UPLOAD_IF_NOT_IN_FOLDER:
+                            if (!inFolder) {
+                                thread.start();
+                            }
+                            break;
+                        case DO_NOT_UPLOAD:
+                        default:
+                            removeUploadRequest(uploadItem);
+                            decreaseCurrentThreadCount(uploadItem);
+                            for (UploadListenerUI listener : uploadItem.getUiListeners()) {
+                                listener.onCompleted(uploadItem);
+                            }
+                            if (uploadItem.getDatabaseListener() != null) {
+                                uploadItem.getDatabaseListener().onCompleted(uploadItem);
+                            }
+                            break;
+                    }
                 }
-                if (uploadItem.getDatabaseListener() != null) {
-                    uploadItem.getDatabaseListener().onCompleted(uploadItem);
+            } else { // hash does not exist. call resumable.
+                if (response.getResumableUpload().getAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
+                    // all units are ready and we have the poll upload key. start polling.
+                    uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
+                    uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
+                    PollProcess process = new PollProcess(sessionManager, uploadItem);
+                    Thread thread = new Thread(process);
+                    thread.start();
+                } else {
+                    // either we don't have the poll upload key or all units are not ready
+                    uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
+                    uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
+                    ResumableProcess process = new ResumableProcess(sessionManager, uploadItem);
+                    Thread thread = new Thread(process);
+                    thread.start();
                 }
-                return;
             }
-        }
-
-        // if the check says there is not an instant upload available, and all units are not ready then
-        // let's start the resumable process
-        // first we set the chunk data we received
-        if (!response.getResumableUpload().getAllUnitsReady()) {
-            uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
-            uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
-            ResumableProcess process = new ResumableProcess(sessionManager, uploadItem);
-            Thread thread = new Thread(process);
-            thread.start();
-        } else {
-            // if the check says there is not an instant upload available, but all units are ready, then we start polling.
-            // first we set the chunk data we received
-            uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
-            uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
-            PollProcess process = new PollProcess(sessionManager, uploadItem);
-            Thread thread = new Thread(process);
-            thread.start();
+        } else { //user exceeded storage space.
+            removeUploadRequest(uploadItem);
+            decreaseCurrentThreadCount(uploadItem);
         }
     }
 
@@ -426,7 +435,7 @@ public class UploadManager implements UploadListenerManager {
                 break;
         }
 
-        // if everything is ok with the response we want to call upload/check to make sure all units are ready
+        // if the item status isn't cancelled or paused then call upload/check to make sure all units are ready
         CheckProcess process = new CheckProcess(sessionManager, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
