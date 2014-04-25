@@ -368,17 +368,24 @@ public class UploadManager implements UploadListenerManager {
                     boolean inFolder = response.getInFolder();
                     InstantProcess process = new InstantProcess(sessionManager, uploadItem);
                     Thread thread = new Thread(process);
+                    System.out.println("***ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
                     switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
                         case UPLOAD_ALWAYS:
+                            System.out.println("***ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
                             thread.start();
                             break;
                         case UPLOAD_IF_NOT_IN_FOLDER:
+                            System.out.println("***ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
                             if (!inFolder) {
+                                System.out.println("***NOT IN FOLDER SO UPLOADING");
                                 thread.start();
+                            } else {
+                                System.out.println("***NOT IN FOLDER SO NOT UPLOADING");
                             }
                             break;
                         case DO_NOT_UPLOAD:
                         default:
+                            System.out.println("***ACTION IN ACCOUNT VIA SWITCH STMT case do_not_upload/default");
                             removeUploadRequest(uploadItem);
                             decreaseCurrentThreadCount(uploadItem);
                             for (UploadListenerUI listener : uploadItem.getUiListeners()) {
