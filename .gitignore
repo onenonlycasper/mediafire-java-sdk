@@ -3,3 +3,4 @@ out/
 .idea/tasks.xml
 .gradle/
 build/
+.idea/libraries/

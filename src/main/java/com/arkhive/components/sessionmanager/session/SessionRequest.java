@@ -1,5 +1,12 @@
 package com.arkhive.components.sessionmanager.session;
 
+import com.arkhive.components.api.HttpGetRequest;
+import com.arkhive.components.api.HttpRequestHandler;
+import com.arkhive.components.api.Utility;
+import com.arkhive.components.credentials.Credentials;
+import com.arkhive.components.httplibrary.HttpInterface;
+import com.arkhive.components.sessionmanager.Session;
+import com.arkhive.components.sessionmanager.SessionManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
@@ -11,15 +18,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.arkhive.components.api.HttpGetRequest;
-import com.arkhive.components.api.HttpRequestHandler;
-import com.arkhive.components.api.Utility;
-import com.arkhive.components.credentials.Credentials;
-import com.arkhive.components.httplibrary.HttpInterface;
-import com.arkhive.components.sessionmanager.Session;
-import com.arkhive.components.sessionmanager.SessionManager;
-
-/** Requests a session from the web API.
+/**
+ * Requests a session from the web API.
  * <br>
  * This class requests a session from the web API.  It is responsible for
  * populating the request, as well as handling the response from the web API.
@@ -27,20 +27,23 @@ import com.arkhive.components.sessionmanager.SessionManager;
 public class SessionRequest implements HttpRequestHandler {
     /*uri for a session token request*/
     private static final String URI = "/api/user/get_session_token.php?";
-    private Credentials credentials;
-    private String applicationId;
-    private String apiKey;
-    private String domain;
-    private HttpInterface httpInterface;
-    private SessionRequestHandler callback;
-    private Gson gson = new Gson();
+    private final Credentials           credentials;
+    private final String                applicationId;
+    private final String                apiKey;
+    private final String                domain;
+    private final HttpInterface         httpInterface;
+    private final SessionRequestHandler callback;
 
-    /** Requests a session from the web API.
+    private final Gson gson = new Gson();
+
+    /**
+     * Requests a session from the web API.
      *
      * @param sessionManager The session manager that will accept the requested session.
-     * @param callback The SessionRequestHandler that needs the session.
+     * @param callback       The SessionRequestHandler that needs the session.
      */
     public SessionRequest(SessionManager sessionManager, SessionRequestHandler callback) {
+        super();
         this.credentials = sessionManager.getCredentials();
         this.applicationId = sessionManager.getApplicationId();
         this.apiKey = sessionManager.getApiKey();
@@ -49,7 +52,8 @@ public class SessionRequest implements HttpRequestHandler {
         this.callback = callback;
     }
 
-    /** Executes the request for a session.
+    /**
+     * Executes the request for a session.
      * <br>
      * When this method is invoked, a request for a session token is submitted to the server.
      * The communication to the server is completed through a different thread, and when
@@ -64,11 +68,12 @@ public class SessionRequest implements HttpRequestHandler {
         t.start();
     }
 
-    /** Executes a request for a Session.
-     * <p>
+    /**
+     * Executes a request for a Session.
+     * <p/>
      * Makes a request for a session token, and then blocks until the Session is returned.
      *
-     * @return  A fresh session object.
+     * @return A fresh session object.
      */
     public Session executeSync() {
         // Prepare query and call httpInterface to get the session JSON
@@ -79,10 +84,11 @@ public class SessionRequest implements HttpRequestHandler {
         return prepareSession(response);
     }
 
-    /** Handle the response from a request for a Session.
+    /**
+     * Handle the response from a request for a Session.
      * This method accepts the response as a string, and then processes it into a Session object.
      *
-     * @param response  The response from the HTTP request.
+     * @param response The response from the HTTP request.
      */
     public void httpRequestHandler(String response) {
         Session session = prepareSession(response);
@@ -95,19 +101,20 @@ public class SessionRequest implements HttpRequestHandler {
     /* / ____/ /  / /| |/ / /_/ / /_/  __/  / /  / /  __/ /_/ / / / /_/ / /_/ (__  ) */
     /*/_/   /_/  /_/ |___/\__,_/\__/\___/  /_/  /_/\___/\__/_/ /_/\____/\__,_/____/  */
 
-    /** Create a Session from a JSON string.
-     * <p>
+    /**
+     * Create a Session from a JSON string.
+     * <p/>
      * Convert the JSON response from a session request into a Session object
      *
-     * @param  response  The JSON response from the web request.
+     * @param response The JSON response from the web request.
      *
-     * @return  A fully constructed Session.
+     * @return A fully constructed Session.
      */
     private Session prepareSession(String response) {
         //Populate a SessionResponse with the response string in order to use the values to populate the
         //new Session object.
         JsonElement jsonResponse = Utility.getResponseElement(response);
-        SessionResponse sessionResponse = new SessionResponse();
+        SessionResponse sessionResponse;
         sessionResponse = gson.fromJson(jsonResponse, SessionResponse.class);
 
         // Create a new session object and pass it to the callback function
@@ -118,8 +125,9 @@ public class SessionRequest implements HttpRequestHandler {
         return sessionBuilder.build();
     }
 
-    /** Convert a Credentials map into a query string.
-     * <p>
+    /**
+     * Convert a Credentials map into a query string.
+     * <p/>
      * Prepares the query string needed to submit a request for a session token.
      *
      * @return The completed query string.
@@ -151,14 +159,17 @@ public class SessionRequest implements HttpRequestHandler {
         return queryString.toString();
     }
 
-    /** Construct a query paramter string from a key/value set.
-     * <p>
+    /**
+     * Construct a query parameter string from a key/value set.
+     * <p/>
      * Creates a query parameter by URL encoding the value, then creating a string in the format:
      * "key=value&".
-     * @param  key  The key of the query parameter.
-     * @param  value  The value of the query parameter.
      *
-     * @return The URL encoded key/value pair, converted to a String.*/
+     * @param key   The key of the query parameter.
+     * @param value The value of the query parameter.
+     *
+     * @return The URL encoded key/value pair, converted to a String.
+     */
     private String createQueryParameter(String key, String value) {
         try {
             // convert the parameter value into UTF-8 to avoid issues
@@ -172,8 +183,9 @@ public class SessionRequest implements HttpRequestHandler {
         }
     }
 
-    /** Performs SHA-1 hashing on the signature string to produce a signature hash.
-     *
+    /**
+     * Performs SHA-1 hashing on the signature string to produce a signature hash.
+     * <p/>
      * A signature hash is required for any API request.
      *
      * @param signatureString String to be hashed.
@@ -181,7 +193,7 @@ public class SessionRequest implements HttpRequestHandler {
      * @return The hash of the signature string.
      */
     private String calculateSignature(String signatureString) {
-        String signature = "";
+        String signature;
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             digest.reset();
@@ -190,7 +202,7 @@ public class SessionRequest implements HttpRequestHandler {
             signature = new BigInteger(1, digestBytes).toString(16);
         } catch (NoSuchAlgorithmException e) {
             // This state should not occur because all JVM implementations contain a
-            // SHA-1 encoding algorithim.
+            // SHA-1 encoding algorithm.
             throw new IllegalStateException(e);
         } catch (UnsupportedEncodingException e) {
             // This state should not occur because all JVM implementations contain a
