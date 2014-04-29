@@ -11,66 +11,84 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/** Contains a session, which is needed to call the MediaFire REST API. */
+/**
+ * Contains a session, which is needed to call the MediaFire REST API.
+ */
 public class Session {
-    /** Constant defined by the web API, used to calculate the new secret key. */
-    private static final int DIVISOR = 2147483647;
-    /** Constant defined by the web API, used to calculate the new secret key. */
+    /**
+     * Constant defined by the web API, used to calculate the new secret key.
+     */
+    private static final int DIVISOR    = 2147483647;
+    /**
+     * Constant defined by the web API, used to calculate the new secret key.
+     */
     private static final int MULTIPLIER = 16807;
-    /** The secret key used to create an API signature.
+    /**
+     * The secret key used to create an API signature.
      * <br>
      * This value is updated after every API call.
-     *
-     * @author jmoore
      */
-    private BigInteger secretKey;
+    private       BigInteger secretKey;
     /* The time value used to create an API signature. */
-    private String time;
+    private final String     time;
     /* The session token used to create an API signature. */
-    private String sessionToken;
+    private final String     sessionToken;
 
-    Logger logger = LoggerFactory.getLogger(Session.class);
+    private final Logger logger = LoggerFactory.getLogger(Session.class);
 
-    /** Constructs a {@link Session} from a Builder.
+    /**
+     * Constructs a {@link Session} from a Builder.
      * <br>
      * This is the only way to construct a Session.  It guarantees
      * that the Session is created with all of the fields set to
      * reasonable values.
      */
     private Session(Builder b) {
+        super();
         this.secretKey = b.secretKey;
         this.time = b.time;
         this.sessionToken = b.sessionToken;
 
     }
 
-    public BigInteger   getSecretKey()      { return this.secretKey; }
-    public String       getTime()           { return this.time; }
-    public String       getSessionToken()   { return this.sessionToken; }
+    public BigInteger getSecretKey() {
+        return this.secretKey;
+    }
 
-    /** Converts a URI and parameter map to a query string.
-     * <p>
-     *  This method calculates the signature needed to complete a web API call,
-     *  and appends it to the end of the query string.  The signature is calculated by
-     *  performing the following steps:
-     *  <p>
-     *  Take the current secret key modulo 256.
-     *  Prepend this value to the current time value.
-     *  Add the session token as the first parameter to the query string.
-     *  Merge the secret key modulo, the time, and the API request as so:
-     *  <br>
-     *  {@code (secret key + time + API request) }.
+    public String getSessionToken() {
+        return this.sessionToken;
+    }
+
+    /**
+     * Converts a URI and parameter map to a query string.
+     * <p/>
+     * This method calculates the signature needed to complete a web API call,
+     * and appends it to the end of the query string.  The signature is calculated by
+     * performing the following steps:
+     * <p/>
+     * Take the current secret key modulo 256.
+     * Prepend this value to the current time value.
+     * Add the session token as the first parameter to the query string.
+     * Merge the secret key modulo, the time, and the API request as so:
+     * <br>
      *
-     * @param uri  The URI of the web API call.
-     * @param parameters  A {@link Map}&lt;String, String&gt; holding the parameters
-     *                    for the web API call.
-     * @return  A String containing the the full query string.
+     * @param inputUri        The URI of the web API call.
+     * @param inputParameters A {@link Map}&lt;String, String&gt; holding the parameters
+     *                        for the web API call.
+     *
+     * @return A String containing the the full query string.
      */
-    public String getQueryString(String uri, Map<String, String> parameters) {
-        String queryString = "";
+    public String getQueryString(String inputUri, Map<String, String> inputParameters) {
+        String uri = inputUri;
+        Map<String, String> parameters = inputParameters;
+        String queryString;
         // Handle cases where null parameters are passed.
-        if (uri == null) { uri = ""; }
-        if (parameters == null) { parameters = new HashMap<String, String>(); }
+        if (uri == null) {
+            uri = "";
+        }
+        if (parameters == null) {
+            parameters = new HashMap<String, String>();
+        }
 
         // Iterate over the parameters list and create the query string.
         StringBuilder stringBuilder = new StringBuilder();
@@ -97,11 +115,13 @@ public class Session {
     }
 
     private void updateSession() {
+        logger.debug("Updating SessionToken");
         BigInteger tempKey = this.getSecretKey().multiply(BigInteger.valueOf(MULTIPLIER));
         this.secretKey = tempKey.mod(BigInteger.valueOf(DIVISOR));
     }
 
-    /** Calculate the MD5 of the signature.
+    /**
+     * Calculate the MD5 of the signature.
      * <br>
      * The MD5 hash of a signature string is needed for all API calls.
      *
@@ -110,7 +130,7 @@ public class Session {
      * @return The signature converted into a MD5 hash.
      */
     private String calculateMD5Hash(String signatureBase) {
-        String signatureString = "";
+        String signatureString;
         try {
             byte[] signatureBytes = signatureBase.getBytes("UTF-8");
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -141,52 +161,58 @@ public class Session {
         // The MD5 function will truncate the leading 0 of a hash.
         // If the hash does not have 32 characters, the leading 0 was truncated, so add
         // it back.
-        if (signatureString.length() == 31) { signatureString = "0" + signatureString; }
+        if (signatureString.length() == 31) {
+            signatureString = "0" + signatureString;
+        }
         return signatureString;
     }
 
-    /** Builder for a Session object
-     * <p>
+    /**
+     * Builder for a Session object
+     * <p/>
      * The only way to construct a Session object is through the
      * Session Builder.  This is done to ensure that the Session
      * object is fully built with all of the appropriate values
      * initialized.
      */
     public static class Builder {
-        private BigInteger secretKey = BigInteger.valueOf(0);
-        private String time = "";
-        private String sessionToken = "";
+        private BigInteger secretKey    = BigInteger.valueOf(0);
+        private String     time         = "";
+        private String     sessionToken = "";
 
-        /** Set the value of the secret key for this session
-         * <p>
+        /**
+         * Set the value of the secret key for this session
+         * <p/>
          * The secret key is used to calculate the signature
          * required for a session token v2 request.
          *
-         * @param value  The value of the secret key.
+         * @param value The value of the secret key.
          */
         public Builder secretKey(BigInteger value) {
             this.secretKey = value;
             return this;
         }
 
-        /** Set the time value for this session
-         * <p>
+        /**
+         * Set the time value for this session
+         * <p/>
          * The time value is used to calculate the signature
          * required for the session token v2 request.
          *
-         * @param value  The value of the session time.
+         * @param value The value of the session time.
          */
         public Builder time(String value) {
             this.time = value;
             return this;
         }
 
-        /** Set the session token
-         * <p>
+        /**
+         * Set the session token
+         * <p/>
          * The session token is required for all session
          * token v2 requests.
          *
-         * @param value  The value of the session token.
+         * @param value The value of the session token.
          */
         public Builder sessionToken(String value) {
             if (value != null) {
@@ -195,8 +221,9 @@ public class Session {
             return this;
         }
 
-        /** Create a new Session object.
-         * <p>
+        /**
+         * Create a new Session object.
+         * <p/>
          * Constructs a new Session from the Builder properties.
          *
          * @return A fully constructed Session.
