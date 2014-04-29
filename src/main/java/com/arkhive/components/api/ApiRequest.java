@@ -5,6 +5,8 @@ import com.arkhive.components.sessionmanager.Session;
 import com.arkhive.components.sessionmanager.SessionManager;
 import com.arkhive.components.sessionmanager.session.SessionRequestHandler;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -12,8 +14,8 @@ import java.util.Map;
  * Interface for a request to the MediaFire web API.
  */
 public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
-    private static final String TAG = ApiRequest.class.getSimpleName();
-    private static final int RETRY_MAX = 10;
+    private static final String TAG       = ApiRequest.class.getSimpleName();
+    private static final int    RETRY_MAX = 10;
     private final String              domain;
     private final String              uri;
     private final Map<String, String> parameters;
@@ -21,9 +23,11 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
     private final ApiRequestHandler   requestHandler;
     private final SessionManager      sessionManager;
 
-    private int retryCount = 0;
+    private final Logger logger = LoggerFactory.getLogger(ApiRequest.class);
 
+    private int retryCount = 0;
     private Session session;
+
 
     protected ApiRequest(ApiRequestBuilder b) {
         super();
@@ -60,14 +64,18 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
         String responseString = httpInterface.sendGetRequest(domain + queryString);
         ApiResponse response = new Gson().fromJson(Utility.getResponseElement(responseString), ApiResponse.class);
         if (response.hasError() && response.getErrorCode() == ApiResponseCode.ERROR_INVALID_SIGNATURE) {
+            logger.warn("Invalid signature detected");
             if (retryCount < RETRY_MAX) {
                 retryCount++;
+                logger.warn("Retry request attempt: " + retryCount);
                 this.submitRequestSync();
             } else {
+                logger.warn("Unable to retry request, limit exceeded");
                 return responseString;
             }
+        } else {
+            sessionManager.releaseSession(session);
         }
-        sessionManager.releaseSession(session);
         return responseString;
     }
 
@@ -83,9 +91,14 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
     public void httpRequestHandler(String responseString) {
         ApiResponse response = new Gson().fromJson(Utility.getResponseElement(responseString), ApiResponse.class);
         if (response.hasError() && response.getErrorCode() == ApiResponseCode.ERROR_INVALID_SIGNATURE) {
+            logger.warn("Invalid signature detected");
             if (retryCount < RETRY_MAX) {
                 retryCount++;
+                logger.warn("Retry request attempt: " + retryCount);
                 this.submitRequest();
+                return;
+            } else {
+                logger.warn("Unable to retry request, limit exceeded");
             }
         } else {
             this.sessionManager.releaseSession(this.session);
@@ -104,6 +117,10 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
     @Override
     public void responseHandler(Session session) {
         this.session = session;
+        if (session.getSessionToken().isEmpty()) {
+            logger.warn("Unable to get session token");
+            return;
+        }
         parameters.put("response_format", "json");
         String queryString = session.getQueryString(uri, parameters);
         HttpGetRequest request = new HttpGetRequest(domain + queryString, httpInterface, this);
