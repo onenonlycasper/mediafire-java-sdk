@@ -160,7 +160,7 @@ public class SessionRequest implements HttpRequestHandler {
     }
 
     /**
-     * Construct a query paramter string from a key/value set.
+     * Construct a query parameter string from a key/value set.
      * <p/>
      * Creates a query parameter by URL encoding the value, then creating a string in the format:
      * "key=value&".
