@@ -202,7 +202,7 @@ public class SessionRequest implements HttpRequestHandler {
             signature = new BigInteger(1, digestBytes).toString(16);
         } catch (NoSuchAlgorithmException e) {
             // This state should not occur because all JVM implementations contain a
-            // SHA-1 encoding algorithim.
+            // SHA-1 encoding algorithm.
             throw new IllegalStateException(e);
         } catch (UnsupportedEncodingException e) {
             // This state should not occur because all JVM implementations contain a
