@@ -264,6 +264,8 @@ public class UploadItem {
      * @return true if hashes match, false otherwise.
      */
     public boolean equalTo(UploadItem item) { return fileData.getFileHash().equals(item.fileData.getFileHash()); }
+
+    public boolean equals(UploadItem item) { return getPath().equals(item.getPath()); }
     
     /**
      * Gives the status (paused, ready, cancelled) of this item.
