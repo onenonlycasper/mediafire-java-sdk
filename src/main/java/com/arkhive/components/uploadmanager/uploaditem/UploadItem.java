@@ -33,9 +33,9 @@ public class UploadItem {
     private String imageId;
     private UploadListenerDatabase dbListener;
     private List<UploadListenerUI> uiListeners;
-    private UploadListenerManager mgrListener;    
+    private UploadListenerManager mgrListener;
     private UploadStatus status;
-    
+
     /**
      * Constructor which takes a path and upload attempts.
      * Use this method when you want to customize the upload options for this UploadItem.
@@ -54,10 +54,10 @@ public class UploadItem {
         this.path = path;
         this.imageId = imageId;
         setShortFileName(path);
-        
+
         //instantiate ui listener collection
         uiListeners = new ArrayList<UploadListenerUI>();
-        
+
         //set Object fields so they won't be null
         fileData = new FileData(path);
         this.quickkey = "";
@@ -86,19 +86,19 @@ public class UploadItem {
      * @return
      */
     public UploadListenerDatabase getDatabaseListener() { return dbListener; }
-    
+
     /**
      * returns the listener that is set as the UI listener.
      * @return
      */
     public List<UploadListenerUI> getUiListeners() { return uiListeners; }
-    
+
     /**
      * returns the listener that is set as the upload manager listener.
      * @return
      */
     public UploadListenerManager getUploadManagerListener() { return mgrListener; }
-    
+
     /**
      * Called to get the image id (MediaStore column _ID).
      * @return
@@ -161,19 +161,19 @@ public class UploadItem {
     /*============================
      * public setters
      *============================*/
-    
+
     /**
      * sets the content provider listener.
      * @param dbListener
      */
     public void setDatabaseListener(UploadListenerDatabase dbListener) { this.dbListener = dbListener; }
-    
+
     /**
      * adds a UI listener.
      * @param uiListener
      */
     public void addUiListener(UploadListenerUI uiListener) { uiListeners.add(uiListener); }
-    
+
     /**
      * removes a ui listener.
      * @param uiListener
@@ -182,13 +182,13 @@ public class UploadItem {
     public boolean removeUiListener(UploadListenerUI uiListener) {
       return uiListeners.remove(uiListener);
     }
-    
+
     /**
-     * sets the upload manager listener. 
+     * sets the upload manager listener.
      * @param mgrListener
      */
     public void setUploadManagerListener(UploadListenerManager mgrListener) { this.mgrListener = mgrListener; }
-    
+
     /**
      * Sets the quick key.
      * @param quickKey
@@ -265,7 +265,26 @@ public class UploadItem {
      */
     public boolean equalTo(UploadItem item) { return fileData.getFileHash().equals(item.fileData.getFileHash()); }
 
-    public boolean equals(UploadItem item) { return getPath().equals(item.getPath()); }
+    @Override
+    public boolean equals(Object item) {
+        if (item == null) {
+            return false;
+        }
+        if (getClass() != item.getClass()) {
+            return false;
+        }
+        if (this == item) {
+            return true;
+        }
+        if (item instanceof UploadItem) {
+            UploadItem comparedObject = (UploadItem) item;
+            return this.getPath().equals(comparedObject.getPath());
+        } else {
+            return false;
+        }
+    }
+
+
     
     /**
      * Gives the status (paused, ready, cancelled) of this item.
