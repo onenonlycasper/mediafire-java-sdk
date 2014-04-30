@@ -66,8 +66,9 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
             } else {
                 return responseString;
             }
+        } else {
+            sessionManager.releaseSession(session);
         }
-        sessionManager.releaseSession(session);
         return responseString;
     }
 
