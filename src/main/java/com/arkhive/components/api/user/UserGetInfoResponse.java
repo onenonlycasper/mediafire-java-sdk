@@ -80,7 +80,7 @@ public class UserGetInfoResponse extends ApiResponse {
 
         public String getUsedStorageSize() {
             if (used_storage_size == null) { used_storage_size = ""; }
-            return used_storage_size;t
+            return used_storage_size;
         }
 
         public String getStorageLimitExceeded() {
