@@ -245,7 +245,7 @@ public class Folder {
 
     public static ApiResponse setPublic(FileSystemItem folder, SessionManager sm) {
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("quick_key", folder.getKey());
+        parameters.put("folder_key", folder.getKey());
         parameters.put("privacy", "public");
 
         JsonElement jsonResponse = sendRequest(parameters, UPDATE_URI, sm);
@@ -254,7 +254,7 @@ public class Folder {
 
     public static ApiResponse setPrivate(FileSystemItem folder, SessionManager sm) {
         Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("quick_key", folder.getKey());
+        parameters.put("folder_key", folder.getKey());
         parameters.put("privacy", "private");
 
         JsonElement jsonResponse = sendRequest(parameters, UPDATE_URI, sm);
