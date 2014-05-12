@@ -36,6 +36,7 @@ public class FolderGetInfoResponse extends ApiResponse {
     private String flag;
     private String permissions;
     private String avatar;
+      private String privacy;
     //CHECKSTYLE:OFF
     private String parent_folderkey;
     private String custom_url;
@@ -172,6 +173,10 @@ public class FolderGetInfoResponse extends ApiResponse {
       }
       return Integer.valueOf(this.flag);
     }
+
+      public boolean isPrivate() {
+          return "private".equalsIgnoreCase(this.privacy);
+      }
 
     public int getTotalItems() {
       return this.getFileCount() + this.getFolderCount();
