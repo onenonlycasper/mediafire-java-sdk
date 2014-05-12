@@ -17,10 +17,15 @@ public class FileSystemItem {
     private String thumbnail;
     private boolean isShared;
     private boolean isSharedFromOther;
+    private boolean isPrivate;
     private long size;
     private int revisionEpoch;
     private long revision;
 
+
+    public boolean isPrivate() {
+        return this.isPrivate;
+    }
 
   public String getThumbnailBase64Encoded() {
     if (thumbnail == null) { thumbnail = ""; }
@@ -142,6 +147,10 @@ public class FileSystemItem {
   public static class Builder {
         private FileSystemItem item = new FileSystemItem();
 
+      public Builder isPrivate(boolean value) {
+          item.isPrivate = value;
+          return this;
+      }
         public Builder isFolder(boolean value) {
             item.isFolder = value;
             return this;

@@ -44,6 +44,7 @@ public class Converter {
     builder.isShared(f.isSharedByUser());
     builder.revision(f.getRevision());
     builder.size((int) f.getSize());
+      builder.isPrivate(!f.isPublic());
 
     return builder;
   }
@@ -76,6 +77,7 @@ public class Converter {
     builder.parentFolderKey(parentFolderKey);
     builder.size((int) f.getSize());
     builder.hash(f.getHash());
+      builder.isPrivate(!f.isPublic());
     return builder;
 
   }

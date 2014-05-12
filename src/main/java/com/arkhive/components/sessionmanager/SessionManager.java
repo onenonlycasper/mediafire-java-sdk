@@ -135,10 +135,10 @@ public class SessionManager implements SessionRequestHandler {
      * @param session The Session to return to the pool.
      */
     public void releaseSession(Session session) {
-        if (sessionList.size() >= maxSessions - 1) { return; }
-        synchronized (this) {
-            sessionList.add(session);
-        }
+//        if (sessionList.size() >= maxSessions - 1) { return; }
+//        synchronized (this) {
+//            sessionList.add(session);
+//        }
     }
 
     /** Request an upload action token.
