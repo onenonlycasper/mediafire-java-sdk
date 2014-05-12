@@ -21,6 +21,7 @@ public class UserGetInfoResponse extends ApiResponse {
         private String max_instant_upload_size;
         private String storage_limit;
         private String storage_limit_exceeded;
+        private String used_storage_size;
         private String email;
         private String gender;
         private String location;
@@ -75,6 +76,11 @@ public class UserGetInfoResponse extends ApiResponse {
         public String getStorageLimit() {
             if (storage_limit == null) { storage_limit = ""; }
             return storage_limit;
+        }
+
+        public String getUsedStorageSize() {
+            if (used_storage_size == null) { used_storage_size = ""; }
+            return used_storage_size;
         }
 
         public String getStorageLimitExceeded() {

@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import com.arkhive.components.api.ApiRequest;
 import com.arkhive.components.api.ApiRequestBuilder;
+import com.arkhive.components.api.ApiResponse;
 import com.arkhive.components.api.Utility;
 import com.arkhive.components.api.filesystem.FileSystemItem;
 import com.arkhive.components.sessionmanager.SessionManager;
@@ -242,6 +243,23 @@ public class Folder {
     return new Gson().fromJson(jsonResponse, FolderUpdateResponse.class);
   }
 
+    public static ApiResponse setPublic(FileSystemItem folder, SessionManager sm) {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("quick_key", folder.getKey());
+        parameters.put("privacy", "public");
+
+        JsonElement jsonResponse = sendRequest(parameters, UPDATE_URI, sm);
+        return new Gson().fromJson(jsonResponse, FolderUpdateResponse.class);
+    }
+
+    public static ApiResponse setPrivate(FileSystemItem folder, SessionManager sm) {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("quick_key", folder.getKey());
+        parameters.put("privacy", "private");
+
+        JsonElement jsonResponse = sendRequest(parameters, UPDATE_URI, sm);
+        return new Gson().fromJson(jsonResponse, FolderUpdateResponse.class);
+    }
   /*=================================================================================================================
    * FOLDER GET CONTENTS API
    ==================================================================================================================*/

@@ -130,7 +130,12 @@ public class InstantProcess implements Runnable {
         keyValue.put("size", Long.toString(uploadItem.getFileData().getFileSize()));
         keyValue.put("mtime", uploadItem.getModificationTime());
         keyValue.put("response_format", "json");
-        keyValue.put("upload_folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
+        if (!uploadItem.getUploadOptions().getUploadPath().isEmpty()) {
+            keyValue.put("path", uploadItem.getUploadOptions().getUploadPath());
+        } else {
+            keyValue.put("upload_folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
+        }
+
         keyValue.put("action_on_duplicate", uploadItem.getUploadOptions().getActionOnDuplicate());
         return keyValue;
     }
