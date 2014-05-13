@@ -47,6 +47,7 @@ public class FolderSearchResponse extends ApiResponse {
     private String privacy;
     private String flag;
     private String relevancy;
+    private String hash;
 
     private String folderkey;
     private String name;
@@ -140,8 +141,8 @@ public class FolderSearchResponse extends ApiResponse {
       return this.pass;
     }
     public String getCreated() {
-      if (this.type == null) {
-          this.type = "";
+      if (this.created == null) {
+          this.created = "";
       }
       return this.created;
     }
@@ -186,6 +187,13 @@ public class FolderSearchResponse extends ApiResponse {
         this.relevancy = "0";
       }
       return Integer.valueOf(this.relevancy);
+    }
+
+    public String getHash() {
+        if (this.hash == null) {
+            this.hash = "";
+        }
+        return this.hash;
     }
   }
 }
