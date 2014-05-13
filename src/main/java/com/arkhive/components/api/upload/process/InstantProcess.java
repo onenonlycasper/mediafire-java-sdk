@@ -111,7 +111,6 @@ public class InstantProcess implements Runnable {
         if (uploadItem.getUploadManagerListener() != null) {
             uploadItem.getUploadManagerListener().onCancelled(uploadItem, response);
         }
-
         notifyListenersCancelled();
     }
 
