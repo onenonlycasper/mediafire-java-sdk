@@ -509,7 +509,7 @@ public class UploadManager implements UploadListenerManager {
         }
 
         //pause upload manager
-        pause();
+        // pause(); STARS TASK #25330
 
         //add item to backlog
         addUploadRequest(uploadItem);
