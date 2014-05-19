@@ -29,7 +29,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class UploadManager implements UploadListenerManager {
     private static final String TAG = UploadManager.class.getSimpleName();
-
     private int maximumThreadCount = 5;
     private int currentThreadCount = 0;
     private boolean paused;
