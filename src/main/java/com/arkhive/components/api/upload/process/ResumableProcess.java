@@ -57,6 +57,7 @@ public class ResumableProcess implements Runnable {
      * 3. send upload POST request for each chunk
      */
     private void resumable() {
+        logger.info(TAG, "resumable()");
         ResumableResponse response = new ResumableResponse();
         int numChunks = uploadItem.getChunkData().getNumberOfUnits();
         int unitSize = uploadItem.getChunkData().getUnitSize();

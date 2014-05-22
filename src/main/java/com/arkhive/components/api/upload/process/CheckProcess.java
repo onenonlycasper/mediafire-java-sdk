@@ -50,6 +50,7 @@ public class CheckProcess implements Runnable {
    *  6. notify listeners of completion.
    */
   private void check() {
+      logger.info(TAG, "check()");
     //notify listeners that check started
     notifyListenersStarted();
 

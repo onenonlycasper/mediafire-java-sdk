@@ -46,8 +46,6 @@ public class UploadOptions {
      * @param maxUploadAttempts - maximum times to attempt to upload
      * @param curUploadAttempts - current number of upload attempts
      * @param resumable - upload is resumable or not
-     * TODO(jmoore): please advise if we should make ALL uploads resumable,
-     * or do we want to implement whether or not the upload is resumable on a per UploadItem basis?
      */
     public UploadOptions(int maxUploadAttempts, int curUploadAttempts, boolean resumable) {
         this.currentUploadAttempts = curUploadAttempts;

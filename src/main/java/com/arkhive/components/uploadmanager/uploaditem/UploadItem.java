@@ -11,6 +11,8 @@ import java.util.Locale;
 import com.arkhive.components.api.upload.listeners.UploadListenerDatabase;
 import com.arkhive.components.api.upload.listeners.UploadListenerManager;
 import com.arkhive.components.api.upload.listeners.UploadListenerUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This data structure represents an item to be uploaded.
@@ -21,6 +23,7 @@ import com.arkhive.components.api.upload.listeners.UploadListenerUI;
  *
  */
 public class UploadItem {
+    private static final String TAG = UploadItem.class.getSimpleName();
     private String path;
     private String shortFileName;
     private String quickkey;
@@ -35,6 +38,7 @@ public class UploadItem {
     private List<UploadListenerUI> uiListeners;
     private UploadListenerManager mgrListener;    
     private UploadStatus status;
+    private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
     
     /**
      * Constructor which takes a path and upload attempts.
@@ -43,6 +47,7 @@ public class UploadItem {
      * Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, String imageId, UploadOptions uploadData) {
+        logger.info(TAG, "UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }

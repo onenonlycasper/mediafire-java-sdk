@@ -1,5 +1,8 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,11 +18,14 @@ import java.security.NoSuchAlgorithmException;
  *
  */
 public class FileData {
+  private static final String TAG = FileData.class.getSimpleName();
   private String fileName;
   private long fileSize;
   private String fileHash;
+  private final Logger logger = LoggerFactory.getLogger(FileData.class);
 
     public FileData(String fileName) {
+      logger.info(TAG, "FileData() created");
       if (fileName == null) { throw new IllegalArgumentException("invalid fileName (cannot be null)"); }
       this.fileName = fileName;
       this.setFileSize();
@@ -51,6 +57,7 @@ public class FileData {
      * private setters
      *============================*/
     private void setFileSize() {
+      logger.info(TAG, "setFileSize()");
       File file = new File(getFileName());
       FileInputStream fileInputStream;
       FileChannel channel;
@@ -68,9 +75,11 @@ public class FileData {
           this.fileSize = 0;
           e.printStackTrace();
       }
+        logger.info(TAG, "--file size set to: " + this.fileSize);
     }
 
     private void setFileHash() {
+        logger.info(TAG, "setFileHash()");
       File file = new File(fileName);
       FileInputStream fileInputStream;
 
@@ -111,5 +120,6 @@ public class FileData {
           e.printStackTrace();
           this.fileHash = "";
       }
+        logger.info(TAG, "--file hash set to: " + fileHash);
     }
 }
