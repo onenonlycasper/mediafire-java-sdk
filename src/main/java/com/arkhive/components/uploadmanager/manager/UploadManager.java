@@ -29,7 +29,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class UploadManager implements UploadListenerManager {
     private static final String TAG = UploadManager.class.getSimpleName();
-
     private int maximumThreadCount = 5;
     private int currentThreadCount = 0;
     private boolean paused;
@@ -355,37 +354,37 @@ public class UploadManager implements UploadListenerManager {
         }
 
         if (!response.getStorageLimitExceeded()) { //storage limit not exceeded
-            System.out.println("--storage limit not exceeded");
+            logger.info("--storage limit not exceeded");
             if (response.getHashExists()) { //hash does exist for the file
-                System.out.println("--hash exists");
+                logger.info("--hash exists");
                 if (!response.getInAccount()) { // hash which exists is not in the account
-                    System.out.println("--hash not in account");
+                    logger.info("--hash not in account");
                     InstantProcess process = new InstantProcess(sessionManager, uploadItem);
                     Thread thread = new Thread(process);
                     thread.start();
                 } else { // hash exists and is in the account
-                    System.out.println("--hash in account");
+                    logger.info("--hash in account");
                     boolean inFolder = response.getInFolder();
                     InstantProcess process = new InstantProcess(sessionManager, uploadItem);
                     Thread thread = new Thread(process);
-                    System.out.println("***ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
+                    logger.info("***ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
                     switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
                         case UPLOAD_ALWAYS:
-                            System.out.println("***ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
+                            logger.info("***ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
                             thread.start();
                             break;
                         case UPLOAD_IF_NOT_IN_FOLDER:
-                            System.out.println("***ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
+                            logger.info("***ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
                             if (!inFolder) {
-                                System.out.println("***NOT IN FOLDER SO UPLOADING");
+                                logger.info("***NOT IN FOLDER SO UPLOADING");
                                 thread.start();
                             } else {
-                                System.out.println("***NOT IN FOLDER SO NOT UPLOADING");
+                                logger.info("***NOT IN FOLDER SO NOT UPLOADING");
                             }
                             break;
                         case DO_NOT_UPLOAD:
                         default:
-                            System.out.println("***ACTION IN ACCOUNT VIA SWITCH STMT case do_not_upload/default");
+                            logger.info("***ACTION IN ACCOUNT VIA SWITCH STMT case do_not_upload/default");
                             removeUploadRequest(uploadItem);
                             decreaseCurrentThreadCount(uploadItem);
                             for (UploadListenerUI listener : uploadItem.getUiListeners()) {
@@ -398,9 +397,9 @@ public class UploadManager implements UploadListenerManager {
                     }
                 }
             } else { // hash does not exist. call resumable.
-                System.out.println("--hash does not exist");
+                logger.info("--hash does not exist");
                 if (response.getResumableUpload().getAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
-                    System.out.println("--all units ready and have a poll upload key");
+                    logger.info("--all units ready and have a poll upload key");
                     // all units are ready and we have the poll upload key. start polling.
                     uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
                     uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
@@ -408,7 +407,7 @@ public class UploadManager implements UploadListenerManager {
                     Thread thread = new Thread(process);
                     thread.start();
                 } else {
-                    System.out.println("--all units not ready or do not have poll upload key");
+                    logger.info("--all units not ready or do not have poll upload key");
                     // either we don't have the poll upload key or all units are not ready
                     uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
                     uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
@@ -418,7 +417,7 @@ public class UploadManager implements UploadListenerManager {
                 }
             }
         } else { //user exceeded storage space.
-            System.out.println("--storage limit is exceeded");
+            logger.info("--storage limit is exceeded");
             removeUploadRequest(uploadItem);
             decreaseCurrentThreadCount(uploadItem);
         }
