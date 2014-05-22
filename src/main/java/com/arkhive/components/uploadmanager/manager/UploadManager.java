@@ -86,9 +86,9 @@ public class UploadManager implements UploadListenerManager {
     }
 
     public List<UploadItem> getAllItems() {
-        logger.info(TAG + " getAllItems() called");
+        logger.info(TAG + "getAllItems()");
         List<UploadItem> items = new CopyOnWriteArrayList<UploadItem>();
-        logger.info(TAG + "    items size: " + items.size());
+        logger.info(TAG + "--items size: " + items.size());
         synchronized (backlog) { // lock backlog
             synchronized (pool) { // lock pool
                 items.addAll(backlog);
@@ -123,16 +123,16 @@ public class UploadManager implements UploadListenerManager {
      * @param uploadItem The UploadItem to add to the backlog queue.
      */
     public void addUploadRequest(UploadItem uploadItem) {
-        logger.info(TAG + " addUploadRequest() called");
+        logger.info(TAG + "addUploadRequest()");
         //don't add the item to the backlog queue if it is null or the path is null
         if (uploadItem == null || uploadItem.getPath() == null) {
-            logger.info(TAG, "  UploadItem is null");
+            logger.info(TAG, "--UploadItem is null");
             return;
         }
 
         //don't add the item to the backlog queue if max attempts has been exceeded
         if (uploadItem.exceedsMaximumUploadAttempts()) {
-            logger.info(TAG, "  UploadItem exceeded it's maximum upload attempts");
+            logger.info(TAG, "--UploadItem exceeded it's maximum upload attempts");
             return;
         }
 
@@ -140,7 +140,7 @@ public class UploadManager implements UploadListenerManager {
             //don't add the item to the backlog queue if it is already in the backlog queue
             for (UploadItem item : backlog) {
                 if (item.equalTo(uploadItem)) {
-                    logger.info(TAG, "  UploadItem is already in queue");
+                    logger.info(TAG, "--UploadItem is already in queue");
                     return;
                 }
             }
@@ -158,7 +158,7 @@ public class UploadManager implements UploadListenerManager {
     }
 
     public void clearUploadQueue() {
-        logger.info(TAG, " clearUploadQueue() called");
+        logger.info(TAG, "clearUploadQueue()");
         boolean startedPaused = isPaused();
         if (!startedPaused) {
             pause();
@@ -185,7 +185,7 @@ public class UploadManager implements UploadListenerManager {
      * This method sets the paused flag to true.
      */
     public void pause() {
-        logger.info(TAG + " pause() called");
+        logger.info(TAG + "pause()");
         this.paused = true;
     }
 
@@ -195,7 +195,7 @@ public class UploadManager implements UploadListenerManager {
      * This method sets the paused flag to false and then calls moveBacklogToThread().
      */
     public void resume() {
-        logger.info(TAG + " resume() called");
+        logger.info(TAG + "resume()");
         this.paused = false;
         moveBacklogToThread();
     }
@@ -206,7 +206,7 @@ public class UploadManager implements UploadListenerManager {
      * @return true if paused (not moving backlog to queue), false otherwise.
      */
     public boolean isPaused() {
-        logger.info(TAG + " isPaused() called");
+        logger.info(TAG + "isPaused()");
         return paused;
     }
 
@@ -219,7 +219,7 @@ public class UploadManager implements UploadListenerManager {
      * this method should only be called by the Listener
      */
     private synchronized void decreaseCurrentThreadCount(UploadItem uploadItem) {
-        logger.info(TAG + " decreaseCurrentThreadCount() called");
+        logger.info(TAG + "decreaseCurrentThreadCount()");
         if (getCurrentThreadCount() > 0) {
             currentThreadCount--;
         }
@@ -236,13 +236,13 @@ public class UploadManager implements UploadListenerManager {
      * @param uploadItem  The UploadItem to remove from the pool.
      */
     private synchronized void removeUploadFromPool(UploadItem uploadItem) {
-        logger.info(TAG + " removeUploadFromPool() called");
+        logger.info(TAG + "removeUploadFromPool()");
         if (uploadItem == null) { return; }
         for (UploadItem item : pool) {
             if (item.equalTo(uploadItem)) { // remove item if it is found
-                logger.info(TAG + " backlog removing path: " + uploadItem.getPath());
+                logger.info(TAG + "--backlog removing path: " + uploadItem.getPath());
                 boolean removed = pool.remove(uploadItem);
-                logger.info(TAG + "  remove success: " + removed);
+                logger.info(TAG + "--remove success: " + removed);
                 if (removed) {
                     break;
                 }
@@ -257,20 +257,20 @@ public class UploadManager implements UploadListenerManager {
      * @param uploadItem  The UploadItem to remove from the queue.
      */
     private synchronized void removeUploadRequest(UploadItem uploadItem) {
-        logger.info(TAG + " removeUploadRequest() called");
+        logger.info(TAG + "removeUploadRequest()");
         if (uploadItem == null) { return; }
         for (UploadItem item : backlog) {
             if (item.equalTo(uploadItem)) { // remove item if it is found
-                logger.info(TAG + " backlog removing path: " + uploadItem.getPath());
+                logger.info(TAG + "--backlog removing path: " + uploadItem.getPath());
                 boolean removed = backlog.remove(uploadItem);
-                logger.info(TAG + "  remove success: " + removed);
+                logger.info(TAG + "--remove success: " + removed);
                 if (removed) {
                     break;
                 }
             } else if (item.getStatus() == UploadStatus.CANCELLED) { // remove item anyway if status is CANCELLED
-                logger.info(TAG + " backlog removing path: " + uploadItem.getPath());
+                logger.info(TAG + "--backlog removing path: " + uploadItem.getPath());
                 boolean removed = backlog.remove(uploadItem);
-                logger.info(TAG + "  remove success: " + removed);
+                logger.info(TAG + "--remove success: " + removed);
             }
         }
     }
@@ -281,7 +281,7 @@ public class UploadManager implements UploadListenerManager {
      * @param thread  The Thread to process.
      */
     private synchronized void increaseCurrentThreadCount(Thread thread) {
-        logger.info(TAG + " increaseCurrentThreadCount() called");
+        logger.info(TAG + "increaseCurrentThreadCount()");
         if (thread != null) {
             currentThreadCount++;
             thread.start();
@@ -297,7 +297,7 @@ public class UploadManager implements UploadListenerManager {
      * If we have, then we return out of the method
      */
     private synchronized void moveBacklogToThread() {
-        logger.info(TAG + " moveBacklogToThread() called");
+        logger.info(TAG + "moveBacklogToThread()");
         if (isPaused()) {
             return;
         }
@@ -336,7 +336,7 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onCheckCompleted(UploadItem uploadItem, CheckResponse response) {
-        logger.info(TAG + " onCheckCompleted() called");
+        logger.info(TAG + "onCheckCompleted()");
         //check the item status first to see if the item status was changed.
         switch (uploadItem.getStatus()) {
             case CANCELLED: // cancelled, don't add it to thread queue and also drop it from the backlog queue.
@@ -367,24 +367,24 @@ public class UploadManager implements UploadListenerManager {
                     boolean inFolder = response.getInFolder();
                     InstantProcess process = new InstantProcess(sessionManager, uploadItem);
                     Thread thread = new Thread(process);
-                    logger.info("***ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
+                    logger.info("--ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
                     switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
                         case UPLOAD_ALWAYS:
-                            logger.info("***ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
+                            logger.info("--ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
                             thread.start();
                             break;
                         case UPLOAD_IF_NOT_IN_FOLDER:
-                            logger.info("***ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
+                            logger.info("--ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
                             if (!inFolder) {
-                                logger.info("***NOT IN FOLDER SO UPLOADING");
+                                logger.info("--NOT IN FOLDER SO UPLOADING");
                                 thread.start();
                             } else {
-                                logger.info("***NOT IN FOLDER SO NOT UPLOADING");
+                                logger.info("--NOT IN FOLDER SO NOT UPLOADING");
                             }
                             break;
                         case DO_NOT_UPLOAD:
                         default:
-                            logger.info("***ACTION IN ACCOUNT VIA SWITCH STMT case do_not_upload/default");
+                            logger.info("--ACTION IN ACCOUNT VIA SWITCH STMT case do_not_upload/default");
                             removeUploadRequest(uploadItem);
                             decreaseCurrentThreadCount(uploadItem);
                             for (UploadListenerUI listener : uploadItem.getUiListeners()) {
@@ -425,14 +425,14 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onInstantCompleted(UploadItem uploadItem) {
-        logger.info(TAG + " onInstantCompleted() called");
+        logger.info(TAG + "onInstantCompleted()");
         // if everything is ok with the response we want to decrease the current thread count
         decreaseCurrentThreadCount(uploadItem);
     }
 
     @Override
     public void onResumableCompleted(UploadItem uploadItem) {
-        logger.info(TAG + " onResumableCompleted() called");
+        logger.info(TAG + "onResumableCompleted()");
         //check the item status first to see if the item status was changed.
         switch (uploadItem.getStatus()) {
             case CANCELLED: // cancelled, don't add it to thread queue and also drop it from the backlog queue.
@@ -457,7 +457,7 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onPollCompleted(UploadItem uploadItem, PollResponse response) {
-        logger.info(TAG + " onPollCompleted() called");
+        logger.info(TAG + "onPollCompleted()");
         //check the item status first to see if the item status was changed.
         switch (uploadItem.getStatus()) {
             case CANCELLED: // cancelled, don't add it to thread queue and also drop it from the backlog queue.
@@ -484,7 +484,7 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onProcessException(UploadItem uploadItem, Exception exception) {
-        logger.info(TAG + " onProcessException() called");
+        logger.info(TAG + " onProcessException()");
         //decrease the thread count
         logger.error(TAG, "received exception: " + exception);
         decreaseCurrentThreadCount(uploadItem);
@@ -492,7 +492,7 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onLostConnection(UploadItem uploadItem) {
-        logger.info(TAG + " onLostConnection() called");
+        logger.info(TAG + "onLostConnection()");
         //check the item status first to see if the item status was changed.
         switch (uploadItem.getStatus()) {
             case CANCELLED: // cancelled, don't add it to thread queue and also drop it from the backlog queue.
@@ -519,6 +519,7 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onCancelled(UploadItem uploadItem, ApiResponse response) {
+        logger.info(TAG, "onCancelled");
         //check the item status first to see if the item status was changed.
         switch (uploadItem.getStatus()) {
             case CANCELLED: // cancelled, don't add it to thread queue and also drop it from the backlog queue.
