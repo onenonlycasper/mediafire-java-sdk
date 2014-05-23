@@ -5,4 +5,5 @@ package com.arkhive.components.uploadmanager.manager;
  */
 public interface NetChecker {
     public void lostConnection();
+    public void acquiredConnection();
 }
