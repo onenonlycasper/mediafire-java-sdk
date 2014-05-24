@@ -1,8 +1,8 @@
 package com.arkhive.components.api.upload.process;
 
-import com.arkhive.components.api.upload.listeners.UploadListenerUI;
 import com.arkhive.components.api.upload.responses.InstantResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
+import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -30,10 +30,12 @@ public class InstantProcess implements Runnable {
     private SessionManager sessionManager;
     private UploadItem     uploadItem;
     private Gson           gson;
+    private final UploadManager uploadManager;
     private Logger logger = LoggerFactory.getLogger(InstantProcess.class);
 
-    public InstantProcess(SessionManager sessionManager, UploadItem uploadItem) {
+    public InstantProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem) {
         this.sessionManager = sessionManager;
+        this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
         this.gson = new Gson();
     }
@@ -105,11 +107,11 @@ public class InstantProcess implements Runnable {
     /**
      * cancels this upload because of an api error.
      *
-     * @param response
+     * @param response - response from calling instant.php.
      */
     private void notifyManagerCancelled(InstantResponse response) {
-        if (uploadItem.getUploadManagerListener() != null) {
-            uploadItem.getUploadManagerListener().onCancelled(uploadItem, response);
+        if (uploadManager.getUploadManagerListener() != null) {
+            uploadManager.getUploadManagerListener().onCancelled(uploadItem, response);
         }
         notifyListenersCancelled();
     }
@@ -117,9 +119,9 @@ public class InstantProcess implements Runnable {
     /**
      * generates the request parameter after we receive a UTF encoded filename.
      *
-     * @param filename
+     * @param filename - the filename used to construct request paramater.
      *
-     * @return
+     * @return - a map containing the request paramaters.
      */
     private Map<String, String> generateRequestParameters(String filename) {
         // generate map with request parameters
@@ -142,21 +144,19 @@ public class InstantProcess implements Runnable {
     /**
      * notifies listeners that this process has completed successfully.
      *
-     * @param response
      */
     private void notifyListenersCompleted() {
         //notify manager that the upload is completed
-        if (uploadItem.getUploadManagerListener() != null) {
-            uploadItem.getUploadManagerListener().onInstantCompleted(uploadItem);
+        if (uploadManager.getUploadManagerListener() != null) {
+            uploadManager.getUploadManagerListener().onInstantCompleted(uploadItem);
         }
         //notify ui listeners that the upload has been completed
-        for (UploadListenerUI listener : uploadItem.getUiListeners()) {
-            listener.onProgressUpdate(uploadItem, 100);
-            listener.onCompleted(uploadItem);
+        if (uploadManager.getUiListener() != null) {
+            uploadManager.getUiListener().onCompleted(uploadItem);
         }
         //notify database listener that task has been cancelled
-        if (uploadItem.getDatabaseListener() != null) {
-            uploadItem.getDatabaseListener().onCompleted(uploadItem);
+        if (uploadManager.getDatabaseListener() != null) {
+            uploadManager.getDatabaseListener().onCompleted(uploadItem);
         }
     }
 
@@ -165,24 +165,24 @@ public class InstantProcess implements Runnable {
      */
     private void notifyListenersCancelled() {
         //notify ui listeners that task has been cancelled
-        for (UploadListenerUI listener : uploadItem.getUiListeners()) {
-            listener.onCancelled(uploadItem);
+        if (uploadManager.getUiListener() != null) {
+            uploadManager.getUiListener().onCancelled(uploadItem);
         }
         //notify database listener that task has been cancelled
-        if (uploadItem.getDatabaseListener() != null) {
-            uploadItem.getDatabaseListener().onCancelled(uploadItem);
+        if (uploadManager.getDatabaseListener() != null) {
+            uploadManager.getDatabaseListener().onCancelled(uploadItem);
         }
     }
 
     /**
      * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
      *
-     * @param e
+     * @param e - the exception that occurred
      */
     private void notifyManagerException(Exception e) {
         //notify listeners that there has been an exception
-        if (uploadItem.getUploadManagerListener() != null) {
-            uploadItem.getUploadManagerListener().onProcessException(uploadItem, e);
+        if (uploadManager.getUploadManagerListener() != null) {
+            uploadManager.getUploadManagerListener().onProcessException(uploadItem, e);
         }
 
         notifyListenersCancelled();
@@ -193,8 +193,8 @@ public class InstantProcess implements Runnable {
      */
     private void notifyManagerLostConnection() {
         //notify listeners that connection was lost
-        if (uploadItem.getUploadManagerListener() != null) {
-            uploadItem.getUploadManagerListener().onLostConnection(uploadItem);
+        if (uploadManager.getUploadManagerListener() != null) {
+            uploadManager.getUploadManagerListener().onLostConnection(uploadItem);
         }
         notifyListenersCancelled();
     }

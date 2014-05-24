@@ -1,5 +1,6 @@
 package com.arkhive.components.api.upload.process;
 
+import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,7 +12,6 @@ import java.util.Map;
 import com.arkhive.components.api.upload.errors.PollFileErrorCode;
 import com.arkhive.components.api.upload.errors.PollResultCode;
 import com.arkhive.components.api.upload.errors.PollStatusCode;
-import com.arkhive.components.api.upload.listeners.UploadListenerUI;
 import com.arkhive.components.api.upload.responses.PollResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
@@ -34,6 +34,7 @@ public class PollProcess implements Runnable {
   private Gson gson;
   private long sleepTime;
   private int maxLoopAttempts;
+    private UploadManager uploadManager;
   
   /**
    * Constructor for an upload with a listener. This constructor uses sleepTime for the loop sleep time with 
@@ -43,8 +44,9 @@ public class PollProcess implements Runnable {
    * @param sleepTime - milliseconds to wait between polls
    * @param maxLoopAttempts - max number of polls
    */
-  public PollProcess(SessionManager sessionManager, UploadItem uploadItem, long sleepTime, int maxLoopAttempts) {
+  public PollProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem, long sleepTime, int maxLoopAttempts) {
     this.sessionManager = sessionManager;
+      this.uploadManager = uploadManager;
     this.uploadItem = uploadItem;
     this.gson = new Gson();
     this.sleepTime = sleepTime;
@@ -57,8 +59,8 @@ public class PollProcess implements Runnable {
    * @param sessionManager - the session to use for this upload process
    * @param uploadItem - the item to be uploaded
    */
-  public PollProcess(SessionManager sessionManager, UploadItem uploadItem) {
-    this(sessionManager, uploadItem, 2000, 60);
+  public PollProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem) {
+    this(sessionManager, uploadManager, uploadItem, 2000, 60);
   }
 
   @Override
@@ -148,11 +150,11 @@ public class PollProcess implements Runnable {
   
   /**
    * notifies the listeners that this upload has successfully completed.
-   * @param response
+   * @param response - poll response.
    */
   public void notifyManagerCompleted(PollResponse response) {
-    if (uploadItem.getUploadManagerListener() != null) {
-      uploadItem.getUploadManagerListener().onPollCompleted(uploadItem, response);
+    if (uploadManager.getUploadManagerListener() != null) {
+        uploadManager.getUploadManagerListener().onPollCompleted(uploadItem, response);
     } 
     notifyListenersCompleted();
   }
@@ -162,32 +164,31 @@ public class PollProcess implements Runnable {
    */
   public void notifyListenersCompleted() {
     // notify ui listeners that the upload has completed
-    for (UploadListenerUI listener : uploadItem.getUiListeners()) {
-      //allocated the last % to this process.
-      listener.onProgressUpdate(uploadItem, 100);
-      listener.onCompleted(uploadItem);
-    }
+      if (uploadManager.getUiListener() != null) {
+          //allocated the last % to this process.
+          uploadManager.getUiListener().onCompleted(uploadItem);
+      }
+
     // notify database listener that the upload has completed
-    if (uploadItem.getDatabaseListener() != null) {
-      uploadItem.getDatabaseListener().onCompleted(uploadItem);
+    if (uploadManager.getDatabaseListener() != null) {
+        uploadManager.getDatabaseListener().onCompleted(uploadItem);
     }
   }
   
   /**
    * notifies the upload manager that the process has been cancelled and then notifies other listeners.
-   * @param uploadItem
-   * @param response
+   * @param response - poll response.
    */
   private void notifyManagerCancelled(PollResponse response) {
-    if (uploadItem.getUploadManagerListener() != null) {
-      uploadItem.getUploadManagerListener().onCancelled(uploadItem, response);
+    if (uploadManager.getUploadManagerListener() != null) {
+        uploadManager.getUploadManagerListener().onCancelled(uploadItem, response);
     }
     notifyListenersCancelled();
   }
   
   /**
    * generates a HashMap of the GET parameters.
-   * @return
+   * @return - map of request parameters.
    */
   private HashMap<String, String> generateGetParameters() {
     HashMap<String, String> keyValue = new HashMap<String, String>();
@@ -201,8 +202,8 @@ public class PollProcess implements Runnable {
    */
   private void notifyManagerLostConnection() {
     // notify listeners that connection was lost
-    if (uploadItem.getUploadManagerListener() != null) {
-      uploadItem.getUploadManagerListener().onLostConnection(uploadItem);
+    if (uploadManager.getUploadManagerListener() != null) {
+        uploadManager.getUploadManagerListener().onLostConnection(uploadItem);
     }
     notifyListenersCancelled();
   }
@@ -212,12 +213,12 @@ public class PollProcess implements Runnable {
    */
   private void notifyListenersCancelled() {
     // notify ui listeners that task has been cancelled
-    for (UploadListenerUI listener : uploadItem.getUiListeners()) {
-      listener.onCancelled(uploadItem);
+    if (uploadManager.getUiListener() != null) {
+        uploadManager.getUiListener().onCancelled(uploadItem);
     }
     // notify database listener that task has been cancelled
-    if (uploadItem.getDatabaseListener() != null) {
-      uploadItem.getDatabaseListener().onCancelled(uploadItem);
+    if (uploadManager.getDatabaseListener() != null) {
+        uploadManager.getDatabaseListener().onCancelled(uploadItem);
     }
   }
   

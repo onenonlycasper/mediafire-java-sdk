@@ -5,9 +5,9 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.arkhive.components.api.upload.listeners.UploadListenerUI;
 import com.arkhive.components.api.upload.responses.CheckResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
+import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 // CHECKSTYLE:OFF
 import com.google.gson.Gson;
@@ -28,10 +28,12 @@ public class CheckProcess implements Runnable {
   private SessionManager sessionManager;
   private UploadItem uploadItem;
   private Gson gson;
+    private final UploadManager uploadManager;
   private Logger logger = LoggerFactory.getLogger(CheckProcess.class);
 
-  public CheckProcess(SessionManager sessionManager, UploadItem uploadItem) {
+  public CheckProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem) {
     this.sessionManager = sessionManager;
+    this.uploadManager = uploadManager;
     this.uploadItem = uploadItem;
     this.gson = new Gson();
   }
@@ -50,7 +52,7 @@ public class CheckProcess implements Runnable {
    *  6. notify listeners of completion.
    */
   private void check() {
-      logger.info(TAG, "check()");
+      logger.info(TAG + "check()");
     //notify listeners that check started
     notifyListenersStarted();
 
@@ -103,8 +105,8 @@ public class CheckProcess implements Runnable {
 
   /**
    * generates the request parameter after we receive a UTF encoded filename.
-   * @param filename
-   * @return
+   * @param filename - the name of hte file.
+   * @return - a map of request paramaters.
    */
   private Map<String, String> generateRequestParameters(String filename) {
     // generate map with request parameters
@@ -124,17 +126,12 @@ public class CheckProcess implements Runnable {
 
   /**
    * notifies listeners that this process has completed.
-   * @param checkResponse
+   * @param checkResponse - the response from calling check.php.
    */
   private void notifyListenersCompleted(CheckResponse checkResponse) {
     //notify manager that check is completed
-    if (uploadItem.getUploadManagerListener() != null) {
-      uploadItem.getUploadManagerListener().onCheckCompleted(uploadItem, checkResponse);
-    }
-
-    for (UploadListenerUI listener : uploadItem.getUiListeners()) {
-      //default start at 5% completed if this process is successful
-      listener.onProgressUpdate(uploadItem, 5);
+    if (uploadManager.getUploadManagerListener() != null) {
+        uploadManager.getUploadManagerListener().onCheckCompleted(uploadItem, checkResponse);
     }
   }
 
@@ -143,12 +140,12 @@ public class CheckProcess implements Runnable {
    */
   private void notifyListenersStarted() {
     // notify Ui listeners that task has started.
-    for (UploadListenerUI listener : uploadItem.getUiListeners()) {
-      listener.onStarted(uploadItem);
+      if (uploadManager.getUiListener() != null) {
+          uploadManager.getUiListener().onStarted(uploadItem);
     }
     //notify database lsitener task has started.
-    if (uploadItem.getDatabaseListener() != null) {
-      uploadItem.getDatabaseListener().onStarted(uploadItem);
+    if (uploadManager.getDatabaseListener() != null) {
+        uploadManager.getDatabaseListener().onStarted(uploadItem);
     }
   }
 
@@ -157,18 +154,18 @@ public class CheckProcess implements Runnable {
    */
   private void notifyListenersCancelled() {
     //notify ui listeners that task has been cancelled
-    for (UploadListenerUI listener : uploadItem.getUiListeners()) {
-      listener.onCancelled(uploadItem);
+      if (uploadManager.getUiListener() != null) {
+          uploadManager.getUiListener().onCancelled(uploadItem);
     }
     //notify database listener that task has been cancelled
-    if (uploadItem.getDatabaseListener() != null) {
-      uploadItem.getDatabaseListener().onCancelled(uploadItem);
+    if (uploadManager.getDatabaseListener() != null) {
+        uploadManager.getDatabaseListener().onCancelled(uploadItem);
     }
   }
 
   private void notifyManagerCancelled(CheckResponse response) {
-    if (uploadItem.getUploadManagerListener() != null) {
-      uploadItem.getUploadManagerListener().onCancelled(uploadItem, response);
+    if (uploadManager.getUploadManagerListener() != null) {
+        uploadManager.getUploadManagerListener().onCancelled(uploadItem, response);
     }
 
     notifyListenersCancelled();
@@ -176,12 +173,12 @@ public class CheckProcess implements Runnable {
 
   /**
    * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
-   * @param e
+   * @param e - exception that occurred.
    */
   private void notifyManagerException(Exception e) {
     //notify listeners that there has been an exception
-    if (uploadItem.getUploadManagerListener() != null) {
-      uploadItem.getUploadManagerListener().onProcessException(uploadItem, e);
+    if (uploadManager.getUploadManagerListener() != null) {
+        uploadManager.getUploadManagerListener().onProcessException(uploadItem, e);
     }
 
     notifyListenersCancelled();
@@ -192,8 +189,8 @@ public class CheckProcess implements Runnable {
    */
   private void notifyManagerLostConnection() {
     //notify listeners that connection was lost
-    if (uploadItem.getUploadManagerListener() != null) {
-      uploadItem.getUploadManagerListener().onLostConnection(uploadItem);
+    if (uploadManager.getUploadManagerListener() != null) {
+        uploadManager.getUploadManagerListener().onLostConnection(uploadItem);
     }
     notifyListenersCancelled();
   }

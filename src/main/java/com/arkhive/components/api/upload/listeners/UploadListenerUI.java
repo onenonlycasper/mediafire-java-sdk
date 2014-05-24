@@ -18,19 +18,20 @@ public interface UploadListenerUI {
   /**
    * called when there is an update to the progress of an upload, specifically when each chunk is uploaded.
    * @param uploadItem - item whose upload has been cancelled.
-   * @param percentComplete - % completed (# of chunks remaining)
+   * @param currentChunk - the current chunk.
+   * @param totalChunks - the total number of chunks.
    */
-  public void onProgressUpdate(UploadItem uploadItem, int percentComplete);
+  public void onProgressUpdate(UploadItem uploadItem, int currentChunk, int totalChunks);
   
   /**
    * called when the upload process has started.
-   * @param uploadItem
+   * @param uploadItem - the upload item.
    */
   public void onStarted(UploadItem uploadItem);
   
   /**
    * called when the upload process has completed.
-   * @param uploadItem
+   * @param uploadItem - the upload item.
    */
   public void onCompleted(UploadItem uploadItem);
 }

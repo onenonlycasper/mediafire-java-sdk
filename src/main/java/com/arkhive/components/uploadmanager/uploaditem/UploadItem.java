@@ -5,12 +5,8 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import com.arkhive.components.api.upload.listeners.UploadListenerDatabase;
-import com.arkhive.components.api.upload.listeners.UploadListenerManager;
-import com.arkhive.components.api.upload.listeners.UploadListenerUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +30,6 @@ public class UploadItem {
     private ResumableBitmap bitmap;
     private String pollUploadKey;
     private String imageId;
-    private UploadListenerDatabase dbListener;
-    private List<UploadListenerUI> uiListeners;
-    private UploadListenerManager mgrListener;    
     private UploadStatus status;
     private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
     
@@ -47,7 +40,7 @@ public class UploadItem {
      * Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, String imageId, UploadOptions uploadData) {
-        logger.info(TAG, "UploadItem created");
+        logger.info(TAG + "UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
@@ -59,10 +52,7 @@ public class UploadItem {
         this.path = path;
         this.imageId = imageId;
         setShortFileName(path);
-        
-        //instantiate ui listener collection
-        uiListeners = new ArrayList<UploadListenerUI>();
-        
+
         //set Object fields so they won't be null
         fileData = new FileData(path);
         this.quickkey = "";
@@ -86,23 +76,6 @@ public class UploadItem {
     /*============================
      * public getters
      *============================*/
-    /**
-     * returns the listener that is set as the database listener.
-     * @return
-     */
-    public UploadListenerDatabase getDatabaseListener() { return dbListener; }
-    
-    /**
-     * returns the listener that is set as the UI listener.
-     * @return
-     */
-    public List<UploadListenerUI> getUiListeners() { return uiListeners; }
-    
-    /**
-     * returns the listener that is set as the upload manager listener.
-     * @return
-     */
-    public UploadListenerManager getUploadManagerListener() { return mgrListener; }
     
     /**
      * Called to get the image id (MediaStore column _ID).
@@ -166,34 +139,7 @@ public class UploadItem {
     /*============================
      * public setters
      *============================*/
-    
-    /**
-     * sets the content provider listener.
-     * @param dbListener
-     */
-    public void setDatabaseListener(UploadListenerDatabase dbListener) { this.dbListener = dbListener; }
-    
-    /**
-     * adds a UI listener.
-     * @param uiListener
-     */
-    public void addUiListener(UploadListenerUI uiListener) { uiListeners.add(uiListener); }
-    
-    /**
-     * removes a ui listener.
-     * @param uiListener
-     * @return - false if there was no listener to remove, true otherwise.
-     */
-    public boolean removeUiListener(UploadListenerUI uiListener) {
-      return uiListeners.remove(uiListener);
-    }
-    
-    /**
-     * sets the upload manager listener. 
-     * @param mgrListener
-     */
-    public void setUploadManagerListener(UploadListenerManager mgrListener) { this.mgrListener = mgrListener; }
-    
+
     /**
      * Sets the quick key.
      * @param quickKey
