@@ -276,7 +276,7 @@ public class UploadManager implements UploadListenerManager {
         if (uploadItem == null) { return; }
         for (UploadItem item : pool) {
             if (item.equalTo(uploadItem)) { // remove item if it is found
-                logger.info(TAG + "--backlog removing path: " + uploadItem.getPath());
+                logger.info(TAG + "--pool removing path: " + uploadItem.getPath());
                 boolean removed = pool.remove(uploadItem);
                 logger.info(TAG + "--remove success: " + removed);
                 if (removed) {
