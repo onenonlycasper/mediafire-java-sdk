@@ -29,7 +29,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class UploadManager implements UploadListenerManager {
     private static final String TAG = UploadManager.class.getSimpleName();
-    private NetChecker netChecker;
     private int maximumThreadCount = 5;
     private int currentThreadCount = 0;
     private boolean paused;
@@ -209,12 +208,6 @@ public class UploadManager implements UploadListenerManager {
     public boolean isPaused() {
         logger.info(TAG + "isPaused()");
         return paused;
-    }
-
-    public void setNetChecker(NetChecker netChecker) {
-        if (netChecker != null) {
-            this.netChecker = netChecker;
-        }
     }
 
     /*============================
@@ -522,11 +515,6 @@ public class UploadManager implements UploadListenerManager {
 
         //decrease current thread count
         decreaseCurrentThreadCount(uploadItem);
-
-        if (netChecker != null) {
-            netChecker.lostConnection();
-        }
-
     }
 
     @Override
