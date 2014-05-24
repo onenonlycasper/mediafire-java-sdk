@@ -40,7 +40,7 @@ public class UploadItem {
      * Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, String imageId, UploadOptions uploadData) {
-        logger.info(TAG, "UploadItem created");
+        logger.info(TAG + "UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }

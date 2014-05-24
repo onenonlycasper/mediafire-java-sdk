@@ -57,7 +57,7 @@ public class ResumableProcess implements Runnable {
      * 3. send upload POST request for each chunk
      */
     private void resumable() {
-        logger.info(TAG, "resumable()");
+        logger.info(TAG + "resumable()");
         ResumableResponse response = new ResumableResponse();
         int numChunks = uploadItem.getChunkData().getNumberOfUnits();
         int unitSize = uploadItem.getChunkData().getUnitSize();
@@ -165,7 +165,7 @@ public class ResumableProcess implements Runnable {
     }
 
     private void exceptionHandler(Exception e) {
-        logger.warn(TAG, " Exception: " + e);
+        logger.warn(TAG + " Exception: " + e);
         e.printStackTrace();
         // if we catch FileNotFoundException, NoSuchAlgorithmException,
         // or UnsupportedEncoding Exception, notify manager and listeners

@@ -25,7 +25,7 @@ public class FileData {
   private final Logger logger = LoggerFactory.getLogger(FileData.class);
 
     public FileData(String fileName) {
-      logger.info(TAG, "FileData() created");
+      logger.info(TAG + "FileData() created");
       if (fileName == null) { throw new IllegalArgumentException("invalid fileName (cannot be null)"); }
       this.fileName = fileName;
       this.setFileSize();
@@ -57,7 +57,7 @@ public class FileData {
      * private setters
      *============================*/
     private void setFileSize() {
-      logger.info(TAG, "setFileSize()");
+      logger.info(TAG + "setFileSize()");
       File file = new File(getFileName());
       FileInputStream fileInputStream;
       FileChannel channel;
@@ -75,11 +75,11 @@ public class FileData {
           this.fileSize = 0;
           e.printStackTrace();
       }
-        logger.info(TAG, "--file size set to: " + this.fileSize);
+        logger.info(TAG + "--file size set to: " + this.fileSize);
     }
 
     private void setFileHash() {
-        logger.info(TAG, "setFileHash()");
+        logger.info(TAG + "setFileHash()");
       File file = new File(fileName);
       FileInputStream fileInputStream;
 
@@ -120,6 +120,6 @@ public class FileData {
           e.printStackTrace();
           this.fileHash = "";
       }
-        logger.info(TAG, "--file hash set to: " + fileHash);
+        logger.info(TAG + "--file hash set to: " + fileHash);
     }
 }

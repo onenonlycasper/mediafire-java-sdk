@@ -52,7 +52,7 @@ public class CheckProcess implements Runnable {
    *  6. notify listeners of completion.
    */
   private void check() {
-      logger.info(TAG, "check()");
+      logger.info(TAG + "check()");
     //notify listeners that check started
     notifyListenersStarted();
 
@@ -61,7 +61,7 @@ public class CheckProcess implements Runnable {
     try {
       filename = URLEncoder.encode(uploadItem.getShortFileName(), "UTF-8");
     } catch (UnsupportedEncodingException e) {
-      logger.warn(TAG, " Exception: " + e);
+      logger.warn(TAG + " Exception: " + e);
       e.printStackTrace();
       notifyManagerException(e);
       return;

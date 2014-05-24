@@ -59,7 +59,7 @@ public class InstantProcess implements Runnable {
         try {
             filename = URLEncoder.encode(uploadItem.getShortFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.warn(TAG, " Exception: " + e);
+            logger.warn(TAG + " Exception: " + e);
             e.printStackTrace();
             notifyManagerException(e);
             return;
