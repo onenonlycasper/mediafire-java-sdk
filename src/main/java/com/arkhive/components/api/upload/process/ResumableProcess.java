@@ -1,9 +1,9 @@
 package com.arkhive.components.api.upload.process;
 
 import com.arkhive.components.api.upload.errors.ResumableResultCode;
-import com.arkhive.components.api.upload.listeners.UploadListenerUI;
 import com.arkhive.components.api.upload.responses.ResumableResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
+import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -26,10 +26,10 @@ import java.util.HashMap;
 public class ResumableProcess implements Runnable {
     private static final String TAG        = ResumableProcess.class.getSimpleName();
     private static final String UPLOAD_URI = "/api/upload/resumable.php";
-
     private final UploadItem     uploadItem;
     private final Gson           gson;
     private final SessionManager sessionManager;
+    private final UploadManager uploadManager;
     private final Logger logger = LoggerFactory.getLogger(ResumableProcess.class);
 
     /**
@@ -38,9 +38,9 @@ public class ResumableProcess implements Runnable {
      * @param sessionManager - the session to use for this upload process
      * @param uploadItem     - the item to be uploaded
      */
-    public ResumableProcess(SessionManager sessionManager, UploadItem uploadItem) {
-        super();
+    public ResumableProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem) {
         this.sessionManager = sessionManager;
+        this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
         this.gson = new Gson();
     }
@@ -165,7 +165,7 @@ public class ResumableProcess implements Runnable {
     }
 
     private void exceptionHandler(Exception e) {
-        logger.warn(TAG + " Exception: " + e);
+        logger.warn(TAG, " Exception: " + e);
         e.printStackTrace();
         // if we catch FileNotFoundException, NoSuchAlgorithmException,
         // or UnsupportedEncoding Exception, notify manager and listeners
@@ -177,13 +177,13 @@ public class ResumableProcess implements Runnable {
      * gives the listeners a progress update of the number of chunks completed.
      */
     private void notifyListenersProgressUpdate(int chunkNumber, int numChunks) {
-        for (UploadListenerUI listener : uploadItem.getUiListeners()) {
+        if (uploadManager.getUiListener() != null) {
             //we multiply the % by 90 because we allocate 5% to upload/poll_upload and 5% to upload/check
             double chunkPercent = (double) chunkNumber / (double) numChunks;
             chunkPercent *= 100;
             chunkPercent *= 0.9;
             double percentCompleted = 5 + chunkPercent;
-            listener.onProgressUpdate(uploadItem, (int) percentCompleted);
+            uploadManager.getUiListener().onProgressUpdate(uploadItem, (int) percentCompleted);
         }
     }
 
@@ -193,8 +193,8 @@ public class ResumableProcess implements Runnable {
      * @param response The response from the resumable upload API request.
      */
     private void notifyManagerCompleted(ResumableResponse response) {
-        if (uploadItem.getUploadManagerListener() != null) {
-            uploadItem.getUploadManagerListener().onResumableCompleted(uploadItem);
+        if (uploadManager.getUploadManagerListener() != null) {
+            uploadManager.getUploadManagerListener().onResumableCompleted(uploadItem);
         }
     }
 
@@ -203,9 +203,10 @@ public class ResumableProcess implements Runnable {
      */
     private void notifyManagerLostConnection() {
         // notify listeners that connection was lost
-        if (uploadItem.getUploadManagerListener() != null) {
-            uploadItem.getUploadManagerListener().onLostConnection(uploadItem);
+        if (uploadManager.getUploadManagerListener() != null) {
+            uploadManager.getUploadManagerListener().onLostConnection(uploadItem);
         }
+
         notifyListenersCancelled();
     }
 
@@ -255,12 +256,12 @@ public class ResumableProcess implements Runnable {
      */
     private void notifyListenersCancelled() {
         // notify ui listeners that task has been cancelled
-        for (UploadListenerUI listener : uploadItem.getUiListeners()) {
-            listener.onCancelled(uploadItem);
+        if (uploadManager.getUiListener() != null) {
+            uploadManager.getUiListener().onCancelled(uploadItem);
         }
         // notify database listener that task has been cancelled
-        if (uploadItem.getDatabaseListener() != null) {
-            uploadItem.getDatabaseListener().onCancelled(uploadItem);
+        if (uploadManager.getDatabaseListener() != null) {
+            uploadManager.getDatabaseListener().onCancelled(uploadItem);
         }
     }
 
@@ -271,8 +272,8 @@ public class ResumableProcess implements Runnable {
      */
     private void notifyManagerException(Exception e) {
         // notify listeners that there has been an exception
-        if (uploadItem.getUploadManagerListener() != null) {
-            uploadItem.getUploadManagerListener().onProcessException(uploadItem, e);
+        if (uploadManager.getUploadManagerListener() != null) {
+            uploadManager.getUploadManagerListener().onProcessException(uploadItem, e);
         }
 
         notifyListenersCancelled();
@@ -284,8 +285,8 @@ public class ResumableProcess implements Runnable {
      * @param response The response from the resumable upload API request.
      */
     private void notifyManagerCancelled(ResumableResponse response) {
-        if (uploadItem.getUploadManagerListener() != null) {
-            uploadItem.getUploadManagerListener().onCancelled(uploadItem, response);
+        if (uploadManager.getUploadManagerListener() != null) {
+            uploadManager.getUploadManagerListener().onCancelled(uploadItem, response);
         }
         notifyListenersCancelled();
     }
