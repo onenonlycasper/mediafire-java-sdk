@@ -223,11 +223,6 @@ public class UploadManager implements UploadListenerManager {
     public synchronized void pause() {
         logger.info(TAG + "pause()");
         this.paused = true;
-        for (UploadItem uploadItem : pool) {
-            removeUploadFromPool(uploadItem);
-            addUploadRequest(uploadItem);
-        }
-        currentThreadCount = 0;
     }
 
     /**
@@ -536,6 +531,8 @@ public class UploadManager implements UploadListenerManager {
         logger.info(TAG + "onLostConnection()");
         //pause upload manager
         pause();
+        decreaseCurrentThreadCount(uploadItem);
+        addUploadRequest(uploadItem);
     }
 
     @Override
