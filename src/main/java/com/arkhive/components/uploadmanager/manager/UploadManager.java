@@ -220,9 +220,14 @@ public class UploadManager implements UploadListenerManager {
      * <p/>
      * This method sets the paused flag to true.
      */
-    public void pause() {
+    public synchronized void pause() {
         logger.info(TAG, "pause()");
         this.paused = true;
+        for (UploadItem uploadItem : pool) {
+            removeUploadFromPool(uploadItem);
+            addUploadRequest(uploadItem);
+        }
+        currentThreadCount = 0;
     }
 
     /**
@@ -230,7 +235,7 @@ public class UploadManager implements UploadListenerManager {
      * <p/>
      * This method sets the paused flag to false and then calls moveBacklogToThread().
      */
-    public void resume() {
+    public synchronized void resume() {
         logger.info(TAG, "resume()");
         this.paused = false;
         moveBacklogToThread();
@@ -529,28 +534,8 @@ public class UploadManager implements UploadListenerManager {
     @Override
     public void onLostConnection(UploadItem uploadItem) {
         logger.info(TAG, "onLostConnection()");
-        //check the item status first to see if the item status was changed.
-        switch (uploadItem.getStatus()) {
-            case CANCELLED: // cancelled, don't add it to thread queue and also drop it from the backlog queue.
-                removeUploadRequest(uploadItem);
-                decreaseCurrentThreadCount(uploadItem);
-                return;
-            case PAUSED: // paused, continue code execution
-                break;
-            case READY: // ready to continue, continue code execution
-                break;
-            default: // this should never happen.
-                break;
-        }
-
         //pause upload manager
         pause();
-
-        //add item to backlog
-        addUploadRequest(uploadItem);
-
-        //decrease current thread count
-        decreaseCurrentThreadCount(uploadItem);
     }
 
     @Override
