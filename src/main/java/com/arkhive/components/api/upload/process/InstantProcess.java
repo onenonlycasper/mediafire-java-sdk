@@ -107,7 +107,7 @@ public class InstantProcess implements Runnable {
     /**
      * cancels this upload because of an api error.
      *
-     * @param response
+     * @param response - response from calling instant.php.
      */
     private void notifyManagerCancelled(InstantResponse response) {
         if (uploadManager.getUploadManagerListener() != null) {
@@ -119,9 +119,9 @@ public class InstantProcess implements Runnable {
     /**
      * generates the request parameter after we receive a UTF encoded filename.
      *
-     * @param filename
+     * @param filename - the filename used to construct request paramater.
      *
-     * @return
+     * @return - a map containing the request paramaters.
      */
     private Map<String, String> generateRequestParameters(String filename) {
         // generate map with request parameters
@@ -144,7 +144,6 @@ public class InstantProcess implements Runnable {
     /**
      * notifies listeners that this process has completed successfully.
      *
-     * @param
      */
     private void notifyListenersCompleted() {
         //notify manager that the upload is completed
@@ -153,7 +152,6 @@ public class InstantProcess implements Runnable {
         }
         //notify ui listeners that the upload has been completed
         if (uploadManager.getUiListener() != null) {
-            uploadManager.getUiListener().onProgressUpdate(uploadItem, 100);
             uploadManager.getUiListener().onCompleted(uploadItem);
         }
         //notify database listener that task has been cancelled
@@ -179,7 +177,7 @@ public class InstantProcess implements Runnable {
     /**
      * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
      *
-     * @param e
+     * @param e - the exception that occurred
      */
     private void notifyManagerException(Exception e) {
         //notify listeners that there has been an exception

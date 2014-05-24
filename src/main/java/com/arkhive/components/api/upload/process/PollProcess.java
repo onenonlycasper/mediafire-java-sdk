@@ -150,7 +150,7 @@ public class PollProcess implements Runnable {
   
   /**
    * notifies the listeners that this upload has successfully completed.
-   * @param response
+   * @param response - poll response.
    */
   public void notifyManagerCompleted(PollResponse response) {
     if (uploadManager.getUploadManagerListener() != null) {
@@ -166,7 +166,6 @@ public class PollProcess implements Runnable {
     // notify ui listeners that the upload has completed
       if (uploadManager.getUiListener() != null) {
           //allocated the last % to this process.
-          uploadManager.getUiListener().onProgressUpdate(uploadItem, 100);
           uploadManager.getUiListener().onCompleted(uploadItem);
       }
 
@@ -178,7 +177,7 @@ public class PollProcess implements Runnable {
   
   /**
    * notifies the upload manager that the process has been cancelled and then notifies other listeners.
-   * @param response
+   * @param response - poll response.
    */
   private void notifyManagerCancelled(PollResponse response) {
     if (uploadManager.getUploadManagerListener() != null) {
@@ -189,7 +188,7 @@ public class PollProcess implements Runnable {
   
   /**
    * generates a HashMap of the GET parameters.
-   * @return
+   * @return - map of request parameters.
    */
   private HashMap<String, String> generateGetParameters() {
     HashMap<String, String> keyValue = new HashMap<String, String>();

@@ -178,12 +178,7 @@ public class ResumableProcess implements Runnable {
      */
     private void notifyListenersProgressUpdate(int chunkNumber, int numChunks) {
         if (uploadManager.getUiListener() != null) {
-            //we multiply the % by 90 because we allocate 5% to upload/poll_upload and 5% to upload/check
-            double chunkPercent = (double) chunkNumber / (double) numChunks;
-            chunkPercent *= 100;
-            chunkPercent *= 0.9;
-            double percentCompleted = 5 + chunkPercent;
-            uploadManager.getUiListener().onProgressUpdate(uploadItem, (int) percentCompleted);
+            uploadManager.getUiListener().onProgressUpdate(uploadItem, chunkNumber, numChunks);
         }
     }
 

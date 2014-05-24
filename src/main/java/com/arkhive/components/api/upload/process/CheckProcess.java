@@ -105,8 +105,8 @@ public class CheckProcess implements Runnable {
 
   /**
    * generates the request parameter after we receive a UTF encoded filename.
-   * @param filename
-   * @return
+   * @param filename - the name of hte file.
+   * @return - a map of request paramaters.
    */
   private Map<String, String> generateRequestParameters(String filename) {
     // generate map with request parameters
@@ -126,18 +126,12 @@ public class CheckProcess implements Runnable {
 
   /**
    * notifies listeners that this process has completed.
-   * @param checkResponse
+   * @param checkResponse - the response from calling check.php.
    */
   private void notifyListenersCompleted(CheckResponse checkResponse) {
     //notify manager that check is completed
     if (uploadManager.getUploadManagerListener() != null) {
         uploadManager.getUploadManagerListener().onCheckCompleted(uploadItem, checkResponse);
-    }
-
-
-      if (uploadManager.getUiListener() != null) {
-      //default start at 5% completed if this process is successful
-          uploadManager.getUiListener().onProgressUpdate(uploadItem, 5);
     }
   }
 
@@ -179,7 +173,7 @@ public class CheckProcess implements Runnable {
 
   /**
    * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
-   * @param e
+   * @param e - exception that occurred.
    */
   private void notifyManagerException(Exception e) {
     //notify listeners that there has been an exception
