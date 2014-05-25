@@ -2,6 +2,7 @@ package com.arkhive.components.uploadmanager.process;
 
 import com.arkhive.components.api.upload.responses.InstantResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
+import com.arkhive.components.uploadmanager.UploadRunnable;
 import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.google.gson.Gson;
@@ -24,7 +25,7 @@ import java.util.Map;
  *
  * @author Chris Najar
  */
-public class InstantProcess implements Runnable {
+public class InstantProcess implements UploadRunnable {
     private static final String TAG         = InstantProcess.class.getSimpleName();
     private static final String INSTANT_URI = "/api/upload/instant.php";
     private SessionManager sessionManager;
@@ -38,6 +39,11 @@ public class InstantProcess implements Runnable {
         this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
         this.gson = new Gson();
+    }
+
+    @Override
+    public UploadItem getUploadItem() {
+        return uploadItem;
     }
 
     @Override

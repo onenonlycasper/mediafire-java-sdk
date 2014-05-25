@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.arkhive.components.api.upload.responses.CheckResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
+import com.arkhive.components.uploadmanager.UploadRunnable;
 import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 // CHECKSTYLE:OFF
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
 /**Runnable for making a call to upload/check.php.
  * @author Chris Najar
  */
-public class CheckProcess implements Runnable {
+public class CheckProcess implements UploadRunnable {
   private static final String TAG = CheckProcess.class.getSimpleName();
   private static final String CHECK_URI = "/api/upload/check.php";
   private SessionManager sessionManager;
@@ -37,6 +38,11 @@ public class CheckProcess implements Runnable {
     this.uploadItem = uploadItem;
     this.gson = new Gson();
   }
+
+    @Override
+    public UploadItem getUploadItem() {
+        return uploadItem;
+    }
 
   @Override
   public void run() {

@@ -1,5 +1,6 @@
 package com.arkhive.components.uploadmanager.process;
 
+import com.arkhive.components.uploadmanager.UploadRunnable;
 import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -27,7 +28,7 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
  * @author Chris Najar
  *
  */
-public class PollProcess implements Runnable {
+public class PollProcess implements UploadRunnable {
   private static final String POLL_UPLOAD_URI = "/api/upload/poll_upload.php";
   private SessionManager sessionManager;
   private UploadItem uploadItem;
@@ -62,6 +63,11 @@ public class PollProcess implements Runnable {
   public PollProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem) {
     this(sessionManager, uploadManager, uploadItem, 2000, 60);
   }
+
+    @Override
+    public UploadItem getUploadItem() {
+        return uploadItem;
+    }
 
   @Override
   public void run() {

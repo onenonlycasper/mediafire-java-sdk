@@ -30,7 +30,6 @@ public class UploadItem {
     private ResumableBitmap bitmap;
     private String pollUploadKey;
     private String imageId;
-    private UploadStatus status;
     private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
     
     /**
@@ -60,7 +59,6 @@ public class UploadItem {
         this.pollUploadKey = "";
         this.chunkData = new ChunkData(0, 0);
         this.bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
-        this.status = UploadStatus.READY;
     }
 
     /**
@@ -202,28 +200,5 @@ public class UploadItem {
      * @return true if hashes match, false otherwise.
      */
     public boolean equalTo(UploadItem item) { return fileData.getFileHash().equals(item.fileData.getFileHash()); }
-    
-    /**
-     * Gives the status (paused, ready, cancelled) of this item.
-     * @return the UploadStatus for this item.
-     */
-    public UploadStatus getStatus() {
-      synchronized (this) {
-        return this.status;
-      }
-    }
-    
-    /**
-     * Sets the status (paused, ready, cancelled) of this item.
-     * @param status - status to set this item to.
-     */
-    public void setStatus(UploadStatus status) {
-      synchronized (this) {
-        this.status = status;
-      }
-    }
 
-    /*============================
-     * protected methods
-     *============================*/
 }
