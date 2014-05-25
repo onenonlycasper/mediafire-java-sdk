@@ -1,4 +1,4 @@
-package com.arkhive.components.api.upload.process;
+package com.arkhive.components.uploadmanager.process;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -52,7 +52,7 @@ public class CheckProcess implements Runnable {
    *  6. notify listeners of completion.
    */
   private void check() {
-      logger.info(TAG + "check()");
+      logger.info(TAG + " check()");
     //notify listeners that check started
     notifyListenersStarted();
 
@@ -129,6 +129,7 @@ public class CheckProcess implements Runnable {
    * @param checkResponse - the response from calling check.php.
    */
   private void notifyListenersCompleted(CheckResponse checkResponse) {
+      logger.info(TAG + " notifyListenersCompleted()");
     //notify manager that check is completed
     if (uploadManager.getUploadManagerListener() != null) {
         uploadManager.getUploadManagerListener().onCheckCompleted(uploadItem, checkResponse);
