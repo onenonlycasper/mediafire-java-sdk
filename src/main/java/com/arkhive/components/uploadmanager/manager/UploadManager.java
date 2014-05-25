@@ -169,12 +169,6 @@ public class UploadManager implements UploadListenerManager {
             return;
         }
 
-        //don't add the item to the backlog queue if max attempts has been exceeded
-        if (uploadItem.exceedsMaximumUploadAttempts()) {
-            logger.info(TAG + "--UploadItem exceeded it's maximum upload attempts");
-            return;
-        }
-
         synchronized (backlog) {
             //don't add the item to the backlog queue if it is already in the backlog queue
             for (UploadItem item : backlog) {
@@ -185,8 +179,6 @@ public class UploadManager implements UploadListenerManager {
             }
         }
 
-        //adding to the backlog queue means we eventually attempt to upload this item, so increase the upload attempts
-        uploadItem.increaseCurrentUploadAttempt();
         synchronized (backlog) {
             backlog.add(uploadItem);
         }

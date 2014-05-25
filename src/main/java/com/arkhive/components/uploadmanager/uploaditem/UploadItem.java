@@ -197,19 +197,6 @@ public class UploadItem {
      * public methods
      *============================*/
     /**
-     * determines if this UploadItem has exceeded the maximum attempts as specified by UploadItem creator.
-     * @return true if exceeded, false if not.
-     */
-    public boolean exceedsMaximumUploadAttempts() {
-      return options.getCurrentUploadAttempts() > options.getMaximumUploadAttempts();
-    }
-
-    /**
-     * Increases the number of upload attempts for this UploadItem by 1.
-     */
-    public void increaseCurrentUploadAttempt() { options.uploadAttempt(); }
-
-    /**
      * Determines whether an Upload Item has the same hash as another Upload Item.
      * @param item
      * @return true if hashes match, false otherwise.
