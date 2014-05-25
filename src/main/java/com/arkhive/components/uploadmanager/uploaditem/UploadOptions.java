@@ -11,28 +11,6 @@ package com.arkhive.components.uploadmanager.uploaditem;
  *
  */
 public class UploadOptions {
-    /**
-     * enum for the upload option "action_on_duplicate"
-     * in the GET request to be sent via upload/pre_upload.php.
-     * @author Chris Najar
-     *
-     */
-    public enum ActionOnDuplicate { KEEP, SKIP, REPLACE };
-
-    /**
-     * enum for how to handle when an upload is already in a users account
-     */
-    public enum ActionOnInAccount { UPLOAD_ALWAYS, UPLOAD_IF_NOT_IN_FOLDER, DO_NOT_UPLOAD}
-    /**
-     * enum for the upload option "version_control"
-     * in the POST request to be sent via upload/upload.php.
-     * @author Chris Najar
-     *
-     */
-    public enum VersionControl { CREATE_PATCHES, KEEP_REVISION, NONE };
-
-    private int currentUploadAttempts;
-    private int maximumUploadAttempts;
     private String resumable;
     private String uploadFolderKey;
     private String actionOnDuplicate;
@@ -43,13 +21,10 @@ public class UploadOptions {
     /**
      * Constructor for the upload options which takes parameters
      * set by implementor.
-     * @param maxUploadAttempts - maximum times to attempt to upload
-     * @param curUploadAttempts - current number of upload attempts
+
      * @param resumable - upload is resumable or not
      */
-    public UploadOptions(int maxUploadAttempts, int curUploadAttempts, boolean resumable) {
-        this.currentUploadAttempts = curUploadAttempts;
-        this.maximumUploadAttempts = maxUploadAttempts;
+    public UploadOptions(boolean resumable) {
         if (resumable) {
             this.resumable = "yes";
         } else {
@@ -58,17 +33,12 @@ public class UploadOptions {
     }
 
     public UploadOptions() {
-        this(5, 0, true);
+        this(true);
     }
 
     /*============================
      * public getters
      *============================*/
-    /**
-     * Gets the current upload attempts.
-     * @return number of current attempts for this UploadItem
-     */
-    public int getCurrentUploadAttempts() { return currentUploadAttempts; }
 
     /**
      * Gets the action on what to do if a file already exists in a users account.
@@ -134,15 +104,6 @@ public class UploadOptions {
     }
 
     /*============================
-     * protected getters
-     *============================*/
-    /**
-     * Returns the maximum number of Upload Attempts for this UploadItem.
-     * @return max number of attempts (int)
-     */
-    protected int getMaximumUploadAttempts() { return maximumUploadAttempts; }
-
-    /*============================
      * public setters
      *============================*/
     /**
@@ -193,12 +154,23 @@ public class UploadOptions {
         }
     }
 
-
-    /*============================
-     * protected methods
-     *============================*/
     /**
-     * indicates an upload attempt has been made so increases the current upload attempts by 1.
+     * enum for the upload option "action_on_duplicate"
+     * in the GET request to be sent via upload/pre_upload.php.
+     * @author Chris Najar
+     *
      */
-    protected void uploadAttempt() { currentUploadAttempts++; }
+    public enum ActionOnDuplicate { KEEP, SKIP, REPLACE };
+
+    /**
+     * enum for how to handle when an upload is already in a users account
+     */
+    public enum ActionOnInAccount { UPLOAD_ALWAYS, UPLOAD_IF_NOT_IN_FOLDER, DO_NOT_UPLOAD}
+    /**
+     * enum for the upload option "version_control"
+     * in the POST request to be sent via upload/upload.php.
+     * @author Chris Najar
+     *
+     */
+    public enum VersionControl { CREATE_PATCHES, KEEP_REVISION, NONE };
 }
