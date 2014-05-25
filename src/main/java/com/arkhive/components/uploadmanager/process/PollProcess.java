@@ -1,4 +1,4 @@
-package com.arkhive.components.api.upload.process;
+package com.arkhive.components.uploadmanager.process;
 
 import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.google.gson.Gson;

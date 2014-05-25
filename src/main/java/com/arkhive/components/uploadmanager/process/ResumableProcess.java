@@ -1,4 +1,4 @@
-package com.arkhive.components.api.upload.process;
+package com.arkhive.components.uploadmanager.process;
 
 import com.arkhive.components.api.upload.errors.ResumableResultCode;
 import com.arkhive.components.api.upload.responses.ResumableResponse;

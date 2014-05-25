@@ -6,4 +6,4 @@
  * PollProcess - upload/poll_upload.php.
  * ResumableProcess - upload/resumable.php.
  */
-package com.arkhive.components.api.upload.process;
+package com.arkhive.components.uploadmanager.process;
