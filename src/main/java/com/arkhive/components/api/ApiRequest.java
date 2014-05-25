@@ -6,6 +6,7 @@ import com.arkhive.components.sessionmanager.SessionManager;
 import com.arkhive.components.sessionmanager.session.SessionRequestHandler;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -57,7 +58,13 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
         Session session = sessionManager.getSession();
         parameters.put("response_format", "json");
         String queryString = session.getQueryString(uri, parameters);
-        String responseString = httpInterface.sendGetRequest(domain + queryString);
+        String responseString = null;
+        try {
+            responseString = httpInterface.sendGetRequest(domain + queryString);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
         ApiResponse response = new Gson().fromJson(Utility.getResponseElement(responseString), ApiResponse.class);
         if (response.hasError() && response.getErrorCode() == ApiResponseCode.ERROR_INVALID_SIGNATURE) {
             if (retryCount < RETRY_MAX) {

@@ -3,6 +3,7 @@ package com.arkhive.components.sessionmanager.session;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
@@ -74,7 +75,12 @@ public class SessionRequest implements HttpRequestHandler {
         // Prepare query and call httpInterface to get the session JSON
         String queryString = prepareQueryString();
         String call = domain + URI + queryString;
-        String response = httpInterface.sendGetRequest(call);
+        String response = null;
+        try {
+            response = httpInterface.sendGetRequest(call);
+        } catch (IOException e) {
+            return prepareSession("");
+        }
 
         return prepareSession(response);
     }

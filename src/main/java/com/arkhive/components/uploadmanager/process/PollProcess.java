@@ -1,11 +1,13 @@
 package com.arkhive.components.uploadmanager.process;
 
+import com.arkhive.components.uploadmanager.UploadRunnable;
 import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
  * @author Chris Najar
  *
  */
-public class PollProcess implements Runnable {
+public class PollProcess implements UploadRunnable {
   private static final String POLL_UPLOAD_URI = "/api/upload/poll_upload.php";
   private SessionManager sessionManager;
   private UploadItem uploadItem;
@@ -63,6 +65,11 @@ public class PollProcess implements Runnable {
     this(sessionManager, uploadManager, uploadItem, 2000, 60);
   }
 
+    @Override
+    public UploadItem getUploadItem() {
+        return uploadItem;
+    }
+
   @Override
   public void run() {
     pollUpload();
@@ -91,8 +98,14 @@ public class PollProcess implements Runnable {
         //increment counter
         pollCount++;
         //send the get request and receive the json response
-        String jsonResponse = 
-            sessionManager.getHttpInterface().sendGetRequest(request);
+          String jsonResponse = "";
+          try {
+              jsonResponse =
+                      sessionManager.getHttpInterface().sendGetRequest(request);
+          } catch (IOException e) {
+              notifyListenersException(uploadItem, e);
+              return;
+          }
         
         //if jsonResponse is empty, then HttpInterface.sendGetRequest() has no internet connectivity so we
         //call lostInternetConnectivity() and UploadManager will move this item to the backlog queue.
@@ -147,6 +160,14 @@ public class PollProcess implements Runnable {
       // we ran out of attempts.
       notifyManagerCancelled(response);
   }
+
+    public void notifyListenersException(UploadItem uploadItem, Exception exception) {
+        if (uploadManager.getUploadManagerListener() != null) {
+            uploadManager.getUploadManagerListener().onProcessException(uploadItem, exception);
+        }
+
+        notifyListenersCancelled();
+    }
   
   /**
    * notifies the listeners that this upload has successfully completed.

@@ -1,5 +1,6 @@
 package com.arkhive.components.httplibrary;
 
+import java.io.IOException;
 import java.util.Map;
 
 /** Interface to a HTTP library.
@@ -15,7 +16,7 @@ public interface HttpInterface {
      *
      * @return  The response from the GET request.
      */
-    public String sendGetRequest(String request);
+    public String sendGetRequest(String request) throws IOException;
     /** Send a POST request.
      * <p>
      * Send a POST request via HTTP/HTTPS.
@@ -26,7 +27,7 @@ public interface HttpInterface {
      *
      * @return  The response from the POST request.
      */
-    public String sendPostRequest(String domain, String uri, Map<String, String> parameters);
+    public String sendPostRequest(String domain, String uri, Map<String, String> parameters) throws IOException;
     /** Send a POST request.
      * <p>
      * Send a POST request via HTTP/HTTPS. The request can contain POST parameters, modified HTTP headers, and a
@@ -41,5 +42,5 @@ public interface HttpInterface {
      * @return  The response from the POST request.
      */
     public String sendPostRequest(String domain, String uri, Map<String, String> parameters,
-                                  Map<String, String> headers, byte[] fileData);
+                                  Map<String, String> headers, byte[] fileData) throws IOException;
 }

@@ -3,6 +3,7 @@ package com.arkhive.components.uploadmanager.process;
 import com.arkhive.components.api.upload.errors.ResumableResultCode;
 import com.arkhive.components.api.upload.responses.ResumableResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
+import com.arkhive.components.uploadmanager.UploadRunnable;
 import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.google.gson.Gson;
@@ -23,7 +24,7 @@ import java.util.HashMap;
  *
  * @author Chris Najar
  */
-public class ResumableProcess implements Runnable {
+public class ResumableProcess implements UploadRunnable {
     private static final String TAG        = ResumableProcess.class.getSimpleName();
     private static final String UPLOAD_URI = "/api/upload/resumable.php";
     private final UploadItem     uploadItem;
@@ -43,6 +44,11 @@ public class ResumableProcess implements Runnable {
         this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
         this.gson = new Gson();
+    }
+
+    @Override
+    public UploadItem getUploadItem() {
+        return uploadItem;
     }
 
     @Override
@@ -109,8 +115,15 @@ public class ResumableProcess implements Runnable {
 
                 // now send the http post request
                 String jsonResponse =
-                        sessionManager.getHttpInterface().
-                                sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, chunkData);
+                        null;
+                try {
+                    jsonResponse = sessionManager.getHttpInterface().
+                            sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, chunkData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    notifyManagerException(e);
+                    return;
+                }
 
                 // if jsonResponse is empty, then HttpInterface.sendGetRequest() has no internet connectivity so we
                 // call lostInternetConnectivity() and UploadManager will move this item to the backlog queue.
@@ -144,20 +157,6 @@ public class ResumableProcess implements Runnable {
 
             // update listeners on progress each loop
             notifyListenersProgressUpdate(chunkNumber, numChunks);
-
-            // check if we need to cancel upload because another entitiy changes the UploadItem status to CANCELLED
-            switch (uploadItem.getStatus()) {
-                case CANCELLED: //paused, cancel upload
-                    this.notifyManagerCancelled(response);
-                    return;
-                case PAUSED: // paused, cancel upload.
-                    this.notifyManagerCancelled(response);
-                    return;
-                case READY: // continue upload
-                    break;
-                default: // this should never happen
-                    break;
-            }
         } // end loop
 
         // let the listeners know that upload has attempted to upload all chunks.
