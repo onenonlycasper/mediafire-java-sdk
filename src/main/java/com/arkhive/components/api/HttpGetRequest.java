@@ -2,6 +2,8 @@ package com.arkhive.components.api;
 
 import com.arkhive.components.httplibrary.HttpInterface;
 
+import java.io.IOException;
+
 /** Class used to send a GET request to the web API. */
 public class HttpGetRequest implements Runnable {
     private HttpRequestHandler handler;
@@ -26,7 +28,13 @@ public class HttpGetRequest implements Runnable {
      * completed, the callback function is executed.
      */
     public void run() {
-        String result = this.httpInterface.sendGetRequest(this.call);
+        String result = null;
+        try {
+            result = this.httpInterface.sendGetRequest(this.call);
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = "";
+        }
         handler.httpRequestHandler(result);
     }
 }

@@ -101,6 +101,25 @@ public class UploadManager implements UploadListenerManager {
      *============================*/
 
     /**
+     * returns all items in the executor thread pool.
+     *
+     * @return an int representing both active and waiting threads.
+     */
+    public int getAllItems() {
+        int workQueueSize = executor.getPoolSize();
+        int executorActiveCount = executor.getActiveCount();
+        return workQueueSize + executorActiveCount;
+    }
+
+    /**
+     * removes all items from the executor thread pool and attempts to cancel all threads currently running.
+     */
+    public void clearUploadQueue() {
+        workQueue.clear();
+        executor.shutdownNow();
+    }
+
+    /**
      * adds an UploadItem to the backlog queue.
      * If the UploadItem already exists in the backlog queue then we do not add the item.
      *
@@ -119,8 +138,6 @@ public class UploadManager implements UploadListenerManager {
 
     /**
      * Pause moving backlog items to the thread queue.
-     * <p/>
-     * This method sets the paused flag to true.
      */
     public synchronized void pause() {
         logger.info(TAG + "pause()");
@@ -129,8 +146,6 @@ public class UploadManager implements UploadListenerManager {
 
     /**
      * Resume moving backlog items to the thread queue.
-     * <p/>
-     * This method sets the paused flag to false and then calls moveBacklogToThread().
      */
     public synchronized void resume() {
         logger.info(TAG + "resume()");

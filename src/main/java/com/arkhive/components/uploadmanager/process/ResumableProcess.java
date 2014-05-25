@@ -115,8 +115,15 @@ public class ResumableProcess implements UploadRunnable {
 
                 // now send the http post request
                 String jsonResponse =
-                        sessionManager.getHttpInterface().
-                                sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, chunkData);
+                        null;
+                try {
+                    jsonResponse = sessionManager.getHttpInterface().
+                            sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, chunkData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    notifyManagerException(e);
+                    return;
+                }
 
                 // if jsonResponse is empty, then HttpInterface.sendGetRequest() has no internet connectivity so we
                 // call lostInternetConnectivity() and UploadManager will move this item to the backlog queue.

@@ -12,6 +12,7 @@ import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -80,7 +81,14 @@ public class InstantProcess implements UploadRunnable {
 
         // receive response
         String jsonResponse =
-                sessionManager.getHttpInterface().sendGetRequest(request);
+                null;
+        try {
+            jsonResponse = sessionManager.getHttpInterface().sendGetRequest(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+            notifyManagerException(e);
+            return;
+        }
 
         //check if we did not get a response (json response string is empty)
         if (jsonResponse.isEmpty()) {

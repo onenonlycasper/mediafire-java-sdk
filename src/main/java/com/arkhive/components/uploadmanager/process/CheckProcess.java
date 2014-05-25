@@ -1,5 +1,6 @@
 package com.arkhive.components.uploadmanager.process;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -82,9 +83,15 @@ public class CheckProcess implements UploadRunnable {
         sessionManager.getDomain() + sessionManager.getSession().getQueryString(CHECK_URI, keyValue);
 
     // receive response
-    String jsonResponse =
-        sessionManager.getHttpInterface().sendGetRequest(request);
-    //check if we did not get a response (json response string is empty)
+      String jsonResponse =
+              null;
+      try {
+          jsonResponse = sessionManager.getHttpInterface().sendGetRequest(request);
+      } catch (IOException e) {
+          notifyManagerException(e);
+          return;
+      }
+      //check if we did not get a response (json response string is empty)
     if (jsonResponse.isEmpty()) {
       // notify listeners we received an empty json response.
       notifyManagerLostConnection();
