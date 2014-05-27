@@ -111,6 +111,10 @@ public class UploadManager implements UploadListenerManager {
         return workQueueSize + executorActiveCount;
     }
 
+    public BlockingQueue<Runnable> getAllWaitingRunnables() {
+        return workQueue;
+    }
+
     /**
      * removes all items from the executor thread pool and attempts to cancel all threads currently running.
      */
