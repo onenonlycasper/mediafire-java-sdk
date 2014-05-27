@@ -112,9 +112,7 @@ public class UploadManager implements UploadListenerManager {
      * @return an int representing both active and waiting threads.
      */
     public int getAllItems() {
-        int workQueueSize = executor.getPoolSize();
-        int executorActiveCount = executor.getActiveCount();
-        return workQueueSize + executorActiveCount;
+        return workQueue.size() + executor.getActiveCount();
     }
 
     public BlockingQueue<Runnable> getAllWaitingRunnables() {
