@@ -57,7 +57,6 @@ public class UploadManager implements UploadListenerManager {
                         workQueue,
                         threadFactory,
                         null);
-        pause(); // pause upload manager.
     }
 
     /*============================
@@ -149,17 +148,21 @@ public class UploadManager implements UploadListenerManager {
     /**
      * Pause moving backlog items to the thread queue.
      */
-    public synchronized void pause() {
+    public void pause() {
         logger.info(TAG + "pause()");
-        executor.pause();
+        if (executor != null) {
+            executor.pause();
+        }
     }
 
     /**
      * Resume moving backlog items to the thread queue.
      */
-    public synchronized void resume() {
+    public void resume() {
         logger.info(TAG + "resume()");
-        executor.resume();
+        if (executor != null) {
+            executor.resume();
+        }
     }
 
     /**
@@ -169,7 +172,11 @@ public class UploadManager implements UploadListenerManager {
      */
     public boolean isPaused() {
         logger.info(TAG + "isPaused()");
-        return executor.isPaused();
+        if (executor != null) {
+            return executor.isPaused();
+        } else {
+            return true;
+        }
     }
 
     /*============================
