@@ -31,10 +31,10 @@ public class UploadManager implements UploadListenerManager {
     private static final String TAG = UploadManager.class.getSimpleName();
     private UploadListenerDatabase dbListener;
     private UploadListenerUI uiListener;
-    private UploadListenerManager mgrListener = this;
+    private UploadListenerManager mgrListener;
     public PausableThreadPoolExecutor executor;
-    private BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
-    private ThreadFactory threadFactory = Executors.defaultThreadFactory();
+    private BlockingQueue<Runnable> workQueue;
+    private ThreadFactory threadFactory;
     private final SessionManager sessionManager;
 
     private final Logger logger = LoggerFactory.getLogger(UploadManager.class);
@@ -47,7 +47,9 @@ public class UploadManager implements UploadListenerManager {
      */
     public UploadManager(SessionManager sessionManager, int maximumThreadCount) {
         this.sessionManager = sessionManager; // set session manager
-        this.setUploadManagerListener(this); // set upload manager listener to this class
+        mgrListener = this;
+        workQueue = new LinkedBlockingQueue<Runnable>();
+        threadFactory = Executors.defaultThreadFactory();
         executor =
                 new PausableThreadPoolExecutor( // establish thread pool executor
                         maximumThreadCount,
@@ -55,8 +57,7 @@ public class UploadManager implements UploadListenerManager {
                         5000,
                         TimeUnit.MILLISECONDS,
                         workQueue,
-                        threadFactory,
-                        null);
+                        threadFactory);
     }
 
     /*============================
