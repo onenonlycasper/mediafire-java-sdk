@@ -3,9 +3,7 @@ package com.arkhive.components.uploadmanager.uploaditem;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,39 +20,39 @@ public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
     private String path;
     private String shortFileName;
-    private String quickkey;
+    private String quickKey;
     private String modificationTime;
     private UploadOptions options;
     private FileData fileData;
     private ChunkData chunkData;
     private ResumableBitmap bitmap;
     private String pollUploadKey;
-    private String imageId;
+    private Map<String, String> userData = new HashMap<String, String>();
     private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
     
     /**
      * Constructor which takes a path and upload attempts.
      * Use this method when you want to customize the upload options for this UploadItem.
      * @param path - file path on the device
+     * @param uploadOptions - upload options to use for the upload item.
      * Should use the single or dual argument constructor for the most part.
      */
-    public UploadItem(String path, String imageId, UploadOptions uploadData) {
+    public UploadItem(String path, UploadOptions uploadOptions) {
         logger.info(TAG + "UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
-        if (uploadData == null) {
+        if (uploadOptions == null) {
             options = new UploadOptions();
         } else {
-            this.options = uploadData;
+            this.options = uploadOptions;
         }
         this.path = path;
-        this.imageId = imageId;
         setShortFileName(path);
 
         //set Object fields so they won't be null
         fileData = new FileData(path);
-        this.quickkey = "";
+        this.quickKey = "";
         this.modificationTime = "";
         this.pollUploadKey = "";
         this.chunkData = new ChunkData(0, 0);
@@ -65,32 +63,51 @@ public class UploadItem {
      * Constructor which takes a path and an image id
      * Use this method when you want to use default upload options for this UploadItem.
      * @param path - path to data
-     * @param id - unique image id
      */
-    public UploadItem(String path, String id) {
-        this(path, id, null);
+    public UploadItem(String path) {
+        this(path, null);
     }
 
     /*============================
      * public getters
      *============================*/
-    
+
     /**
-     * Called to get the image id (MediaStore column _ID).
-     * @return
+     * Add a Key to the userData field.
      */
-    public String getImageId() { return imageId; }
+    public void putUserData(String key, String value) {
+        userData.put(key, value);
+    }
+
+    /**
+     * retrieve a key, if it exists.
+     * @param key - key added by user
+     * @return value of key or null if no key associated.
+     */
+    public String getUserData(String key) {
+        return userData.get(key);
+    }
+
+    /**
+     * clears userData.
+     */
+    public void clearUserData() {
+        userData.clear();
+    }
+
     /**
      * Called to get the quick key.
      * @return
      */
-    public String getQuickKey() { return quickkey; }
+    public String getQuickKey() { return quickKey; }
 
     /**
      * Called to get the Short file name.
      * @return
      */
-    public String getShortFileName() { return shortFileName; }
+    public String getShortFileName() {
+        return shortFileName;
+    }
 
     /**
      * CAlled to get the UploadItemFileData.
@@ -142,7 +159,7 @@ public class UploadItem {
      * Sets the quick key.
      * @param quickKey
      */
-    public void setQuickKey(String quickKey) { this.quickkey = quickKey; }
+    public void setQuickKey(String quickKey) { this.quickKey = quickKey; }
 
     /**
      * Sets the ResumableUploadBitmap.
@@ -161,10 +178,12 @@ public class UploadItem {
      * @param modificationTime
      */
     public void setModificationTime(String modificationTime) {
-        String timeString = null;
+        String timeString;
         if (modificationTime == null || modificationTime.isEmpty()) {
             timeString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US).format(new Date());
-        } else { timeString = modificationTime; }
+        } else {
+            timeString = modificationTime;
+        }
 
         try {
             this.modificationTime = URLEncoder.encode(timeString, "UTF-8");
