@@ -49,9 +49,9 @@ public class UploadManager implements UploadListenerManager {
      */
     public UploadManager(SessionManager sessionManager, int maximumThreadCount) {
         this.sessionManager = sessionManager;
-        pause();
         this.setUploadManagerListener(this);
         executor = new PausableThreadPoolExecutor(maximumThreadCount, maximumThreadCount, 5000, TimeUnit.MILLISECONDS, workQueue, threadFactory, null);
+        pause();
     }
 
     /*============================
