@@ -41,17 +41,23 @@ public class UploadManager implements UploadListenerManager {
 
     /**
      * Constructor that takes a SessionManager, HttpInterface, and a maximum thread count.
-     * <p/>
-     * Use this method when you do not want to explicitly set the starting thread count.
      *
      * @param sessionManager  The SessionManager to use for API operations.
      * @param maximumThreadCount  The maximum number of threads to use for uploading.
      */
     public UploadManager(SessionManager sessionManager, int maximumThreadCount) {
-        this.sessionManager = sessionManager;
-        this.setUploadManagerListener(this);
-        executor = new PausableThreadPoolExecutor(maximumThreadCount, maximumThreadCount, 5000, TimeUnit.MILLISECONDS, workQueue, threadFactory, null);
-        pause();
+        this.sessionManager = sessionManager; // set session manager
+        this.setUploadManagerListener(this); // set upload manager listener to this class
+        executor =
+                new PausableThreadPoolExecutor( // establish thread pool executor
+                        maximumThreadCount,
+                        maximumThreadCount,
+                        5000,
+                        TimeUnit.MILLISECONDS,
+                        workQueue,
+                        threadFactory,
+                        null);
+        pause(); // pause upload manager.
     }
 
     /*============================
