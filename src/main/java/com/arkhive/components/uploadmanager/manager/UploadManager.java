@@ -211,7 +211,13 @@ public class UploadManager implements UploadListenerManager {
                                 logger.info("--NOT IN FOLDER SO UPLOADING");
                                 executor.execute(process);
                             } else {
-                                logger.info("--NOT IN FOLDER SO NOT UPLOADING");
+                                logger.info("--IN FOLDER SO NOT UPLOADING");
+                                if (uiListener != null) {
+                                    uiListener.onCompleted(uploadItem);
+                                }
+                                if (dbListener != null) {
+                                    dbListener.onCompleted(uploadItem);
+                                }
                             }
                             break;
                         case DO_NOT_UPLOAD:
