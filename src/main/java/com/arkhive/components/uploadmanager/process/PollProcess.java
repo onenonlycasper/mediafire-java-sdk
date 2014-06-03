@@ -127,12 +127,15 @@ public class PollProcess implements UploadRunnable {
             //      first   -   result code no error? yes, keep calm and poll on. no, cancel upload because error.
             //      second  -   fileerror code no error? yes, carry on old chap!. no, cancel upload because error.
             //      third   -   status code 99 (no more requests)? yes, weee! done!. no, continue.
-            if (response.getDoUpload().getResultCode() != PollResultCode.SUCCESS || 
-            response.getDoUpload().getFileErrorCode() != PollFileErrorCode.NO_ERROR) {
-              //cancel upload because of a doupload/fileerrorcode or a bad doupload/resultcode
-              notifyManagerCancelled(response);
-              return;
-            }
+              if (response.getDoUpload().getResultCode() != PollResultCode.SUCCESS) {
+                  notifyManagerCancelled(response);
+                  return;
+              }
+
+              if (response.getDoUpload().getFileErrorCode() != PollFileErrorCode.NO_ERROR) {
+                  notifyManagerCancelled(response);
+                  return;
+              }
             
             if (response.getDoUpload().getStatusCode() == PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY) {
               //done uploading this file.

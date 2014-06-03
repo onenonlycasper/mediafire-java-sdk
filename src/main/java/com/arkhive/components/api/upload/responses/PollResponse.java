@@ -30,7 +30,9 @@ public class PollResponse extends ApiResponse {
     private String hash;
 
     public PollResultCode getResultCode() {
-      if (result == null || result.equals("")) { return PollResultCode.fromInt(0); }
+      if (result == null || result.equals("")) {
+          result = "0";
+      }
       return PollResultCode.fromInt(Integer.parseInt(result));
     }
     public PollStatusCode getStatusCode() {
@@ -42,7 +44,9 @@ public class PollResponse extends ApiResponse {
       return description;
     }
     public PollFileErrorCode getFileErrorCode() {
-      if (fileerror == null || fileerror.equals(""))  { return PollFileErrorCode.fromInt(0); }
+      if (fileerror == null || fileerror.equals(""))  {
+          fileerror = "0";
+      }
       return PollFileErrorCode.fromInt(Integer.parseInt(fileerror));
     }
     public String getQuickKey() {
