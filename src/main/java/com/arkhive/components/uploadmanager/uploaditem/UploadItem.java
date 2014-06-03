@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
     private String path;
-    private String shortFileName;
+    private String fileName;
     private String quickKey;
     private String modificationTime;
     private UploadOptions options;
@@ -48,7 +48,12 @@ public class UploadItem {
             this.options = uploadOptions;
         }
         this.path = path;
-        setShortFileName(path);
+
+        if (options.getCustomFileName().isEmpty()) {
+            setFileName(path);
+        } else {
+            fileName = options.getCustomFileName();
+        }
 
         //set Object fields so they won't be null
         fileData = new FileData(path);
@@ -97,57 +102,57 @@ public class UploadItem {
 
     /**
      * Called to get the quick key.
-     * @return
+     * @return the quick key.
      */
     public String getQuickKey() { return quickKey; }
 
     /**
      * Called to get the Short file name.
-     * @return
+     * @return the filename.
      */
-    public String getShortFileName() {
-        return shortFileName;
+    public String getFileName() {
+        return fileName;
     }
 
     /**
      * CAlled to get the UploadItemFileData.
-     * @return
+     * @return the file data struct.
      */
     public FileData getFileData() { return fileData; }
 
     /**
      * Called to get the path.
-     * @return
+     * @return - the path.
      */
     public String getPath() { return path; }
 
     /**
      * Called to get the poll upload key.
-     * @return
+     * @return - the poll upload key.
      */
     public String getPollUploadKey() { return pollUploadKey; }
 
     /**
      * Called to get the UploadItemFileUploadOptions.
-     * @return
+     * @return - the upload options struct.
      */
     public UploadOptions getUploadOptions() { return options; }
 
     /**
      * Called to get the UploadItemChunkData.
-     * @return
+     * @return - the chunkdata struct.
      */
     public ChunkData getChunkData() { return chunkData; }
 
     /**
      * Called to get the ResumableUploadBitmap.
-     * @return
+     * @return - the resumablebitmap struct.
      */
     public ResumableBitmap getBitmap() { return bitmap; }
 
     /**
      * Called to get the Modification Time.
-     * @return
+     * @return - the modification time.
      */
     public String getModificationTime() { return modificationTime; }
 
@@ -157,25 +162,25 @@ public class UploadItem {
 
     /**
      * Sets the quick key.
-     * @param quickKey
+     * @param quickKey - the quickkey to set.
      */
     public void setQuickKey(String quickKey) { this.quickKey = quickKey; }
 
     /**
      * Sets the ResumableUploadBitmap.
-     * @param bitmap
+     * @param bitmap - the resumablebitmap to set.
      */
     public void setBitmap(ResumableBitmap bitmap) { this.bitmap = bitmap; }
 
     /**
      * Sets the poll upload key.
-     * @param pollUploadKey
+     * @param pollUploadKey - the polluploadkey to set.
      */
     public void setPollUploadKey(String pollUploadKey) { this.pollUploadKey = pollUploadKey; }
 
     /**
      * Sets the modification time. A valid format must be entered.
-     * @param modificationTime
+     * @param modificationTime - the modification time to set.
      */
     public void setModificationTime(String modificationTime) {
         String timeString;
@@ -200,11 +205,11 @@ public class UploadItem {
      * sets the short file name given the path.
      * @param path
      */
-    private void setShortFileName(String path) {
+    private void setFileName(String path) {
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {
-          this.shortFileName = URLEncoder.encode(splitName[splitName.length - 1], "UTF-8");
+          this.fileName = URLEncoder.encode(splitName[splitName.length - 1], "UTF-8");
         } catch (UnsupportedEncodingException e) {
           throw new IllegalStateException("UTF-8 not supported");
         }
