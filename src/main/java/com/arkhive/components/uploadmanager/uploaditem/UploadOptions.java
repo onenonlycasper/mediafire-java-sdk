@@ -16,6 +16,7 @@ public class UploadOptions {
     private String actionOnDuplicate;
     private String versionControl;
     private String uploadPath;
+    private String customFileName;
     private ActionOnInAccount actionOnInAccount;
 
     /**
@@ -37,8 +38,30 @@ public class UploadOptions {
     }
 
     /*============================
-     * public getters
+     * public methods
      *============================*/
+
+    /**
+     * get the custom file name for an upload item.
+     * @return - the custom file name. if the stored value is null then an empty string will be returned.
+     */
+    public String getCustomFileName() {
+        if (customFileName == null) {
+            customFileName = "";
+        }
+        return customFileName;
+    }
+
+    /**
+     * set a custom file name for an UploadItem.
+     * @param customFileName - the file name desired. if null is passed, then an empty string will be set.
+     */
+    public void setCustomFileName(String customFileName) {
+        if (customFileName == null) {
+            customFileName = "";
+        }
+        this.customFileName = customFileName;
+    }
 
     /**
      * Gets the action on what to do if a file already exists in a users account.
@@ -103,12 +126,9 @@ public class UploadOptions {
         return this.uploadPath;
     }
 
-    /*============================
-     * public setters
-     *============================*/
     /**
      * sets the upload folder key for this Upload Item. this is the destination folder key.
-     * @param uploadFolderKey
+     * @param uploadFolderKey - the target folder key where the item will be uploaded.
      */
     public void setUploadFolderKey(String uploadFolderKey) {
       if (uploadFolderKey == null) {
@@ -126,7 +146,7 @@ public class UploadOptions {
     }
 
     /*============================
-     * private setters
+     * private methods
      *============================*/
     /**
      * sets the version control option for this upload item.
@@ -143,7 +163,7 @@ public class UploadOptions {
 
     /**
      * sets the action on duplicate option for this upload item.
-     * @param actionOnDuplicate
+     * @param actionOnDuplicate - the action to take.
      */
     public void setActionOnDuplicate(ActionOnDuplicate actionOnDuplicate) {
         switch(actionOnDuplicate) {
@@ -160,7 +180,7 @@ public class UploadOptions {
      * @author Chris Najar
      *
      */
-    public enum ActionOnDuplicate { KEEP, SKIP, REPLACE };
+    public enum ActionOnDuplicate { KEEP, SKIP, REPLACE }
 
     /**
      * enum for how to handle when an upload is already in a users account
@@ -172,5 +192,5 @@ public class UploadOptions {
      * @author Chris Najar
      *
      */
-    public enum VersionControl { CREATE_PATCHES, KEEP_REVISION, NONE };
+    public enum VersionControl { CREATE_PATCHES, KEEP_REVISION, NONE }
 }
