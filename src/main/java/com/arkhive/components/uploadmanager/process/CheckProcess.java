@@ -66,7 +66,7 @@ public class CheckProcess implements UploadRunnable {
     // url encode the filename
     String filename;
     try {
-      filename = URLEncoder.encode(uploadItem.getShortFileName(), "UTF-8");
+      filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
     } catch (UnsupportedEncodingException e) {
       logger.warn(TAG + " Exception: " + e);
       e.printStackTrace();
