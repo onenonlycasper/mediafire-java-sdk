@@ -88,7 +88,7 @@ public class ResumableProcess implements UploadRunnable {
                     bis = new BufferedInputStream(fis);
                     chunkData = createUploadChunk(chunkSize, chunkNumber, bis);
                     chunkHash = getSHA256(chunkData);
-                    encodedShortFileName = URLEncoder.encode(uploadItem.getShortFileName(), "UTF-8");
+                    encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
                     fis.close();
                     bis.close();
                 } catch (FileNotFoundException e) {

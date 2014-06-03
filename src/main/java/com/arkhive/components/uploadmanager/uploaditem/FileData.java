@@ -19,15 +19,15 @@ import java.security.NoSuchAlgorithmException;
  */
 public class FileData {
   private static final String TAG = FileData.class.getSimpleName();
-  private String fileName;
+  private String filePath;
   private long fileSize;
   private String fileHash;
   private final Logger logger = LoggerFactory.getLogger(FileData.class);
 
-    public FileData(String fileName) {
+    public FileData(String filePath) {
       logger.info(TAG + "FileData() created");
-      if (fileName == null) { throw new IllegalArgumentException("invalid fileName (cannot be null)"); }
-      this.fileName = fileName;
+      if (filePath == null) { throw new IllegalArgumentException("invalid filePath (cannot be null)"); }
+      this.filePath = filePath;
       this.setFileSize();
       this.setFileHash();
     }
@@ -39,7 +39,7 @@ public class FileData {
      * Gets the filename.
      * @return
      */
-    public String getFileName() { return this.fileName; }
+    public String getFilePath() { return this.filePath; }
     
     /**
      * gets the file size.
@@ -58,7 +58,7 @@ public class FileData {
      *============================*/
     private void setFileSize() {
       logger.info(TAG + "setFileSize()");
-      File file = new File(getFileName());
+      File file = new File(getFilePath());
       FileInputStream fileInputStream;
       FileChannel channel;
       try {
@@ -80,7 +80,7 @@ public class FileData {
 
     private void setFileHash() {
         logger.info(TAG + "setFileHash()");
-      File file = new File(fileName);
+      File file = new File(filePath);
       FileInputStream fileInputStream;
 
       try {
