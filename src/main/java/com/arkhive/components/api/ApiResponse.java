@@ -13,29 +13,29 @@ public class ApiResponse {
     //CHECKSTYLE:ON
 
     public String getAction() {
-        if (action == null) { 
-          action  = ""; 
+        if (action == null) {
+            action  = "";
         }
         return action;
     }
 
     public String getResult() {
-        if (result == null) { 
-          result  = ""; 
+        if (result == null) {
+            result  = "";
         }
         return result;
     }
 
     public String getMessage() {
-        if (message == null) { 
-          message  = ""; 
+        if (message == null) {
+            message  = "";
         }
         return message;
     }
 
     public String getCurrentApiVersion() {
-        if (current_api_version == null) { 
-          current_api_version  = ""; 
+        if (current_api_version == null) {
+            current_api_version  = "";
         }
         return current_api_version;
     }
@@ -43,9 +43,9 @@ public class ApiResponse {
     public ApiResponseCode getErrorCode() {
         return ApiResponseCode.fromInt(error);
     }
-    
+
     public int getErrorNumber() {
-      return error;
+        return error;
     }
 
     public boolean hasError() {

@@ -27,7 +27,7 @@ public class UploadItem {
     private ResumableBitmap bitmap;
     private String pollUploadKey;
     private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
-    
+
     /**
      * Constructor which takes a path and upload attempts.
      * Use this method when you want to customize the upload options for this UploadItem.
@@ -57,7 +57,7 @@ public class UploadItem {
         this.quickKey = "";
         this.modificationTime = "";
         this.pollUploadKey = "";
-        this.chunkData = new ChunkData(0, 0);
+        this.chunkData = new ChunkData();
         this.bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
     }
 
@@ -124,7 +124,7 @@ public class UploadItem {
      */
     public ChunkData getChunkData() {
         if (chunkData == null) {
-            chunkData = new ChunkData(0, 0);
+            chunkData = new ChunkData();
         }
         return chunkData;
     }
@@ -208,9 +208,9 @@ public class UploadItem {
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {
-          this.fileName = URLEncoder.encode(splitName[splitName.length - 1], "UTF-8");
+            this.fileName = URLEncoder.encode(splitName[splitName.length - 1], "UTF-8");
         } catch (UnsupportedEncodingException e) {
-          throw new IllegalStateException("UTF-8 not supported");
+            throw new IllegalStateException("UTF-8 not supported");
         }
     }
 

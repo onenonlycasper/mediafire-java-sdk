@@ -40,7 +40,7 @@ public class PollProcess implements Runnable {
     private int maxLoopAttempts;
     private UploadListenerManager uploadManager;
     private Logger logger = LoggerFactory.getLogger(PollProcess.class);
-  
+
     /**
      * Constructor for an upload with a listener. This constructor uses sleepTime for the loop sleep time with
      * loopAttempts for the loop attempts.
@@ -56,13 +56,13 @@ public class PollProcess implements Runnable {
         this.sleepTime = sleepTime;
         this.maxLoopAttempts = maxLoopAttempts;
     }
-  
+
     /**
-    * Constructor for an upload with a listener. This constructor uses 2000ms for the loop sleep time with 60 attempts
-    * for the loop attempts
-    * @param sessionManager - the session to use for this upload process
-    * @param uploadItem - the item to be uploaded
-    */
+     * Constructor for an upload with a listener. This constructor uses 2000ms for the loop sleep time with 60 attempts
+     * for the loop attempts
+     * @param sessionManager - the session to use for this upload process
+     * @param uploadItem - the item to be uploaded
+     */
     public PollProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem) {
         this(sessionManager, uploadManager, uploadItem, 2000, 60);
     }
@@ -74,13 +74,13 @@ public class PollProcess implements Runnable {
     }
 
     /**
-    * start the poll upload process with a maximum of 2 minutes of polling with the following process:
-    * 1. create GET request
-    * 2. send GET request
-    * 3. get response
-    * 4. check response data
-    * 5. step 1 again until 2 minutes is up, there is an error, or status code 99 (no more requests for this key)
-    */
+     * start the poll upload process with a maximum of 2 minutes of polling with the following process:
+     * 1. create GET request
+     * 2. send GET request
+     * 3. get response
+     * 4. check response data
+     * 5. step 1 again until 2 minutes is up, there is an error, or status code 99 (no more requests for this key)
+     */
     private void pollUpload() {
         //generate our request string
         HashMap<String, String> keyValue = generateGetParameters();
@@ -98,7 +98,7 @@ public class PollProcess implements Runnable {
             String jsonResponse;
             try {
                 jsonResponse =
-                sessionManager.getHttpInterface().sendGetRequest(request);
+                        sessionManager.getHttpInterface().sendGetRequest(request);
             } catch (IOException e) {
                 notifyListenersException(uploadItem, e);
                 return;
@@ -143,7 +143,7 @@ public class PollProcess implements Runnable {
                 default:
                     // stop polling and inform listeners we cancel because API result wasn't "Success"
                     notifyManagerCancelled(response);
-                return;
+                    return;
             }
 
             //wait 2 seconds before next api call
@@ -166,11 +166,11 @@ public class PollProcess implements Runnable {
             uploadManager.onProcessException(uploadItem, exception);
         }
     }
-  
+
     /**
-    * notifies the listeners that this upload has successfully completed.
-    * @param response - poll response.
-    */
+     * notifies the listeners that this upload has successfully completed.
+     * @param response - poll response.
+     */
     public void notifyManagerCompleted(PollResponse response) {
         if (uploadManager != null) {
             uploadManager.onPollCompleted(uploadItem, response);
@@ -178,29 +178,29 @@ public class PollProcess implements Runnable {
     }
 
     /**
-    * notifies the upload manager that the process has been cancelled and then notifies other listeners.
-    * @param response - poll response.
-    */
+     * notifies the upload manager that the process has been cancelled and then notifies other listeners.
+     * @param response - poll response.
+     */
     private void notifyManagerCancelled(PollResponse response) {
         if (uploadManager != null) {
             uploadManager.onCancelled(uploadItem, response);
         }
     }
-  
+
     /**
-    * generates a HashMap of the GET parameters.
-    * @return - map of request parameters.
-    */
+     * generates a HashMap of the GET parameters.
+     * @return - map of request parameters.
+     */
     private HashMap<String, String> generateGetParameters() {
         HashMap<String, String> keyValue = new HashMap<String, String>();
         keyValue.put("key", uploadItem.getPollUploadKey());
         keyValue.put("response_format", "json");
         return keyValue;
     }
-  
+
     /**
-    * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
-    */
+     * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
+     */
     private void notifyManagerLostConnection() {
         // notify listeners that connection was lost
         if (uploadManager != null) {
@@ -223,10 +223,10 @@ public class PollProcess implements Runnable {
     }
 
     /**
-    * converts a String received from JSON format into a response String.
-    * @param response - the response received in JSON format
-    * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
-    */
+     * converts a String received from JSON format into a response String.
+     * @param response - the response received in JSON format
+     * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
+     */
     private String getResponseString(String response) {
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(response);

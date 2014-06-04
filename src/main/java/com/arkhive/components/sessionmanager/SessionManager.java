@@ -173,9 +173,9 @@ public class SessionManager implements SessionRequestHandler {
 
     /** Destroy an upload action token. */
     public void destroyUploadActionToken() {
-      if (uploadActionToken == null) {
-        return;
-      }
+        if (uploadActionToken == null) {
+            return;
+        }
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("action_token", uploadActionToken.getSessionToken());
         manageActionToken("/api/user/destroy_action_token.php", parameters);
@@ -183,9 +183,9 @@ public class SessionManager implements SessionRequestHandler {
 
     /** Destroy an image action token. */
     public void destroyImageActionToken() {
-      if (imageActionToken == null) {
-        return;
-      }
+        if (imageActionToken == null) {
+            return;
+        }
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("action_token", imageActionToken.getSessionToken());
         manageActionToken("/api/user/destroy_action_token.php", parameters);
@@ -330,13 +330,13 @@ public class SessionManager implements SessionRequestHandler {
      */
     private void manageActionToken(ApiRequestHandler handler, String uri, Map<String, String> parameters) {
         ApiRequest tokenRequest = new ApiRequestBuilder()
-            .domain(domain)
-            .uri(uri)
-            .parameters(parameters)
-            .httpInterface(httpInterface)
-            .sessionManager(this)
-            .requestHandler(handler)
-            .build();
+                .domain(domain)
+                .uri(uri)
+                .parameters(parameters)
+                .httpInterface(httpInterface)
+                .sessionManager(this)
+                .requestHandler(handler)
+                .build();
         tokenRequest.submitRequest();
     }
 
@@ -351,12 +351,12 @@ public class SessionManager implements SessionRequestHandler {
      */
     private String manageActionToken(String uri, Map<String, String> parameters) {
         ApiRequest tokenRequest = new ApiRequestBuilder()
-            .domain(domain)
-            .uri(uri)
-            .parameters(parameters)
-            .httpInterface(httpInterface)
-            .sessionManager(this)
-            .build();
+                .domain(domain)
+                .uri(uri)
+                .parameters(parameters)
+                .httpInterface(httpInterface)
+                .sessionManager(this)
+                .build();
         return tokenRequest.submitRequestSync();
     }
 

@@ -20,9 +20,9 @@ import com.arkhive.components.sessionmanager.session.ActionTokenResponse;
  */
 class InternalUploadTokenHandler implements ApiRequestHandler {
     /**
-   * 
-   */
-  private final SessionManager sessionManager;
+     *
+     */
+    private final SessionManager sessionManager;
     private List<ActionTokenRequestHandler> handlers;
     private Gson gson = new Gson();
 
@@ -33,10 +33,10 @@ class InternalUploadTokenHandler implements ApiRequestHandler {
 
     @Override
     public void onRequestComplete(String response) {
-       JsonElement jsonResponse = Utility.getResponseElement(response);
-       ActionTokenResponse actionTokenResponse;
-       actionTokenResponse = gson.fromJson(jsonResponse, ActionTokenResponse.class);
-       sessionManager.setUploadActionToken(actionTokenResponse);
+        JsonElement jsonResponse = Utility.getResponseElement(response);
+        ActionTokenResponse actionTokenResponse;
+        actionTokenResponse = gson.fromJson(jsonResponse, ActionTokenResponse.class);
+        sessionManager.setUploadActionToken(actionTokenResponse);
         for (ActionTokenRequestHandler e : handlers) {
             e.receiveActionToken(actionTokenResponse);
         }

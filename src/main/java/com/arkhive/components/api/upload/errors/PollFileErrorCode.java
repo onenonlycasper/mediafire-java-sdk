@@ -47,26 +47,26 @@ public enum PollFileErrorCode {
     public String toString() {
         String returnMessage;
         switch(this.value) {
-          case 0:   returnMessage = "No Error"; break;
-          case 1:   returnMessage = "File is larger than the maximum file size allowed"; break;
-          case 2:   returnMessage = "File size cannont be 0"; break;
-          case 3:
-          case 4:
-          case 9:   returnMessage = "Found bad RAR file"; break;
-          case 5:   returnMessage = "Virus found"; break;
-          case 6:
-          case 8:
-          case 10:  returnMessage = "Unknown internal error"; break;
-          case 7:   returnMessage = "File hash or size mismach"; break;
-          case 12:  returnMessage = "Failed to insert data into database"; break;
-          case 13:  returnMessage = "File name already exists in the same parent folder, skipping"; break;
-          case 14:  returnMessage = "Destination folder does not exist"; break;
-          case 15:  returnMessage = "Account storage limit reached"; break;
-          case 16:  returnMessage = "There was an update revision conflict"; break;
-          case 17:  returnMessage = "Error patching delta file"; break;
-          case 18:  returnMessage = "Account is blocked"; break;
-          case 19:  returnMessage = "Failure to create path"; break;
-          default:  returnMessage = "No error code associated with: " + this.value; break;
+            case 0:   returnMessage = "No Error"; break;
+            case 1:   returnMessage = "File is larger than the maximum file size allowed"; break;
+            case 2:   returnMessage = "File size cannont be 0"; break;
+            case 3:
+            case 4:
+            case 9:   returnMessage = "Found bad RAR file"; break;
+            case 5:   returnMessage = "Virus found"; break;
+            case 6:
+            case 8:
+            case 10:  returnMessage = "Unknown internal error"; break;
+            case 7:   returnMessage = "File hash or size mismach"; break;
+            case 12:  returnMessage = "Failed to insert data into database"; break;
+            case 13:  returnMessage = "File name already exists in the same parent folder, skipping"; break;
+            case 14:  returnMessage = "Destination folder does not exist"; break;
+            case 15:  returnMessage = "Account storage limit reached"; break;
+            case 16:  returnMessage = "There was an update revision conflict"; break;
+            case 17:  returnMessage = "Error patching delta file"; break;
+            case 18:  returnMessage = "Account is blocked"; break;
+            case 19:  returnMessage = "Failure to create path"; break;
+            default:  returnMessage = "No error code associated with: " + this.value; break;
         }
         return returnMessage;
     }

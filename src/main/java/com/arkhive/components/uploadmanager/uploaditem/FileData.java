@@ -18,14 +18,14 @@ import java.security.NoSuchAlgorithmException;
  *
  */
 public class FileData {
-  private static final String TAG = FileData.class.getSimpleName();
+    private static final String TAG = FileData.class.getSimpleName();
     private String filePath;
     private long fileSize;
     private String fileHash;
     private final Logger logger = LoggerFactory.getLogger(FileData.class);
 
     public FileData(String filePath) {
-    logger.info(TAG + "FileData object created");
+        logger.info(TAG + "FileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
@@ -45,7 +45,7 @@ public class FileData {
         logger.info(TAG + "getFilePath()");
         return filePath;
     }
-    
+
     /**
      * gets the file size.
      * @return
@@ -54,7 +54,7 @@ public class FileData {
         logger.info(TAG + "getFilePath()");
         return fileSize;
     }
-    
+
     /**
      * gets the file hash.
      * @return
@@ -72,25 +72,25 @@ public class FileData {
         File file = new File(getFilePath());
         FileInputStream fileInputStream;
         FileChannel channel;
-            try {
-                fileInputStream = new FileInputStream(file);
-                channel = fileInputStream.getChannel();
-                fileSize = channel.size();
+        try {
+            fileInputStream = new FileInputStream(file);
+            channel = fileInputStream.getChannel();
+            fileSize = channel.size();
 
-                fileInputStream.close();
-                channel.close();
-                fileInputStream.close();
-            } catch (FileNotFoundException e) {
-                logger.error(TAG + "Exception: " + e);
-                fileSize = 0;
-                filePath = "";
-            } catch (IOException e) {
-                logger.error(TAG + "Exception: " + e);
-                fileSize = 0;
-            } finally {
-                channel = null;
-                fileInputStream = null;
-            }
+            fileInputStream.close();
+            channel.close();
+            fileInputStream.close();
+        } catch (FileNotFoundException e) {
+            logger.error(TAG + "Exception: " + e);
+            fileSize = 0;
+            filePath = "";
+        } catch (IOException e) {
+            logger.error(TAG + "Exception: " + e);
+            fileSize = 0;
+        } finally {
+            channel = null;
+            fileInputStream = null;
+        }
         logger.info(TAG + "--file size set to: " + this.fileSize);
     }
 

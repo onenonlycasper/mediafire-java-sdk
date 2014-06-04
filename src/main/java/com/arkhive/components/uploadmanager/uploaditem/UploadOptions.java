@@ -81,12 +81,12 @@ public class UploadOptions {
      * @return the upload folder key.
      */
     public String getUploadFolderKey() {
-      if (uploadFolderKey == null) {
-        uploadFolderKey = "myfiles";
-      } else if (uploadFolderKey.isEmpty()) {
-        uploadFolderKey = "myfiles";
-      }
-      return uploadFolderKey;
+        if (uploadFolderKey == null) {
+            uploadFolderKey = "myfiles";
+        } else if (uploadFolderKey.isEmpty()) {
+            uploadFolderKey = "myfiles";
+        }
+        return uploadFolderKey;
     }
 
     /**
@@ -133,12 +133,12 @@ public class UploadOptions {
      * @param uploadFolderKey - the target folder key where the item will be uploaded.
      */
     public void setUploadFolderKey(String uploadFolderKey) {
-      if (uploadFolderKey == null) {
-        uploadFolderKey = "myfiles";
-      } else if (uploadFolderKey.isEmpty()) {
-        uploadFolderKey = "myfiles";
-      }
-      this.uploadFolderKey = uploadFolderKey;
+        if (uploadFolderKey == null) {
+            uploadFolderKey = "myfiles";
+        } else if (uploadFolderKey.isEmpty()) {
+            uploadFolderKey = "myfiles";
+        }
+        this.uploadFolderKey = uploadFolderKey;
     }
 
     public void setUploadPath(String path) {

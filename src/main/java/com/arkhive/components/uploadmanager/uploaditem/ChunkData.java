@@ -29,7 +29,7 @@ public class ChunkData {
      * @return
      */
     public int getUnitSize() { return unitSize; }
-    
+
     /**
      * Get the number of chunks.
      * @return
@@ -44,15 +44,15 @@ public class ChunkData {
      * @param unitSize
      */
     public void setUnitSize(int unitSize) {
-      this.unitSize = unitSize;
+        this.unitSize = unitSize;
     }
-    
+
     /**
      * sets the number of units to the passed value.
      * @param numberOfUnits
      */
     public void setNumberOfUnits(int numberOfUnits) {
-      this.numberOfUnits = numberOfUnits;
+        this.numberOfUnits = numberOfUnits;
     }
-    
+
 }

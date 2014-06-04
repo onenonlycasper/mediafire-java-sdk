@@ -45,13 +45,13 @@ public class CheckProcess implements Runnable {
     }
 
     /**
-    *  1. url encode filename.
-    *  2. generate request parameters.
-    *  3. create GET request.
-    *  4. receive API response.
-    *  5. convert response to CheckResponse using Gson.
-    *  6. notify listeners of completion.
-    */
+     *  1. url encode filename.
+     *  2. generate request parameters.
+     *  3. create GET request.
+     *  4. receive API response.
+     *  5. convert response to CheckResponse using Gson.
+     *  6. notify listeners of completion.
+     */
     private void check() {
         logger.info(TAG + " check()");
         //notify listeners that check started
@@ -70,11 +70,11 @@ public class CheckProcess implements Runnable {
 
         // generate map with request parameters
         Map<String, String> keyValue =
-        generateRequestParameters(filename);
+                generateRequestParameters(filename);
 
         // generate request
         String request =
-        sessionManager.getDomain() + sessionManager.getSession().getQueryString(CHECK_URI, keyValue);
+                sessionManager.getDomain() + sessionManager.getSession().getQueryString(CHECK_URI, keyValue);
 
         // receive response
         String jsonResponse;
@@ -106,10 +106,10 @@ public class CheckProcess implements Runnable {
     }
 
     /**
-    * generates the request parameter after we receive a UTF encoded filename.
-    * @param filename - the name of hte file.
-    * @return - a map of request paramaters.
-    */
+     * generates the request parameter after we receive a UTF encoded filename.
+     * @param filename - the name of hte file.
+     * @return - a map of request paramaters.
+     */
     private Map<String, String> generateRequestParameters(String filename) {
         // generate map with request parameters
         Map<String, String> keyValue = new HashMap<String, String>();
@@ -127,9 +127,9 @@ public class CheckProcess implements Runnable {
     }
 
     /**
-    * notifies listeners that this process has completed.
-    * @param checkResponse - the response from calling check.php.
-    */
+     * notifies listeners that this process has completed.
+     * @param checkResponse - the response from calling check.php.
+     */
     private void notifyListenersCompleted(CheckResponse checkResponse) {
         logger.info(TAG + " notifyListenersCompleted()");
         //notify manager that check is completed
@@ -139,8 +139,8 @@ public class CheckProcess implements Runnable {
     }
 
     /**
-    * lets listeners know that this process has started.
-    */
+     * lets listeners know that this process has started.
+     */
     private void notifyManagerUploadStarted() {
         // notify Ui listeners that task has started.
         if (uploadManager != null) {
@@ -155,9 +155,9 @@ public class CheckProcess implements Runnable {
     }
 
     /**
-    * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
-    * @param e - exception that occurred.
-    */
+     * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
+     * @param e - exception that occurred.
+     */
     private void notifyManagerException(Exception e) {
         //notify listeners that there has been an exception
         if (uploadManager != null) {
@@ -166,8 +166,8 @@ public class CheckProcess implements Runnable {
     }
 
     /**
-    * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
-    */
+     * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
+     */
     private void notifyManagerLostConnection() {
         //notify listeners that connection was lost
         if (uploadManager != null) {
@@ -176,10 +176,10 @@ public class CheckProcess implements Runnable {
     }
 
     /**
-    * converts a String received from JSON format into a response String.
-    * @param response - the response received in JSON format
-    * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
-    */
+     * converts a String received from JSON format into a response String.
+     * @param response - the response received in JSON format
+     * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
+     */
     private String getResponseString(String response) {
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(response);
