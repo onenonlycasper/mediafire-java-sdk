@@ -83,7 +83,7 @@ public class Avatar {
         return gson.fromJson(jsonResponse, SetAvatarResponse.class);
     }
 
-    /** Unsets the avatar of the logged in user.
+    /** Unset the avatar of the logged in user.
      * <p>
      * Calling this method will change the users avatar back to the default avatar. Their avatar will still
      * be stored in their account, and they are able to restore it from their preferences menu on the website.

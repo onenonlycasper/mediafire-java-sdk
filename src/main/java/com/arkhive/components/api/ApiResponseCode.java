@@ -204,8 +204,8 @@ public enum ApiResponseCode {
             case 119:   returnMessage = "You cannot register a Mediafire.com email address"; break;
             case 120:   returnMessage = "The email address you specified is already in use"; break;
             case 121:   returnMessage = "The email address you specified is found to be rejected/bounced"; break;
-            case 122:   returnMessage = "The email address you specified is misformatted"; break;
-            case 123:   returnMessage = "The password you specified is misformatted"; break;
+            case 122:   returnMessage = "The email address you specified is malformed"; break;
+            case 123:   returnMessage = "The password you specified is malformed"; break;
             case 124:   returnMessage = "The API Version is missing"; break;
             case 125:   returnMessage = "The API version specified or the API Library is old for this call. "
                     + "Please Specify a higher API version or update your API Library"; break;
@@ -341,7 +341,7 @@ public enum ApiResponseCode {
             case 242:   returnMessage = "The folder trying to be deleted has over 1000 files"; break;
             case 243:   returnMessage = "This account is temporarily locked. Please, try again later"; break;
             case 244:   returnMessage = "This service is available to US residents only"; break;
-            default:    returnMessage = "Unkown response code";
+            default:    returnMessage = "Unknown response code";
         }
         return returnMessage;
     }

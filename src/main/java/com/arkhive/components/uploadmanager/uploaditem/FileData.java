@@ -121,10 +121,10 @@ public class FileData {
             }
 
             byte[] digestBytes = digest.digest();
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < digestBytes.length; ++i) {
-                String tempString = Integer.toHexString((digestBytes[i] & 0xFF) | 0x100).substring(1, 3);
+            for (byte digestByte : digestBytes) {
+                String tempString = Integer.toHexString((digestByte & 0xFF) | 0x100).substring(1, 3);
                 sb.append(tempString);
             }
 

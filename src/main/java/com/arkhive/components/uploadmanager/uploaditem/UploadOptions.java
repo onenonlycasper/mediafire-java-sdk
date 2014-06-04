@@ -103,7 +103,7 @@ public class UploadOptions {
      * @return create_patches, keep_revision, or none
      */
     public String getVersionControl() {
-        if (versionControl == null) { setVersionControl(VersionControl.CREATE_PATCHES); }
+        if (versionControl == null) { setVersionControl(VersionControl.KEEP_REVISION); }
         return versionControl;
     }
 
@@ -156,10 +156,10 @@ public class UploadOptions {
      */
     private void setVersionControl(VersionControl control) {
         switch(control) {
-            case CREATE_PATCHES: this.versionControl = "create_patches"; break;
-            case KEEP_REVISION: this.versionControl = "keep_revision"; break;
-            case NONE: this.versionControl = "none"; break;
-            default: this.versionControl = "create_patches"; break;
+            case CREATE_PATCHES: versionControl = "create_patches"; break;
+            case KEEP_REVISION: versionControl = "keep_revision"; break;
+            case NONE: versionControl = "none"; break;
+            default: versionControl = "create_patches"; break;
         }
     }
 
