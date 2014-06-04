@@ -11,7 +11,7 @@ package com.arkhive.components.uploadmanager.uploaditem;
  *
  */
 public class UploadOptions {
-    private String resumable;
+    private boolean resumable;
     private String uploadFolderKey;
     private String actionOnDuplicate;
     private String versionControl;
@@ -26,11 +26,7 @@ public class UploadOptions {
      * @param resumable - upload is resumable or not
      */
     public UploadOptions(boolean resumable) {
-        if (resumable) {
-            this.resumable = "yes";
-        } else {
-            this.resumable = "no";
-        }
+        this.resumable = resumable;
     }
 
     public UploadOptions() {
@@ -115,7 +111,13 @@ public class UploadOptions {
      * Returns whether the resumable option is "yes" or "no".
      * @return "yes" if resumable, "no" otherwise
      */
-    public String isResumable() { return resumable; }
+    public String getResumable() {
+        if (resumable) {
+            return "yes";
+        } else {
+            return "no";
+        }
+    }
 
     /**
      * Returns the path relative to myfiles root that will serve as the upload path.

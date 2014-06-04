@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
  */
 public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
-    private String path;
     private String fileName;
     private String quickKey;
     private String modificationTime;
@@ -27,7 +26,6 @@ public class UploadItem {
     private ChunkData chunkData;
     private ResumableBitmap bitmap;
     private String pollUploadKey;
-    private Map<String, String> userData = new HashMap<String, String>();
     private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
     
     /**
@@ -47,7 +45,6 @@ public class UploadItem {
         } else {
             this.options = uploadOptions;
         }
-        this.path = path;
 
         if (options.getCustomFileName().isEmpty()) {
             setFileName(path);
@@ -77,34 +74,14 @@ public class UploadItem {
      * public getters
      *============================*/
 
-    /**
-     * Add a Key to the userData field.
-     */
-    public void putUserData(String key, String value) {
-        userData.put(key, value);
-    }
-
-    /**
-     * retrieve a key, if it exists.
-     * @param key - key added by user
-     * @return value of key or null if no key associated.
-     */
-    public String getUserData(String key) {
-        return userData.get(key);
-    }
-
-    /**
-     * clears userData.
-     */
-    public void clearUserData() {
-        userData.clear();
-    }
 
     /**
      * Called to get the quick key.
      * @return the quick key.
      */
-    public String getQuickKey() { return quickKey; }
+    public String getQuickKey() {
+        return quickKey;
+    }
 
     /**
      * Called to get the Short file name.
@@ -118,43 +95,59 @@ public class UploadItem {
      * CAlled to get the UploadItemFileData.
      * @return the file data struct.
      */
-    public FileData getFileData() { return fileData; }
-
-    /**
-     * Called to get the path.
-     * @return - the path.
-     */
-    public String getPath() { return path; }
+    public FileData getFileData() {
+        return fileData;
+    }
 
     /**
      * Called to get the poll upload key.
      * @return - the poll upload key.
      */
-    public String getPollUploadKey() { return pollUploadKey; }
+    public String getPollUploadKey() {
+        return pollUploadKey;
+    }
 
     /**
      * Called to get the UploadItemFileUploadOptions.
      * @return - the upload options struct.
      */
-    public UploadOptions getUploadOptions() { return options; }
+    public UploadOptions getUploadOptions() {
+        if (options == null) {
+            options = new UploadOptions();
+        }
+        return options;
+    }
 
     /**
      * Called to get the UploadItemChunkData.
      * @return - the chunkdata struct.
      */
-    public ChunkData getChunkData() { return chunkData; }
+    public ChunkData getChunkData() {
+        if (chunkData == null) {
+            chunkData = new ChunkData(0, 0);
+        }
+        return chunkData;
+    }
 
     /**
      * Called to get the ResumableUploadBitmap.
      * @return - the resumablebitmap struct.
      */
-    public ResumableBitmap getBitmap() { return bitmap; }
+    public ResumableBitmap getBitmap() {
+        if (bitmap == null) {
+            logger.error(TAG + "   resumable bitmap reference lost");
+            bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
+        }
+        return bitmap;
+    }
 
     /**
      * Called to get the Modification Time.
      * @return - the modification time.
      */
-    public String getModificationTime() { return modificationTime; }
+    public String getModificationTime() {
+        return modificationTime;
+    }
 
     /*============================
      * public setters
@@ -164,19 +157,25 @@ public class UploadItem {
      * Sets the quick key.
      * @param quickKey - the quickkey to set.
      */
-    public void setQuickKey(String quickKey) { this.quickKey = quickKey; }
+    public void setQuickKey(String quickKey) {
+        this.quickKey = quickKey;
+    }
 
     /**
      * Sets the ResumableUploadBitmap.
      * @param bitmap - the resumablebitmap to set.
      */
-    public void setBitmap(ResumableBitmap bitmap) { this.bitmap = bitmap; }
+    public void setBitmap(ResumableBitmap bitmap) {
+        this.bitmap = bitmap;
+    }
 
     /**
      * Sets the poll upload key.
      * @param pollUploadKey - the polluploadkey to set.
      */
-    public void setPollUploadKey(String pollUploadKey) { this.pollUploadKey = pollUploadKey; }
+    public void setPollUploadKey(String pollUploadKey) {
+        this.pollUploadKey = pollUploadKey;
+    }
 
     /**
      * Sets the modification time. A valid format must be entered.
@@ -223,6 +222,31 @@ public class UploadItem {
      * @param item
      * @return true if hashes match, false otherwise.
      */
-    public boolean equalTo(UploadItem item) { return fileData.getFileHash().equals(item.fileData.getFileHash()); }
+    public boolean equalTo(UploadItem item) {
+        logger.info(TAG + "equalTo()");
+        return fileData.getFileHash().equals(item.fileData.getFileHash());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        logger.info(TAG + "equals()");
+        if (object == null) {
+            return false;
+        }
+
+        if (this.getClass() != object.getClass()) {
+            return false;
+        }
+
+        if (!(object instanceof UploadItem)) {
+            return false;
+        }
+
+        if (!fileData.equals(((UploadItem) object).getFileData())) {
+            return false;
+        }
+
+        return true;
+    }
 
 }
