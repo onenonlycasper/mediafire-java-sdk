@@ -16,10 +16,10 @@ public class Utility {
      * @param  response  A response string from a web API call.
      *
      * @return  The JsonElement created from the response string.*/
-    public static JsonElement getResponseElement(String response) {  
-      if (response.length() == 0 || response.isEmpty() || response == null) {
-        response = FAIL_RES;
-      }
+    public static JsonElement getResponseElement(String response) {
+        if (response.length() == 0 || response.isEmpty() || response == null) {
+            response = FAIL_RES;
+        }
         JsonElement returnJson = new JsonObject();
         JsonParser parser = new JsonParser();
         JsonElement rootElement = parser.parse(response);
@@ -31,25 +31,25 @@ public class Utility {
         }
         return returnJson;
     }
-    
+
     /**
      * converts a String received from JSON format into a response String.
      * @param response - the response received in JSON format
      * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
      */
     public static String getResponseString(String response) {
-      if (response.length() == 0 || response.isEmpty() || response == null) {
-        response = FAIL_RES;
-      }
-      
-      JsonParser parser = new JsonParser();
-      JsonElement element = parser.parse(response);
-      if (element.isJsonObject()) {
-        JsonObject jsonResponse = element.getAsJsonObject().get("response").getAsJsonObject();
+        if (response.length() == 0 || response.isEmpty() || response == null) {
+            response = FAIL_RES;
+        }
+
+        JsonParser parser = new JsonParser();
+        JsonElement element = parser.parse(response);
+        if (element.isJsonObject()) {
+            JsonObject jsonResponse = element.getAsJsonObject().get("response").getAsJsonObject();
 //        System.out.println("getResponseString() returning response: " + jsonResponse.toString());
-        return jsonResponse.toString();
-      } else {
-          return FAIL_RES;
-      }
+            return jsonResponse.toString();
+        } else {
+            return FAIL_RES;
+        }
     }
 }
