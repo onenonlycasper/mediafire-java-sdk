@@ -17,7 +17,7 @@ public class Utility {
      *
      * @return  The JsonElement created from the response string.*/
     public static JsonElement getResponseElement(String response) {  
-      if (response.length() == 0 || response.equalsIgnoreCase("") || response == null) {
+      if (response.length() == 0 || response.isEmpty() || response == null) {
         response = FAIL_RES;
       }
         JsonElement returnJson = new JsonObject();
@@ -38,7 +38,7 @@ public class Utility {
      * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
      */
     public static String getResponseString(String response) {
-      if (response.length() == 0 || response.equalsIgnoreCase("") || response == null) {
+      if (response.length() == 0 || response.isEmpty() || response == null) {
         response = FAIL_RES;
       }
       

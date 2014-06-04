@@ -33,7 +33,6 @@ public class UploadManager implements UploadListenerManager {
     private UploadListenerUI uiListener;
     private PausableThreadPoolExecutor executor;
     private BlockingQueue<Runnable> workQueue;
-    private ThreadFactory threadFactory;
     private final SessionManager sessionManager;
 
     private final Logger logger = LoggerFactory.getLogger(UploadManager.class);
@@ -47,7 +46,7 @@ public class UploadManager implements UploadListenerManager {
     public UploadManager(SessionManager sessionManager, int maximumThreadCount) {
         this.sessionManager = sessionManager; // set session manager
         workQueue = new LinkedBlockingQueue<Runnable>();
-        threadFactory = Executors.defaultThreadFactory();
+        ThreadFactory threadFactory = Executors.defaultThreadFactory();
         executor =
                 new PausableThreadPoolExecutor( // establish thread pool executor
                         maximumThreadCount,
