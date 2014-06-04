@@ -2,7 +2,7 @@ package com.arkhive.components.api;
 
 /** Submits an API request.
  *
- * This interface is implemented by classes needing to submit a requst
+ * This interface is implemented by classes needing to submit a request
  * to the MediaFire API.
  */
 public interface ApiRequestHandler {

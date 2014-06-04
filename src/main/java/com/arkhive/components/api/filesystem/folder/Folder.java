@@ -375,33 +375,6 @@ public class Folder {
     return new Gson().fromJson(jsonResponse, FolderGetInfoResponse.class);
   }
 
-  /*=================================================================================================================
-   * FOLDER GET REVISION API
-   ==================================================================================================================*/
-  public static FolderGetRevisionResponse getRevision(FileSystemItem item, SessionManager sm) {
-    return getRevision(item, sm, false);
-  }
-
-  /**
-   * Makes a call to folder/get_revision.php.
-   * @param item - FileSystemItem to use.
-   * @param sm - Session manager to use.
-   * @param getChanges - boolean to get additional info from api call (changes are added/updated/deleted items).
-   * @return a FolderGetRevisionResponse representing the response from the api.
-   */
-  public static FolderGetRevisionResponse getRevision(FileSystemItem item, SessionManager sm, boolean getChanges) {
-    Map<String, String> map = new HashMap<String, String>();
-    map.put("folder_key", item.getKey());
-    if (getChanges) {
-      map.put("return_changes", "yes");
-    } else {
-      map.put("return_changes", "no");
-    }
-
-    JsonElement jsonResponse = sendRequest(map, GET_REVISION_URI, sm);
-    return new Gson().fromJson(jsonResponse, FolderGetRevisionResponse.class);
-  }
-
    /** Submit a request to the API.
    *
    * @param  parameters  A Map<String, String> of parameters to pass to the API.

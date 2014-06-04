@@ -28,7 +28,7 @@ public class HttpGetRequest implements Runnable {
      * completed, the callback function is executed.
      */
     public void run() {
-        String result = null;
+        String result;
         try {
             result = this.httpInterface.sendGetRequest(this.call);
         } catch (IOException e) {

@@ -180,7 +180,7 @@ public enum ApiResponseCode {
 
   @Override
   public String toString() {
-      String returnMessage = "";
+      String returnMessage;
       switch(this.value) {
         case 0:     returnMessage = "Success"; break;
         case 100:   returnMessage = "Internal server error"; break;

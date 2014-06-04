@@ -77,7 +77,7 @@ public class CheckProcess implements Runnable {
         sessionManager.getDomain() + sessionManager.getSession().getQueryString(CHECK_URI, keyValue);
 
         // receive response
-        String jsonResponse = null;
+        String jsonResponse;
         try {
             jsonResponse = sessionManager.getHttpInterface().sendGetRequest(request);
         } catch (IOException e) {

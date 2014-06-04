@@ -95,7 +95,7 @@ public class PollProcess implements Runnable {
             //increment counter
             pollCount++;
             //send the get request and receive the json response
-            String jsonResponse = "";
+            String jsonResponse;
             try {
                 jsonResponse =
                 sessionManager.getHttpInterface().sendGetRequest(request);

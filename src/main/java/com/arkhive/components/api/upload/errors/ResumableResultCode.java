@@ -75,7 +75,7 @@ public enum ResumableResultCode {
 
     @Override
     public String toString() {
-        String returnMessage = "";
+        String returnMessage;
         switch(this.value) {
           case 0:         returnMessage = "Success"; break;
           case 14:        returnMessage = "Upload succeeded but the folder specified does not exist, "

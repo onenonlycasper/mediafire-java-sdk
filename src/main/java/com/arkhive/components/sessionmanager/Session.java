@@ -67,7 +67,7 @@ public class Session {
      * @return  A String containing the the full query string.
      */
     public String getQueryString(String uri, Map<String, String> parameters) {
-        String queryString = "";
+        String queryString;
         // Handle cases where null parameters are passed.
         if (uri == null) { uri = ""; }
         if (parameters == null) { parameters = new HashMap<String, String>(); }
@@ -110,7 +110,7 @@ public class Session {
      * @return The signature converted into a MD5 hash.
      */
     private String calculateMD5Hash(String signatureBase) {
-        String signatureString = "";
+        String signatureString;
         try {
             byte[] signatureBytes = signatureBase.getBytes("UTF-8");
             MessageDigest md = MessageDigest.getInstance("MD5");

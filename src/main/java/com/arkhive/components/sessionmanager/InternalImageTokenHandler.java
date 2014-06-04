@@ -16,7 +16,6 @@ import com.arkhive.components.sessionmanager.session.ActionTokenResponse;
  * When the API call returns, create a new ActionTokenResponse, and notify
  * all handlers in the list.
  *
- * @param  handlers  A list of ActionTokenRequestHandler awaiting a new image action token.
  */
 class InternalImageTokenHandler implements ApiRequestHandler {
     /**
@@ -34,7 +33,7 @@ class InternalImageTokenHandler implements ApiRequestHandler {
     @Override
     public void onRequestComplete(String response) {
         JsonElement jsonResponse = Utility.getResponseElement(response);
-        ActionTokenResponse actionTokenResponse = new ActionTokenResponse();
+        ActionTokenResponse actionTokenResponse;
         actionTokenResponse = gson.fromJson(jsonResponse, ActionTokenResponse.class);
         sessionManager.setImageActionToken(actionTokenResponse);
         for (ActionTokenRequestHandler e : handlers) {

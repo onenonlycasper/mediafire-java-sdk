@@ -1,6 +1,6 @@
 package com.arkhive.components.sessionmanager.session;
 
-/** Stores a response from a request for an actoin token. 
+/** Stores a response from a request for an action token.
  */
 public class ActionTokenResponse {
 

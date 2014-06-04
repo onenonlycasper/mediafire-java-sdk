@@ -4,7 +4,6 @@ import com.arkhive.components.api.upload.errors.ResumableResultCode;
 import com.arkhive.components.api.upload.responses.ResumableResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
-import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -145,14 +144,13 @@ public class ResumableProcess implements Runnable {
 
                 if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR) {
                     // let the listeners know we are done with this process (because there was an error in this case)
-                    notifyManagerCancelled(response);
-                    return;
+                    if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
+                        // let the listeners know we are done with this process (because there was an error in this case)
+                        notifyManagerCancelled(response);
+                        return;
+                    }
                 }
-                if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
-                    // let the listeners know we are done with this process (because there was an error in this case)
-                    notifyManagerCancelled(response);
-                    return;
-                }
+
             }
 
             // update listeners on progress each loop

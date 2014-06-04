@@ -29,7 +29,7 @@ public enum CheckResponseErrorCode {
 
     @Override
     public String toString() {
-        String response = "";
+        String response;
         switch(this.value) {
             case 114: response = "Success"; break;
             default: response = "No error code associated with: " + this.value; break;

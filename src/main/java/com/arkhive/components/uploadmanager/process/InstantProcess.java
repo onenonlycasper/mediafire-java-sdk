@@ -72,7 +72,7 @@ public class InstantProcess implements Runnable {
         String request = sessionManager.getDomain() + sessionManager.getSession().getQueryString(INSTANT_URI, keyValue);
 
         // receive response
-        String jsonResponse = null;
+        String jsonResponse;
         try {
             jsonResponse = sessionManager.getHttpInterface().sendGetRequest(request);
         } catch (IOException e) {

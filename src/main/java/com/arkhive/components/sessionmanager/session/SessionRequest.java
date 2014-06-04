@@ -75,7 +75,7 @@ public class SessionRequest implements HttpRequestHandler {
         // Prepare query and call httpInterface to get the session JSON
         String queryString = prepareQueryString();
         String call = domain + URI + queryString;
-        String response = null;
+        String response;
         try {
             response = httpInterface.sendGetRequest(call);
         } catch (IOException e) {
@@ -113,7 +113,7 @@ public class SessionRequest implements HttpRequestHandler {
         //Populate a SessionResponse with the response string in order to use the values to populate the
         //new Session object.
         JsonElement jsonResponse = Utility.getResponseElement(response);
-        SessionResponse sessionResponse = new SessionResponse();
+        SessionResponse sessionResponse;
         sessionResponse = gson.fromJson(jsonResponse, SessionResponse.class);
 
         // Create a new session object and pass it to the callback function
@@ -187,7 +187,7 @@ public class SessionRequest implements HttpRequestHandler {
      * @return The hash of the signature string.
      */
     private String calculateSignature(String signatureString) {
-        String signature = "";
+        String signature;
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             digest.reset();

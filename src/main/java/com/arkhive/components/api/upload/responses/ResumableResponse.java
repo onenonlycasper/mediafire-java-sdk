@@ -18,7 +18,9 @@ public class ResumableResponse extends ApiResponse {
     private String key;
 
     public ResumableResultCode getResultCode() {
-      if (result == null || result.equals("")) { return ResumableResultCode.fromInt(0); }
+      if (result == null || result.equals("")) {
+          return ResumableResultCode.fromInt(0);
+      }
       return ResumableResultCode.fromInt(Integer.parseInt(result));
     }
     public String getKey() {

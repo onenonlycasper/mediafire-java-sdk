@@ -45,7 +45,7 @@ public enum PollFileErrorCode {
 
     @Override
     public String toString() {
-        String returnMessage = "";
+        String returnMessage;
         switch(this.value) {
           case 0:   returnMessage = "No Error"; break;
           case 1:   returnMessage = "File is larger than the maximum file size allowed"; break;

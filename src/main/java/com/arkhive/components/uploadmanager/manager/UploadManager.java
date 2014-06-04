@@ -163,11 +163,7 @@ public class UploadManager implements UploadListenerManager {
      */
     public boolean isPaused() {
         logger.info(TAG + "isPaused()");
-        if (executor != null) {
-            return executor.isPaused();
-        } else {
-            return true;
-        }
+        return executor == null || executor.isPaused();
     }
 
     private void notifyListenersStarted(UploadItem uploadItem) {
