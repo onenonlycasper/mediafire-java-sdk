@@ -10,6 +10,6 @@ import com.arkhive.components.api.filesystem.FileSystemItem;
  *
  */
 public interface GetContentsUpdateListener {
-  public void contentsReceived(List<FileSystemItem> items);
-  public void finishedReceivingContents();
+    public void contentsReceived(List<FileSystemItem> items);
+    public void finishedReceivingContents();
 }

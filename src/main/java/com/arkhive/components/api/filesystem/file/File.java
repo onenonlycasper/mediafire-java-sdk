@@ -177,51 +177,51 @@ public class File {
         JsonElement jsonResponse = sendRequest(parameters, GET_INFO_URI, sm);
         return new Gson().fromJson(jsonResponse, FileGetInfoResponse.class);
     }
-    
+
     /** Get the links for a FileSystemItem.
-     * 
+     *
      * @param file - the FileSystemItem to get the links of.
      * @param sm - the SessionManager to use for the operation.
      * @return a FileGetLinksResponse containing the result of the operation.
      */
     public static FileGetLinksResponse getLinks(FileSystemItem file, SessionManager sm) {
-      return getLinks(file, sm, LinkType.ALL);
+        return getLinks(file, sm, LinkType.ALL);
     }
-    
+
     public static FileGetLinksResponse getLinks(FileSystemItem file, SessionManager sm, LinkType type) {
-      Map<String, String> parameters = new HashMap<String, String>();
-      parameters.put("quick_key", file.getKey());
-      switch (type) {
-        case ALL:
-          break;
-        case DIRECT_DOWNLOAD:
-          parameters.put("link_type", "direct_download");
-          break;
-        case EDIT:
-          parameters.put("link_type", "edit");
-          break;
-        case NORMAL:
-          parameters.put("link_type", "normal_download");
-          break;
-        case ONE_TIME_DOWNLOAD:
-          parameters.put("link_type", "one_time_download");
-          break;
-        case VIEW:
-          parameters.put("link_type", "view");
-          break;
-        default:
-          break;
-        
-      }
-      JsonElement jsonResponse = sendRequest(parameters, GET_LINKS_URI, sm);
-      return new Gson().fromJson(jsonResponse, FileGetLinksResponse.class);
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("quick_key", file.getKey());
+        switch (type) {
+            case ALL:
+                break;
+            case DIRECT_DOWNLOAD:
+                parameters.put("link_type", "direct_download");
+                break;
+            case EDIT:
+                parameters.put("link_type", "edit");
+                break;
+            case NORMAL:
+                parameters.put("link_type", "normal_download");
+                break;
+            case ONE_TIME_DOWNLOAD:
+                parameters.put("link_type", "one_time_download");
+                break;
+            case VIEW:
+                parameters.put("link_type", "view");
+                break;
+            default:
+                break;
+
+        }
+        JsonElement jsonResponse = sendRequest(parameters, GET_LINKS_URI, sm);
+        return new Gson().fromJson(jsonResponse, FileGetLinksResponse.class);
     }
-    
+
     /** A simple enum for passing link type which is used in the getLinks() method.
      * @author Chris Najar
      */
     public enum LinkType {
-      VIEW, EDIT, NORMAL, ONE_TIME_DOWNLOAD, DIRECT_DOWNLOAD, ALL,
+        VIEW, EDIT, NORMAL, ONE_TIME_DOWNLOAD, DIRECT_DOWNLOAD, ALL,
     }
 
     /** Submit a request to the API.
