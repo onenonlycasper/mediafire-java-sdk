@@ -112,7 +112,7 @@ public class ResumableProcess implements Runnable {
                         generateGetParameters();
 
                 // now send the http post request
-                String jsonResponse = null;
+                String jsonResponse;
                 try {
                     jsonResponse = sessionManager.getHttpInterface().sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, chunkData);
                 } catch (IOException e) {
@@ -143,8 +143,12 @@ public class ResumableProcess implements Runnable {
                     return;
                 }
 
-                if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR
-                        && response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
+                if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR) {
+                    // let the listeners know we are done with this process (because there was an error in this case)
+                    notifyManagerCancelled(response);
+                    return;
+                }
+                if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
                     // let the listeners know we are done with this process (because there was an error in this case)
                     notifyManagerCancelled(response);
                     return;

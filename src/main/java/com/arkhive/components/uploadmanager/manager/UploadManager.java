@@ -285,6 +285,18 @@ public class UploadManager implements UploadListenerManager {
 
     private void hashDoesNotExist(UploadItem uploadItem, CheckResponse response) {
         logger.info(TAG + "hashDoesNotExist()");
+        if (response.getResumableUpload().getUnitSize() == 0) {
+            logger.info(TAG + "--unit size received from unit_size was 0. cancelling");
+            notifyListenersCancelled(uploadItem);
+            return;
+        }
+
+        if (response.getResumableUpload().getNumberOfUnits() == 0) {
+            logger.info(TAG + "--number of units received from number_of_units was 0. cancelling");
+            notifyListenersCancelled(uploadItem);
+            return;
+        }
+
         if (response.getResumableUpload().getAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             logger.info(TAG + "--all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
