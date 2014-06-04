@@ -69,7 +69,7 @@ public class PollProcess implements Runnable {
 
     @Override
     public void run() {
-        logger.info(TAG + "run()");
+        logger.info("run()");
         pollUpload();
     }
 

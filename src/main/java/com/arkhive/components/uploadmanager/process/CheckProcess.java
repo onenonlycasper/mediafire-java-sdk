@@ -40,7 +40,7 @@ public class CheckProcess implements Runnable {
 
     @Override
     public void run() {
-        logger.info(TAG + " run()");
+        logger.info(" run()");
         check();
     }
 
@@ -53,7 +53,7 @@ public class CheckProcess implements Runnable {
      *  6. notify listeners of completion.
      */
     private void check() {
-        logger.info(TAG + " check()");
+        logger.info(" check()");
         //notify listeners that check started
         notifyManagerUploadStarted();
 
@@ -131,7 +131,7 @@ public class CheckProcess implements Runnable {
      * @param checkResponse - the response from calling check.php.
      */
     private void notifyListenersCompleted(CheckResponse checkResponse) {
-        logger.info(TAG + " notifyListenersCompleted()");
+        logger.info(" notifyListenersCompleted()");
         //notify manager that check is completed
         if (uploadManager != null) {
             uploadManager.onCheckCompleted(uploadItem, checkResponse);

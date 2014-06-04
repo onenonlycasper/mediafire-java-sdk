@@ -25,7 +25,7 @@ public class FileData {
     private final Logger logger = LoggerFactory.getLogger(FileData.class);
 
     public FileData(String filePath) {
-        logger.info(TAG + "FileData object created");
+        logger.info("FileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
@@ -42,7 +42,7 @@ public class FileData {
      * @return
      */
     public String getFilePath() {
-        logger.info(TAG + "getFilePath()");
+        logger.info("getFilePath()");
         return filePath;
     }
 
@@ -51,7 +51,7 @@ public class FileData {
      * @return
      */
     public long getFileSize() {
-        logger.info(TAG + "getFilePath()");
+        logger.info("getFilePath()");
         return fileSize;
     }
 
@@ -60,7 +60,7 @@ public class FileData {
      * @return
      */
     public String getFileHash() {
-        logger.info(TAG + "getFilePath()");
+        logger.info("getFilePath()");
         return fileHash;
     }
 
@@ -68,7 +68,7 @@ public class FileData {
      * private setters
      *============================*/
     private void setFileSize() {
-        logger.info(TAG + "setFileSize()");
+        logger.info("setFileSize()");
         File file = new File(getFilePath());
         FileInputStream fileInputStream;
         FileChannel channel;
@@ -91,11 +91,11 @@ public class FileData {
             channel = null;
             fileInputStream = null;
         }
-        logger.info(TAG + "--file size set to: " + this.fileSize);
+        logger.info("--file size set to: " + this.fileSize);
     }
 
     private void setFileHash() {
-        logger.info(TAG + "setFileHash()");
+        logger.info("setFileHash()");
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;
@@ -144,7 +144,7 @@ public class FileData {
             in = null;
         }
 
-        logger.info(TAG + "--file hash set to: " + fileHash);
+        logger.info("--file hash set to: " + fileHash);
     }
 
     @Override

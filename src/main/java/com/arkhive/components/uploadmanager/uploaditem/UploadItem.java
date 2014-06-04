@@ -36,7 +36,7 @@ public class UploadItem {
      * Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, UploadOptions uploadOptions) {
-        logger.info(TAG + "UploadItem created");
+        logger.info("UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
@@ -223,13 +223,13 @@ public class UploadItem {
      * @return true if hashes match, false otherwise.
      */
     public boolean equalTo(UploadItem item) {
-        logger.info(TAG + "equalTo()");
+        logger.info("equalTo()");
         return fileData.getFileHash().equals(item.fileData.getFileHash());
     }
 
     @Override
     public boolean equals(Object object) {
-        logger.info(TAG + "equals()");
+        logger.info("equals()");
         if (object == null) {
             return false;
         }

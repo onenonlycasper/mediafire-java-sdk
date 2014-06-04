@@ -119,7 +119,7 @@ public class UploadManager implements UploadListenerManager {
      * @param uploadItem The UploadItem to add to the backlog queue.
      */
     public void addUploadRequest(UploadItem uploadItem) {
-        logger.info(TAG + "addUploadRequest()");
+        logger.info("addUploadRequest()");
         //don't add the item to the backlog queue if it is null or the path is null
         if (uploadItem == null
                 || uploadItem.getFileData() == null
@@ -128,7 +128,7 @@ public class UploadManager implements UploadListenerManager {
                 || uploadItem.getFileData().getFilePath() == null
                 || uploadItem.getFileData().getFilePath().isEmpty()
                 || uploadItem.getFileData().getFileSize() == 0) {
-            logger.info(TAG + "one or more required parameters are invalid, not adding item to queue");
+            logger.info("one or more required parameters are invalid, not adding item to queue");
             return;
         }
         CheckProcess process = new CheckProcess(sessionManager, this, uploadItem);
@@ -139,7 +139,7 @@ public class UploadManager implements UploadListenerManager {
      * Pause moving backlog items to the thread queue.
      */
     public void pause() {
-        logger.info(TAG + "pause()");
+        logger.info("pause()");
         if (executor != null) {
             executor.pause();
         }
@@ -149,7 +149,7 @@ public class UploadManager implements UploadListenerManager {
      * Resume moving backlog items to the thread queue.
      */
     public void resume() {
-        logger.info(TAG + "resume()");
+        logger.info("resume()");
         if (executor != null) {
             executor.resume();
         }
@@ -161,12 +161,12 @@ public class UploadManager implements UploadListenerManager {
      * @return true if paused (not moving backlog to queue), false otherwise.
      */
     public boolean isPaused() {
-        logger.info(TAG + "isPaused()");
+        logger.info("isPaused()");
         return executor == null || executor.isPaused();
     }
 
     private void notifyListenersStarted(UploadItem uploadItem) {
-        logger.info(TAG + "notifyListenersStarted()");
+        logger.info("notifyListenersStarted()");
         if (uiListener != null) {
             uiListener.onCompleted(uploadItem);
         }
@@ -176,7 +176,7 @@ public class UploadManager implements UploadListenerManager {
     }
 
     private void notifyListenersCompleted(UploadItem uploadItem) {
-        logger.info(TAG + "notifyListenersCompleted()");
+        logger.info("notifyListenersCompleted()");
         if (uiListener != null) {
             uiListener.onCompleted(uploadItem);
         }
@@ -186,7 +186,7 @@ public class UploadManager implements UploadListenerManager {
     }
 
     private void notifyListenersOnProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        logger.info(TAG + "notifyListenersOnProgressUpdate()");
+        logger.info("notifyListenersOnProgressUpdate()");
         if (uiListener != null) {
             uiListener.onProgressUpdate(uploadItem, chunkNumber, numChunks);
         }
@@ -203,13 +203,13 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onStartedUploadProcess(UploadItem uploadItem) {
-        logger.info(TAG + "onStartedUploadProcess()");
+        logger.info("onStartedUploadProcess()");
         notifyListenersStarted(uploadItem);
     }
 
     @Override
     public void onCheckCompleted(UploadItem uploadItem, CheckResponse response) {
-        logger.info(TAG + "onCheckCompleted()");
+        logger.info("onCheckCompleted()");
         if (response.getStorageLimitExceeded()) {
             logger.info("--storage limit is exceeded");
             storageLimitExceeded(uploadItem);
@@ -225,17 +225,17 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        logger.info(TAG + "onProgressUpdate()");
+        logger.info("onProgressUpdate()");
         notifyListenersOnProgressUpdate(uploadItem, chunkNumber, numChunks);
     }
 
     private void storageLimitExceeded(UploadItem uploadItem) {
-        logger.info(TAG + "storageLimitExceeded()");
+        logger.info("storageLimitExceeded()");
         notifyListenersCancelled(uploadItem);
     }
 
     private void hashExists(UploadItem uploadItem, CheckResponse response) {
-        logger.info(TAG + "hashExists()");
+        logger.info("hashExists()");
         if (!response.getInAccount()) { // hash which exists is not in the account
             hashNotInAccount(uploadItem);
         } else { // hash exists and is in the account
@@ -244,14 +244,14 @@ public class UploadManager implements UploadListenerManager {
     }
 
     private void hashNotInAccount(UploadItem uploadItem) {
-        logger.info(TAG + "hashNotInAccount()");
+        logger.info("hashNotInAccount()");
         InstantProcess process = new InstantProcess(sessionManager, this, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
     }
 
     private void hashInAccount(UploadItem uploadItem, CheckResponse response) {
-        logger.info(TAG + "hashInAccount()");
+        logger.info("hashInAccount()");
         boolean inFolder = response.getInFolder();
         InstantProcess process = new InstantProcess(sessionManager, this, uploadItem);
         logger.info("--ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
@@ -279,28 +279,28 @@ public class UploadManager implements UploadListenerManager {
     }
 
     private void hashDoesNotExist(UploadItem uploadItem, CheckResponse response) {
-        logger.info(TAG + "hashDoesNotExist()");
+        logger.info("hashDoesNotExist()");
         if (response.getResumableUpload().getUnitSize() == 0) {
-            logger.info(TAG + "--unit size received from unit_size was 0. cancelling");
+            logger.info("--unit size received from unit_size was 0. cancelling");
             notifyListenersCancelled(uploadItem);
             return;
         }
 
         if (response.getResumableUpload().getNumberOfUnits() == 0) {
-            logger.info(TAG + "--number of units received from number_of_units was 0. cancelling");
+            logger.info("--number of units received from number_of_units was 0. cancelling");
             notifyListenersCancelled(uploadItem);
             return;
         }
 
         if (response.getResumableUpload().getAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
-            logger.info(TAG + "--all units ready and have a poll upload key");
+            logger.info("--all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
             uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
             uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
             PollProcess process = new PollProcess(sessionManager, this, uploadItem);
             executor.execute(process);
         } else {
-            logger.info(TAG + "--all units not ready or do not have poll upload key");
+            logger.info("--all units not ready or do not have poll upload key");
             // either we don't have the poll upload key or all units are not ready
             uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
             uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
@@ -311,13 +311,13 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onInstantCompleted(UploadItem uploadItem) {
-        logger.info(TAG + "onInstantCompleted()");
+        logger.info("onInstantCompleted()");
         notifyListenersCompleted(uploadItem);
     }
 
     @Override
     public void onResumableCompleted(UploadItem uploadItem) {
-        logger.info(TAG + "onResumableCompleted()");
+        logger.info("onResumableCompleted()");
         // if the item status isn't cancelled or paused then call upload/check to make sure all units are ready
         CheckProcess process = new CheckProcess(sessionManager, this, uploadItem);
         executor.execute(process);
@@ -325,7 +325,7 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onPollCompleted(UploadItem uploadItem, PollResponse response) {
-        logger.info(TAG + "onPollCompleted()");
+        logger.info("onPollCompleted()");
         // if this method is called then filerror and result codes are fine,
         // but we may not have received status 99 so check status code and
         // then possibly senditem to the backlog queue.
@@ -338,14 +338,14 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onProcessException(UploadItem uploadItem, Exception exception) {
-        logger.info(TAG + "onProcessException()");
+        logger.info("onProcessException()");
         logger.error(TAG + "received exception: " + exception);
         notifyListenersCancelled(uploadItem);
     }
 
     @Override
     public void onLostConnection(UploadItem uploadItem) {
-        logger.info(TAG + "onLostConnection()");
+        logger.info("onLostConnection()");
         notifyListenersCancelled(uploadItem);
         //pause upload manager
         pause();
@@ -354,7 +354,7 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onCancelled(UploadItem uploadItem, ApiResponse response) {
-        logger.info(TAG + "onCancelled()");
+        logger.info("onCancelled()");
         notifyListenersCancelled(uploadItem);
         // if there is an api error then add this item to the backlog queue and decrease current thread count
         if (response.hasError()) {
