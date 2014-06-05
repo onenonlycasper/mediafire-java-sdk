@@ -40,7 +40,7 @@ public class User {
       return new Gson().fromJson(jsonResponse, UserGetInfoResponse.class);
   }
 
-  /**Attempts to register a user.
+  /**Attempts to register a user. 
    * @param sessionManager - the session manager to be used to process the request.
    * @return a UserRegisterResponse containing the server response.
    */
