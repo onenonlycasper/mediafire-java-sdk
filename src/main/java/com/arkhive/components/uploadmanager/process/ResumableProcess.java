@@ -334,7 +334,7 @@ public class ResumableProcess implements Runnable {
         logger.info("createUploadChunk()");
         byte[] readBytes = new byte[(int) unitSize];
         int offset = calculateOffSet(chunkNumber, numChunks, unitSize);
-        int readSize = fileStream.read(readBytes, 0, (int) unitSize);
+        int readSize = fileStream.read(readBytes, offset, (int) unitSize);
         if (readSize != unitSize) {
             byte[] temp = new byte[readSize];
             System.arraycopy(readBytes, 0, temp, 0, readSize);
