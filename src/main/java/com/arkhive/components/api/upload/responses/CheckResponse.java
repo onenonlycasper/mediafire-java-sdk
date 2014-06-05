@@ -57,12 +57,16 @@ public class CheckResponse extends ApiResponse {
         private String[] words;
 
         public int getCount() {
-            if (count == null || count.isEmpty()) { return 0; }
+            if (count == null || count.isEmpty()) {
+                return 0;
+            }
             return Integer.parseInt(count);
         }
 
         public List<Integer> getWords() {
-            if (words == null || words.length == 0) { return new ArrayList<Integer>(); }
+            if (words == null || words.length == 0) {
+                return new ArrayList<Integer>();
+            }
             return convert(words);
         }
 

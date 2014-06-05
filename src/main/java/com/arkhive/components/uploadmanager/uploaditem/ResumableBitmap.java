@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.arkhive.components.api.upload.responses.CheckResponse.Bitmap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This data structure represents the bitmap
@@ -16,6 +18,7 @@ public class ResumableBitmap {
     private final int count;
     private List<Integer> words = null;
     private List<Boolean> uploadUnits = null;
+    private final Logger logger = LoggerFactory.getLogger(ResumableBitmap.class);
 
     /**
      * Constructor given an int count and Collection of words.
@@ -23,8 +26,8 @@ public class ResumableBitmap {
      * @param words
      */
     public ResumableBitmap(int count, List<Integer> words) {
-        this.count = count;
-        this.words = words;
+        this.count = 0;
+        this.words = new ArrayList<Integer>();
         decodeBitmap();
     }
 
@@ -43,6 +46,7 @@ public class ResumableBitmap {
      * decodes the Bitmap received (given parameters count, [words]).
      */
     private void decodeBitmap() {
+        logger.info("decodeBitmap()");
         List<Boolean> uploadUnits = new ArrayList<Boolean>();
 
         //loop count times
@@ -73,7 +77,10 @@ public class ResumableBitmap {
      * @return - true if uploaded, false if not.
      */
     public boolean isUploaded(int chunkId) {
-        if (uploadUnits.size() == 0) { return false; }
+        logger.info("isUploaded()");
+        if (uploadUnits.size() == 0) {
+            return false;
+        }
         return uploadUnits.get(uploadUnits.size() - 1 - chunkId);
     }
 
@@ -82,14 +89,17 @@ public class ResumableBitmap {
      * @return - the collection of Upload Units.
      */
     public List<Boolean> getUploadUnits() {
+        logger.info("getUploadUnits()");
         return uploadUnits;
     }
 
     public int getCount() {
+        logger.info("getCount()");
         return count;
     }
 
     public List<Integer> getWords() {
+        logger.info("getWords()");
         return words;
     }
 }

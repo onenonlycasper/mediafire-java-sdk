@@ -73,6 +73,7 @@ public class UploadItem {
     }
 
     public int getCheckCount() {
+        logger.info("getCheckCount()");
         count++;
         return count;
     }
@@ -82,6 +83,7 @@ public class UploadItem {
      * @return the quick key.
      */
     public String getQuickKey() {
+        logger.info("getQuickKey()");
         return quickKey;
     }
 
@@ -90,6 +92,7 @@ public class UploadItem {
      * @return the filename.
      */
     public String getFileName() {
+        logger.info("getFileName()");
         return fileName;
     }
 
@@ -98,6 +101,7 @@ public class UploadItem {
      * @return the file data struct.
      */
     public FileData getFileData() {
+        logger.info("getFileData()");
         return fileData;
     }
 
@@ -106,6 +110,7 @@ public class UploadItem {
      * @return - the poll upload key.
      */
     public String getPollUploadKey() {
+        logger.info("getPollUploadKey()");
         return pollUploadKey;
     }
 
@@ -114,6 +119,7 @@ public class UploadItem {
      * @return - the upload options struct.
      */
     public UploadOptions getUploadOptions() {
+        logger.info("getUploadOptions()");
         if (options == null) {
             options = new UploadOptions();
         }
@@ -125,6 +131,7 @@ public class UploadItem {
      * @return - the chunkdata struct.
      */
     public ChunkData getChunkData() {
+        logger.info("getChunkData()");
         if (chunkData == null) {
             chunkData = new ChunkData();
         }
@@ -136,6 +143,7 @@ public class UploadItem {
      * @return - the resumablebitmap struct.
      */
     public ResumableBitmap getBitmap() {
+        logger.info("getBitmap()");
         if (bitmap == null) {
             logger.error(TAG + "   resumable bitmap reference lost");
             bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
@@ -148,6 +156,7 @@ public class UploadItem {
      * @return - the modification time.
      */
     public String getModificationTime() {
+        logger.info("getModificationTime()");
         return modificationTime;
     }
 
@@ -156,6 +165,7 @@ public class UploadItem {
      * @param quickKey - the quickkey to set.
      */
     public void setQuickKey(String quickKey) {
+        logger.info("setQuickKey()");
         this.quickKey = quickKey;
     }
 
@@ -164,6 +174,7 @@ public class UploadItem {
      * @param bitmap - the resumablebitmap to set.
      */
     public void setBitmap(ResumableBitmap bitmap) {
+        logger.info("setBitmap()");
         this.bitmap = bitmap;
     }
 
@@ -172,6 +183,7 @@ public class UploadItem {
      * @param pollUploadKey - the polluploadkey to set.
      */
     public void setPollUploadKey(String pollUploadKey) {
+        logger.info("setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
     }
 
@@ -180,6 +192,7 @@ public class UploadItem {
      * @param modificationTime - the modification time to set.
      */
     public void setModificationTime(String modificationTime) {
+        logger.info("setModificationTime()");
         String timeString;
         if (modificationTime == null || modificationTime.isEmpty()) {
             timeString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US).format(new Date());
@@ -200,6 +213,7 @@ public class UploadItem {
      * @param path
      */
     private void setFileName(String path) {
+        logger.info("setFileName()");
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {

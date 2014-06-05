@@ -60,6 +60,9 @@ public class ResumableProcess implements Runnable {
         int numChunks = uploadItem.getChunkData().getNumberOfUnits();
         int unitSize = uploadItem.getChunkData().getUnitSize();
         long fileSize = uploadItem.getFileData().getFileSize();
+        logger.info("number of chunks: " + numChunks);
+        logger.info("size of units: " + unitSize);
+        logger.info("size of file: " + fileSize);
         // loop through our chunks and create http post with header data and send after we are done looping,
         // let the listener know we are completed
 
@@ -86,6 +89,11 @@ public class ResumableProcess implements Runnable {
                     chunkData = createUploadChunk(chunkSize, bis);
                     chunkHash = getSHA256(chunkData);
                     encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
+
+                    logger.info("chunk #" + chunkNumber + " hash: " + chunkHash);
+                    logger.info("chunk #" + chunkNumber + " size: " + chunkSize);
+                    logger.info("chunk #" + chunkNumber + " name: " + encodedShortFileName);
+
                     fis.close();
                     bis.close();
                 } catch (FileNotFoundException e) {
@@ -103,12 +111,10 @@ public class ResumableProcess implements Runnable {
                 }
 
                 // generate the post headers
-                HashMap<String, String> headers =
-                        generatePostHeaders(encodedShortFileName, fileSize, chunkNumber, chunkHash, chunkSize);
+                HashMap<String, String> headers = generatePostHeaders(encodedShortFileName, fileSize, chunkNumber, chunkHash, chunkSize);
 
                 // generate the get parameters
-                HashMap<String, String> parameters =
-                        generateGetParameters();
+                HashMap<String, String> parameters = generateGetParameters();
 
                 // now send the http post request
                 String jsonResponse;
@@ -133,11 +139,13 @@ public class ResumableProcess implements Runnable {
 
                 // set poll upload key if possible
                 if (shouldSetPollUploadKey(response)) {
-                    uploadItem.setPollUploadKey(response.getDoUpload().getKey());
+                    logger.info("have a poll upload key: " + response.getDoUpload().getPollUploadKey());
+                    uploadItem.setPollUploadKey(response.getDoUpload().getPollUploadKey());
                 }
 
                 // if API response code OR Upload Response Result code have an error then we need to terminate the process
                 if (response.hasError()) {
+                    logger.info("response has an error # " + response.getErrorNumber() + ": " + response.getMessage());
                     notifyManagerCancelled(response);
                     return;
                 }
@@ -146,6 +154,7 @@ public class ResumableProcess implements Runnable {
                     // let the listeners know we are done with this process (because there was an error in this case)
                     if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
                         // let the listeners know we are done with this process (because there was an error in this case)
+                        logger.info("cancelling because result code: " + response.getDoUpload().getResultCode().toString());
                         notifyManagerCancelled(response);
                         return;
                     }
@@ -230,8 +239,7 @@ public class ResumableProcess implements Runnable {
      *
      * @return A HashMap<String, String> containing the parameters to use with the HTTP POST request.
      */
-    private HashMap<String, String> generatePostHeaders(String encodedShortFileName,
-                                                        long fileSize, int chunkNumber, String chunkHash, int chunkSize) {
+    private HashMap<String, String> generatePostHeaders(String encodedShortFileName, long fileSize, int chunkNumber, String chunkHash, int chunkSize) {
         logger.info("generatePostHeaders()");
         HashMap<String, String> headers = new HashMap<String, String>();
         // these headers are related to the entire file
@@ -282,17 +290,24 @@ public class ResumableProcess implements Runnable {
      */
     private int getChunkSize(int chunkNumber, int numChunks, long fileSize, int unitSize) {
         logger.info("getChunkSize()");
+        int chunkSize;
         if (chunkNumber >= numChunks) {
-            return 0; // represents bad size
+            chunkSize = 0; // represents bad size
+        } else {
+            if (fileSize % unitSize == 0) { // all units will be of unitSize
+                logger.info("CHUNK SIZE IS: " + unitSize);
+                chunkSize = unitSize;
+            } else if (chunkNumber < numChunks - 1) { // this unit is of unitSize
+                logger.info("CHUNK SIZE IS: " + unitSize);
+                chunkSize = unitSize;
+            } else { // this unit is "special" and is the modulo of fileSize and unitSize
+                logger.info("CHUNK SIZE IS: " + unitSize);
+                chunkSize = (int) (fileSize % unitSize);
+            }
         }
 
-        if (fileSize % unitSize == 0) { // all units will be of unitSize
-            return unitSize;
-        } else if (chunkNumber < numChunks - 1) { // this unit is of unitSize
-            return unitSize;
-        } else { // this unit is "special" and is the modulo of fileSize and unitSize
-            return (int) (fileSize % unitSize);
-        }
+        logger.info("RETURNING CHUNK SIZE OF: " + chunkSize);
+        return chunkSize;
     }
 
     /**
@@ -351,7 +366,9 @@ public class ResumableProcess implements Runnable {
             String tempString = Integer.toHexString((hashByte & 0xFF) | 0x100).substring(1, 3);
             sb.append(tempString);
         }
-        return sb.toString();
+        String hash = sb.toString();
+        logger.info("HASH FOR THIS CHUNK IS: " + hash);
+        return hash;
     }
 
     /**

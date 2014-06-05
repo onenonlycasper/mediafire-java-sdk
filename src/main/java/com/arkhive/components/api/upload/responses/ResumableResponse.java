@@ -23,7 +23,7 @@ public class ResumableResponse extends ApiResponse {
             }
             return ResumableResultCode.fromInt(Integer.parseInt(result));
         }
-        public String getKey() {
+        public String getPollUploadKey() {
             if (key == null) { return ""; }
             return key;
         }
