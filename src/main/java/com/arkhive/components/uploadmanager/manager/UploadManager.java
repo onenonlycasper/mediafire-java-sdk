@@ -122,13 +122,7 @@ public class UploadManager implements UploadListenerManager {
     public void addUploadRequest(UploadItem uploadItem) {
         logger.info("addUploadRequest()");
         //don't add the item to the backlog queue if it is null or the path is null
-        if (uploadItem == null
-                || uploadItem.getFileData() == null
-                || uploadItem.getFileData().getFileHash() == null
-                || uploadItem.getFileData().getFileHash().isEmpty()
-                || uploadItem.getFileData().getFilePath() == null
-                || uploadItem.getFileData().getFilePath().isEmpty()
-                || uploadItem.getFileData().getFileSize() == 0) {
+        if (uploadItem == null || uploadItem.getFileData() == null || uploadItem.getFileData().getFilePath() == null || uploadItem.getFileData().getFilePath().isEmpty()) {
             logger.info("one or more required parameters are invalid, not adding item to queue");
             return;
         }
