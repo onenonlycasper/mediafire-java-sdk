@@ -49,7 +49,7 @@ public enum PollFileErrorCode {
         switch(this.value) {
             case 0:   returnMessage = "No Error"; break;
             case 1:   returnMessage = "File is larger than the maximum file size allowed"; break;
-            case 2:   returnMessage = "File size cannont be 0"; break;
+            case 2:   returnMessage = "File size cannot be 0"; break;
             case 3:
             case 4:
             case 9:   returnMessage = "Found bad RAR file"; break;
@@ -57,7 +57,7 @@ public enum PollFileErrorCode {
             case 6:
             case 8:
             case 10:  returnMessage = "Unknown internal error"; break;
-            case 7:   returnMessage = "File hash or size mismach"; break;
+            case 7:   returnMessage = "File hash or size mismatch"; break;
             case 12:  returnMessage = "Failed to insert data into database"; break;
             case 13:  returnMessage = "File name already exists in the same parent folder, skipping"; break;
             case 14:  returnMessage = "Destination folder does not exist"; break;

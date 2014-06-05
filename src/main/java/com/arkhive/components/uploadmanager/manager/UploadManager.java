@@ -337,6 +337,7 @@ public class UploadManager implements UploadListenerManager {
         // if this method is called then filerror and result codes are fine, but we may not have received status 99 so
         // check status code and then possibly senditem to the backlog queue.
         if (response.getDoUpload().getStatusCode() != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY) {
+            logger.info("status code: " + response.getDoUpload().getStatusCode().toString() + " need to try again");
             addUploadRequest(uploadItem);
         } else {
             notifyListenersCompleted(uploadItem);
