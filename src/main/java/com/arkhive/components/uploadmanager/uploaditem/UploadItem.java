@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
+    private int count;
     private String fileName;
     private String quickKey;
     private String modificationTime;
@@ -54,11 +55,12 @@ public class UploadItem {
 
         //set Object fields so they won't be null
         fileData = new FileData(path);
-        this.quickKey = "";
-        this.modificationTime = "";
-        this.pollUploadKey = "";
-        this.chunkData = new ChunkData();
-        this.bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
+        quickKey = "";
+        modificationTime = "";
+        pollUploadKey = "";
+        chunkData = new ChunkData();
+        bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
+        count = 0;
     }
 
     /**
@@ -70,10 +72,10 @@ public class UploadItem {
         this(path, null);
     }
 
-    /*============================
-     * public getters
-     *============================*/
-
+    public int getCheckCount() {
+        count++;
+        return count;
+    }
 
     /**
      * Called to get the quick key.
@@ -149,10 +151,6 @@ public class UploadItem {
         return modificationTime;
     }
 
-    /*============================
-     * public setters
-     *============================*/
-
     /**
      * Sets the quick key.
      * @param quickKey - the quickkey to set.
@@ -197,9 +195,6 @@ public class UploadItem {
         }
     }
 
-    /*============================
-     * private methods
-     *============================*/
     /**
      * sets the short file name given the path.
      * @param path
@@ -214,9 +209,6 @@ public class UploadItem {
         }
     }
 
-    /*============================
-     * public methods
-     *============================*/
     /**
      * Determines whether an Upload Item has the same hash as another Upload Item.
      * @param item

@@ -29,6 +29,7 @@ import java.util.concurrent.*;
  */
 public class UploadManager implements UploadListenerManager {
     private static final String TAG = UploadManager.class.getSimpleName();
+    private static final int MAX_CHECK_COUNT = 20;
     private UploadListenerDatabase dbListener;
     private UploadListenerUI uiListener;
     private PausableThreadPoolExecutor executor;
@@ -210,6 +211,13 @@ public class UploadManager implements UploadListenerManager {
     @Override
     public void onCheckCompleted(UploadItem uploadItem, CheckResponse response) {
         logger.info("onCheckCompleted()");
+        //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
+        //20x is high, but it should never happen and will allow for more information gathering.
+        if (uploadItem.getCheckCount() > MAX_CHECK_COUNT) {
+            notifyListenersCancelled(uploadItem);
+            return;
+        }
+
         if (response.getStorageLimitExceeded()) {
             logger.info("--storage limit is exceeded");
             storageLimitExceeded(uploadItem);
@@ -326,9 +334,8 @@ public class UploadManager implements UploadListenerManager {
     @Override
     public void onPollCompleted(UploadItem uploadItem, PollResponse response) {
         logger.info("onPollCompleted()");
-        // if this method is called then filerror and result codes are fine,
-        // but we may not have received status 99 so check status code and
-        // then possibly senditem to the backlog queue.
+        // if this method is called then filerror and result codes are fine, but we may not have received status 99 so
+        // check status code and then possibly senditem to the backlog queue.
         if (response.getDoUpload().getStatusCode() != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY) {
             addUploadRequest(uploadItem);
         } else {
@@ -359,19 +366,6 @@ public class UploadManager implements UploadListenerManager {
         // if there is an api error then add this item to the backlog queue and decrease current thread count
         if (response.hasError()) {
             addUploadRequest(uploadItem);
-            return;
-        }
-
-        // if the response does not have an api error, then onCancelled was called by PollProcess or ResumableProcess
-        if (response instanceof PollResponse) {
-            PollResponse castResponse = (PollResponse) response;
-            // if poll upload called onCancelled() because it ran past its attempts, add this to the backlog queue
-            // if poll upload called onCancelled() because of a file error code or a result error code then drop it from
-            // the queue (via not adding it back to the queue)
-            if (castResponse.getDoUpload().getFileErrorCode() == PollFileErrorCode.NO_ERROR &&
-                    castResponse.getDoUpload().getResultCode() == PollResultCode.SUCCESS) {
-                addUploadRequest(uploadItem);
-            }
         }
     }
 }

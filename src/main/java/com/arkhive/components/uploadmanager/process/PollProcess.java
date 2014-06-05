@@ -158,7 +158,7 @@ public class PollProcess implements Runnable {
 
         // we exceeded our attempts. inform listener that the upload is cancelled. in this case it is because
         // we ran out of attempts.
-        notifyManagerCancelled(response);
+        notifyManagerCompleted(response);
     }
 
     public void notifyListenersException(UploadItem uploadItem, Exception exception) {
