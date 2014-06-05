@@ -163,10 +163,10 @@ public class UploadManager implements UploadListenerManager {
     private void notifyListenersStarted(UploadItem uploadItem) {
         logger.info("notifyListenersStarted()");
         if (uiListener != null) {
-            uiListener.onCompleted(uploadItem);
+            uiListener.onStarted(uploadItem);
         }
         if (dbListener != null) {
-            dbListener.onCompleted(uploadItem);
+            dbListener.onStarted(uploadItem);
         }
     }
 
