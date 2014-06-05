@@ -347,6 +347,13 @@ public class ResumableProcess implements Runnable {
             readBytes = temp;
         }
 
+        //debug
+        StringBuilder sb = new StringBuilder();
+        for (Byte b : readBytes) {
+            sb.append(b.toString());
+        }
+        logger.info("CREATED UPLOAD CHUNK OF: " + sb.toString());
+
         return readBytes;
     }
 
