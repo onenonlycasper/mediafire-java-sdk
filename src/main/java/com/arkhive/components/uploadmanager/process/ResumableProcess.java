@@ -66,7 +66,6 @@ public class ResumableProcess implements Runnable {
         // loop through our chunks and create http post with header data and send after we are done looping,
         // let the listener know we are completed
 
-
         for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {
             logger.info("   enter chunk upload loop()");
             // if the bitmap says this chunk number is uploaded then we can just skip it, if not, we upload it.
@@ -86,7 +85,7 @@ public class ResumableProcess implements Runnable {
                 try {
                     fis = new FileInputStream(uploadItem.getFileData().getFilePath());
                     bis = new BufferedInputStream(fis);
-                    chunkData = createUploadChunk(chunkSize, bis);
+                    chunkData = createUploadChunk(chunkSize, numChunks, unitSize, bis);
                     chunkHash = getSHA256(chunkData);
                     encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
 
@@ -279,6 +278,24 @@ public class ResumableProcess implements Runnable {
     }
 
     /**
+     * only set the upload key for the upload item if response/doupload/result is 14 or 0.
+     *
+     * @param response The response from the resumable upload API request.
+     *
+     * @return Flag indicating if the upload key should be set.
+     */
+    private boolean shouldSetPollUploadKey(ResumableResponse response) {
+        logger.info("shouldSetPollUploadKey()");
+        switch (response.getDoUpload().getResultCode()) {
+            case NO_ERROR:
+            case SUCCESS_FILE_MOVED_TO_ROOT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * calculates the chunk size.
      *
      * @param chunkNumber The current chunk number.
@@ -311,36 +328,13 @@ public class ResumableProcess implements Runnable {
     }
 
     /**
-     * only set the upload key for the upload item if response/doupload/result is 14 or 0.
-     *
-     * @param response The response from the resumable upload API request.
-     *
-     * @return Flag indicating if the upload key should be set.
+     * creates an upload chunk array of bytes based on a position in a file.
      */
-    private boolean shouldSetPollUploadKey(ResumableResponse response) {
-        logger.info("shouldSetPollUploadKey()");
-        switch (response.getDoUpload().getResultCode()) {
-            case NO_ERROR:
-            case SUCCESS_FILE_MOVED_TO_ROOT:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * creates an upload chunk array of bytes.
-     *
-     * @param unitSize   The size of the chunk to create.
-     * @param fileStream The BufferedInputStream containing the upload file.
-     *
-     * @return an array of bytes with unitSize size, or 0 size if IOException is caught
-     */
-    private byte[] createUploadChunk(long unitSize, BufferedInputStream fileStream) throws IOException {
+    private byte[] createUploadChunk(int chunkNumber, int numChunks, long unitSize, BufferedInputStream fileStream) throws IOException {
         logger.info("createUploadChunk()");
         byte[] readBytes = new byte[(int) unitSize];
-        int readSize;
-        readSize = fileStream.read(readBytes, 0, (int) unitSize);
+        int offset = calculateOffSet(chunkNumber, numChunks, unitSize);
+        int readSize = fileStream.read(readBytes, 0, (int) unitSize);
         if (readSize != unitSize) {
             byte[] temp = new byte[readSize];
             System.arraycopy(readBytes, 0, temp, 0, readSize);
@@ -355,6 +349,17 @@ public class ResumableProcess implements Runnable {
         logger.info("CREATED UPLOAD CHUNK OF: " + sb.toString());
 
         return readBytes;
+    }
+
+    private int calculateOffSet(int chunkNumber, int numChunks, long unitSize) {
+        int offset = 0;
+        if (chunkNumber < numChunks -1) { // not on the last chunk
+            offset = (int) ((chunkNumber + 1)  * unitSize);
+        } else { // on the last chunk
+            offset = (int) (chunkNumber * unitSize);
+        }
+
+        return offset;
     }
 
     /**
