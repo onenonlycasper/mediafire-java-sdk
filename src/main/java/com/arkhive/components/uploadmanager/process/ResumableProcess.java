@@ -85,7 +85,7 @@ public class ResumableProcess implements Runnable {
                 try {
                     fis = new FileInputStream(uploadItem.getFileData().getFilePath());
                     bis = new BufferedInputStream(fis);
-                    chunkData = createUploadChunk(unitSize, bis);
+                    chunkData = createUploadChunk(unitSize, chunkNumber, bis);
                     chunkHash = getSHA256(chunkData);
                     encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
 
@@ -330,10 +330,11 @@ public class ResumableProcess implements Runnable {
     /**
      * creates an upload chunk array of bytes based on a position in a file.
      */
-    private byte[] createUploadChunk(long unitSize, BufferedInputStream fileStream) throws IOException {
+    private byte[] createUploadChunk(long unitSize, int chunkNumber, BufferedInputStream fileStream) throws IOException {
         logger.info("createUploadChunk()");
         byte[] readBytes = new byte[(int) unitSize];
-        int readSize = fileStream.read(readBytes, 0, (int) unitSize);
+        int offset = (int) (unitSize * chunkNumber);
+        int readSize = fileStream.read(readBytes, offset, (int) unitSize);
         if (readSize != unitSize) {
             byte[] temp = new byte[readSize];
             System.arraycopy(readBytes, 0, temp, 0, readSize);
