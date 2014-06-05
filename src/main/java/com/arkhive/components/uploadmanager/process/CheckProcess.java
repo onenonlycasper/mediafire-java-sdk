@@ -41,6 +41,8 @@ public class CheckProcess implements Runnable {
     @Override
     public void run() {
         logger.info(" run()");
+        uploadItem.getFileData().setFileSize();
+        uploadItem.getFileData().setFileHash();
         check();
     }
 

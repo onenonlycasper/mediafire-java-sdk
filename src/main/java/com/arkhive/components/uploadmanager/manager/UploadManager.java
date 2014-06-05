@@ -122,13 +122,7 @@ public class UploadManager implements UploadListenerManager {
     public void addUploadRequest(UploadItem uploadItem) {
         logger.info("addUploadRequest()");
         //don't add the item to the backlog queue if it is null or the path is null
-        if (uploadItem == null
-                || uploadItem.getFileData() == null
-                || uploadItem.getFileData().getFileHash() == null
-                || uploadItem.getFileData().getFileHash().isEmpty()
-                || uploadItem.getFileData().getFilePath() == null
-                || uploadItem.getFileData().getFilePath().isEmpty()
-                || uploadItem.getFileData().getFileSize() == 0) {
+        if (uploadItem == null || uploadItem.getFileData() == null || uploadItem.getFileData().getFilePath() == null || uploadItem.getFileData().getFilePath().isEmpty()) {
             logger.info("one or more required parameters are invalid, not adding item to queue");
             return;
         }
@@ -169,10 +163,10 @@ public class UploadManager implements UploadListenerManager {
     private void notifyListenersStarted(UploadItem uploadItem) {
         logger.info("notifyListenersStarted()");
         if (uiListener != null) {
-            uiListener.onCompleted(uploadItem);
+            uiListener.onStarted(uploadItem);
         }
         if (dbListener != null) {
-            dbListener.onCompleted(uploadItem);
+            dbListener.onStarted(uploadItem);
         }
     }
 
@@ -337,6 +331,7 @@ public class UploadManager implements UploadListenerManager {
         // if this method is called then filerror and result codes are fine, but we may not have received status 99 so
         // check status code and then possibly senditem to the backlog queue.
         if (response.getDoUpload().getStatusCode() != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY) {
+            logger.info("status code: " + response.getDoUpload().getStatusCode().toString() + " need to try again");
             addUploadRequest(uploadItem);
         } else {
             notifyListenersCompleted(uploadItem);

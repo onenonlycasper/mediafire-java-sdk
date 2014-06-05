@@ -1,5 +1,8 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Data structure used within UploadItem.
  * This data structure stores the unit size
@@ -12,6 +15,7 @@ package com.arkhive.components.uploadmanager.uploaditem;
 public class ChunkData {
     private int unitSize;
     private int numberOfUnits;
+    private final Logger logger = LoggerFactory.getLogger(ChunkData.class);
 
     /**
      * Sole constructor for this data structure.
@@ -28,13 +32,21 @@ public class ChunkData {
      * Get the unit size for each chunk.
      * @return
      */
-    public int getUnitSize() { return unitSize; }
+    public int getUnitSize() {
+        logger.info("getUnitSize()");
+        logger.info("RETURNING UNIT SIZE: " + unitSize);
+        return unitSize;
+    }
 
     /**
      * Get the number of chunks.
      * @return
      */
-    public int getNumberOfUnits() { return numberOfUnits; }
+    public int getNumberOfUnits() {
+        logger.info("getNumberOfUnits()");
+        logger.info("RETURNING NUMBER OF UNITS: " + numberOfUnits);
+        return numberOfUnits;
+    }
     
     /*============================
      * public setters
@@ -44,7 +56,9 @@ public class ChunkData {
      * @param unitSize
      */
     public void setUnitSize(int unitSize) {
+        logger.info("setUnitSize()");
         this.unitSize = unitSize;
+        logger.info("UNIT SIZE SET TO: " + this.unitSize);
     }
 
     /**
@@ -52,7 +66,9 @@ public class ChunkData {
      * @param numberOfUnits
      */
     public void setNumberOfUnits(int numberOfUnits) {
+        logger.info("setNumberOfUnits()");
         this.numberOfUnits = numberOfUnits;
+        logger.info("NUMBER OF UNITS SET TO: " + this.numberOfUnits);
     }
 
 }
