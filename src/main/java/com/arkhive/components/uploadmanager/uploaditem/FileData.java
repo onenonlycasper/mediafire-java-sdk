@@ -30,8 +30,8 @@ public class FileData {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
         this.filePath = filePath;
-        setFileSize();
         setFileHash();
+        setFileSize();
     }
 
     /*============================
@@ -91,7 +91,8 @@ public class FileData {
             channel = null;
             fileInputStream = null;
         }
-        logger.info("--file size set to: " + this.fileSize);
+
+        logger.info("FILE SIZE IS SET TO: " + fileHash);
     }
 
     private void setFileHash() {
@@ -104,7 +105,7 @@ public class FileData {
             fileInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
             logger.error(TAG + "Exception: " + e);
-            this.fileHash = "";
+            fileHash = "";
             return;
         }
 
@@ -128,23 +129,23 @@ public class FileData {
                 sb.append(tempString);
             }
 
-            this.fileHash = sb.toString();
+            fileHash = sb.toString();
             fileInputStream.close();
             fileUri.close();
             in.close();
         } catch (NoSuchAlgorithmException e) {
             logger.error(TAG + "Exception: " + e);
-            this.fileHash = "";
+            fileHash = "";
         } catch (IOException e) {
             logger.error(TAG + "Exception: " + e);
-            this.fileHash = "";
+            fileHash = "";
         } finally {
             fileInputStream = null;
             fileUri = null;
             in = null;
         }
 
-        logger.info("--file hash set to: " + fileHash);
+        logger.info("FILE HASH IS SET TO: " + fileHash);
     }
 
     @Override
