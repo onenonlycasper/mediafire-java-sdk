@@ -92,7 +92,7 @@ public class FileData {
             fileInputStream = null;
         }
 
-        logger.info("FILE SIZE IS SET TO: " + fileHash);
+        logger.info("FILE SIZE IS SET TO: " + fileSize);
     }
 
     private void setFileHash() {
