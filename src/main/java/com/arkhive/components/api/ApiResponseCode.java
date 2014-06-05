@@ -157,7 +157,7 @@ public enum ApiResponseCode {
     ERROR_NON_US_USER(244),
     ;
 
-    private int value;
+    private final int value;
 
     private static final int ZIP_MAX_FILESIZE_READABLE = 0; //TODO(cnajar): get correct value from rabie
     private static final int ZIP_MAX_TOTAL_FILESIZE = 0; //TODO(cnajar): get correct value from rabie

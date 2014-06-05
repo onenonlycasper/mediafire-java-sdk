@@ -11,7 +11,7 @@ package com.arkhive.components.uploadmanager.uploaditem;
  *
  */
 public class UploadOptions {
-    private boolean resumable;
+    private final boolean resumable;
     private String uploadFolderKey;
     private String actionOnDuplicate;
     private String versionControl;

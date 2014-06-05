@@ -23,8 +23,8 @@ class InternalUploadTokenHandler implements ApiRequestHandler {
      *
      */
     private final SessionManager sessionManager;
-    private List<ActionTokenRequestHandler> handlers;
-    private Gson gson = new Gson();
+    private final List<ActionTokenRequestHandler> handlers;
+    private final Gson gson = new Gson();
 
     protected InternalUploadTokenHandler(SessionManager sessionManager, List<ActionTokenRequestHandler> handlers) {
         this.sessionManager = sessionManager;

@@ -23,7 +23,7 @@ public class UploadItem {
     private String quickKey;
     private String modificationTime;
     private UploadOptions options;
-    private FileData fileData;
+    private final FileData fileData;
     private ChunkData chunkData;
     private ResumableBitmap bitmap;
     private String pollUploadKey;

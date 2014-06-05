@@ -26,10 +26,10 @@ import sun.misc.BASE64Decoder;
  *
  */
 public class RawTrie {
-    private String data;
+    private final String data;
     private List<String> dataPointer;
-    private Node root;
-    private String directory;
+    private final Node root;
+    private final String directory;
 
     public RawTrie(String directory, String data) {
         if (directory == null || data == null) {
@@ -134,9 +134,9 @@ public class RawTrie {
     public int convertEndNodeToPointer(String nodeValue) throws Exception {
         if (nodeValue.length() < 3) {
             throw new Exception("Invalid node value");
-        } else if (!String.valueOf(nodeValue.charAt(0)).equalsIgnoreCase("[")) {
+        } else if (!"[".equalsIgnoreCase(String.valueOf(nodeValue.charAt(0)))) {
             throw new Exception("Invalid node value");
-        } else if (!String.valueOf(nodeValue.charAt(nodeValue.length() - 1)).equalsIgnoreCase("]")) {
+        } else if (!"]".equalsIgnoreCase(String.valueOf(nodeValue.charAt(nodeValue.length() - 1)))) {
             throw new Exception("Invalid node value");
         }
 

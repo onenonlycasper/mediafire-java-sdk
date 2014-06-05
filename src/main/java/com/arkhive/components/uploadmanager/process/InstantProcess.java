@@ -29,10 +29,10 @@ import java.util.Map;
 public class InstantProcess implements Runnable {
     private static final String TAG         = InstantProcess.class.getSimpleName();
     private static final String INSTANT_URI = "/api/upload/instant.php";
-    private SessionManager sessionManager;
-    private UploadItem     uploadItem;
+    private final SessionManager sessionManager;
+    private final UploadItem     uploadItem;
     private final UploadListenerManager uploadManager;
-    private Logger logger = LoggerFactory.getLogger(InstantProcess.class);
+    private final Logger logger = LoggerFactory.getLogger(InstantProcess.class);
 
     public InstantProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
         this.sessionManager = sessionManager;

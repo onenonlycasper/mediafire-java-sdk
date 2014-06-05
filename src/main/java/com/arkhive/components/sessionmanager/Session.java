@@ -25,9 +25,9 @@ public class Session {
      */
     private BigInteger secretKey;
     /* The time value used to create an API signature. */
-    private String time;
+    private final String time;
     /* The session token used to create an API signature. */
-    private String sessionToken;
+    private final String sessionToken;
 
     Logger logger = LoggerFactory.getLogger(Session.class);
 

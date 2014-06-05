@@ -34,37 +34,23 @@ import org.slf4j.LoggerFactory;
 public class PollProcess implements Runnable {
     private static final String TAG = PollProcess.class.getSimpleName();
     private static final String POLL_UPLOAD_URI = "/api/upload/poll_upload.php";
-    private SessionManager sessionManager;
-    private UploadItem uploadItem;
-    private long sleepTime;
-    private int maxLoopAttempts;
-    private UploadListenerManager uploadManager;
-    private Logger logger = LoggerFactory.getLogger(PollProcess.class);
+    private static final long TIME_BETWEEN_POLLS = 2000;
+    private static final int MAX_POLLS = 60;
+    private final SessionManager sessionManager;
+    private final UploadItem uploadItem;
+    private final UploadListenerManager uploadManager;
+    private final Logger logger = LoggerFactory.getLogger(PollProcess.class);
 
     /**
      * Constructor for an upload with a listener. This constructor uses sleepTime for the loop sleep time with
      * loopAttempts for the loop attempts.
      * @param sessionManager - the session to use for this upload process
      * @param uploadItem - the item to be uploaded
-     * @param sleepTime - milliseconds to wait between polls
-     * @param maxLoopAttempts - max number of polls
      */
-    public PollProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem, long sleepTime, int maxLoopAttempts) {
+    public PollProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
         this.sessionManager = sessionManager;
         this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
-        this.sleepTime = sleepTime;
-        this.maxLoopAttempts = maxLoopAttempts;
-    }
-
-    /**
-     * Constructor for an upload with a listener. This constructor uses 2000ms for the loop sleep time with 60 attempts
-     * for the loop attempts
-     * @param sessionManager - the session to use for this upload process
-     * @param uploadItem - the item to be uploaded
-     */
-    public PollProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem) {
-        this(sessionManager, uploadManager, uploadItem, 2000, 60);
     }
 
     @Override
@@ -148,13 +134,13 @@ public class PollProcess implements Runnable {
 
             //wait 2 seconds before next api call
             try {
-                Thread.sleep(sleepTime);
+                Thread.sleep(TIME_BETWEEN_POLLS);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("Exception: " + e);
                 Thread.currentThread().interrupt();
             }
 
-        } while (pollCount < maxLoopAttempts);
+        } while (pollCount < MAX_POLLS);
 
         // we exceeded our attempts. inform listener that the upload is cancelled. in this case it is because
         // we ran out of attempts.

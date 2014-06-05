@@ -28,13 +28,13 @@ import com.arkhive.components.sessionmanager.SessionManager;
 public class SessionRequest implements HttpRequestHandler {
     /*uri for a session token request*/
     private static final String URI = "/api/user/get_session_token.php?";
-    private Credentials credentials;
-    private String applicationId;
-    private String apiKey;
-    private String domain;
-    private HttpInterface httpInterface;
-    private SessionRequestHandler callback;
-    private Gson gson = new Gson();
+    private final Credentials credentials;
+    private final String applicationId;
+    private final String apiKey;
+    private final String domain;
+    private final HttpInterface httpInterface;
+    private final SessionRequestHandler callback;
+    private final Gson gson = new Gson();
 
     /** Requests a session from the web API.
      *

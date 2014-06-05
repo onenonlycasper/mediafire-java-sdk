@@ -32,8 +32,8 @@ public class UploadManager implements UploadListenerManager {
     private static final int MAX_CHECK_COUNT = 20;
     private UploadListenerDatabase dbListener;
     private UploadListenerUI uiListener;
-    private PausableThreadPoolExecutor executor;
-    private BlockingQueue<Runnable> workQueue;
+    private final PausableThreadPoolExecutor executor;
+    private final BlockingQueue<Runnable> workQueue;
     private final SessionManager sessionManager;
 
     private final Logger logger = LoggerFactory.getLogger(UploadManager.class);

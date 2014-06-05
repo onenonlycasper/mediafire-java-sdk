@@ -13,7 +13,7 @@ import com.arkhive.components.api.upload.responses.CheckResponse.Bitmap;
  *
  */
 public class ResumableBitmap {
-    private int count;
+    private final int count;
     private List<Integer> words = null;
     private List<Boolean> uploadUnits = null;
 

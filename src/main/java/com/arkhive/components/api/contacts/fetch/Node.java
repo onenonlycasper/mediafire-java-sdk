@@ -9,8 +9,8 @@ import java.util.List;
  *
  */
 public class Node {
-    private String data;
-    private List<Node> children;
+    private final String data;
+    private final List<Node> children;
 
     public Node(String data) {
         this.data = data;

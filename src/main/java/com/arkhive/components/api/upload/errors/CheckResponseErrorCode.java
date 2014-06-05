@@ -12,7 +12,7 @@ public enum CheckResponseErrorCode {
     NO_ERROR(0),
     ;
 
-    private int value;
+    private final int value;
 
     private CheckResponseErrorCode(int value) { this.value = value; }
 

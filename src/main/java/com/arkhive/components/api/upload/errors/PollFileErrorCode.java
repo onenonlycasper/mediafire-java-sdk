@@ -28,7 +28,7 @@ public enum PollFileErrorCode {
     FAILED_TO_CREATE_PATH(19),
     ;
 
-    private int value;
+    private final int value;
 
     private PollFileErrorCode(int value) { this.value = value; }
 

@@ -6,9 +6,9 @@ import java.io.IOException;
 
 /** Class used to send a GET request to the web API. */
 public class HttpGetRequest implements Runnable {
-    private HttpRequestHandler handler;
-    private String call;
-    private HttpInterface httpInterface;
+    private final HttpRequestHandler handler;
+    private final String call;
+    private final HttpInterface httpInterface;
 
     /** Initializes the HttpRequestRunner object.
      *

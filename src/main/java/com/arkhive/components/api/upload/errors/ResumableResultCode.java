@@ -58,7 +58,7 @@ public enum ResumableResultCode {
     INTERNAL_SERVER_ERROR_16(-301),
     ;
 
-    private int value;
+    private final int value;
 
     private ResumableResultCode(int value) { this.value = value; }
 

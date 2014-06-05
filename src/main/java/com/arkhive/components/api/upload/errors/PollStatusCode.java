@@ -20,7 +20,7 @@ public enum PollStatusCode {
     NO_MORE_REQUESTS_FOR_THIS_KEY(99),
     ;
 
-    private int value;
+    private final int value;
 
     private PollStatusCode(int value) { this.value = value; }
 

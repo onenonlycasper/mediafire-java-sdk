@@ -145,7 +145,7 @@ public class FileSystemItem {
      *
      */
     public static class Builder {
-        private FileSystemItem item = new FileSystemItem();
+        private final FileSystemItem item = new FileSystemItem();
 
         public Builder isPrivate(boolean value) {
             item.isPrivate = value;

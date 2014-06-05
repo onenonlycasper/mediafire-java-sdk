@@ -27,10 +27,10 @@ import org.slf4j.LoggerFactory;
 public class CheckProcess implements Runnable {
     private static final String TAG = CheckProcess.class.getSimpleName();
     private static final String CHECK_URI = "/api/upload/check.php";
-    private SessionManager sessionManager;
-    private UploadItem uploadItem;
+    private final SessionManager sessionManager;
+    private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
-    private Logger logger = LoggerFactory.getLogger(CheckProcess.class);
+    private final Logger logger = LoggerFactory.getLogger(CheckProcess.class);
 
     public CheckProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
         this.sessionManager = sessionManager;

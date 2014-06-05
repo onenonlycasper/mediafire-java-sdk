@@ -12,7 +12,7 @@ public enum PollResultCode {
     UPLOAD_KEY_NOT_FOUND(-80),
     ;
 
-    private int value;
+    private final int value;
 
     private PollResultCode(int value) { this.value = value; }
 

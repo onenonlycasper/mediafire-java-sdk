@@ -22,8 +22,8 @@ class InternalImageTokenHandler implements ApiRequestHandler {
      *
      */
     private final SessionManager sessionManager;
-    private List<ActionTokenRequestHandler> handlers;
-    private Gson gson = new Gson();
+    private final List<ActionTokenRequestHandler> handlers;
+    private final Gson gson = new Gson();
 
     public InternalImageTokenHandler(SessionManager sessionManager, List<ActionTokenRequestHandler> handlers) {
         this.sessionManager = sessionManager;
