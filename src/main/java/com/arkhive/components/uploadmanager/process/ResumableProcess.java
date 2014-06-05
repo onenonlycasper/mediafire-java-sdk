@@ -338,7 +338,7 @@ public class ResumableProcess implements Runnable {
         int skipLength = offset;
         logger.info("offset is: " + offset);
         logger.info("using unit size of: " + unitSize);
-        logger.info("skipping fileStream");
+        logger.info("skipping fileStream bytes: " + skipLength + " bytes");
         fileStream.skip(skipLength);
         logger.info("starting read of file which has available bytes to read of: " + fileStream.available());
         int readSize = fileStream.read(readBytes, 0, (int) unitSize);
