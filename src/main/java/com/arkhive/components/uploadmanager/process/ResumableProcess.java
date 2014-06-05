@@ -352,8 +352,10 @@ public class ResumableProcess implements Runnable {
     }
 
     private int calculateOffSet(int chunkNumber, int numChunks, long unitSize) {
-        int offset = 0;
-        if (chunkNumber < numChunks -1) { // not on the last chunk
+        int offset;
+        if (chunkNumber == 0) {
+            offset = 0;
+        } else if (chunkNumber < numChunks -1) { // not on the last chunk
             offset = (int) ((chunkNumber + 1)  * unitSize);
         } else { // on the last chunk
             offset = (int) (chunkNumber * unitSize);
