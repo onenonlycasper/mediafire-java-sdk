@@ -119,6 +119,9 @@ public class PollProcess implements Runnable {
 
                     if (response.getDoUpload().getFileErrorCode() != PollFileErrorCode.NO_ERROR) {
                         logger.info("result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
+                        logger.info("file path: " + uploadItem.getFileData().getFilePath());
+                        logger.info("file hash: " + uploadItem.getFileData().getFileHash());
+                        logger.info("file size: " + uploadItem.getFileData().getFileSize());
                         notifyManagerCancelled(response);
                         return;
                     }
