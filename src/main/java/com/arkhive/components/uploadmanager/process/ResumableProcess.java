@@ -333,8 +333,13 @@ public class ResumableProcess implements Runnable {
     private byte[] createUploadChunk(long unitSize, int chunkNumber, BufferedInputStream fileStream) throws IOException {
         logger.info("createUploadChunk()");
         byte[] readBytes = new byte[(int) unitSize];
+        logger.info("created byte array of size: " +readBytes.length);
         int offset = (int) (unitSize * chunkNumber);
+        logger.info("offset is: " + offset);
+        logger.info("using unit size of: " + unitSize);
+        logger.info("starting read of file which has available bytes to read of: " + fileStream.available());
         int readSize = fileStream.read(readBytes, offset, (int) unitSize);
+        logger.info("got read size of: " + readSize);
         if (readSize != unitSize) {
             byte[] temp = new byte[readSize];
             System.arraycopy(readBytes, 0, temp, 0, readSize);
