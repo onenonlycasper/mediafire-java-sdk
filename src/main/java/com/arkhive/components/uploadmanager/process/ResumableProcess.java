@@ -337,6 +337,8 @@ public class ResumableProcess implements Runnable {
         int offset = (int) (unitSize * chunkNumber);
         logger.info("offset is: " + offset);
         logger.info("using unit size of: " + unitSize);
+        logger.info("resetting fileStream");
+        fileStream.reset();
         logger.info("starting read of file which has available bytes to read of: " + fileStream.available());
         int readSize = fileStream.read(readBytes, offset, (int) unitSize);
         logger.info("got read size of: " + readSize);
