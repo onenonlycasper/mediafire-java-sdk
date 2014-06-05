@@ -85,7 +85,7 @@ public class ResumableProcess implements Runnable {
                 try {
                     fis = new FileInputStream(uploadItem.getFileData().getFilePath());
                     bis = new BufferedInputStream(fis);
-                    chunkData = createUploadChunk(chunkSize, numChunks, unitSize, bis);
+                    chunkData = createUploadChunk(unitSize, bis);
                     chunkHash = getSHA256(chunkData);
                     encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
 
@@ -330,11 +330,10 @@ public class ResumableProcess implements Runnable {
     /**
      * creates an upload chunk array of bytes based on a position in a file.
      */
-    private byte[] createUploadChunk(int chunkNumber, int numChunks, long unitSize, BufferedInputStream fileStream) throws IOException {
+    private byte[] createUploadChunk(long unitSize, BufferedInputStream fileStream) throws IOException {
         logger.info("createUploadChunk()");
         byte[] readBytes = new byte[(int) unitSize];
-        int offset = calculateOffSet(chunkNumber, numChunks, unitSize);
-        int readSize = fileStream.read(readBytes, offset, (int) unitSize);
+        int readSize = fileStream.read(readBytes, 0, (int) unitSize);
         if (readSize != unitSize) {
             byte[] temp = new byte[readSize];
             System.arraycopy(readBytes, 0, temp, 0, readSize);
@@ -349,19 +348,6 @@ public class ResumableProcess implements Runnable {
         logger.info("CREATED UPLOAD CHUNK OF: " + sb.toString());
 
         return readBytes;
-    }
-
-    private int calculateOffSet(int chunkNumber, int numChunks, long unitSize) {
-        int offset;
-        if (chunkNumber == 0) {
-            offset = 0;
-        } else if (chunkNumber < numChunks -1) { // not on the last chunk
-            offset = (int) ((chunkNumber + 1)  * unitSize);
-        } else { // on the last chunk
-            offset = (int) (chunkNumber * unitSize);
-        }
-
-        return offset;
     }
 
     /**

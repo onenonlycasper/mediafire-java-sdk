@@ -30,13 +30,8 @@ public class FileData {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
         this.filePath = filePath;
-        setFileHash();
-        setFileSize();
     }
 
-    /*============================
-     * public getters
-     *============================*/
     /**
      * Gets the filename.
      * @return
@@ -64,38 +59,36 @@ public class FileData {
         return fileHash;
     }
 
-    /*============================
-     * private setters
-     *============================*/
-    private void setFileSize() {
+    public void setFileSize() {
         logger.info("setFileSize()");
         File file = new File(getFilePath());
-        FileInputStream fileInputStream;
-        FileChannel channel;
-        try {
-            fileInputStream = new FileInputStream(file);
-            channel = fileInputStream.getChannel();
-            fileSize = channel.size();
-
-            fileInputStream.close();
-            channel.close();
-            fileInputStream.close();
-        } catch (FileNotFoundException e) {
-            logger.error(TAG + "Exception: " + e);
-            fileSize = 0;
-            filePath = "";
-        } catch (IOException e) {
-            logger.error(TAG + "Exception: " + e);
-            fileSize = 0;
-        } finally {
-            channel = null;
-            fileInputStream = null;
-        }
+//        FileInputStream fileInputStream;
+//        FileChannel channel;
+//        try {
+//            fileInputStream = new FileInputStream(file);
+//            channel = fileInputStream.getChannel();
+//            fileSize = channel.size();
+//
+//            fileInputStream.close();
+//            channel.close();
+//            fileInputStream.close();
+//        } catch (FileNotFoundException e) {
+//            logger.error(TAG + "Exception: " + e);
+//            fileSize = 0;
+//            filePath = "";
+//        } catch (IOException e) {
+//            logger.error(TAG + "Exception: " + e);
+//            fileSize = 0;
+//        } finally {
+//            channel = null;
+//            fileInputStream = null;
+//        }
+        fileSize = file.length();
 
         logger.info("FILE SIZE IS SET TO: " + fileSize);
     }
 
-    private void setFileHash() {
+    public void setFileHash() {
         logger.info("setFileHash()");
         File file = new File(filePath);
         FileInputStream fileInputStream;
