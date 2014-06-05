@@ -6,7 +6,7 @@ import java.util.Map;
 /** Value object for holding a contact information. */
 public class Contact {
 
-    private ContactVO contactVO;
+    private final ContactVO contactVO;
 
     private Contact(ContactVO contactVO) { this.contactVO = contactVO; }
 

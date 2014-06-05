@@ -20,7 +20,7 @@ public enum PollStatusCode {
     NO_MORE_REQUESTS_FOR_THIS_KEY(99),
     ;
 
-    private int value;
+    private final int value;
 
     private PollStatusCode(int value) { this.value = value; }
 
@@ -37,7 +37,7 @@ public enum PollStatusCode {
 
     @Override
     public String toString() {
-        String returnMessage = "";
+        String returnMessage;
         switch(this.value) {
             case 0:         returnMessage = "Unknown or no status available for this key"; break;
             case 2:         returnMessage = "Key is ready for use"; break;

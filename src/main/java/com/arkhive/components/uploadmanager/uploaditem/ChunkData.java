@@ -15,14 +15,10 @@ public class ChunkData {
 
     /**
      * Sole constructor for this data structure.
-     * @param unitSize - unit size as received from pre upload
-     * response
-     * @param numberOfUnits - number of units as received from
-     * pre upload response
      */
-    public ChunkData(int unitSize, int numberOfUnits) {
-        this.unitSize = unitSize;
-        this.numberOfUnits = numberOfUnits;
+    public ChunkData() {
+        unitSize = 0;
+        numberOfUnits = 0;
     }
 
     /*============================
@@ -33,7 +29,7 @@ public class ChunkData {
      * @return
      */
     public int getUnitSize() { return unitSize; }
-    
+
     /**
      * Get the number of chunks.
      * @return
@@ -48,15 +44,15 @@ public class ChunkData {
      * @param unitSize
      */
     public void setUnitSize(int unitSize) {
-      this.unitSize = unitSize;
+        this.unitSize = unitSize;
     }
-    
+
     /**
      * sets the number of units to the passed value.
      * @param numberOfUnits
      */
     public void setNumberOfUnits(int numberOfUnits) {
-      this.numberOfUnits = numberOfUnits;
+        this.numberOfUnits = numberOfUnits;
     }
-    
+
 }

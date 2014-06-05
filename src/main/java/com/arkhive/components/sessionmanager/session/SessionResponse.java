@@ -52,7 +52,7 @@ public class SessionResponse {
      * @return The secret key.
      */
     public BigInteger getSecretKey() {
-      if (secret_key == null) { this.secret_key = BigInteger.valueOf(0); }
+        if (secret_key == null) { this.secret_key = BigInteger.valueOf(0); }
         return this.secret_key;
     }
 

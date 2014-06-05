@@ -12,7 +12,7 @@ public enum PollResultCode {
     UPLOAD_KEY_NOT_FOUND(-80),
     ;
 
-    private int value;
+    private final int value;
 
     private PollResultCode(int value) { this.value = value; }
 
@@ -29,7 +29,7 @@ public enum PollResultCode {
 
     @Override
     public String toString() {
-        String returnMessage = "";
+        String returnMessage;
         switch(this.value) {
             case 0:         returnMessage = "Success"; break;
             case -20:       returnMessage = "Invalid Upload Key"; break;

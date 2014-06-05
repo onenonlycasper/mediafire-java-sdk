@@ -26,7 +26,9 @@ public class ContactResponse extends ApiResponse {
     }
 
     public List<SingleContactResponse> getContacts() {
-      if (contacts == null) { contacts = new SingleContactResponse[0]; }
+        if (contacts == null) {
+            contacts = new SingleContactResponse[0];
+        }
         return Arrays.asList(contacts);
     }
 

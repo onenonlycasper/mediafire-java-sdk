@@ -17,15 +17,14 @@ import com.arkhive.components.sessionmanager.session.ActionTokenResponse;
  * When the API call returns, create a new ActionTokenResponse, and notify
  * all of the handlers in the list.
  *
- * @param  handlers  A list of ActionTokenRequestHandler awaiting a new upload action token.
  */
 class InternalUploadTokenHandler implements ApiRequestHandler {
     /**
-   * 
-   */
-  private final SessionManager sessionManager;
-    private List<ActionTokenRequestHandler> handlers;
-    private Gson gson = new Gson();
+     *
+     */
+    private final SessionManager sessionManager;
+    private final List<ActionTokenRequestHandler> handlers;
+    private final Gson gson = new Gson();
 
     protected InternalUploadTokenHandler(SessionManager sessionManager, List<ActionTokenRequestHandler> handlers) {
         this.sessionManager = sessionManager;
@@ -34,10 +33,10 @@ class InternalUploadTokenHandler implements ApiRequestHandler {
 
     @Override
     public void onRequestComplete(String response) {
-       JsonElement jsonResponse = Utility.getResponseElement(response);
-       ActionTokenResponse actionTokenResponse = new ActionTokenResponse();
-       actionTokenResponse = gson.fromJson(jsonResponse, ActionTokenResponse.class);
-       sessionManager.setUploadActionToken(actionTokenResponse);
+        JsonElement jsonResponse = Utility.getResponseElement(response);
+        ActionTokenResponse actionTokenResponse;
+        actionTokenResponse = gson.fromJson(jsonResponse, ActionTokenResponse.class);
+        sessionManager.setUploadActionToken(actionTokenResponse);
         for (ActionTokenRequestHandler e : handlers) {
             e.receiveActionToken(actionTokenResponse);
         }

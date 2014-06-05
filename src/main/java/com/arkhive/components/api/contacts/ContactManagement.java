@@ -40,10 +40,10 @@ public class ContactManagement {
 
         ApiRequestBuilder builder = new ApiRequestBuilder();
         builder.domain(sessionManager.getDomain())
-            .sessionManager(sessionManager)
-            .httpInterface(sessionManager.getHttpInterface())
-            .parameters(parameters)
-            .uri(DELETE_URI);
+                .sessionManager(sessionManager)
+                .httpInterface(sessionManager.getHttpInterface())
+                .parameters(parameters)
+                .uri(DELETE_URI);
 
         ApiRequest request = builder.build();
 
@@ -57,11 +57,11 @@ public class ContactManagement {
         Map<String, String> parameters = new HashMap<String, String>();
 
         ApiRequest request = new ApiRequestBuilder()
-            .sessionManager(sessionManager)
-            .httpInterface(sessionManager.getHttpInterface())
-            .parameters(parameters)
-            .uri(FETCH_URI)
-            .build();
+                .sessionManager(sessionManager)
+                .httpInterface(sessionManager.getHttpInterface())
+                .parameters(parameters)
+                .uri(FETCH_URI)
+                .build();
 
         String responseString = request.submitRequestSync();
         JsonElement jsonResponse = Utility.getResponseElement(responseString);

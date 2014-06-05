@@ -1,9 +1,9 @@
 package com.arkhive.components.uploadmanager.process;
 
+import com.arkhive.components.api.ApiResponseCode;
 import com.arkhive.components.api.upload.responses.InstantResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
-import com.arkhive.components.uploadmanager.UploadRunnable;
-import com.arkhive.components.uploadmanager.manager.UploadManager;
+import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -26,25 +26,18 @@ import java.util.Map;
  *
  * @author Chris Najar
  */
-public class InstantProcess implements UploadRunnable {
+public class InstantProcess implements Runnable {
     private static final String TAG         = InstantProcess.class.getSimpleName();
     private static final String INSTANT_URI = "/api/upload/instant.php";
-    private SessionManager sessionManager;
-    private UploadItem     uploadItem;
-    private Gson           gson;
-    private final UploadManager uploadManager;
-    private Logger logger = LoggerFactory.getLogger(InstantProcess.class);
+    private final SessionManager sessionManager;
+    private final UploadItem     uploadItem;
+    private final UploadListenerManager uploadManager;
+    private final Logger logger = LoggerFactory.getLogger(InstantProcess.class);
 
-    public InstantProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem) {
+    public InstantProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
         this.sessionManager = sessionManager;
         this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
-        this.gson = new Gson();
-    }
-
-    @Override
-    public UploadItem getUploadItem() {
-        return uploadItem;
     }
 
     @Override
@@ -76,12 +69,10 @@ public class InstantProcess implements UploadRunnable {
         Map<String, String> keyValue = generateRequestParameters(filename);
 
         // generate request
-        String request =
-                sessionManager.getDomain() + sessionManager.getSession().getQueryString(INSTANT_URI, keyValue);
+        String request = sessionManager.getDomain() + sessionManager.getSession().getQueryString(INSTANT_URI, keyValue);
 
         // receive response
-        String jsonResponse =
-                null;
+        String jsonResponse;
         try {
             jsonResponse = sessionManager.getHttpInterface().sendGetRequest(request);
         } catch (IOException e) {
@@ -97,25 +88,21 @@ public class InstantProcess implements UploadRunnable {
             return;
         }
 
+        Gson gson = new Gson();
         // convert response to CheckResponse data structure
-        InstantResponse response =
-                gson.fromJson(getResponseString(jsonResponse), InstantResponse.class);
+        InstantResponse response = gson.fromJson(getResponseString(jsonResponse), InstantResponse.class);
 
-        if (response.hasError()) {
-            switch (response.getErrorCode()) {
-                case NO_ERROR:
-                    break;
-                default:
-                    notifyManagerCancelled(response);
-                    return;
-            }
+        if (response.getErrorCode() != ApiResponseCode.NO_ERROR) {
+            notifyManagerCancelled(response);
+            return;
         }
 
         if (!response.getQuickkey().isEmpty()) {
             // notify listeners that check has completed
-            notifyListenersCompleted();
+            notifyManagerCompleted();
+        } else {
+            notifyManagerCancelled(response);
         }
-
     }
 
     /**
@@ -124,10 +111,9 @@ public class InstantProcess implements UploadRunnable {
      * @param response - response from calling instant.php.
      */
     private void notifyManagerCancelled(InstantResponse response) {
-        if (uploadManager.getUploadManagerListener() != null) {
-            uploadManager.getUploadManagerListener().onCancelled(uploadItem, response);
+        if (uploadManager != null) {
+            uploadManager.onCancelled(uploadItem, response);
         }
-        notifyListenersCancelled();
     }
 
     /**
@@ -159,34 +145,13 @@ public class InstantProcess implements UploadRunnable {
      * notifies listeners that this process has completed successfully.
      *
      */
-    private void notifyListenersCompleted() {
+    private void notifyManagerCompleted() {
         //notify manager that the upload is completed
-        if (uploadManager.getUploadManagerListener() != null) {
-            uploadManager.getUploadManagerListener().onInstantCompleted(uploadItem);
-        }
-        //notify ui listeners that the upload has been completed
-        if (uploadManager.getUiListener() != null) {
-            uploadManager.getUiListener().onCompleted(uploadItem);
-        }
-        //notify database listener that task has been cancelled
-        if (uploadManager.getDatabaseListener() != null) {
-            uploadManager.getDatabaseListener().onCompleted(uploadItem);
+        if (uploadManager != null) {
+            uploadManager.onInstantCompleted(uploadItem);
         }
     }
 
-    /**
-     * lets listeners know that this process has been cancelled for the upload item.
-     */
-    private void notifyListenersCancelled() {
-        //notify ui listeners that task has been cancelled
-        if (uploadManager.getUiListener() != null) {
-            uploadManager.getUiListener().onCancelled(uploadItem);
-        }
-        //notify database listener that task has been cancelled
-        if (uploadManager.getDatabaseListener() != null) {
-            uploadManager.getDatabaseListener().onCancelled(uploadItem);
-        }
-    }
 
     /**
      * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
@@ -195,11 +160,9 @@ public class InstantProcess implements UploadRunnable {
      */
     private void notifyManagerException(Exception e) {
         //notify listeners that there has been an exception
-        if (uploadManager.getUploadManagerListener() != null) {
-            uploadManager.getUploadManagerListener().onProcessException(uploadItem, e);
+        if (uploadManager != null) {
+            uploadManager.onProcessException(uploadItem, e);
         }
-
-        notifyListenersCancelled();
     }
 
     /**
@@ -207,10 +170,9 @@ public class InstantProcess implements UploadRunnable {
      */
     private void notifyManagerLostConnection() {
         //notify listeners that connection was lost
-        if (uploadManager.getUploadManagerListener() != null) {
-            uploadManager.getUploadManagerListener().onLostConnection(uploadItem);
+        if (uploadManager != null) {
+            uploadManager.onLostConnection(uploadItem);
         }
-        notifyListenersCancelled();
     }
 
     /**

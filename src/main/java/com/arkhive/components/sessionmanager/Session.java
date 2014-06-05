@@ -25,9 +25,9 @@ public class Session {
      */
     private BigInteger secretKey;
     /* The time value used to create an API signature. */
-    private String time;
+    private final String time;
     /* The session token used to create an API signature. */
-    private String sessionToken;
+    private final String sessionToken;
 
     Logger logger = LoggerFactory.getLogger(Session.class);
 
@@ -67,7 +67,7 @@ public class Session {
      * @return  A String containing the the full query string.
      */
     public String getQueryString(String uri, Map<String, String> parameters) {
-        String queryString = "";
+        String queryString;
         // Handle cases where null parameters are passed.
         if (uri == null) { uri = ""; }
         if (parameters == null) { parameters = new HashMap<String, String>(); }
@@ -110,7 +110,7 @@ public class Session {
      * @return The signature converted into a MD5 hash.
      */
     private String calculateMD5Hash(String signatureBase) {
-        String signatureString = "";
+        String signatureString;
         try {
             byte[] signatureBytes = signatureBase.getBytes("UTF-8");
             MessageDigest md = MessageDigest.getInstance("MD5");

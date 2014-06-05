@@ -3,8 +3,7 @@ package com.arkhive.components.uploadmanager.process;
 import com.arkhive.components.api.upload.errors.ResumableResultCode;
 import com.arkhive.components.api.upload.responses.ResumableResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
-import com.arkhive.components.uploadmanager.UploadRunnable;
-import com.arkhive.components.uploadmanager.manager.UploadManager;
+import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -24,13 +23,12 @@ import java.util.HashMap;
  *
  * @author Chris Najar
  */
-public class ResumableProcess implements UploadRunnable {
+public class ResumableProcess implements Runnable {
     private static final String TAG        = ResumableProcess.class.getSimpleName();
     private static final String UPLOAD_URI = "/api/upload/resumable.php";
     private final UploadItem     uploadItem;
-    private final Gson           gson;
     private final SessionManager sessionManager;
-    private final UploadManager uploadManager;
+    private final UploadListenerManager uploadManager;
     private final Logger logger = LoggerFactory.getLogger(ResumableProcess.class);
 
     /**
@@ -39,20 +37,15 @@ public class ResumableProcess implements UploadRunnable {
      * @param sessionManager - the session to use for this upload process
      * @param uploadItem     - the item to be uploaded
      */
-    public ResumableProcess(SessionManager sessionManager, UploadManager uploadManager, UploadItem uploadItem) {
+    public ResumableProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
         this.sessionManager = sessionManager;
         this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
-        this.gson = new Gson();
-    }
-
-    @Override
-    public UploadItem getUploadItem() {
-        return uploadItem;
     }
 
     @Override
     public void run() {
+        logger.info("run()");
         resumable();
     }
 
@@ -63,17 +56,21 @@ public class ResumableProcess implements UploadRunnable {
      * 3. send upload POST request for each chunk
      */
     private void resumable() {
-        logger.info(TAG + "resumable()");
-        ResumableResponse response = new ResumableResponse();
+        logger.info("resumable()");
         int numChunks = uploadItem.getChunkData().getNumberOfUnits();
         int unitSize = uploadItem.getChunkData().getUnitSize();
         long fileSize = uploadItem.getFileData().getFileSize();
         // loop through our chunks and create http post with header data and send after we are done looping,
         // let the listener know we are completed
 
+
         for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {
+            logger.info("   enter chunk upload loop()");
             // if the bitmap says this chunk number is uploaded then we can just skip it, if not, we upload it.
-            if (!uploadItem.getBitmap().isUploaded(chunkNumber)) {
+            if (uploadItem.getBitmap().isUploaded(chunkNumber)) {
+                logger.info("chunk #" + chunkNumber + " already uploaded");
+            } else {
+                logger.info("chunk #" + chunkNumber + " not uploaded yet");
                 // get the chunk size for this chunk
                 int chunkSize = getChunkSize(chunkNumber, numChunks, fileSize, unitSize);
 
@@ -84,9 +81,9 @@ public class ResumableProcess implements UploadRunnable {
                 String encodedShortFileName;
                 byte[] chunkData;
                 try {
-                    fis = new FileInputStream(uploadItem.getPath());
+                    fis = new FileInputStream(uploadItem.getFileData().getFilePath());
                     bis = new BufferedInputStream(fis);
-                    chunkData = createUploadChunk(chunkSize, chunkNumber, bis);
+                    chunkData = createUploadChunk(chunkSize, bis);
                     chunkHash = getSHA256(chunkData);
                     encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
                     fis.close();
@@ -114,11 +111,9 @@ public class ResumableProcess implements UploadRunnable {
                         generateGetParameters();
 
                 // now send the http post request
-                String jsonResponse =
-                        null;
+                String jsonResponse;
                 try {
-                    jsonResponse = sessionManager.getHttpInterface().
-                            sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, chunkData);
+                    jsonResponse = sessionManager.getHttpInterface().sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, chunkData);
                 } catch (IOException e) {
                     e.printStackTrace();
                     notifyManagerException(e);
@@ -132,9 +127,9 @@ public class ResumableProcess implements UploadRunnable {
                     return;
                 }
 
+                Gson gson = new Gson();
                 // generate the ResumableResponse object
-                response =
-                        gson.fromJson(getResponseString(jsonResponse), ResumableResponse.class);
+                ResumableResponse response = gson.fromJson(getResponseString(jsonResponse), ResumableResponse.class);
 
                 // set poll upload key if possible
                 if (shouldSetPollUploadKey(response)) {
@@ -147,12 +142,15 @@ public class ResumableProcess implements UploadRunnable {
                     return;
                 }
 
-                if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR
-                        && response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
+                if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR) {
                     // let the listeners know we are done with this process (because there was an error in this case)
-                    notifyManagerCancelled(response);
-                    return;
+                    if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
+                        // let the listeners know we are done with this process (because there was an error in this case)
+                        notifyManagerCancelled(response);
+                        return;
+                    }
                 }
+
             }
 
             // update listeners on progress each loop
@@ -160,11 +158,11 @@ public class ResumableProcess implements UploadRunnable {
         } // end loop
 
         // let the listeners know that upload has attempted to upload all chunks.
-        notifyManagerCompleted(response);
+        notifyManagerCompleted();
     }
 
     private void exceptionHandler(Exception e) {
-        logger.warn(TAG + " Exception: " + e);
+        logger.warn(TAG + "exceptionHandler: " + e);
         e.printStackTrace();
         // if we catch FileNotFoundException, NoSuchAlgorithmException,
         // or UnsupportedEncoding Exception, notify manager and listeners
@@ -176,19 +174,20 @@ public class ResumableProcess implements UploadRunnable {
      * gives the listeners a progress update of the number of chunks completed.
      */
     private void notifyListenersProgressUpdate(int chunkNumber, int numChunks) {
-        if (uploadManager.getUiListener() != null) {
-            uploadManager.getUiListener().onProgressUpdate(uploadItem, chunkNumber, numChunks);
+        logger.info("notifyListenersProgressUpdate()");
+        if (uploadManager != null) {
+            uploadManager.onProgressUpdate(uploadItem, chunkNumber, numChunks);
         }
     }
 
     /**
      * notifies the upload manager attached to the upload item that this process has finished.
      *
-     * @param response The response from the resumable upload API request.
      */
-    private void notifyManagerCompleted(ResumableResponse response) {
-        if (uploadManager.getUploadManagerListener() != null) {
-            uploadManager.getUploadManagerListener().onResumableCompleted(uploadItem);
+    private void notifyManagerCompleted() {
+        logger.info("notifyManagerCompleted()");
+        if (uploadManager != null) {
+            uploadManager.onResumableCompleted(uploadItem);
         }
     }
 
@@ -196,12 +195,11 @@ public class ResumableProcess implements UploadRunnable {
      * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
      */
     private void notifyManagerLostConnection() {
+        logger.info("notifyManagerLostConnection()");
         // notify listeners that connection was lost
-        if (uploadManager.getUploadManagerListener() != null) {
-            uploadManager.getUploadManagerListener().onLostConnection(uploadItem);
+        if (uploadManager != null) {
+            uploadManager.onLostConnection(uploadItem);
         }
-
-        notifyListenersCancelled();
     }
 
     /**
@@ -210,6 +208,7 @@ public class ResumableProcess implements UploadRunnable {
      * @return The parameters to use for the upload API request.
      */
     private HashMap<String, String> generateGetParameters() {
+        logger.info("generateGetParameters()");
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("session_token", sessionManager.requestUploadActionToken().getSessionToken());
         parameters.put("action_on_duplicate", uploadItem.getUploadOptions().getActionOnDuplicate());
@@ -233,6 +232,7 @@ public class ResumableProcess implements UploadRunnable {
      */
     private HashMap<String, String> generatePostHeaders(String encodedShortFileName,
                                                         long fileSize, int chunkNumber, String chunkHash, int chunkSize) {
+        logger.info("generatePostHeaders()");
         HashMap<String, String> headers = new HashMap<String, String>();
         // these headers are related to the entire file
         headers.put("x-filename", encodedShortFileName);
@@ -246,31 +246,16 @@ public class ResumableProcess implements UploadRunnable {
     }
 
     /**
-     * lets listeners know that this process has been cancelled for the upload item.
-     */
-    private void notifyListenersCancelled() {
-        // notify ui listeners that task has been cancelled
-        if (uploadManager.getUiListener() != null) {
-            uploadManager.getUiListener().onCancelled(uploadItem);
-        }
-        // notify database listener that task has been cancelled
-        if (uploadManager.getDatabaseListener() != null) {
-            uploadManager.getDatabaseListener().onCancelled(uploadItem);
-        }
-    }
-
-    /**
      * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
      *
      * @param e The exception thrown by the upload process.
      */
     private void notifyManagerException(Exception e) {
+        logger.info("notifyManagerException()");
         // notify listeners that there has been an exception
-        if (uploadManager.getUploadManagerListener() != null) {
-            uploadManager.getUploadManagerListener().onProcessException(uploadItem, e);
+        if (uploadManager != null) {
+            uploadManager.onProcessException(uploadItem, e);
         }
-
-        notifyListenersCancelled();
     }
 
     /**
@@ -279,10 +264,10 @@ public class ResumableProcess implements UploadRunnable {
      * @param response The response from the resumable upload API request.
      */
     private void notifyManagerCancelled(ResumableResponse response) {
-        if (uploadManager.getUploadManagerListener() != null) {
-            uploadManager.getUploadManagerListener().onCancelled(uploadItem, response);
+        logger.info("notifyManagerCancelled()");
+        if (uploadManager != null) {
+            uploadManager.onCancelled(uploadItem, response);
         }
-        notifyListenersCancelled();
     }
 
     /**
@@ -296,6 +281,7 @@ public class ResumableProcess implements UploadRunnable {
      * @return The actual chunk size.
      */
     private int getChunkSize(int chunkNumber, int numChunks, long fileSize, int unitSize) {
+        logger.info("getChunkSize()");
         if (chunkNumber >= numChunks) {
             return 0; // represents bad size
         }
@@ -317,6 +303,7 @@ public class ResumableProcess implements UploadRunnable {
      * @return Flag indicating if the upload key should be set.
      */
     private boolean shouldSetPollUploadKey(ResumableResponse response) {
+        logger.info("shouldSetPollUploadKey()");
         switch (response.getDoUpload().getResultCode()) {
             case NO_ERROR:
             case SUCCESS_FILE_MOVED_TO_ROOT:
@@ -330,12 +317,12 @@ public class ResumableProcess implements UploadRunnable {
      * creates an upload chunk array of bytes.
      *
      * @param unitSize   The size of the chunk to create.
-     * @param unitNumber The unit number of this chunk.
      * @param fileStream The BufferedInputStream containing the upload file.
      *
      * @return an array of bytes with unitSize size, or 0 size if IOException is caught
      */
-    private byte[] createUploadChunk(long unitSize, int unitNumber, BufferedInputStream fileStream) throws IOException {
+    private byte[] createUploadChunk(long unitSize, BufferedInputStream fileStream) throws IOException {
+        logger.info("createUploadChunk()");
         byte[] readBytes = new byte[(int) unitSize];
         int readSize;
         readSize = fileStream.read(readBytes, 0, (int) unitSize);
@@ -344,6 +331,7 @@ public class ResumableProcess implements UploadRunnable {
             System.arraycopy(readBytes, 0, temp, 0, readSize);
             readBytes = temp;
         }
+
         return readBytes;
     }
 
@@ -355,6 +343,7 @@ public class ResumableProcess implements UploadRunnable {
      * @return The SHA-256 hash of an upload chunk.
      */
     private String getSHA256(byte[] chunkData) throws NoSuchAlgorithmException {
+        logger.info("getSHA256()");
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hashBytes = md.digest(chunkData);
         StringBuilder sb = new StringBuilder();
@@ -373,6 +362,7 @@ public class ResumableProcess implements UploadRunnable {
      * @return The response received which can then be parsed into a specific format as per Gson.fromJson().
      */
     private String getResponseString(String response) {
+        logger.info("getResponseString()");
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(response);
         if (element.isJsonObject()) {

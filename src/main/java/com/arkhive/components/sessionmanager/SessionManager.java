@@ -34,21 +34,21 @@ import com.arkhive.components.sessionmanager.session.SessionRequestHandler;
  */
 public class SessionManager implements SessionRequestHandler {
     /** The ID for the specific application making an API call.*/
-    private String applicationId;
+    private final String applicationId;
     /** The API key for the application making the API call. */
-    private String apiKey;
+    private final String apiKey;
     /** A {@link LinkedList} functioning as a queue used to hold the {@link Session} objects. */
-    private Queue<Session> sessionList = new LinkedList<Session>();
+    private final Queue<Session> sessionList = new LinkedList<Session>();
     /** The minimum number of {@link Session} objects to hold. */
-    private int minSessions;
+    private final int minSessions;
     /** The maximum number of {@link Session} objects to hold. */
-    private int maxSessions;
+    private final int maxSessions;
     /** The domain name to use for API requests. */
-    private String domain;
+    private final String domain;
     /** The {@link HttpInterface} to use for API requests. */
-    private HttpInterface httpInterface;
+    private final HttpInterface httpInterface;
     /** The {@link Credentials} to use for API requests. */
-    private Credentials credentials;
+    private final Credentials credentials;
     /** The upload action token. */
     private ActionTokenResponse uploadActionToken;
     /** The image action token. */
@@ -173,9 +173,9 @@ public class SessionManager implements SessionRequestHandler {
 
     /** Destroy an upload action token. */
     public void destroyUploadActionToken() {
-      if (uploadActionToken == null) {
-        return;
-      }
+        if (uploadActionToken == null) {
+            return;
+        }
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("action_token", uploadActionToken.getSessionToken());
         manageActionToken("/api/user/destroy_action_token.php", parameters);
@@ -183,9 +183,9 @@ public class SessionManager implements SessionRequestHandler {
 
     /** Destroy an image action token. */
     public void destroyImageActionToken() {
-      if (imageActionToken == null) {
-        return;
-      }
+        if (imageActionToken == null) {
+            return;
+        }
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("action_token", imageActionToken.getSessionToken());
         manageActionToken("/api/user/destroy_action_token.php", parameters);
@@ -330,13 +330,13 @@ public class SessionManager implements SessionRequestHandler {
      */
     private void manageActionToken(ApiRequestHandler handler, String uri, Map<String, String> parameters) {
         ApiRequest tokenRequest = new ApiRequestBuilder()
-            .domain(domain)
-            .uri(uri)
-            .parameters(parameters)
-            .httpInterface(httpInterface)
-            .sessionManager(this)
-            .requestHandler(handler)
-            .build();
+                .domain(domain)
+                .uri(uri)
+                .parameters(parameters)
+                .httpInterface(httpInterface)
+                .sessionManager(this)
+                .requestHandler(handler)
+                .build();
         tokenRequest.submitRequest();
     }
 
@@ -351,12 +351,12 @@ public class SessionManager implements SessionRequestHandler {
      */
     private String manageActionToken(String uri, Map<String, String> parameters) {
         ApiRequest tokenRequest = new ApiRequestBuilder()
-            .domain(domain)
-            .uri(uri)
-            .parameters(parameters)
-            .httpInterface(httpInterface)
-            .sessionManager(this)
-            .build();
+                .domain(domain)
+                .uri(uri)
+                .parameters(parameters)
+                .httpInterface(httpInterface)
+                .sessionManager(this)
+                .build();
         return tokenRequest.submitRequestSync();
     }
 

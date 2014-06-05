@@ -11,7 +11,7 @@ package com.arkhive.components.uploadmanager.uploaditem;
  *
  */
 public class UploadOptions {
-    private String resumable;
+    private final boolean resumable;
     private String uploadFolderKey;
     private String actionOnDuplicate;
     private String versionControl;
@@ -26,11 +26,7 @@ public class UploadOptions {
      * @param resumable - upload is resumable or not
      */
     public UploadOptions(boolean resumable) {
-        if (resumable) {
-            this.resumable = "yes";
-        } else {
-            this.resumable = "no";
-        }
+        this.resumable = resumable;
     }
 
     public UploadOptions() {
@@ -85,12 +81,12 @@ public class UploadOptions {
      * @return the upload folder key.
      */
     public String getUploadFolderKey() {
-      if (uploadFolderKey == null) {
-        uploadFolderKey = "myfiles";
-      } else if (uploadFolderKey.isEmpty()) {
-        uploadFolderKey = "myfiles";
-      }
-      return uploadFolderKey;
+        if (uploadFolderKey == null) {
+            uploadFolderKey = "myfiles";
+        } else if (uploadFolderKey.isEmpty()) {
+            uploadFolderKey = "myfiles";
+        }
+        return uploadFolderKey;
     }
 
     /**
@@ -107,7 +103,7 @@ public class UploadOptions {
      * @return create_patches, keep_revision, or none
      */
     public String getVersionControl() {
-        if (versionControl == null) { setVersionControl(VersionControl.CREATE_PATCHES); }
+        if (versionControl == null) { setVersionControl(VersionControl.KEEP_REVISION); }
         return versionControl;
     }
 
@@ -115,7 +111,13 @@ public class UploadOptions {
      * Returns whether the resumable option is "yes" or "no".
      * @return "yes" if resumable, "no" otherwise
      */
-    public String isResumable() { return resumable; }
+    public String getResumable() {
+        if (resumable) {
+            return "yes";
+        } else {
+            return "no";
+        }
+    }
 
     /**
      * Returns the path relative to myfiles root that will serve as the upload path.
@@ -131,12 +133,12 @@ public class UploadOptions {
      * @param uploadFolderKey - the target folder key where the item will be uploaded.
      */
     public void setUploadFolderKey(String uploadFolderKey) {
-      if (uploadFolderKey == null) {
-        uploadFolderKey = "myfiles";
-      } else if (uploadFolderKey.isEmpty()) {
-        uploadFolderKey = "myfiles";
-      }
-      this.uploadFolderKey = uploadFolderKey;
+        if (uploadFolderKey == null) {
+            uploadFolderKey = "myfiles";
+        } else if (uploadFolderKey.isEmpty()) {
+            uploadFolderKey = "myfiles";
+        }
+        this.uploadFolderKey = uploadFolderKey;
     }
 
     public void setUploadPath(String path) {
@@ -154,10 +156,10 @@ public class UploadOptions {
      */
     private void setVersionControl(VersionControl control) {
         switch(control) {
-            case CREATE_PATCHES: this.versionControl = "create_patches"; break;
-            case KEEP_REVISION: this.versionControl = "keep_revision"; break;
-            case NONE: this.versionControl = "none"; break;
-            default: this.versionControl = "create_patches"; break;
+            case CREATE_PATCHES: versionControl = "create_patches"; break;
+            case KEEP_REVISION: versionControl = "keep_revision"; break;
+            case NONE: versionControl = "none"; break;
+            default: versionControl = "create_patches"; break;
         }
     }
 

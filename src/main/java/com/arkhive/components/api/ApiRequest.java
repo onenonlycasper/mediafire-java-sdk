@@ -58,7 +58,7 @@ public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
         Session session = sessionManager.getSession();
         parameters.put("response_format", "json");
         String queryString = session.getQueryString(uri, parameters);
-        String responseString = null;
+        String responseString;
         try {
             responseString = httpInterface.sendGetRequest(domain + queryString);
         } catch (IOException e) {
