@@ -42,6 +42,7 @@ public class InstantProcess implements Runnable {
 
     @Override
     public void run() {
+        logger.info("run()");
         instant();
     }
 
@@ -54,6 +55,7 @@ public class InstantProcess implements Runnable {
      * 6. notify listeners of completion.
      */
     private void instant() {
+        Thread.currentThread().setPriority(3); //uploads are set to low priority
         // url encode the filename
         String filename;
         try {

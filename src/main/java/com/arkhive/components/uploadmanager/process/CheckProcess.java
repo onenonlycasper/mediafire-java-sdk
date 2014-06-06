@@ -56,6 +56,7 @@ public class CheckProcess implements Runnable {
      */
     private void check() {
         logger.info(" check()");
+        Thread.currentThread().setPriority(3); //uploads are set to low priority
         //notify listeners that check started
         notifyManagerUploadStarted();
 

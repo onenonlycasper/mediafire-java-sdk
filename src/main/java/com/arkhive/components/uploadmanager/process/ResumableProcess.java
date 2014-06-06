@@ -4,7 +4,10 @@ import com.arkhive.components.api.upload.errors.ResumableResultCode;
 import com.arkhive.components.api.upload.responses.ResumableResponse;
 import com.arkhive.components.sessionmanager.SessionManager;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
+import com.arkhive.components.uploadmanager.uploaditem.ChunkData;
+import com.arkhive.components.uploadmanager.uploaditem.FileData;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
+import com.arkhive.components.uploadmanager.uploaditem.UploadOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -57,12 +60,38 @@ public class ResumableProcess implements Runnable {
      */
     private void resumable() {
         logger.info("resumable()");
-        int numChunks = uploadItem.getChunkData().getNumberOfUnits();
-        int unitSize = uploadItem.getChunkData().getUnitSize();
-        long fileSize = uploadItem.getFileData().getFileSize();
+        Thread.currentThread().setPriority(3); //uploads are set to low priority
+
+        // get chunk. these will be used for chunks.
+        ChunkData chunkData = uploadItem.getChunkData();
+        int numChunks = chunkData.getNumberOfUnits();
+        int unitSize = chunkData.getUnitSize();
         logger.info("number of chunks: " + numChunks);
         logger.info("size of units: " + unitSize);
+
+        //get file size. this will be used for chunks.
+        FileData fileData = uploadItem.getFileData();
+        long fileSize = fileData.getFileSize();
         logger.info("size of file: " + fileSize);
+
+        // get upload options. these will be passed as request parameters
+        UploadOptions uploadOptions = uploadItem.getUploadOptions();
+        String actionOnDuplicate = uploadOptions.getActionOnDuplicate();
+        String versionControl = uploadOptions.getVersionControl();
+        String uploadFolderKey = uploadOptions.getUploadFolderKey();
+        logger.info("action on duplicate: " + actionOnDuplicate);
+        logger.info("version control: " + versionControl);
+        logger.info("upload folder key: " + uploadFolderKey);
+
+        String encodedShortFileName;
+        try {
+            encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Exception while encoding file name: " + e);
+            notifyManagerException(e);
+            return;
+        }
+
         // loop through our chunks and create http post with header data and send after we are done looping,
         // let the listener know we are completed
 
@@ -80,14 +109,12 @@ public class ResumableProcess implements Runnable {
                 FileInputStream fis;
                 BufferedInputStream bis;
                 String chunkHash;
-                String encodedShortFileName;
-                byte[] chunkData;
+                byte[] uploadChunk;
                 try {
                     fis = new FileInputStream(uploadItem.getFileData().getFilePath());
                     bis = new BufferedInputStream(fis);
-                    chunkData = createUploadChunk(unitSize, chunkNumber, bis);
-                    chunkHash = getSHA256(chunkData);
-                    encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
+                    uploadChunk = createUploadChunk(unitSize, chunkNumber, bis);
+                    chunkHash = getSHA256(uploadChunk);
 
                     logger.info("chunk #" + chunkNumber + " hash: " + chunkHash);
                     logger.info("chunk #" + chunkNumber + " size: " + chunkSize);
@@ -101,9 +128,6 @@ public class ResumableProcess implements Runnable {
                 } catch (NoSuchAlgorithmException e) {
                     this.exceptionHandler(e);
                     return;
-                } catch (UnsupportedEncodingException e) {
-                    this.exceptionHandler(e);
-                    return;
                 } catch (IOException e) {
                     this.exceptionHandler(e);
                     return;
@@ -113,12 +137,12 @@ public class ResumableProcess implements Runnable {
                 HashMap<String, String> headers = generatePostHeaders(encodedShortFileName, fileSize, chunkNumber, chunkHash, chunkSize);
 
                 // generate the get parameters
-                HashMap<String, String> parameters = generateGetParameters();
+                HashMap<String, String> parameters = generateGetParameters(actionOnDuplicate, versionControl, uploadFolderKey);
 
                 // now send the http post request
                 String jsonResponse;
                 try {
-                    jsonResponse = sessionManager.getHttpInterface().sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, chunkData);
+                    jsonResponse = sessionManager.getHttpInterface().sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, uploadChunk);
                 } catch (IOException e) {
                     e.printStackTrace();
                     notifyManagerException(e);
@@ -215,14 +239,15 @@ public class ResumableProcess implements Runnable {
      *
      * @return The parameters to use for the upload API request.
      */
-    private HashMap<String, String> generateGetParameters() {
+    private HashMap<String, String> generateGetParameters(String actionOnDuplicate, String versionControl, String uploadFolderKey) {
         logger.info("generateGetParameters()");
+        String actionToken = sessionManager.requestUploadActionToken().getSessionToken();
         HashMap<String, String> parameters = new HashMap<String, String>();
-        parameters.put("session_token", sessionManager.requestUploadActionToken().getSessionToken());
-        parameters.put("action_on_duplicate", uploadItem.getUploadOptions().getActionOnDuplicate());
+        parameters.put("session_token", actionToken);
+        parameters.put("action_on_duplicate", actionOnDuplicate);
         parameters.put("response_format", "json");
-        parameters.put("version_control", uploadItem.getUploadOptions().getVersionControl());
-        parameters.put("upload_folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
+        parameters.put("version_control", versionControl);
+        parameters.put("upload_folder_key", uploadFolderKey);
 
         return parameters;
     }
@@ -312,13 +337,10 @@ public class ResumableProcess implements Runnable {
             chunkSize = 0; // represents bad size
         } else {
             if (fileSize % unitSize == 0) { // all units will be of unitSize
-                logger.info("CHUNK SIZE IS: " + unitSize);
                 chunkSize = unitSize;
             } else if (chunkNumber < numChunks - 1) { // this unit is of unitSize
-                logger.info("CHUNK SIZE IS: " + unitSize);
                 chunkSize = unitSize;
-            } else { // this unit is "special" and is the modulo of fileSize and unitSize
-                logger.info("CHUNK SIZE IS: " + unitSize);
+            } else { // this unit is "special" and is the modulo of fileSize and unitSize;
                 chunkSize = (int) (fileSize % unitSize);
             }
         }
@@ -333,29 +355,14 @@ public class ResumableProcess implements Runnable {
     private byte[] createUploadChunk(long unitSize, int chunkNumber, BufferedInputStream fileStream) throws IOException {
         logger.info("createUploadChunk()");
         byte[] readBytes = new byte[(int) unitSize];
-        logger.info("created byte array of size: " +readBytes.length);
         int offset = (int) (unitSize * chunkNumber);
-        int skipLength = offset;
-        logger.info("offset is: " + offset);
-        logger.info("using unit size of: " + unitSize);
-        logger.info("skipping fileStream bytes: " + skipLength + " bytes");
-        fileStream.skip(skipLength);
-        logger.info("starting read of file which has available bytes to read of: " + fileStream.available());
+        fileStream.skip(offset);
         int readSize = fileStream.read(readBytes, 0, (int) unitSize);
-        logger.info("got read size of: " + readSize);
         if (readSize != unitSize) {
-            logger.info("read size was not equal to unit size");
             byte[] temp = new byte[readSize];
             System.arraycopy(readBytes, 0, temp, 0, readSize);
             readBytes = temp;
         }
-
-        //debug
-        StringBuilder sb = new StringBuilder();
-        for (Byte b : readBytes) {
-            sb.append(b.toString());
-        }
-        logger.info("CREATED UPLOAD CHUNK OF: " + sb.toString());
 
         return readBytes;
     }
@@ -367,10 +374,30 @@ public class ResumableProcess implements Runnable {
      *
      * @return The SHA-256 hash of an upload chunk.
      */
-    private String getSHA256(byte[] chunkData) throws NoSuchAlgorithmException {
+    private String getSHA256(byte[] chunkData) throws NoSuchAlgorithmException, IOException {
         logger.info("getSHA256()");
         MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hashBytes = md.digest(chunkData);
+        //test code
+        InputStream in = new ByteArrayInputStream(chunkData, 0, chunkData.length);
+        byte[] bytes = new byte[8192];
+        int byteCount;
+        while ((byteCount = in.read(bytes)) > 0) {
+            md.update(bytes, 0, byteCount);
+        }
+        byte[] hashBytes = md.digest();
+        //test code
+        //byte[] hashBytes = md.digest(chunkData); //original code
+
+        return convertHashBytesToString(hashBytes);
+    }
+
+    /**
+     * Convert hash bytes to string.
+     * @param hashBytes
+     * @return byte array converted to string.
+     */
+    private String convertHashBytesToString(byte[] hashBytes) {
+        logger.info("convertHashBytesToString()");
         StringBuilder sb = new StringBuilder();
         for (byte hashByte : hashBytes) {
             String tempString = Integer.toHexString((hashByte & 0xFF) | 0x100).substring(1, 3);

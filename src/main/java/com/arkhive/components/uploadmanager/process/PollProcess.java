@@ -1,7 +1,6 @@
 package com.arkhive.components.uploadmanager.process;
 
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
-import com.arkhive.components.uploadmanager.manager.UploadManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,8 +33,8 @@ import org.slf4j.LoggerFactory;
 public class PollProcess implements Runnable {
     private static final String TAG = PollProcess.class.getSimpleName();
     private static final String POLL_UPLOAD_URI = "/api/upload/poll_upload.php";
-    private static final long TIME_BETWEEN_POLLS = 2000;
-    private static final int MAX_POLLS = 60;
+    private static final long TIME_BETWEEN_POLLS = 10000;
+    private static final int MAX_POLLS = 12;
     private final SessionManager sessionManager;
     private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
@@ -56,7 +55,7 @@ public class PollProcess implements Runnable {
     @Override
     public void run() {
         logger.info("run()");
-        pollUpload();
+        poll();
     }
 
     /**
@@ -67,7 +66,8 @@ public class PollProcess implements Runnable {
      * 4. check response data
      * 5. step 1 again until 2 minutes is up, there is an error, or status code 99 (no more requests for this key)
      */
-    private void pollUpload() {
+    private void poll() {
+        Thread.currentThread().setPriority(3); //uploads are set to low priority
         //generate our request string
         HashMap<String, String> keyValue = generateGetParameters();
 
