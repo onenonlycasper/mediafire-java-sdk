@@ -342,14 +342,13 @@ public class ResumableProcess implements Runnable {
         logger.info("starting read of file which has available bytes to read of: " + fileStream.available());
         int readSize = fileStream.read(readBytes, 0, (int) unitSize);
         logger.info("got read size of: " + readSize);
-        //original code
+        
         if (readSize != unitSize) {
             logger.info("read size was not equal to unit size");
             byte[] temp = new byte[readSize];
             System.arraycopy(readBytes, 0, temp, 0, readSize);
             readBytes = temp;
         }
-        //original code
 
         return readBytes;
     }
