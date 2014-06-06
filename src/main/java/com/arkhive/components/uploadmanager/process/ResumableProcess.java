@@ -337,26 +337,19 @@ public class ResumableProcess implements Runnable {
         logger.info("created byte array of size: " +readBytes.length);
         int offset = (int) (unitSize * chunkNumber);
         int skipLength = offset;
-        logger.info("offset is: " + offset);
-        logger.info("using unit size of: " + unitSize);
-        logger.info("skipping fileStream bytes: " + skipLength + " bytes");
+        logger.info("offset is: " + offset + ", unit size: " + unitSize + ", skip bytes: " + skipLength);
         fileStream.skip(skipLength);
         logger.info("starting read of file which has available bytes to read of: " + fileStream.available());
         int readSize = fileStream.read(readBytes, 0, (int) unitSize);
         logger.info("got read size of: " + readSize);
+        //original code
         if (readSize != unitSize) {
             logger.info("read size was not equal to unit size");
             byte[] temp = new byte[readSize];
             System.arraycopy(readBytes, 0, temp, 0, readSize);
             readBytes = temp;
         }
-
-        //debug
-        StringBuilder sb = new StringBuilder();
-        for (Byte b : readBytes) {
-            sb.append(b.toString());
-        }
-        logger.info("CREATED UPLOAD CHUNK OF: " + sb.toString());
+        //original code
 
         return readBytes;
     }
