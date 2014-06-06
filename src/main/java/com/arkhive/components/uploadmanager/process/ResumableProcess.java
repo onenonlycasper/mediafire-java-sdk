@@ -57,6 +57,7 @@ public class ResumableProcess implements Runnable {
      */
     private void resumable() {
         logger.info("resumable()");
+        Thread.currentThread().setPriority(3); //uploads are set to low priority
         int numChunks = uploadItem.getChunkData().getNumberOfUnits();
         int unitSize = uploadItem.getChunkData().getUnitSize();
         long fileSize = uploadItem.getFileData().getFileSize();
@@ -367,10 +368,25 @@ public class ResumableProcess implements Runnable {
      *
      * @return The SHA-256 hash of an upload chunk.
      */
-    private String getSHA256(byte[] chunkData) throws NoSuchAlgorithmException {
+    private String getSHA256(byte[] chunkData) throws NoSuchAlgorithmException, IOException {
         logger.info("getSHA256()");
         MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hashBytes = md.digest(chunkData);
+        //test code
+        InputStream in = new ByteArrayInputStream(chunkData, 0, chunkData.length);
+        byte[] bytes = new byte[8192];
+        int byteCount;
+        while ((byteCount = in.read(bytes)) > 0) {
+            md.update(bytes, 0, byteCount);
+        }
+        byte[] hashBytes = md.digest();
+        //test code
+        //byte[] hashBytes = md.digest(chunkData); //original code
+
+        return convertHashBytesToString(hashBytes);
+    }
+
+    private String convertHashBytesToString(byte[] hashBytes) {
+        logger.info("convertHashBytesToString()");
         StringBuilder sb = new StringBuilder();
         for (byte hashByte : hashBytes) {
             String tempString = Integer.toHexString((hashByte & 0xFF) | 0x100).substring(1, 3);
