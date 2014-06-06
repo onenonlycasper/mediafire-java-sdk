@@ -87,7 +87,7 @@ public class ResumableProcess implements Runnable {
                     fis = new FileInputStream(uploadItem.getFileData().getFilePath());
                     bis = new BufferedInputStream(fis);
                     chunkData = createUploadChunk(unitSize, chunkNumber, bis);
-                    chunkHash = getSHA256(chunkData);
+                    chunkHash = getSHA256ViaMessageDigest(chunkData);
                     encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
 
                     logger.info("chunk #" + chunkNumber + " hash: " + chunkHash);
@@ -368,8 +368,8 @@ public class ResumableProcess implements Runnable {
      *
      * @return The SHA-256 hash of an upload chunk.
      */
-    private String getSHA256(byte[] chunkData) throws NoSuchAlgorithmException, IOException {
-        logger.info("getSHA256()");
+    private String getSHA256ViaMessageDigest(byte[] chunkData) throws NoSuchAlgorithmException, IOException {
+        logger.info("getSHA256ViaMessageDigest()");
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         //test code
         InputStream in = new ByteArrayInputStream(chunkData, 0, chunkData.length);
