@@ -48,8 +48,7 @@ public class UploadManager implements UploadListenerManager {
         this.sessionManager = sessionManager; // set session manager
         workQueue = new LinkedBlockingQueue<Runnable>();
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
-        executor =
-                new PausableThreadPoolExecutor( // establish thread pool executor
+        executor = new PausableThreadPoolExecutor( // establish thread pool executor
                         maximumThreadCount,
                         maximumThreadCount,
                         5000,
@@ -109,8 +108,7 @@ public class UploadManager implements UploadListenerManager {
      * removes all items from the executor thread pool and attempts to cancel all threads currently running.
      */
     public void clearUploadQueue() {
-        workQueue.clear();
-        executor.shutdownNow();
+        executor.purge();
     }
 
     /**
