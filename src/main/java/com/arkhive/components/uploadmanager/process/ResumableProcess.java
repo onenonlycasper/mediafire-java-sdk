@@ -247,7 +247,7 @@ public class ResumableProcess implements Runnable {
         parameters.put("action_on_duplicate", actionOnDuplicate);
         parameters.put("response_format", "json");
         parameters.put("version_control", versionControl);
-        parameters.put("upload_folder_key", uploadFolderKey);
+        parameters.put("folder_key", uploadFolderKey);
 
         return parameters;
     }

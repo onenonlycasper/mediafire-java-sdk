@@ -124,7 +124,7 @@ public class CheckProcess implements Runnable {
         if (!uploadItem.getUploadOptions().getUploadPath().isEmpty()) {
             keyValue.put("path", uploadItem.getUploadOptions().getUploadPath());
         } else {
-            keyValue.put("upload_folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
+            keyValue.put("folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
         }
         return keyValue;
     }
