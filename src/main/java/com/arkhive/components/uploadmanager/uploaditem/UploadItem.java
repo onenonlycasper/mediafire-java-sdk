@@ -2,7 +2,6 @@ package com.arkhive.components.uploadmanager.uploaditem;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -39,6 +38,7 @@ public class UploadItem {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
+
         if (uploadOptions == null) {
             options = new UploadOptions();
         } else {
@@ -82,6 +82,9 @@ public class UploadItem {
      */
     public String getFileName() {
         logger.info("getFileName()");
+        if (!options.getCustomFileName().isEmpty()) {
+            fileName = options.getCustomFileName();
+        }
         return fileName;
     }
 
@@ -160,7 +163,7 @@ public class UploadItem {
 
     /**
      * sets the short file name given the path.
-     * @param path
+     * @param path path of the file.
      */
     private void setFileName(String path) {
         logger.info("setFileName()");
@@ -172,37 +175,4 @@ public class UploadItem {
             throw new IllegalStateException("UTF-8 not supported");
         }
     }
-
-    /**
-     * Determines whether an Upload Item has the same hash as another Upload Item.
-     * @param item
-     * @return true if hashes match, false otherwise.
-     */
-    public boolean equalTo(UploadItem item) {
-        logger.info("equalTo()");
-        return fileData.getFileHash().equals(item.fileData.getFileHash());
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        logger.info("equals()");
-        if (object == null) {
-            return false;
-        }
-
-        if (this.getClass() != object.getClass()) {
-            return false;
-        }
-
-        if (!(object instanceof UploadItem)) {
-            return false;
-        }
-
-        if (!fileData.equals(((UploadItem) object).getFileData())) {
-            return false;
-        }
-
-        return true;
-    }
-
 }
