@@ -20,8 +20,6 @@ public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
     private int count;
     private String fileName;
-    private String quickKey;
-    private String modificationTime;
     private UploadOptions options;
     private final FileData fileData;
     private ChunkData chunkData;
@@ -55,8 +53,6 @@ public class UploadItem {
 
         //set Object fields so they won't be null
         fileData = new FileData(path);
-        quickKey = "";
-        modificationTime = "";
         pollUploadKey = "";
         chunkData = new ChunkData();
         bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
@@ -78,14 +74,7 @@ public class UploadItem {
         return count;
     }
 
-    /**
-     * Called to get the quick key.
-     * @return the quick key.
-     */
-    public String getQuickKey() {
-        logger.info("getQuickKey()");
-        return quickKey;
-    }
+
 
     /**
      * Called to get the Short file name.
@@ -152,24 +141,6 @@ public class UploadItem {
     }
 
     /**
-     * Called to get the Modification Time.
-     * @return - the modification time.
-     */
-    public String getModificationTime() {
-        logger.info("getModificationTime()");
-        return modificationTime;
-    }
-
-    /**
-     * Sets the quick key.
-     * @param quickKey - the quickkey to set.
-     */
-    public void setQuickKey(String quickKey) {
-        logger.info("setQuickKey()");
-        this.quickKey = quickKey;
-    }
-
-    /**
      * Sets the ResumableUploadBitmap.
      * @param bitmap - the resumablebitmap to set.
      */
@@ -185,27 +156,6 @@ public class UploadItem {
     public void setPollUploadKey(String pollUploadKey) {
         logger.info("setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
-    }
-
-    /**
-     * Sets the modification time. A valid format must be entered.
-     * @param modificationTime - the modification time to set.
-     */
-    public void setModificationTime(String modificationTime) {
-        logger.info("setModificationTime()");
-        String timeString;
-        if (modificationTime == null || modificationTime.isEmpty()) {
-            timeString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US).format(new Date());
-        } else {
-            timeString = modificationTime;
-        }
-
-        try {
-            this.modificationTime = URLEncoder.encode(timeString, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("UTF-8 encoding not available");
-        }
     }
 
     /**

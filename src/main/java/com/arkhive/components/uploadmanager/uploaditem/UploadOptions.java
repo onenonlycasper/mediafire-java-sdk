@@ -1,5 +1,11 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Class which represents the data structure
  * that holds user options when they create an
@@ -17,6 +23,8 @@ public class UploadOptions {
     private String versionControl;
     private String uploadPath;
     private String customFileName;
+    private String quickKey;
+    private String modificationTime;
     private ActionOnInAccount actionOnInAccount;
 
     /**
@@ -82,9 +90,7 @@ public class UploadOptions {
      */
     public String getUploadFolderKey() {
         if (uploadFolderKey == null) {
-            uploadFolderKey = "myfiles";
-        } else if (uploadFolderKey.isEmpty()) {
-            uploadFolderKey = "myfiles";
+            uploadFolderKey = "";
         }
         return uploadFolderKey;
     }
@@ -124,7 +130,9 @@ public class UploadOptions {
      * @return  The upload path.
      */
     public String getUploadPath() {
-        if (this.uploadPath == null) { return ""; }
+        if (this.uploadPath == null) {
+            uploadPath = "";
+        }
         return this.uploadPath;
     }
 
@@ -134,9 +142,7 @@ public class UploadOptions {
      */
     public void setUploadFolderKey(String uploadFolderKey) {
         if (uploadFolderKey == null) {
-            uploadFolderKey = "myfiles";
-        } else if (uploadFolderKey.isEmpty()) {
-            uploadFolderKey = "myfiles";
+            uploadFolderKey = "";
         }
         this.uploadFolderKey = uploadFolderKey;
     }
@@ -160,6 +166,50 @@ public class UploadOptions {
             case KEEP_REVISION: versionControl = "keep_revision"; break;
             case NONE: versionControl = "none"; break;
             default: versionControl = "create_patches"; break;
+        }
+    }
+
+    /**
+     * Called to get the Modification Time.
+     * @return - the modification time.
+     */
+    public String getModificationTime() {
+        return modificationTime;
+    }
+
+    /**
+     * Sets the quick key.
+     * @param quickKey - the quickkey to set.
+     */
+    public void setQuickKey(String quickKey) {
+        this.quickKey = quickKey;
+    }
+
+    /**
+     * Called to get the quick key.
+     * @return the quick key.
+     */
+    public String getQuickKey() {
+        return quickKey;
+    }
+
+    /**
+     * Sets the modification time. A valid format must be entered.
+     * @param modificationTime - the modification time to set.
+     */
+    public void setModificationTime(String modificationTime) {
+        String timeString;
+        if (modificationTime == null || modificationTime.isEmpty()) {
+            timeString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US).format(new Date());
+        } else {
+            timeString = modificationTime;
+        }
+
+        try {
+            this.modificationTime = URLEncoder.encode(timeString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("UTF-8 encoding not available");
         }
     }
 

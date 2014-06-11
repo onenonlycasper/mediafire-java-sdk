@@ -131,7 +131,7 @@ public class InstantProcess implements Runnable {
         keyValue.put("filename", filename);
         keyValue.put("hash", uploadItem.getFileData().getFileHash());
         keyValue.put("size", Long.toString(uploadItem.getFileData().getFileSize()));
-        keyValue.put("mtime", uploadItem.getModificationTime());
+        keyValue.put("mtime", uploadItem.getUploadOptions().getModificationTime());
         keyValue.put("response_format", "json");
         if (!uploadItem.getUploadOptions().getUploadPath().isEmpty()) {
             keyValue.put("path", uploadItem.getUploadOptions().getUploadPath());
