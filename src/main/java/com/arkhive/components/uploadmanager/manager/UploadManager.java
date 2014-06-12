@@ -114,7 +114,8 @@ public class UploadManager implements UploadListenerManager {
                 || uploadItem.getFileData() == null
                 || uploadItem.getFileData().getFilePath() == null
                 || uploadItem.getFileData().getFilePath().isEmpty()
-                || uploadItem.getFileData().getFileHash().isEmpty()) {
+                || uploadItem.getFileData().getFileHash().isEmpty()
+                || uploadItem.getFileData().getFileSize() == 0) {
             logger.info("one or more required parameters are invalid, not adding item to queue");
             return;
         }
