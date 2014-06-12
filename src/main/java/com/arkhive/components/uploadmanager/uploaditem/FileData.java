@@ -29,6 +29,8 @@ public class FileData {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
         this.filePath = filePath;
+        setFileSize();
+        setFileHash();
     }
 
     /**
@@ -137,34 +139,5 @@ public class FileData {
             in = null;
         }
         logger.info("FILE HASH IS SET TO: " + fileHash);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-
-        if (this.getClass() != object.getClass()) {
-            return false;
-        }
-
-        if (!(object instanceof FileData)) {
-            return false;
-        }
-
-        if (!filePath.equals(((FileData) object).filePath)) {
-            return false;
-        }
-
-        if (fileSize != ((FileData) object).fileSize) {
-            return false;
-        }
-
-        if (!fileHash.equals(((FileData) object).fileHash)) {
-            return false;
-        }
-
-        return true;
     }
 }
