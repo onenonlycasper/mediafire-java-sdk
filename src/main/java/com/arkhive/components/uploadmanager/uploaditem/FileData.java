@@ -137,7 +137,6 @@ public class FileData {
             fileUri = null;
             in = null;
         }
-
         logger.info("FILE HASH IS SET TO: " + fileHash);
     }
 
