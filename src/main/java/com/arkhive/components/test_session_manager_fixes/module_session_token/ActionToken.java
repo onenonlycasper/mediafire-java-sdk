@@ -5,17 +5,25 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.A
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public final class ActionToken implements TokenInterface {
+public final class ActionToken extends Token implements TokenInterface {
+    private String token;
 
+    private ActionToken(String id) {
+        super(id);
+    }
+
+    public static ActionToken newInstance(String id) {
+        return new ActionToken(id);
+    }
 
     @Override
     public String getTokenString() {
-        return null;
+        return token;
     }
 
     @Override
     public void setTokenString(String token) {
-
+        this.token = token;
     }
 
     @Override
@@ -27,7 +35,5 @@ public final class ActionToken implements TokenInterface {
     }
 
     @Override
-    public void setTokenSignature(String signature) {
-
-    }
+    public void setTokenSignature(String signature) { }
 }

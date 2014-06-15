@@ -3,8 +3,6 @@ package com.arkhive.components.test_session_manager_fixes.layer_http;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiGetRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiPostRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.TokenInterface;
 
 import java.io.*;
 import java.net.*;
@@ -38,7 +36,7 @@ public final class HttpLayer implements HttpInterface {
             //open connection
 
             if (url == null) {
-                apiGetRequestObject.addExceptionDuringRequest(new HttpLayerException("HttpPreProcessor produced a null URL"));
+                apiGetRequestObject.addExceptionDuringRequest(new HttpLayerException("HttpPreProcessorGET produced a null URL"));
                 return apiGetRequestObject;
             }
 
@@ -83,18 +81,25 @@ public final class HttpLayer implements HttpInterface {
     }
 
     @Override
-    public ApiRequestObject sendPostRequest(ApiPostRequestObject apiPostRequestObject, byte[] payload) {
+    public ApiPostRequestObject sendPostRequest(ApiPostRequestObject apiPostRequestObject) {
         HttpURLConnection connection = null;
         InputStream inputStream = null;
         OutputStream outputStream = null;
 
         try {
             URL url = apiPostRequestObject.getConstructedUrl();
+
+            if (url == null) {
+                apiPostRequestObject.addExceptionDuringRequest(new HttpLayerException("HttpPreProcessorGET produced a null URL"));
+                return apiPostRequestObject;
+            }
+
             connection = (HttpURLConnection) url.openConnection();
 
             //sets to POST
             connection.setDoOutput(true);
 
+            byte[] payload = apiPostRequestObject.getPayload();
             if (payload != null) {
                 connection.setFixedLengthStreamingMode(payload.length);
                 connection.setRequestProperty("Content-Type", "application/octet-stream");

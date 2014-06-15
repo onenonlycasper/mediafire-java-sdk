@@ -6,7 +6,6 @@ import com.arkhive.components.test_session_manager_fixes.module_session_token.To
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Chris Najar on 6/15/2014.
@@ -19,7 +18,7 @@ public abstract class ApiRequestObject {
     private HashMap<String, String> requiredParameters;
     private HashMap<String, String> optionalParameters;
     private URL constructedUrl;
-    private List<Exception> exceptionDuringRequest;
+    private LinkedList<Exception> exceptionDuringRequest;
     private String httpResponseString;
     private int httpResponseCode;
 
@@ -82,7 +81,7 @@ public abstract class ApiRequestObject {
         return apiResponse;
     }
 
-    public final List<Exception> getExceptionsDuringRequest() {
+    public final LinkedList<Exception> getExceptionsDuringRequest() {
         return exceptionDuringRequest;
     }
 

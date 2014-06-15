@@ -2,10 +2,6 @@ package com.arkhive.components.test_session_manager_fixes.layer_http;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiGetRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiPostRequestObject;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * Created by Chris Najar on 6/15/2014.
@@ -29,5 +25,5 @@ public interface HttpInterface {
      *
      * @return  The ApiRequestObject.
      */
-    public ApiRequestObject sendPostRequest(ApiPostRequestObject apiPostRequestObject, byte[] payload);
+    public ApiPostRequestObject sendPostRequest(ApiPostRequestObject apiPostRequestObject);
 }
