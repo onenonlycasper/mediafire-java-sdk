@@ -22,7 +22,9 @@ public abstract class ApiRequestObject {
     private String httpResponseString;
     private int httpResponseCode;
 
-    ApiRequestObject() {}
+    ApiRequestObject() {
+        super();
+    }
 
     public final void setDomain(String domain) {
         this.domain = domain;

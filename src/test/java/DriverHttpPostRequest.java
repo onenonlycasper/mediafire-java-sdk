@@ -4,7 +4,6 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.A
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
 
-import java.net.MalformedURLException;
 import java.util.HashMap;
 
 /**
@@ -39,11 +38,7 @@ public class DriverHttpPostRequest {
         apiPostRequestObject.setToken(sessionToken);
         HttpPreProcessor httpGetPreProcessor = new HttpPreProcessor(apiPostRequestObject);
 
-        try {
-            httpGetPreProcessor.processApiRequestObject();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        httpGetPreProcessor.processApiRequestObject();
 
         HttpLayer httpLayer = new HttpLayer();
         apiPostRequestObject = httpLayer.sendPostRequest(apiPostRequestObject);

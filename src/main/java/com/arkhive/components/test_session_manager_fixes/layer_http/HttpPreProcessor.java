@@ -13,13 +13,14 @@ import java.util.HashMap;
  * Created by Chris Najar on 6/15/2014.
  */
 public final class HttpPreProcessor {
-    private ApiRequestObject apiRequestObject;
+    private final ApiRequestObject apiRequestObject;
 
     public HttpPreProcessor(ApiRequestObject apiRequestObject) {
+        super();
         this.apiRequestObject = apiRequestObject;
     }
 
-    public final void processApiRequestObject() throws MalformedURLException {
+    public final void processApiRequestObject() {
         URL constructedUrl;
         if (ApiPostRequestObject.class.isInstance(apiRequestObject)) {
             System.out.println("API POST REQUEST API POST REQUEST");

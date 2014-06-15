@@ -21,6 +21,7 @@ public final class HttpLayer implements HttpInterface {
     }
 
     public HttpLayer(int connectionTimeout, int readTimeout) {
+        super();
         this.connectionTimeout = connectionTimeout;
         this.readTimeout = readTimeout;
     }

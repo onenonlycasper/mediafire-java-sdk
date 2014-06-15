@@ -9,6 +9,7 @@ public class ApiResponse {
     private String result;
     private String error;
     private String current_api_version;
+    private String new_key;
 
     public final String getAction() {
         return action;
@@ -18,8 +19,14 @@ public class ApiResponse {
         return message;
     }
 
-    public final String getError() {
-        return error;
+    public final int getError() {
+        int intValueOfError;
+        if (error == null) {
+            intValueOfError = 0;
+        } else {
+            intValueOfError = Integer.valueOf(error);
+        }
+        return intValueOfError;
     }
 
     public final String getResult() {
@@ -32,5 +39,9 @@ public class ApiResponse {
 
     public final boolean hasError() {
         return error == null;
+    }
+
+    public boolean needNewKey() {
+        return new_key != null && "yes".equals(new_key);
     }
 }

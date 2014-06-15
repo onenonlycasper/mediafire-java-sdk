@@ -5,9 +5,10 @@ package com.arkhive.components.test_session_manager_fixes.module_session_token;
  */
 public abstract class Token implements TokenInterface {
     private String token;
-    public final String id;
+    private final String id;
 
     protected Token(String id) {
+        super();
         this.id = id;
     }
 
