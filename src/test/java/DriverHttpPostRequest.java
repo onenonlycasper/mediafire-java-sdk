@@ -40,7 +40,7 @@ public class DriverHttpPostRequest {
         HttpPreProcessor httpGetPreProcessor = new HttpPreProcessor(apiPostRequestObject);
 
         try {
-            httpGetPreProcessor.processUrl();
+            httpGetPreProcessor.processApiRequestObject();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

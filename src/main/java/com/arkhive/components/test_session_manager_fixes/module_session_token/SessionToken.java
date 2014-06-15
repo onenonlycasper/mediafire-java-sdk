@@ -1,12 +1,9 @@
 package com.arkhive.components.test_session_manager_fixes.module_session_token;
 
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
-
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public final class SessionToken extends Token implements TokenInterface {
-    String token;
+public final class SessionToken extends Token {
     private String signature;
 
     private SessionToken(String id) {
@@ -18,24 +15,10 @@ public final class SessionToken extends Token implements TokenInterface {
     }
 
     @Override
-    public String getTokenString() {
-        return token;
-    }
-
-    @Override
-    public void setTokenString(String token) {
-        this.token = token;
-    }
-
-    @Override
-    public void updateToken(ApiRequestObject apiRequestObject) { }
-
-    @Override
     public String getTokenSignature() {
         return signature;
     }
 
-    @Override
     public void setTokenSignature(String signature) {
         this.signature = signature;
     }

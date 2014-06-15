@@ -3,7 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.layer_http;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiGetRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiPostRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.TokenInterface;
+import com.arkhive.components.test_session_manager_fixes.module_session_token.Token;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,7 +19,7 @@ public final class HttpPreProcessor {
         this.apiRequestObject = apiRequestObject;
     }
 
-    public final void processUrl() throws MalformedURLException {
+    public final void processApiRequestObject() throws MalformedURLException {
         URL constructedUrl;
         if (ApiPostRequestObject.class.isInstance(apiRequestObject)) {
             System.out.println("API POST REQUEST API POST REQUEST");
@@ -37,7 +37,7 @@ public final class HttpPreProcessor {
         String uri = apiGetRequestObject.getUri();
         HashMap<String, String> requiredParameters = apiGetRequestObject.getRequiredParameters();
         HashMap<String, String> optionalParameters = apiGetRequestObject.getOptionalParameters();
-        TokenInterface tokenInterface = apiGetRequestObject.getToken();
+        Token token = apiGetRequestObject.getToken();
 
         StringBuilder stringBuilder = new StringBuilder();
         if (domain != null) {
@@ -48,8 +48,8 @@ public final class HttpPreProcessor {
             stringBuilder.append(uri);
         }
 
-        if (tokenInterface != null) {
-            stringBuilder.append(constructParametersForUrl(tokenInterface));
+        if (token != null) {
+            stringBuilder.append(constructParametersForUrl(token));
         }
 
         if (requiredParameters != null) {
@@ -76,7 +76,7 @@ public final class HttpPreProcessor {
         String uri = apiPostRequestObject.getUri();
         HashMap<String, String> requiredParameters = apiPostRequestObject.getRequiredParameters();
         HashMap<String, String> optionalParameters = apiPostRequestObject.getOptionalParameters();
-        TokenInterface tokenInterface = apiPostRequestObject.getToken();
+        Token token = apiPostRequestObject.getToken();
 
         StringBuilder stringBuilder = new StringBuilder();
         if (domain != null) {
@@ -87,8 +87,8 @@ public final class HttpPreProcessor {
             stringBuilder.append(uri);
         }
 
-        if (tokenInterface != null) {
-            stringBuilder.append(constructParametersForUrl(tokenInterface));
+        if (token != null) {
+            stringBuilder.append(constructParametersForUrl(token));
         }
 
         if (requiredParameters != null) {
@@ -122,17 +122,17 @@ public final class HttpPreProcessor {
         return stringBuilder.toString();
     }
 
-    protected final String constructParametersForUrl(TokenInterface tokenInterface) {
+    protected final String constructParametersForUrl(Token token) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        if (tokenInterface.getTokenString() != null) {
+        if (token.getTokenString() != null) {
             stringBuilder.append("&session_token=");
-            stringBuilder.append(tokenInterface.getTokenString());
+            stringBuilder.append(token.getTokenString());
         }
 
-        if (tokenInterface.getTokenSignature() != null) {
+        if (token.getTokenSignature() != null) {
             stringBuilder.append("&signature=");
-            stringBuilder.append(tokenInterface.getTokenSignature());
+            stringBuilder.append(token.getTokenSignature());
         }
 
         return stringBuilder.toString();

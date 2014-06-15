@@ -1,7 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.TokenInterface;
+import com.arkhive.components.test_session_manager_fixes.module_session_token.Token;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.LinkedList;
 public abstract class ApiRequestObject {
     private String domain;
     private String uri;
-    private TokenInterface token;
+    private Token token;
     private ApiResponse apiResponse;
     private HashMap<String, String> requiredParameters;
     private HashMap<String, String> optionalParameters;
@@ -22,8 +22,7 @@ public abstract class ApiRequestObject {
     private String httpResponseString;
     private int httpResponseCode;
 
-    ApiRequestObject() {
-    }
+    ApiRequestObject() {}
 
     public final void setDomain(String domain) {
         this.domain = domain;
@@ -41,11 +40,11 @@ public abstract class ApiRequestObject {
         return uri;
     }
 
-    public final void setToken(TokenInterface token) {
+    public final void setToken(Token token) {
         this.token = token;
     }
 
-    public final TokenInterface getToken() {
+    public final Token getToken() {
         return token;
     }
 
