@@ -75,7 +75,7 @@ public class User {
 
   /**Attempts to link a facebook account.
    * @param sessionManager - the session manager to be used to process the request.
-   * @return an ApiResponse containing the server response.
+   * @return an BaseApiResponse containing the server response.
    */
   public static ApiResponse linkFacebook(String facebookAccessToken, SessionManager sessionManager) {
     Map<String, String> parameters = new HashMap<String, String>();
@@ -86,7 +86,7 @@ public class User {
 
   /**Attempts to link a twitter account.
    * @param sessionManager - the session manager to be used to process the request.
-   * @return an ApiResponse containing the server response.
+   * @return an BaseApiResponse containing the server response.
    */
   public static ApiResponse linkTwitter(String twitterOauthToken, String twitterOauthTokenSecret, 
                                         SessionManager sessionManager) {
@@ -99,7 +99,7 @@ public class User {
 
   /**Attempts to unlink a facebook account.
    * @param sessionManager - the session manager to be used to process the request.
-   * @return an ApiResponse containing the server response.
+   * @return an BaseApiResponse containing the server response.
    */
   public static ApiResponse unlinkFacebook(SessionManager sessionManager) {
     Map<String, String> parameters = new HashMap<String, String>();
@@ -109,7 +109,7 @@ public class User {
 
   /**Attempts to unlink a twitter account.
    * @param sessionManager - the session manager to be used to process the request.
-   * @return an ApiResponse containing the server response.
+   * @return an BaseApiResponse containing the server response.
    */
   public static ApiResponse unlinkTwitter(SessionManager sessionManager) {
     Map<String, String> parameters = new HashMap<String, String>();
