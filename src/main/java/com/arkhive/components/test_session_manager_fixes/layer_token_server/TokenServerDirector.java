@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public class TokenServerDirector implements TokenServerCallback, Pausable {
+public class TokenServerDirector implements TokenServerCallback, InterServerCallback,  Pausable {
     private volatile boolean isPaused;
     private Object pauseLock = new Object();
     private ActionTokenServer actionTokenServer;
@@ -27,32 +27,37 @@ public class TokenServerDirector implements TokenServerCallback, Pausable {
     @Override
     public void actionTokenReturned(ActionToken actionToken) {
         logger.debug("actionTokenReturned(" + actionToken.getId() + ")");
+        actionTokenServer.receiveValidToken(actionToken);
     }
 
     @Override
     public void actionTokenExpired(ActionToken actionToken) {
         logger.debug("actionTokenExpired(" + actionToken.getId() + ")");
+        actionTokenServer.receiveInvalidToken(actionToken);
     }
 
     @Override
     public void newActionTokenReturned(ActionToken actionToken) {
         logger.debug("newActionTokenReturned(" + actionToken.getId() + ")");
-
+        actionTokenServer.receiveNewActionToken(actionToken);
     }
 
     @Override
     public void sessionTokenReturned(SessionToken sessionToken) {
         logger.debug("sessionTokenReturned(" + sessionToken.getId() + ")");
+        sessionTokenServer.receiveValidToken(sessionToken);
     }
 
     @Override
     public void sessionTokenExpired(SessionToken sessionToken) {
         logger.debug("sessionTokenExpired(" + sessionToken.getId() + ")");
+        sessionTokenServer.receiveInvalidToken(sessionToken);
     }
 
     @Override
     public void newSessionTokenReturned(SessionToken sessionToken) {
         logger.debug("newSessionTokenReturned(" + sessionToken.getId() + ")");
+        sessionTokenServer.receiveNewSessionToken(sessionToken);
     }
 
     /*
@@ -79,6 +84,24 @@ public class TokenServerDirector implements TokenServerCallback, Pausable {
     @Override
     public boolean isPaused() {
         logger.debug("isPaused()");
-        return isPaused();
+        return isPaused;
+    }
+
+    /*
+        Interface methods: InterServerCallback
+     */
+    @Override
+    public void requestSessionTokenInternal() {
+
+    }
+
+    @Override
+    public void grantSessionTokenInternal(SessionToken sessionToken) {
+
+    }
+
+    @Override
+    public void returnSessionTokenInternal(SessionToken sessionToken) {
+
     }
 }

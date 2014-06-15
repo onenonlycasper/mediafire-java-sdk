@@ -31,20 +31,24 @@ public class ActionTokenServer implements Pausable {
         logger.debug("addActionTokenRequest()");
     }
 
-    public void receiveValidToken() {
+    public void receiveValidToken(ActionToken actionToken) {
         logger.debug("receiveBackValidToken()");
     }
 
-    public void receiveInvalidToken() {
+    public void receiveInvalidToken(ActionToken actionToken) {
         logger.debug("receiveBackInvalidToken()");
     }
 
-    private void getUploadActionToken() {
-        logger.debug("getUploadActionToken()");
+    public void receiveNewActionToken(ActionToken actionToken) {
+        logger.debug("receiveNewActionToken()");
     }
 
-    private void getImageActionToken() {
-        logger.debug("getImageActionToken()");
+    private void getNewUploadActionToken() {
+        logger.debug("getNewUploadActionToken()");
+    }
+
+    private void getNewImageActionToken() {
+        logger.debug("getNewImageActionToken()");
     }
 
     /*

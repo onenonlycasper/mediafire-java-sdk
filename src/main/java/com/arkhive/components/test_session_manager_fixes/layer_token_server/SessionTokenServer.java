@@ -6,6 +6,7 @@ import com.arkhive.components.test_session_manager_fixes.module_session_token.Se
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -35,21 +36,36 @@ public class SessionTokenServer implements Pausable {
         logger.debug("addSessionTokenRequest()");
     }
 
-    void receiveNewSessionToken(SessionToken sessionToken) {
+    public void receiveValidToken(SessionToken sessionToken) {
+        logger.debug("receiveBackValidToken()");
+    }
+
+    public void receiveInvalidToken(SessionToken sessionToken) {
+        logger.debug("receiveBackInvalidToken()");
+    }
+
+    public void receiveNewSessionToken(SessionToken sessionToken) {
         logger.debug("receiveNewSessionToken()");
         boolean added = sessionTokens.add(sessionToken);
     }
 
-    public void receiveValidToken() {
-        logger.debug("receiveBackValidToken()");
-    }
+    private void getNewSessionToken() {
+        logger.debug("getNewSessionToken()");
+        if (credentialsInterface == null) {
+            logger.debug("-cannot get new session token. credentials interface null");
+            return;
+        }
 
-    public void receiveInvalidToken() {
-        logger.debug("receiveBackInvalidToken()");
-    }
+        Map<String, String> credentialsMap = credentialsInterface.getCredentials();
+        if (credentialsMap == null) {
+            logger.debug("-cannot get new session token. credentials null");
+            return;
+        }
 
-    private void getSessionToken() {
-        logger.debug("getSessionToken()");
+        if (credentialsMap.isEmpty()) {
+            logger.debug("-cannot get new session token. credentials empty");
+            return;
+        }
     }
 
     private void spoolUpSessionTokenWorkQueue() {

@@ -9,9 +9,12 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public final class CredentialsLayer implements CredentialsInterface {
+public final class DeveloperCredentials implements CredentialsInterface {
+    private static final String KEY_APPLICATION_ID = "application_id";
+    private static final String KEY_API_KEY = "api_key";
+
     private Map<String, String> credentials = new HashMap<String, String>();
-    private Logger logger = LoggerFactory.getLogger(CredentialsLayer.class);
+    private Logger logger = LoggerFactory.getLogger(LoginCredentials.class);
 
     @Override
     public Map<String, String> getCredentials() {
