@@ -7,9 +7,19 @@ package com.arkhive.components.test_session_manager_fixes.layer_token_server;
  */
 public interface Pausable {
 
+    /**
+     * call method to pause some behavior.
+     */
     public void pause();
 
+    /**
+     * call method to resume some behavior.
+     */
     public void resume();
 
+    /**
+     * call method to check if some behavior is paused.
+     * @return
+     */
     public boolean isPaused();
 }

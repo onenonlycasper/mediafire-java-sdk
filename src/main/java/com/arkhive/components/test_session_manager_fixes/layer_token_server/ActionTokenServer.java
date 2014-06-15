@@ -2,6 +2,9 @@ package com.arkhive.components.test_session_manager_fixes.layer_token_server;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.CredentialsInterface;
+import com.arkhive.components.test_session_manager_fixes.module_session_token.ActionToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Chris Najar on 6/15/2014.
@@ -13,31 +16,43 @@ public class ActionTokenServer implements Pausable {
     private int actionTokenLifeSpan;
     private PausableThreadPoolExecutor executor;
     private CredentialsInterface credentialsInterface;
+    private ActionToken imageActionToken;
+    private ActionToken uploadActionToken;
 
-    public ActionTokenServer(CredentialsInterface credentialsInterface, int actionTokenLifeSpan, int maxActionTokensWorking) {
+    private Logger logger = LoggerFactory.getLogger(ActionTokenServer.class);
+
+    public ActionTokenServer(CredentialsInterface credentialsInterface, int actionTokenLifeSpan, int poolSize) {
         this.credentialsInterface = credentialsInterface;
         this.actionTokenLifeSpan = actionTokenLifeSpan;
-        executor = new PausableThreadPoolExecutor(maxActionTokensWorking);
+        executor = new PausableThreadPoolExecutor(poolSize);
     }
 
     public void addActionTokenRequest(ApiRequestObject apiRequestObject) {
+        logger.debug("addActionTokenRequest()");
+    }
 
+    public void receiveValidToken() {
+        logger.debug("receiveBackValidToken()");
+    }
+
+    public void receiveInvalidToken() {
+        logger.debug("receiveBackInvalidToken()");
     }
 
     private void getUploadActionToken() {
-
+        logger.debug("getUploadActionToken()");
     }
 
     private void getImageActionToken() {
-
+        logger.debug("getImageActionToken()");
     }
-
 
     /*
      * PAUSABLE INTERFACE
      */
     @Override
     public void pause() {
+        logger.debug("pause()");
         synchronized (pauseLock) {
             isPaused = true;
             executor.pause();
@@ -46,6 +61,7 @@ public class ActionTokenServer implements Pausable {
 
     @Override
     public void resume() {
+        logger.debug("resume()");
         synchronized (pauseLock) {
             isPaused = false;
             executor.resume();
@@ -54,6 +70,7 @@ public class ActionTokenServer implements Pausable {
 
     @Override
     public boolean isPaused() {
+        logger.debug("isPaused()");
         return isPaused;
     }
 }

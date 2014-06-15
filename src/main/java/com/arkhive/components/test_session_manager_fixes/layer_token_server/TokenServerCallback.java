@@ -11,4 +11,5 @@ public interface TokenServerCallback {
     public void actionTokenExpired(ActionToken token);
     public void sessionTokenReturned(SessionToken token);
     public void sessionTokenExpired(SessionToken token);
+    public void newSessionTokenReturned(SessionToken token);
 }

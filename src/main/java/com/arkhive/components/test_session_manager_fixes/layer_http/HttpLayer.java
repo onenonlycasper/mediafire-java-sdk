@@ -3,6 +3,8 @@ package com.arkhive.components.test_session_manager_fixes.layer_http;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiGetRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiPostRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.*;
@@ -16,6 +18,8 @@ public final class HttpLayer implements HttpInterface {
     private final int connectionTimeout;
     private final int readTimeout;
 
+    private Logger logger = LoggerFactory.getLogger(HttpLayer.class);
+
     public HttpLayer() {
         this(5000, 5000);
     }
@@ -28,6 +32,7 @@ public final class HttpLayer implements HttpInterface {
 
     @Override
     public ApiGetRequestObject sendGetRequest(ApiGetRequestObject apiGetRequestObject) {
+        logger.debug("sendGetRequest()");
         HttpURLConnection connection = null;
         InputStream inputStream = null;
 
@@ -83,6 +88,7 @@ public final class HttpLayer implements HttpInterface {
 
     @Override
     public ApiPostRequestObject sendPostRequest(ApiPostRequestObject apiPostRequestObject) {
+        logger.debug("sendPostRequest()");
         HttpURLConnection connection = null;
         InputStream inputStream = null;
         OutputStream outputStream = null;

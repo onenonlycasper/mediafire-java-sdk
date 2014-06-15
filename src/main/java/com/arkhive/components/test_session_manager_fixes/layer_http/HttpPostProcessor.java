@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.layer_http;
 
+import com.arkhive.components.test_session_manager_fixes.layer_token_server.ApiSessionTokenRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
 import com.arkhive.components.test_session_manager_fixes.module_session_token.ActionToken;
@@ -23,16 +24,20 @@ public final class HttpPostProcessor {
 
     public void processApiRequestObject() {
         Token token = apiRequestObject.getToken();
+
+        if (ApiSessionTokenRequestObject.class.isInstance(apiRequestObject)) {
+            returnSessionToken((SessionToken) token);
+            return;
+        }
+
         if (ActionToken.class.isInstance(token)) {
-            boolean stillValid = isTokenStillValid(apiRequestObject);
-            if (stillValid) {
+            if (isTokenStillValid(apiRequestObject)) {
                 returnActionToken((ActionToken) token);
             } else {
                 notifyExpiredActionToken((ActionToken) token);
             }
         } else if (SessionToken.class.isInstance(token)) {
-            boolean stillValid = isTokenStillValid(apiRequestObject);
-            if (stillValid) {
+            if (isTokenStillValid(apiRequestObject)) {
                 returnSessionToken((SessionToken) token);
             } else {
                 notifyExpiredSessionToken((SessionToken) token);
@@ -88,6 +93,12 @@ public final class HttpPostProcessor {
     private void notifyExpiredSessionToken(SessionToken sessionToken) {
         if (apiRequestObject.getTokenServerCallback() != null) {
             apiRequestObject.getTokenServerCallback().sessionTokenExpired(sessionToken);
+        }
+    }
+
+    private void returnNewSessionToken(SessionToken sessionToken) {
+        if (apiRequestObject.getTokenServerCallback() != null) {
+            apiRequestObject.getTokenServerCallback().newSessionTokenReturned(sessionToken);
         }
     }
 

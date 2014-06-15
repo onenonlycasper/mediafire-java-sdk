@@ -4,6 +4,8 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.A
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiPostRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_session_token.Token;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,18 +17,19 @@ import java.util.HashMap;
 public final class HttpPreProcessor {
     private final ApiRequestObject apiRequestObject;
 
+    private Logger logger = LoggerFactory.getLogger(HttpPreProcessor.class);
+
     public HttpPreProcessor(ApiRequestObject apiRequestObject) {
         super();
         this.apiRequestObject = apiRequestObject;
     }
 
     public final void processApiRequestObject() {
+        logger.debug("processApiRequestObject()");
         URL constructedUrl;
         if (ApiPostRequestObject.class.isInstance(apiRequestObject)) {
-            System.out.println("API POST REQUEST API POST REQUEST");
             constructedUrl = createUrl((ApiPostRequestObject) apiRequestObject);
         } else {
-            System.out.println("API GET REQUEST API GET REQUEST");
             constructedUrl = createUrl((ApiGetRequestObject) apiRequestObject);
         }
 
@@ -34,6 +37,7 @@ public final class HttpPreProcessor {
     }
 
     private URL createUrl(ApiGetRequestObject apiGetRequestObject) {
+        logger.debug("createUrl(ApiGetRequestObject)");
         String domain = apiGetRequestObject.getDomain();
         String uri = apiGetRequestObject.getUri();
         HashMap<String, String> requiredParameters = apiGetRequestObject.getRequiredParameters();
@@ -73,6 +77,7 @@ public final class HttpPreProcessor {
     }
 
     private URL createUrl(ApiPostRequestObject apiPostRequestObject) {
+        logger.debug("createUrl(ApiPostRequestObject)");
         String domain = apiPostRequestObject.getDomain();
         String uri = apiPostRequestObject.getUri();
         HashMap<String, String> requiredParameters = apiPostRequestObject.getRequiredParameters();
@@ -112,6 +117,7 @@ public final class HttpPreProcessor {
     }
 
     protected final String constructParametersForUrl(HashMap<String, String> parameters) {
+        logger.debug("constructParametersForUrl(HashMap<String, String>)");
         StringBuilder stringBuilder = new StringBuilder();
         if (parameters != null && parameters.size() > 0) {
             for (String key : parameters.keySet()) {
@@ -124,6 +130,7 @@ public final class HttpPreProcessor {
     }
 
     protected final String constructParametersForUrl(Token token) {
+        logger.debug("constructParametersForUrl(Token)");
         StringBuilder stringBuilder = new StringBuilder();
 
         if (token.getTokenString() != null) {
@@ -140,6 +147,7 @@ public final class HttpPreProcessor {
     }
 
     protected final String cleanupUrlString(String urlString) {
+        logger.debug("cleanupUrlString()");
         String cleanedUrlString;
         if (urlString.contains("&")) {
             cleanedUrlString = urlString.replaceFirst("&", "?");

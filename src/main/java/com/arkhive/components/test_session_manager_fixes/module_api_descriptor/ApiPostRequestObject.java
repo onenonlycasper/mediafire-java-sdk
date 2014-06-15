@@ -1,5 +1,8 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor;
 
+import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_session_token.TokenInterface;
+
 import java.util.HashMap;
 
 /**

@@ -24,7 +24,7 @@ public abstract class ApiRequestObject {
     private int httpResponseCode;
     private TokenServerCallback tokenServerCallback;
 
-    ApiRequestObject() {
+    public ApiRequestObject() {
         super();
     }
 
