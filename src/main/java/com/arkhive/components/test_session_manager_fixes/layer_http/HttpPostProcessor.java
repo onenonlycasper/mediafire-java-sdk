@@ -15,12 +15,10 @@ import com.google.gson.JsonParser;
  */
 public final class HttpPostProcessor {
     private final ApiRequestObject apiRequestObject;
-    private final Callback callback;
 
-    public HttpPostProcessor(Callback callback, ApiRequestObject apiRequestObject) {
+    public HttpPostProcessor(ApiRequestObject apiRequestObject) {
         super();
         this.apiRequestObject = apiRequestObject;
-        this.callback = callback;
     }
 
     public void processApiRequestObject() {
@@ -70,26 +68,26 @@ public final class HttpPostProcessor {
     }
 
     private void returnActionToken(ActionToken actionToken) {
-        if (callback != null) {
-            callback.actionTokenReturned(actionToken);
+        if (apiRequestObject.getTokenServerCallback() != null) {
+            apiRequestObject.getTokenServerCallback().actionTokenReturned(actionToken);
         }
     }
 
     private void notifyExpiredActionToken(ActionToken actionToken) {
-        if (callback != null) {
-            callback.actionTokenExpired(actionToken);
+        if (apiRequestObject.getTokenServerCallback() != null) {
+            apiRequestObject.getTokenServerCallback().actionTokenExpired(actionToken);
         }
     }
 
     private void returnSessionToken(SessionToken sessionToken) {
-        if (callback != null) {
-            callback.sessionTokenReturned(sessionToken);
+        if (apiRequestObject.getTokenServerCallback() != null) {
+            apiRequestObject.getTokenServerCallback().sessionTokenReturned(sessionToken);
         }
     }
 
     private void notifyExpiredSessionToken(SessionToken sessionToken) {
-        if (callback != null) {
-            callback.sessionTokenExpired(sessionToken);
+        if (apiRequestObject.getTokenServerCallback() != null) {
+            apiRequestObject.getTokenServerCallback().sessionTokenExpired(sessionToken);
         }
     }
 
@@ -119,13 +117,5 @@ public final class HttpPostProcessor {
             }
         }
         return returnJson;
-    }
-
-
-    public interface Callback {
-        public void actionTokenReturned(ActionToken token);
-        public void actionTokenExpired(ActionToken token);
-        public void sessionTokenReturned(SessionToken token);
-        public void sessionTokenExpired(SessionToken token);
     }
 }

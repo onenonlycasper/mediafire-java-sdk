@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor;
 
+import com.arkhive.components.test_session_manager_fixes.layer_token_server.TokenServerCallback;
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
 import com.arkhive.components.test_session_manager_fixes.module_session_token.Token;
 
@@ -21,6 +22,7 @@ public abstract class ApiRequestObject {
     private LinkedList<Exception> exceptionDuringRequest;
     private String httpResponseString;
     private int httpResponseCode;
+    private TokenServerCallback tokenServerCallback;
 
     ApiRequestObject() {
         super();
@@ -109,5 +111,13 @@ public abstract class ApiRequestObject {
 
     public void setHttpResponseCode(int httpResponseCode) {
         this.httpResponseCode = httpResponseCode;
+    }
+
+    public TokenServerCallback getTokenServerCallback() {
+        return tokenServerCallback;
+    }
+
+    public void setTokenServerCallback(TokenServerCallback tokenServerCallback) {
+        this.tokenServerCallback = tokenServerCallback;
     }
 }
