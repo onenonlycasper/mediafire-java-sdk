@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.layer_http;
 
+import com.arkhive.components.test_session_manager_fixes.layer_token_server.ApiActionTokenRequestObject;
 import com.arkhive.components.test_session_manager_fixes.layer_token_server.ApiSessionTokenRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
@@ -26,7 +27,12 @@ public final class HttpPostProcessor {
         Token token = apiRequestObject.getToken();
 
         if (ApiSessionTokenRequestObject.class.isInstance(apiRequestObject)) {
-            returnSessionToken((SessionToken) token);
+            returnNewSessionToken((SessionToken) token);
+            return;
+        }
+
+        if (ApiActionTokenRequestObject.class.isInstance(apiRequestObject)) {
+            returnNewActionToken((ActionToken) token);
             return;
         }
 
@@ -99,6 +105,12 @@ public final class HttpPostProcessor {
     private void returnNewSessionToken(SessionToken sessionToken) {
         if (apiRequestObject.getTokenServerCallback() != null) {
             apiRequestObject.getTokenServerCallback().newSessionTokenReturned(sessionToken);
+        }
+    }
+
+    private void returnNewActionToken(ActionToken actionToken) {
+        if (apiRequestObject.getTokenServerCallback() != null) {
+            apiRequestObject.getTokenServerCallback().newActionTokenReturned(actionToken);
         }
     }
 

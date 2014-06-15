@@ -25,28 +25,34 @@ public class TokenServerDirector implements TokenServerCallback, Pausable {
         Interface methods: TokenServerCallback
      */
     @Override
-    public void actionTokenReturned(ActionToken token) {
-        logger.debug("actionTokenReturned(" + token.getId() + ")");
+    public void actionTokenReturned(ActionToken actionToken) {
+        logger.debug("actionTokenReturned(" + actionToken.getId() + ")");
     }
 
     @Override
-    public void actionTokenExpired(ActionToken token) {
-        logger.debug("actionTokenExpired(" + token.getId() + ")");
+    public void actionTokenExpired(ActionToken actionToken) {
+        logger.debug("actionTokenExpired(" + actionToken.getId() + ")");
     }
 
     @Override
-    public void sessionTokenReturned(SessionToken token) {
-        logger.debug("sessionTokenReturned(" + token.getId() + ")");
+    public void newActionTokenReturned(ActionToken actionToken) {
+        logger.debug("newActionTokenReturned(" + actionToken.getId() + ")");
+
     }
 
     @Override
-    public void sessionTokenExpired(SessionToken token) {
-        logger.debug("sessionTokenExpired(" + token.getId() + ")");
+    public void sessionTokenReturned(SessionToken sessionToken) {
+        logger.debug("sessionTokenReturned(" + sessionToken.getId() + ")");
     }
 
     @Override
-    public void newSessionTokenReturned(SessionToken token) {
-        logger.debug("newSessionTokenReturned(" + token.getId() + ")");
+    public void sessionTokenExpired(SessionToken sessionToken) {
+        logger.debug("sessionTokenExpired(" + sessionToken.getId() + ")");
+    }
+
+    @Override
+    public void newSessionTokenReturned(SessionToken sessionToken) {
+        logger.debug("newSessionTokenReturned(" + sessionToken.getId() + ")");
     }
 
     /*
@@ -73,8 +79,6 @@ public class TokenServerDirector implements TokenServerCallback, Pausable {
     @Override
     public boolean isPaused() {
         logger.debug("isPaused()");
-        synchronized (pauseLock) {
-            return isPaused();
-        }
+        return isPaused();
     }
 }
