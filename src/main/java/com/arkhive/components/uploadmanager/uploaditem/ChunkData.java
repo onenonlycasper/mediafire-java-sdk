@@ -33,8 +33,8 @@ public class ChunkData {
      * @return
      */
     public int getUnitSize() {
-        logger.info("getUnitSize()");
-        logger.info("RETURNING UNIT SIZE: " + unitSize);
+        System.out.println("getUnitSize()");
+        System.out.println("RETURNING UNIT SIZE: " + unitSize);
         return unitSize;
     }
 
@@ -43,8 +43,8 @@ public class ChunkData {
      * @return
      */
     public int getNumberOfUnits() {
-        logger.info("getNumberOfUnits()");
-        logger.info("RETURNING NUMBER OF UNITS: " + numberOfUnits);
+        System.out.println("getNumberOfUnits()");
+        System.out.println("RETURNING NUMBER OF UNITS: " + numberOfUnits);
         return numberOfUnits;
     }
     
@@ -56,9 +56,9 @@ public class ChunkData {
      * @param unitSize
      */
     public void setUnitSize(int unitSize) {
-        logger.info("setUnitSize()");
+        System.out.println("setUnitSize()");
         this.unitSize = unitSize;
-        logger.info("UNIT SIZE SET TO: " + this.unitSize);
+        System.out.println("UNIT SIZE SET TO: " + this.unitSize);
     }
 
     /**
@@ -66,9 +66,9 @@ public class ChunkData {
      * @param numberOfUnits
      */
     public void setNumberOfUnits(int numberOfUnits) {
-        logger.info("setNumberOfUnits()");
+        System.out.println("setNumberOfUnits()");
         this.numberOfUnits = numberOfUnits;
-        logger.info("NUMBER OF UNITS SET TO: " + this.numberOfUnits);
+        System.out.println("NUMBER OF UNITS SET TO: " + this.numberOfUnits);
     }
 
 }

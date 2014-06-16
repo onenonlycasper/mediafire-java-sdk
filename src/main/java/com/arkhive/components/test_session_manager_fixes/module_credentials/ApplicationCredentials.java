@@ -1,8 +1,5 @@
 package com.arkhive.components.test_session_manager_fixes.module_credentials;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,10 +10,9 @@ import java.util.Map;
 public class ApplicationCredentials implements CredentialsInterface {
     private Map<String, String> userCredentials = new HashMap<String, String>();
     private UserCredentialsType userCredentialsType;
-    private Logger logger = LoggerFactory.getLogger(ApplicationCredentials.class);
     private boolean credentialsSet;
-    private String appId;
-    private String apiKey;
+    private final String appId;
+    private final String apiKey;
 
     public ApplicationCredentials(String appId, String apiKey) throws CredentialsException {
         if (appId == null || apiKey == null) {
@@ -51,7 +47,7 @@ public class ApplicationCredentials implements CredentialsInterface {
      * @return - true if credentials are stored, false if not.
      */
     public boolean setUserCredentials(HashMap<String, String> credentials) throws CredentialsException {
-        logger.debug("addUserCredentials()");
+        System.out.println("addUserCredentials()");
         if (credentialsSet) {
             throw new CredentialsException("credentials are already set. use clearCredentials()");
         }
@@ -84,7 +80,7 @@ public class ApplicationCredentials implements CredentialsInterface {
     }
 
     private void setCredentials(Map<String, String> credentials) {
-        logger.debug("setCredentials()");
+        System.out.println("setCredentials()");
         credentialsSet = true;
         userCredentials = credentials;
     }
@@ -98,26 +94,26 @@ public class ApplicationCredentials implements CredentialsInterface {
     }
 
     private void clearCredentials() {
-        logger.debug("clearCredentials()");
+        System.out.println("clearCredentials()");
         userCredentials.clear();
         userCredentialsType = UserCredentialsType.UNSET;
         credentialsSet = false;
     }
 
     public boolean isCredentialsSet() {
-        logger.debug("isCredentialsSet()");
+        System.out.println("isCredentialsSet()");
         return credentialsSet;
     }
 
     @Override
     public String getAppId() {
-        logger.debug("getAppId()");
+        System.out.println("getAppId()");
         return appId;
     }
 
     @Override
     public String getApiKey() {
-        logger.debug("getApiKey()");
+        System.out.println("getApiKey()");
         return apiKey;
     }
 
@@ -126,24 +122,15 @@ public class ApplicationCredentials implements CredentialsInterface {
     }
 
     private boolean isFacebookCredentials(HashMap<String, String> credentials) {
-        if (credentials == null) {
-            return false;
-        }
-        return credentials.size() == 1 && credentials.containsKey("fb_access_token");
+        return credentials != null && credentials.size() == 1 && credentials.containsKey("fb_access_token");
     }
 
     private boolean isTwitterCredentials(HashMap<String, String> credentials) {
-        if (credentials == null) {
-            return false;
-        }
-        return credentials.size() == 2 && credentials.containsKey("tw_oauth_token") && credentials.containsKey("tw_oauth_token_secret");
+        return credentials != null && credentials.size() == 2 && credentials.containsKey("tw_oauth_token") && credentials.containsKey("tw_oauth_token_secret");
     }
 
     private boolean isMediaFireCredentials(HashMap<String, String> credentials) {
-        if (credentials == null) {
-            return false;
-        }
-        return credentials.size() == 2 && credentials.containsKey("email") && credentials.containsKey("password");
+        return credentials != null && credentials.size() == 2 && credentials.containsKey("email") && credentials.containsKey("password");
     }
 
     public enum UserCredentialsType {

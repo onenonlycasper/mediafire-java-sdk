@@ -46,7 +46,7 @@ public class ResumableBitmap {
      * decodes the Bitmap received (given parameters count, [words]).
      */
     private void decodeBitmap() {
-        logger.info("decodeBitmap()");
+        System.out.println("decodeBitmap()");
         List<Boolean> uploadUnits = new ArrayList<Boolean>();
 
         //loop count times
@@ -77,7 +77,7 @@ public class ResumableBitmap {
      * @return - true if uploaded, false if not.
      */
     public boolean isUploaded(int chunkId) {
-        logger.info("isUploaded()");
+        System.out.println("isUploaded()");
         if (uploadUnits.size() == 0) {
             return false;
         }
@@ -89,17 +89,17 @@ public class ResumableBitmap {
      * @return - the collection of Upload Units.
      */
     public List<Boolean> getUploadUnits() {
-        logger.info("getUploadUnits()");
+        System.out.println("getUploadUnits()");
         return uploadUnits;
     }
 
     public int getCount() {
-        logger.info("getCount()");
+        System.out.println("getCount()");
         return count;
     }
 
     public List<Integer> getWords() {
-        logger.info("getWords()");
+        System.out.println("getWords()");
         return words;
     }
 }

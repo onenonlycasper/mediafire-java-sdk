@@ -1,14 +1,10 @@
 package com.arkhive.components.test_session_manager_fixes.module_session_token;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Created by Chris Najar on 6/15/2014.
  */
 public final class ActionToken extends Token {
-    private Type type;
-    private Logger logger = LoggerFactory.getLogger(ActionToken.class);
+    private final Type type;
 
     private ActionToken(Type type, String id) {
         super(id);
@@ -27,7 +23,7 @@ public final class ActionToken extends Token {
     public String getTokenSignature() { return null; }
 
     public Type getType() {
-        logger.debug("getType()");
+        System.out.println("getType()");
         return type;
     }
 

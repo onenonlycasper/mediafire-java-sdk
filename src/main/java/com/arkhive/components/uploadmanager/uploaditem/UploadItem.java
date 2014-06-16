@@ -34,7 +34,7 @@ public class UploadItem {
      * Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, UploadOptions uploadOptions) {
-        logger.info("UploadItem created");
+        System.out.println("UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
@@ -69,7 +69,7 @@ public class UploadItem {
     }
 
     public int getCheckCount() {
-        logger.info("getCheckCount()");
+        System.out.println("getCheckCount()");
         count++;
         return count;
     }
@@ -81,7 +81,7 @@ public class UploadItem {
      * @return the filename.
      */
     public String getFileName() {
-        logger.info("getFileName()");
+        System.out.println("getFileName()");
         if (!options.getCustomFileName().isEmpty()) {
             fileName = options.getCustomFileName();
         }
@@ -93,7 +93,7 @@ public class UploadItem {
      * @return the file data struct.
      */
     public FileData getFileData() {
-        logger.info("getFileData()");
+        System.out.println("getFileData()");
         return fileData;
     }
 
@@ -102,7 +102,7 @@ public class UploadItem {
      * @return - the poll upload key.
      */
     public String getPollUploadKey() {
-        logger.info("getPollUploadKey()");
+        System.out.println("getPollUploadKey()");
         return pollUploadKey;
     }
 
@@ -111,7 +111,7 @@ public class UploadItem {
      * @return - the upload options struct.
      */
     public UploadOptions getUploadOptions() {
-        logger.info("getUploadOptions()");
+        System.out.println("getUploadOptions()");
         if (options == null) {
             options = new UploadOptions();
         }
@@ -123,7 +123,7 @@ public class UploadItem {
      * @return - the chunkdata struct.
      */
     public ChunkData getChunkData() {
-        logger.info("getChunkData()");
+        System.out.println("getChunkData()");
         if (chunkData == null) {
             chunkData = new ChunkData();
         }
@@ -135,9 +135,9 @@ public class UploadItem {
      * @return - the resumablebitmap struct.
      */
     public ResumableBitmap getBitmap() {
-        logger.info("getBitmap()");
+        System.out.println("getBitmap()");
         if (bitmap == null) {
-            logger.error(TAG + "   resumable bitmap reference lost");
+            System.out.println(TAG + "   resumable bitmap reference lost");
             bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
         }
         return bitmap;
@@ -148,7 +148,7 @@ public class UploadItem {
      * @param bitmap - the resumablebitmap to set.
      */
     public void setBitmap(ResumableBitmap bitmap) {
-        logger.info("setBitmap()");
+        System.out.println("setBitmap()");
         this.bitmap = bitmap;
     }
 
@@ -157,7 +157,7 @@ public class UploadItem {
      * @param pollUploadKey - the polluploadkey to set.
      */
     public void setPollUploadKey(String pollUploadKey) {
-        logger.info("setPollUploadKey()");
+        System.out.println("setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
     }
 
@@ -166,7 +166,7 @@ public class UploadItem {
      * @param path path of the file.
      */
     private void setFileName(String path) {
-        logger.info("setFileName()");
+        System.out.println("setFileName()");
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {

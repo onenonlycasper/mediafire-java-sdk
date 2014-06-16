@@ -1,8 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_http_processor;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.*;
@@ -18,8 +16,6 @@ public final class HttpPeriProcessor implements HttpInterface {
     private final HttpPreProcessor httpPreProcessor;
     private final HttpPostProcessor httpPostProcessor;
 
-    private Logger logger = LoggerFactory.getLogger(HttpPeriProcessor.class);
-
     public HttpPeriProcessor(int connectionTimeout, int readTimeout) {
         this.connectionTimeout = connectionTimeout;
         this.readTimeout = readTimeout;
@@ -29,7 +25,7 @@ public final class HttpPeriProcessor implements HttpInterface {
 
     @Override
     public ApiRequestObject sendGetRequest(ApiRequestObject apiRequestObject) {
-        logger.debug("sendGetRequest()");
+        System.out.println("sendGetRequest()");
 
         httpPreProcessor.processApiRequestObject(apiRequestObject);
 
@@ -89,7 +85,7 @@ public final class HttpPeriProcessor implements HttpInterface {
 
     @Override
     public ApiRequestObject sendPostRequest(ApiRequestObject apiRequestObject) {
-        logger.debug("sendPostRequest()");
+        System.out.println("sendPostRequest()");
 
         httpPreProcessor.processApiRequestObject(apiRequestObject);
 

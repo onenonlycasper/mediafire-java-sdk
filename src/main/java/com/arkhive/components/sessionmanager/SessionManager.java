@@ -231,7 +231,7 @@ public class SessionManager implements SessionRequestHandler {
      * @param handler A callback handler to receive the requested session token.
      */
     public void getSession(SessionRequestHandler handler) {
-//      logger.info("SESSION REQUESTED");
+//      System.out.println("SESSION REQUESTED");
         if (sessionList.size() > minSessions) {
             synchronized (this) {
                 Session session = sessionList.remove();
