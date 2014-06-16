@@ -12,17 +12,4 @@ public interface CredentialsInterface {
      * @return A Map containing the credentials needed.
      */
     public Map<String, String> getCredentials();
-
-    /**
-     * Store the credentials needed for a web API request.
-     *
-     * @param credentials  A Map containing the credentials information
-     * to store.
-     */
-    public void setCredentials(Map<String, String> credentials);
-
-    /**
-     *  Clear the credentials stored
-     */
-    public void clearCredentials();
 }

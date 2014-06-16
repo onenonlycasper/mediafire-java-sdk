@@ -20,7 +20,6 @@ public final class HttpPreProcessor {
     private Logger logger = LoggerFactory.getLogger(HttpPreProcessor.class);
 
     public HttpPreProcessor(ApiRequestObject apiRequestObject) {
-        super();
         this.apiRequestObject = apiRequestObject;
     }
 

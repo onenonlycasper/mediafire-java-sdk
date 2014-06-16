@@ -1,63 +1,79 @@
 package com.arkhive.components.test_session_manager_fixes.layer_token_server;
 
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.CredentialsInterface;
 import com.arkhive.components.test_session_manager_fixes.module_session_token.ActionToken;
 import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public class TokenServerDirector implements TokenServerCallback, InterServerCallback,  Pausable {
+public class TokenServerDirector implements TokenServerCallback, Pausable {
+    private final int actionTokenLifeSpan;
     private volatile boolean isPaused;
+    private CredentialsInterface combinedCredentials;
+    private BlockingQueue<SessionToken> sessionTokens;
+
+    private ActionToken imageActionToken;
+    private ActionToken uploadActionToken;
+
     private Object pauseLock = new Object();
-    private ActionTokenServer actionTokenServer;
-    private SessionTokenServer sessionTokenServer;
     private Logger logger = LoggerFactory.getLogger(TokenServerDirector.class);
 
-    public TokenServerDirector(CredentialsInterface credentialsInterface, int actionTokenLifeSpan, int maxActionTokensWorking, int maxSessionTokens, int maxSessionTokensWorking) {
-        actionTokenServer = new ActionTokenServer(credentialsInterface, actionTokenLifeSpan, maxActionTokensWorking);
-        sessionTokenServer = new SessionTokenServer(credentialsInterface, maxSessionTokensWorking, maxSessionTokens);
+    PausableThreadPoolExecutor actionTokenExecutor;
+    PausableThreadPoolExecutor sessionTokenExecutor;
+
+    public TokenServerDirector(CredentialsInterface combinedCredentials, int actionTokenLifeSpan, int maxActionTokensWorking, final int maxSessionTokens) {
+        this.combinedCredentials = combinedCredentials;
+        this.actionTokenLifeSpan = actionTokenLifeSpan;
+        sessionTokens = new LinkedBlockingQueue<SessionToken>(maxSessionTokens);
+        actionTokenExecutor = new PausableThreadPoolExecutor(maxActionTokensWorking);
+        sessionTokenExecutor = new PausableThreadPoolExecutor(maxSessionTokens, new LinkedBlockingQueue<Runnable>(maxSessionTokens));
+    }
+
+    public void addRequestNoToken(ApiRequestObject apiRequestObject) {
+
+    }
+
+    public void addRequestUseSessionToken(ApiRequestObject apiRequestObject) {
+
+    }
+
+    public void addRequestUseImageActionToken(ApiRequestObject apiRequestObject) {
+
+    }
+
+    public void addRequestUseUploadActionToken(ApiRequestObject apiRequestObject) {
+
+    }
+
+    public void attachImageActionToken(ApiRequestObject apiRequestObject) {
+
+    }
+
+    public void attachUploadActionToken(ApiRequestObject apiRequestObject) {
+
+    }
+
+    public void attachSessionToken(ApiRequestObject apiRequestObject) {
+
+    }
+
+    public void setTokenServerCallback(ApiRequestObject apiRequestObject) {
+        apiRequestObject.setTokenServerCallback(this);
     }
 
     /*
         Interface methods: TokenServerCallback
      */
     @Override
-    public void actionTokenReturned(ActionToken actionToken) {
-        logger.debug("actionTokenReturned(" + actionToken.getId() + ")");
-        actionTokenServer.receiveValidToken(actionToken);
-    }
+    public void httpRequestFinished(ApiRequestObject apiRequestObject, boolean tokenStillValid) {
 
-    @Override
-    public void actionTokenExpired(ActionToken actionToken) {
-        logger.debug("actionTokenExpired(" + actionToken.getId() + ")");
-        actionTokenServer.receiveInvalidToken(actionToken);
-    }
-
-    @Override
-    public void newActionTokenReturned(ActionToken actionToken) {
-        logger.debug("newActionTokenReturned(" + actionToken.getId() + ")");
-        actionTokenServer.receiveNewActionToken(actionToken);
-    }
-
-    @Override
-    public void sessionTokenReturned(SessionToken sessionToken) {
-        logger.debug("sessionTokenReturned(" + sessionToken.getId() + ")");
-        sessionTokenServer.receiveValidToken(sessionToken);
-    }
-
-    @Override
-    public void sessionTokenExpired(SessionToken sessionToken) {
-        logger.debug("sessionTokenExpired(" + sessionToken.getId() + ")");
-        sessionTokenServer.receiveInvalidToken(sessionToken);
-    }
-
-    @Override
-    public void newSessionTokenReturned(SessionToken sessionToken) {
-        logger.debug("newSessionTokenReturned(" + sessionToken.getId() + ")");
-        sessionTokenServer.receiveNewSessionToken(sessionToken);
     }
 
     /*
@@ -67,8 +83,7 @@ public class TokenServerDirector implements TokenServerCallback, InterServerCall
     public void pause() {
         logger.debug("pause()");
         synchronized (pauseLock) {
-            actionTokenServer.pause();
-            sessionTokenServer.pause();
+            isPaused = true;
         }
     }
 
@@ -76,8 +91,7 @@ public class TokenServerDirector implements TokenServerCallback, InterServerCall
     public void resume() {
         logger.debug("resume()");
         synchronized (pauseLock) {
-            actionTokenServer.resume();
-            sessionTokenServer.resume();
+            isPaused = false;
         }
     }
 
@@ -85,23 +99,5 @@ public class TokenServerDirector implements TokenServerCallback, InterServerCall
     public boolean isPaused() {
         logger.debug("isPaused()");
         return isPaused;
-    }
-
-    /*
-        Interface methods: InterServerCallback
-     */
-    @Override
-    public void requestSessionTokenInternal() {
-
-    }
-
-    @Override
-    public void grantSessionTokenInternal(SessionToken sessionToken) {
-
-    }
-
-    @Override
-    public void returnSessionTokenInternal(SessionToken sessionToken) {
-
     }
 }

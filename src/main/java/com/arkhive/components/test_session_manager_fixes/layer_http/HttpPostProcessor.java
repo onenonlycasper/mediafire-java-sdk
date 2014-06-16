@@ -1,12 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.layer_http;
 
-import com.arkhive.components.test_session_manager_fixes.layer_token_server.ApiActionTokenRequestObject;
-import com.arkhive.components.test_session_manager_fixes.layer_token_server.ApiSessionTokenRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.ActionToken;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.Token;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,39 +14,10 @@ public final class HttpPostProcessor {
     private final ApiRequestObject apiRequestObject;
 
     public HttpPostProcessor(ApiRequestObject apiRequestObject) {
-        super();
         this.apiRequestObject = apiRequestObject;
     }
 
-    public void processApiRequestObject() {
-        Token token = apiRequestObject.getToken();
-
-        if (ApiSessionTokenRequestObject.class.isInstance(apiRequestObject)) {
-            returnNewSessionToken((SessionToken) token);
-            return;
-        }
-
-        if (ApiActionTokenRequestObject.class.isInstance(apiRequestObject)) {
-            returnNewActionToken((ActionToken) token);
-            return;
-        }
-
-        if (ActionToken.class.isInstance(token)) {
-            if (isTokenStillValid(apiRequestObject)) {
-                returnActionToken((ActionToken) token);
-            } else {
-                notifyExpiredActionToken((ActionToken) token);
-            }
-        } else if (SessionToken.class.isInstance(token)) {
-            if (isTokenStillValid(apiRequestObject)) {
-                returnSessionToken((SessionToken) token);
-            } else {
-                notifyExpiredSessionToken((SessionToken) token);
-            }
-        }
-    }
-
-    private boolean isTokenStillValid(ApiRequestObject apiRequestObject) {
+    public boolean isTokenStillValid() {
         String jsonResponse = apiRequestObject.getHttpResponseString();
         if (jsonResponse == null) {
             return true;
@@ -76,42 +42,6 @@ public final class HttpPostProcessor {
         }
 
         return true;
-    }
-
-    private void returnActionToken(ActionToken actionToken) {
-        if (apiRequestObject.getTokenServerCallback() != null) {
-            apiRequestObject.getTokenServerCallback().actionTokenReturned(actionToken);
-        }
-    }
-
-    private void notifyExpiredActionToken(ActionToken actionToken) {
-        if (apiRequestObject.getTokenServerCallback() != null) {
-            apiRequestObject.getTokenServerCallback().actionTokenExpired(actionToken);
-        }
-    }
-
-    private void returnSessionToken(SessionToken sessionToken) {
-        if (apiRequestObject.getTokenServerCallback() != null) {
-            apiRequestObject.getTokenServerCallback().sessionTokenReturned(sessionToken);
-        }
-    }
-
-    private void notifyExpiredSessionToken(SessionToken sessionToken) {
-        if (apiRequestObject.getTokenServerCallback() != null) {
-            apiRequestObject.getTokenServerCallback().sessionTokenExpired(sessionToken);
-        }
-    }
-
-    private void returnNewSessionToken(SessionToken sessionToken) {
-        if (apiRequestObject.getTokenServerCallback() != null) {
-            apiRequestObject.getTokenServerCallback().newSessionTokenReturned(sessionToken);
-        }
-    }
-
-    private void returnNewActionToken(ActionToken actionToken) {
-        if (apiRequestObject.getTokenServerCallback() != null) {
-            apiRequestObject.getTokenServerCallback().newActionTokenReturned(actionToken);
-        }
     }
 
     /** Transform a string into a JsonElement.
