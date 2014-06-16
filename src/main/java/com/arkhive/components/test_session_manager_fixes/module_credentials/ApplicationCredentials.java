@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -49,7 +50,7 @@ public class ApplicationCredentials implements CredentialsInterface {
      *
      * @return - true if credentials are stored, false if not.
      */
-    public boolean addUserCredentials(HashMap<String, String> credentials) throws CredentialsException {
+    public boolean setUserCredentials(HashMap<String, String> credentials) throws CredentialsException {
         logger.debug("addUserCredentials()");
         if (credentialsSet) {
             throw new CredentialsException("credentials are already set. use clearCredentials()");
@@ -61,12 +62,19 @@ public class ApplicationCredentials implements CredentialsInterface {
         }
 
         if (isTwitterCredentials(credentials)) {
-            setCredentials(credentials);
+            LinkedHashMap<String, String> credentialsMap = new LinkedHashMap<String, String>(2);
+            credentialsMap.put("tw_oauth_token", credentials.get("tw_oauth_token"));
+            credentialsMap.put("tw_oauth_token_secret", credentials.get("tw_oauth_token_secret"));
+            setCredentials(credentialsMap);
             userCredentialsType = UserCredentialsType.TWITTER;
             return true;
         }
 
         if (isMediaFireCredentials(credentials)) {
+            LinkedHashMap<String, String> credentialsMap = new LinkedHashMap<String, String>(2);
+            credentialsMap.put("email", credentials.get("email"));
+            credentialsMap.put("password", credentials.get("password"));
+            setCredentials(credentialsMap);
             setCredentials(credentials);
             userCredentialsType = UserCredentialsType.MEDIAFIRE;
             return true;
@@ -82,7 +90,10 @@ public class ApplicationCredentials implements CredentialsInterface {
     }
 
     @Override
-    public Map<String, String> getCredentials() {
+    public Map<String, String> getCredentials() throws CredentialsException {
+        if (userCredentials == null || userCredentials.isEmpty()) {
+            throw new CredentialsException("invalid credentials");
+        }
         return userCredentials;
     }
 
@@ -98,11 +109,13 @@ public class ApplicationCredentials implements CredentialsInterface {
         return credentialsSet;
     }
 
+    @Override
     public String getAppId() {
         logger.debug("getAppId()");
         return appId;
     }
 
+    @Override
     public String getApiKey() {
         logger.debug("getApiKey()");
         return apiKey;

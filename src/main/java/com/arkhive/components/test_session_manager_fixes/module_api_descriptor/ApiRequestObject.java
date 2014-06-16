@@ -1,12 +1,14 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor;
 
-import com.arkhive.components.test_session_manager_fixes.layer_token_server.TokenServerCallback;
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_session_token.ActionToken;
+import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
 import com.arkhive.components.test_session_manager_fixes.module_session_token.Token;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Created by Chris Najar on 6/15/2014.
@@ -14,15 +16,18 @@ import java.util.LinkedList;
 public abstract class ApiRequestObject {
     private String domain;
     private String uri;
-    private Token token;
     private ApiResponse apiResponse;
-    private HashMap<String, String> requiredParameters;
-    private HashMap<String, String> optionalParameters;
+    private Map<String, String> requiredParameters;
+    private Map<String, String> optionalParameters;
     private URL constructedUrl;
     private LinkedList<Exception> exceptionDuringRequest;
     private String httpResponseString;
     private int httpResponseCode;
-    private TokenServerCallback tokenServerCallback;
+    private HashMap<String, String> postHeaders;
+    private byte[] payload;
+    private ActionToken actionToken;
+    private SessionToken sessionToken;
+    private boolean tokenValid;
 
     public ApiRequestObject() {
         super();
@@ -44,27 +49,19 @@ public abstract class ApiRequestObject {
         return uri;
     }
 
-    public final void setToken(Token token) {
-        this.token = token;
-    }
-
-    public final Token getToken() {
-        return token;
-    }
-
-    public final void setRequiredParameters(HashMap<String, String> requiredParameters) {
+    public final void setRequiredParameters(Map<String, String> requiredParameters) {
         this.requiredParameters = requiredParameters;
     }
 
-    public final HashMap<String, String> getRequiredParameters() {
+    public final Map<String, String> getRequiredParameters() {
         return requiredParameters;
     }
 
-    public final void setOptionalParameters(HashMap<String, String> optionalParameters) {
+    public final void setOptionalParameters(Map<String, String> optionalParameters) {
         this.optionalParameters = optionalParameters;
     }
 
-    public final HashMap<String, String> getOptionalParameters() {
+    public final Map<String, String> getOptionalParameters() {
         return optionalParameters;
     }
 
@@ -113,11 +110,41 @@ public abstract class ApiRequestObject {
         this.httpResponseCode = httpResponseCode;
     }
 
-    public TokenServerCallback getTokenServerCallback() {
-        return tokenServerCallback;
+    public HashMap<String, String> getPostHeaders() {
+        return postHeaders;
     }
 
-    public void setTokenServerCallback(TokenServerCallback tokenServerCallback) {
-        this.tokenServerCallback = tokenServerCallback;
+    public void setPostHeaders(HashMap<String, String> postHeaders) {
+        this.postHeaders = postHeaders;
+    }
+
+    public byte[] getPayload() {
+        return payload;
+    }
+
+    public void setPayload(byte[] payload) {
+        this.payload = payload;
+    }
+
+    public Token getToken() {
+        return actionToken == null ? sessionToken : actionToken;
+    }
+
+    public void setToken(Token token) {
+        if(ActionToken.class.isInstance(token)) {
+            actionToken = (ActionToken) token;
+            sessionToken = null;
+        } else {
+            sessionToken = (SessionToken) token;
+            actionToken = null;
+        }
+    }
+
+    public boolean isTokenValid() {
+        return tokenValid;
+    }
+
+    public void setTokenValid(boolean tokenValid) {
+        this.tokenValid = tokenValid;
     }
 }

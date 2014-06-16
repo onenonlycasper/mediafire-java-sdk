@@ -1,7 +1,6 @@
-package com.arkhive.components.test_session_manager_fixes.layer_http;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor;
 
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiGetRequestObject;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiPostRequestObject;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 
 /**
  * Created by Chris Najar on 6/15/2014.
@@ -15,7 +14,7 @@ public interface HttpInterface {
      *
      * @return  The ApiRequestObject.
      */
-    public ApiGetRequestObject sendGetRequest(ApiGetRequestObject apiGetRequestObject);
+    public ApiRequestObject sendGetRequest(ApiRequestObject apiGetRequestObject);
 
     /** Send a POST request.
      * <p>
@@ -25,5 +24,5 @@ public interface HttpInterface {
      *
      * @return  The ApiRequestObject.
      */
-    public ApiPostRequestObject sendPostRequest(ApiPostRequestObject apiPostRequestObject);
+    public ApiRequestObject sendPostRequest(ApiRequestObject apiPostRequestObject);
 }

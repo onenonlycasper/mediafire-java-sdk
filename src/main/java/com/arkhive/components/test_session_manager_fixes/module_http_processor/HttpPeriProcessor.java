@@ -1,7 +1,5 @@
-package com.arkhive.components.test_session_manager_fixes.layer_http;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor;
 
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiGetRequestObject;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiPostRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,36 +12,38 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public final class HttpLayer implements HttpInterface {
+public final class HttpPeriProcessor implements HttpInterface {
     private final int connectionTimeout;
     private final int readTimeout;
+    private final HttpPreProcessor httpPreProcessor;
+    private final HttpPostProcessor httpPostProcessor;
 
-    private Logger logger = LoggerFactory.getLogger(HttpLayer.class);
+    private Logger logger = LoggerFactory.getLogger(HttpPeriProcessor.class);
 
-    public HttpLayer() {
-        this(5000, 5000);
-    }
-
-    public HttpLayer(int connectionTimeout, int readTimeout) {
-        super();
+    public HttpPeriProcessor(int connectionTimeout, int readTimeout) {
         this.connectionTimeout = connectionTimeout;
         this.readTimeout = readTimeout;
+        httpPreProcessor = new HttpPreProcessor();
+        httpPostProcessor = new HttpPostProcessor();
     }
 
     @Override
-    public ApiGetRequestObject sendGetRequest(ApiGetRequestObject apiGetRequestObject) {
+    public ApiRequestObject sendGetRequest(ApiRequestObject apiRequestObject) {
         logger.debug("sendGetRequest()");
+
+        httpPreProcessor.processApiRequestObject(apiRequestObject);
+
         HttpURLConnection connection = null;
         InputStream inputStream = null;
 
         try {
-            URL url = apiGetRequestObject.getConstructedUrl();
+            URL url = apiRequestObject.getConstructedUrl();
             //create url from request
             //open connection
 
             if (url == null) {
-                apiGetRequestObject.addExceptionDuringRequest(new HttpLayerException("HttpPreProcessorGET produced a null URL"));
-                return apiGetRequestObject;
+                apiRequestObject.addExceptionDuringRequest(new HttpException("HttpPreProcessorGET produced a null URL"));
+                return apiRequestObject;
             }
 
             connection = (HttpURLConnection) url.openConnection();
@@ -57,7 +57,7 @@ public final class HttpLayer implements HttpInterface {
 
             //get response code first so we know what type of stream to open
             int httpResponseCode = connection.getResponseCode();
-            apiGetRequestObject.setHttpResponseCode(httpResponseCode);
+            apiRequestObject.setHttpResponseCode(httpResponseCode);
 
             //now open the correct stream type based on error or not
             if (httpResponseCode / 100 != 2) {
@@ -65,10 +65,10 @@ public final class HttpLayer implements HttpInterface {
             } else {
                 inputStream = connection.getInputStream();
             }
-            String httpResponseString = readStream(apiGetRequestObject, inputStream);
-            apiGetRequestObject.setHttpResponseString(httpResponseString);
+            String httpResponseString = readStream(apiRequestObject, inputStream);
+            apiRequestObject.setHttpResponseString(httpResponseString);
         } catch (IOException e) {
-            apiGetRequestObject.addExceptionDuringRequest(e);
+            apiRequestObject.addExceptionDuringRequest(e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -78,27 +78,31 @@ public final class HttpLayer implements HttpInterface {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    apiGetRequestObject.addExceptionDuringRequest(e);
+                    apiRequestObject.addExceptionDuringRequest(e);
                 }
             }
         }
 
-        return apiGetRequestObject;
+        httpPostProcessor.processApiRequestObject(apiRequestObject);
+        return apiRequestObject;
     }
 
     @Override
-    public ApiPostRequestObject sendPostRequest(ApiPostRequestObject apiPostRequestObject) {
+    public ApiRequestObject sendPostRequest(ApiRequestObject apiRequestObject) {
         logger.debug("sendPostRequest()");
+
+        httpPreProcessor.processApiRequestObject(apiRequestObject);
+
         HttpURLConnection connection = null;
         InputStream inputStream = null;
         OutputStream outputStream = null;
 
         try {
-            URL url = apiPostRequestObject.getConstructedUrl();
+            URL url = apiRequestObject.getConstructedUrl();
 
             if (url == null) {
-                apiPostRequestObject.addExceptionDuringRequest(new HttpLayerException("HttpPreProcessorGET produced a null URL"));
-                return apiPostRequestObject;
+                apiRequestObject.addExceptionDuringRequest(new HttpException("HttpPreProcessorGET produced a null URL"));
+                return apiRequestObject;
             }
 
             connection = (HttpURLConnection) url.openConnection();
@@ -106,12 +110,12 @@ public final class HttpLayer implements HttpInterface {
             //sets to POST
             connection.setDoOutput(true);
 
-            byte[] payload = apiPostRequestObject.getPayload();
+            byte[] payload = apiRequestObject.getPayload();
             if (payload != null) {
                 connection.setFixedLengthStreamingMode(payload.length);
                 connection.setRequestProperty("Content-Type", "application/octet-stream");
 
-                HashMap<String, String> headers = apiPostRequestObject.getPostHeaders();
+                HashMap<String, String> headers = apiRequestObject.getPostHeaders();
                 if (headers != null) {
                     //set headers
                     for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -125,7 +129,7 @@ public final class HttpLayer implements HttpInterface {
 
 
             int httpResponseCode = connection.getResponseCode();
-            apiPostRequestObject.setHttpResponseCode(httpResponseCode);
+            apiRequestObject.setHttpResponseCode(httpResponseCode);
 
             String responseString;
             if (httpResponseCode / 100 != 2) {
@@ -134,15 +138,15 @@ public final class HttpLayer implements HttpInterface {
                 inputStream = connection.getInputStream();
             }
 
-            responseString = readStream(apiPostRequestObject, inputStream);
-            apiPostRequestObject.setHttpResponseString(responseString);
+            responseString = readStream(apiRequestObject, inputStream);
+            apiRequestObject.setHttpResponseString(responseString);
 
         } catch (ProtocolException e) {
-            apiPostRequestObject.addExceptionDuringRequest(e);
+            apiRequestObject.addExceptionDuringRequest(e);
         } catch(SocketException e) {
-            apiPostRequestObject.addExceptionDuringRequest(e);
+            apiRequestObject.addExceptionDuringRequest(e);
         } catch (IOException e) {
-            apiPostRequestObject.addExceptionDuringRequest(e);
+            apiRequestObject.addExceptionDuringRequest(e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -152,7 +156,7 @@ public final class HttpLayer implements HttpInterface {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    apiPostRequestObject.addExceptionDuringRequest(e);
+                    apiRequestObject.addExceptionDuringRequest(e);
                 }
             }
 
@@ -160,12 +164,14 @@ public final class HttpLayer implements HttpInterface {
                 try {
                     outputStream.close();
                 } catch (IOException e) {
-                    apiPostRequestObject.addExceptionDuringRequest(e);
+                    apiRequestObject.addExceptionDuringRequest(e);
                 }
             }
         }
 
-        return apiPostRequestObject;
+        httpPostProcessor.processApiRequestObject(apiRequestObject);
+
+        return apiRequestObject;
     }
 
     private String readStream(ApiRequestObject apiRequestObject, InputStream in){

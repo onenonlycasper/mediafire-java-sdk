@@ -1,4 +1,4 @@
-package com.arkhive.components.test_session_manager_fixes.layer_http;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
@@ -11,13 +11,14 @@ import com.google.gson.JsonParser;
  * Created by Chris Najar on 6/15/2014.
  */
 public final class HttpPostProcessor {
-    private final ApiRequestObject apiRequestObject;
 
-    public HttpPostProcessor(ApiRequestObject apiRequestObject) {
-        this.apiRequestObject = apiRequestObject;
+    public HttpPostProcessor() { }
+
+    public void processApiRequestObject(ApiRequestObject apiRequestObject) {
+        apiRequestObject.setTokenValid(isTokenStillValid(apiRequestObject));
     }
 
-    public boolean isTokenStillValid() {
+    private boolean isTokenStillValid(ApiRequestObject apiRequestObject) {
         String jsonResponse = apiRequestObject.getHttpResponseString();
         if (jsonResponse == null) {
             return true;
@@ -53,7 +54,7 @@ public final class HttpPostProcessor {
      *
      * @return  The JsonElement created from the response string.
      */
-    private static JsonElement getResponseElement(String response) {
+    private JsonElement getResponseElement(String response) {
         if (response == null) {
             return null;
         }
