@@ -6,6 +6,7 @@ import com.arkhive.components.test_session_manager_fixes.module_http_processor.H
 import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -17,8 +18,10 @@ public class TokenFarm implements GetSessionTokenRunnable.Callback {
     private ApplicationCredentials applicationCredentials;
     private HttpPeriProcessor httpPeriProcessor;
     private PausableThreadPoolExecutor newSessionTokenExecutor;
+    private BlockingQueue<SessionToken> sessionTokens;
 
     private TokenFarm(ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
+        sessionTokens = new LinkedBlockingQueue<SessionToken>(6);
         this.applicationCredentials = applicationCredentials;
         this.httpPeriProcessor = httpPeriProcessor;
         newSessionTokenExecutor = new PausableThreadPoolExecutor(6, 6, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(6), Executors.defaultThreadFactory());
@@ -40,10 +43,11 @@ public class TokenFarm implements GetSessionTokenRunnable.Callback {
         return instance;
     }
 
-    public static void shutdown() {
+    public void shutdown() {
         System.out.println("TokenFarm shutting down");
         // (TODO) do other stuff to clean up references.
         instance = null;
+        sessionTokens.clear();
         System.out.println("TokenFarm shut down");
     }
 
@@ -56,16 +60,20 @@ public class TokenFarm implements GetSessionTokenRunnable.Callback {
     @Override
     public void sessionTokenFetchCompleted(ApiRequestObject apiResponseObject) {
         System.out.println("sessionTokenFetchCompleted()");
-        System.out.println("response code:   " + apiResponseObject.getHttpResponseCode());
-        System.out.println("response string: " + apiResponseObject.getHttpResponseString());
         System.out.println("constructed url: " + apiResponseObject.getConstructedUrl());
-        System.out.println("domain used:     " + apiResponseObject.getDomain());
-        System.out.println("uri used:        " + apiResponseObject.getUri());
+        System.out.println("response string: " + apiResponseObject.getHttpResponseString());
         SessionToken sessionToken = (SessionToken) apiResponseObject.getToken();
-        System.out.println("session token id:" + sessionToken.getId());
         System.out.println("session token:   " + sessionToken.getTokenString());
         System.out.println("secret key:      " + sessionToken.getSecretKey());
         System.out.println("time:            " + sessionToken.getTime());
         System.out.println("pkey:            " + sessionToken.getPkey());
+
+        if (!apiResponseObject.isSessionTokenInvalid()) {
+            try {
+                sessionTokens.add(sessionToken);
+            } catch (IllegalStateException e) {
+                System.out.println("queue is full, not adding this session token");
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.arkhive.components.test_session_manager_fixes.module_http_processor;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,42 +15,43 @@ public final class HttpPostProcessor {
     public HttpPostProcessor() { }
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        if(!isTokenStillValid(apiRequestObject)) {
-
-        }
-    }
-
-    private boolean isTokenStillValid(ApiRequestObject apiRequestObject) {
         String jsonResponse = apiRequestObject.getHttpResponseString();
-        if (jsonResponse == null) {
-            return true;
-        }
-
         JsonElement jsonElement = getResponseElement(jsonResponse);
         if (jsonElement == null) {
-            return true;
+            return;
         }
 
+        // get the generic api response from the response.
         ApiResponse apiResponse = new Gson().fromJson(jsonElement, ApiResponse.class);
-        if (apiResponse == null) {
-            return true;
+        // if the session token is invalid or expired then set the flag (so TokenFarm knows)
+        if (isSessionTokenInvalidOrExpired(apiResponse)) {
+            apiRequestObject.setSessionTokenInvalid(true);
+        }
+
+        // if the signature is invalid or expired then print something for debugging (for now, remove this later)
+        if (isSignatureInvalid(apiResponse)) {
+            System.out.println("*******************");
+            System.out.println("*signature invalid*");
+            System.out.println("*******************");
         }
 
         if (apiResponse.needNewKey()) {
-            return false;
+            SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
+            sessionToken.updateSecretKey();
         }
-
-        if (apiResponse.getError() == 105 || apiResponse.getError() == 127) {
-            return false;
-        }
-
-        return true;
     }
 
-    /** Transform a string into a JsonElement.
-     *
-     * All response strings returned from the web api are wrapped in response json element.
-     * This method strips the wrapper element, and converts the remaining element into a JsonElement via GSON.
+    private boolean isSessionTokenInvalidOrExpired(ApiResponse apiResponse) {
+        return apiResponse.getError() == 105;
+    }
+
+    private boolean isSignatureInvalid(ApiResponse apiResponse) {
+        return apiResponse.getError() == 127;
+    }
+
+    /**
+     * All response strings returned from the web api are wrapped in "response" json element.
+     * This method strips the "response" element, and converts the remaining element into a JsonElement via GSON.
      *
      * @param  response  A response string from a web API call.
      *

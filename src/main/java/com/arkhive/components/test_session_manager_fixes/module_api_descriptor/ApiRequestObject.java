@@ -27,6 +27,7 @@ public final class ApiRequestObject {
     private byte[] payload;
     private ActionToken actionToken;
     private SessionToken sessionToken;
+    private boolean sessionTokenInvalid;
 
     public ApiRequestObject(String domain, String uri) {
         this.domain = domain;
@@ -130,5 +131,13 @@ public final class ApiRequestObject {
             sessionToken = (SessionToken) token;
             actionToken = null;
         }
+    }
+
+    public boolean isSessionTokenInvalid() {
+        return sessionTokenInvalid;
+    }
+
+    public void setSessionTokenInvalid(boolean sessionTokenInvalid) {
+        this.sessionTokenInvalid = sessionTokenInvalid;
     }
 }
