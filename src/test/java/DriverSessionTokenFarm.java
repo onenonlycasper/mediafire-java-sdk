@@ -22,6 +22,16 @@ public class DriverSessionTokenFarm {
             e.printStackTrace();
             return;
         }
+
+        Map<String, String> userCredentials = new LinkedHashMap<String, String>();
+        userCredentials.put("email", "arkhivetest@test.com");
+        userCredentials.put("password", "74107410");
+        try {
+            applicationCredentials.setUserCredentials(userCredentials);
+        } catch (CredentialsException e) {
+            e.printStackTrace();
+        }
+
         HttpPeriProcessor httpPeriProcessor = new HttpPeriProcessor(5000, 5000);
 
         TokenFarm tokenFarm = TokenFarm.getInstance();
@@ -33,20 +43,11 @@ public class DriverSessionTokenFarm {
             }
         }
 
-        Map<String, String> userCredentials = new LinkedHashMap<String, String>();
-        userCredentials.put("email", "arkhivetest@test.com");
-        userCredentials.put("password", "74107410");
         try {
-            applicationCredentials.setUserCredentials(userCredentials);
-        } catch (CredentialsException e) {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (tokenFarm != null) {
-            for (int i = 0; i < 6; i++) {
-                tokenFarm.getNewSessionToken();
-            }
-        }
-
 
     }
 }

@@ -35,6 +35,7 @@ public class TokenFarm implements GetSessionTokenRunnable.Callback {
             throw new TokenFarmException("Cannot create a new instance without calling shutdown()");
         }
         instance = new TokenFarm(applicationCredentials, httpPeriProcessor);
+        instance.startup();
         System.out.println("TokenFarm initialized");
         return instance;
     }
@@ -51,10 +52,17 @@ public class TokenFarm implements GetSessionTokenRunnable.Callback {
         System.out.println("TokenFarm shut down");
     }
 
-    public void getNewSessionToken() {
+    private void getNewSessionToken() {
         System.out.println("getNewSessionToken()");
         GetSessionTokenRunnable getSessionTokenRunnable = new GetSessionTokenRunnable(this, httpPeriProcessor, applicationCredentials);
         newSessionTokenExecutor.execute(getSessionTokenRunnable);
+    }
+
+    private void startup() {
+        System.out.println("startup()");
+        for(int i = 0; i < sessionTokens.remainingCapacity(); i++) {
+            getNewSessionToken();
+        }
     }
 
     @Override

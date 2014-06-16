@@ -39,6 +39,7 @@ public final class HttpPostProcessor {
             SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
             sessionToken.updateSecretKey();
         }
+
     }
 
     private boolean isSessionTokenInvalidOrExpired(ApiResponse apiResponse) {
