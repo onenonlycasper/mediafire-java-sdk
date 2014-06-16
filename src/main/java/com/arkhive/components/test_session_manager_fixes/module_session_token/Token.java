@@ -28,6 +28,4 @@ public abstract class Token implements TokenInterface {
         System.out.println("setTokenString()");
         this.token = token;
     }
-
-    public abstract String getTokenSignature();
 }

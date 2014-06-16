@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public abstract class ApiRequestObject {
+public final class ApiRequestObject {
     private String domain;
     private String uri;
     private ApiResponse apiResponse;
@@ -27,22 +27,14 @@ public abstract class ApiRequestObject {
     private byte[] payload;
     private ActionToken actionToken;
     private SessionToken sessionToken;
-    private boolean tokenValid;
 
-    public ApiRequestObject() {
-        super();
-    }
-
-    public final void setDomain(String domain) {
+    public ApiRequestObject(String domain, String uri) {
         this.domain = domain;
+        this.uri = uri;
     }
 
     public final String getDomain() {
         return domain;
-    }
-
-    public final void setUri(String uri) {
-        this.uri = uri;
     }
 
     public final String getUri() {
@@ -138,13 +130,5 @@ public abstract class ApiRequestObject {
             sessionToken = (SessionToken) token;
             actionToken = null;
         }
-    }
-
-    public boolean isTokenValid() {
-        return tokenValid;
-    }
-
-    public void setTokenValid(boolean tokenValid) {
-        this.tokenValid = tokenValid;
     }
 }

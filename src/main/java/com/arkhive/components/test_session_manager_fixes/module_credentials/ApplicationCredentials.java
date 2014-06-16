@@ -8,6 +8,12 @@ import java.util.Map;
  * Created by Chris Najar on 6/15/2014.
  */
 public class ApplicationCredentials implements CredentialsInterface {
+    private static String MEDIAFIRE_PARAMETER_EMAIL = "email";
+    private static String MEDIAFIRE_PARAMETER_PASSWORD = "password";
+    private static String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
+    private static String TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET = "tw_oauth_token_secret";
+    private static String FACEBOOK_PARAMETER_FB_ACCESS_TOKEN = "fb_access_token";
+
     private Map<String, String> userCredentials = new HashMap<String, String>();
     private UserCredentialsType userCredentialsType;
     private boolean credentialsSet;
@@ -46,7 +52,7 @@ public class ApplicationCredentials implements CredentialsInterface {
      *
      * @return - true if credentials are stored, false if not.
      */
-    public boolean setUserCredentials(HashMap<String, String> credentials) throws CredentialsException {
+    public boolean setUserCredentials(Map<String, String> credentials) throws CredentialsException {
         System.out.println("addUserCredentials()");
         if (credentialsSet) {
             throw new CredentialsException("credentials are already set. use clearCredentials()");
@@ -59,8 +65,8 @@ public class ApplicationCredentials implements CredentialsInterface {
 
         if (isTwitterCredentials(credentials)) {
             LinkedHashMap<String, String> credentialsMap = new LinkedHashMap<String, String>(2);
-            credentialsMap.put("tw_oauth_token", credentials.get("tw_oauth_token"));
-            credentialsMap.put("tw_oauth_token_secret", credentials.get("tw_oauth_token_secret"));
+            credentialsMap.put(TWITTER_PARAMETER_TW_OAUTH_TOKEN, credentials.get(TWITTER_PARAMETER_TW_OAUTH_TOKEN));
+            credentialsMap.put(TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET, credentials.get(TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET));
             setCredentials(credentialsMap);
             userCredentialsType = UserCredentialsType.TWITTER;
             return true;
@@ -68,8 +74,8 @@ public class ApplicationCredentials implements CredentialsInterface {
 
         if (isMediaFireCredentials(credentials)) {
             LinkedHashMap<String, String> credentialsMap = new LinkedHashMap<String, String>(2);
-            credentialsMap.put("email", credentials.get("email"));
-            credentialsMap.put("password", credentials.get("password"));
+            credentialsMap.put(MEDIAFIRE_PARAMETER_EMAIL, credentials.get(MEDIAFIRE_PARAMETER_EMAIL));
+            credentialsMap.put(MEDIAFIRE_PARAMETER_PASSWORD, credentials.get(MEDIAFIRE_PARAMETER_PASSWORD));
             setCredentials(credentialsMap);
             setCredentials(credentials);
             userCredentialsType = UserCredentialsType.MEDIAFIRE;
@@ -121,16 +127,16 @@ public class ApplicationCredentials implements CredentialsInterface {
         return userCredentialsType;
     }
 
-    private boolean isFacebookCredentials(HashMap<String, String> credentials) {
-        return credentials != null && credentials.size() == 1 && credentials.containsKey("fb_access_token");
+    private boolean isFacebookCredentials(Map<String, String> credentials) {
+        return credentials != null && credentials.size() == 1 && credentials.containsKey(FACEBOOK_PARAMETER_FB_ACCESS_TOKEN);
     }
 
-    private boolean isTwitterCredentials(HashMap<String, String> credentials) {
-        return credentials != null && credentials.size() == 2 && credentials.containsKey("tw_oauth_token") && credentials.containsKey("tw_oauth_token_secret");
+    private boolean isTwitterCredentials(Map<String, String> credentials) {
+        return credentials != null && credentials.size() == 2 && credentials.containsKey(TWITTER_PARAMETER_TW_OAUTH_TOKEN) && credentials.containsKey(TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET);
     }
 
-    private boolean isMediaFireCredentials(HashMap<String, String> credentials) {
-        return credentials != null && credentials.size() == 2 && credentials.containsKey("email") && credentials.containsKey("password");
+    private boolean isMediaFireCredentials(Map<String, String> credentials) {
+        return credentials != null && credentials.size() == 2 && credentials.containsKey(MEDIAFIRE_PARAMETER_EMAIL) && credentials.containsKey(MEDIAFIRE_PARAMETER_PASSWORD);
     }
 
     public enum UserCredentialsType {

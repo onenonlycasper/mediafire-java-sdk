@@ -10,6 +10,7 @@ public class ApiResponse {
     private String error;
     private String current_api_version;
     private String new_key;
+    private String time;
 
     public final String getAction() {
         return action;
@@ -40,6 +41,8 @@ public class ApiResponse {
     public final boolean hasError() {
         return error == null;
     }
+
+    public final String getTime() { return time; }
 
     public boolean needNewKey() {
         return new_key != null && "yes".equals(new_key);

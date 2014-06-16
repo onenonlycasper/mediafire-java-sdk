@@ -11,11 +11,12 @@ import com.google.gson.JsonParser;
  * Created by Chris Najar on 6/15/2014.
  */
 public final class HttpPostProcessor {
-
     public HttpPostProcessor() { }
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        apiRequestObject.setTokenValid(isTokenStillValid(apiRequestObject));
+        if(!isTokenStillValid(apiRequestObject)) {
+
+        }
     }
 
     private boolean isTokenStillValid(ApiRequestObject apiRequestObject) {
@@ -54,7 +55,7 @@ public final class HttpPostProcessor {
      *
      * @return  The JsonElement created from the response string.
      */
-    private JsonElement getResponseElement(String response) {
+    public static JsonElement getResponseElement(String response) {
         if (response == null) {
             return null;
         }

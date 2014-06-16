@@ -4,7 +4,9 @@ package com.arkhive.components.test_session_manager_fixes.module_session_token;
  * Created by Chris Najar on 6/15/2014.
  */
 public final class SessionToken extends Token {
-    private String signature;
+    private String time;
+    private String secretKey;
+    private String pkey;
 
     private SessionToken(String id) {
         super(id);
@@ -14,14 +16,33 @@ public final class SessionToken extends Token {
         return new SessionToken(id);
     }
 
-    @Override
-    public String getTokenSignature() {
-        System.out.println("setTokenString()");
-        return signature;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public void setTokenSignature(String signature) {
-        System.out.println("setTokenSignature()");
-        this.signature = signature;
+    public String getTime() {
+        return time;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void updateSecretKey() {
+        long newKey = Long.valueOf(secretKey) * 16807;
+        newKey = newKey % 2147483647;
+        secretKey = String.valueOf(newKey);
+    }
+
+    public void setPkey(String pkey) {
+        this.pkey = pkey;
+    }
+
+    public String getPkey() {
+        return pkey;
     }
 }

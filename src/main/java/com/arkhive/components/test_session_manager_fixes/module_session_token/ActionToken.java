@@ -19,9 +19,6 @@ public final class ActionToken extends Token {
         return new ActionToken(type, id);
     }
 
-    @Override
-    public String getTokenSignature() { return null; }
-
     public Type getType() {
         System.out.println("getType()");
         return type;
