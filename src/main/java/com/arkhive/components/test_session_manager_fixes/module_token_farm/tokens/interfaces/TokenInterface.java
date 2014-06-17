@@ -1,4 +1,4 @@
-package com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens;
+package com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.interfaces;
 
 /**
  * Created by Chris Najar on 6/15/2014.

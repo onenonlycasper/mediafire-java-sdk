@@ -1,14 +1,12 @@
 package com.arkhive.components.test_session_manager_fixes.module_http_processor;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.request_runnables.HttpGetRequestRunnable;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.request_runnables.HttpPostRequestRunnable;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.request_runnables.HttpRequestCallback;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.runnables.HttpGetRequestRunnable;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.runnables.HttpPostRequestRunnable;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 
-import java.io.*;
-import java.net.*;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 

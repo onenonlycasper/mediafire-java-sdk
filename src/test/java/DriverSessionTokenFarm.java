@@ -1,9 +1,11 @@
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.*;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.runnables.ApiRequestRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.CredentialsException;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarmException;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.exceptions.TokenFarmException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.arkhive.components.test_session_manager_fixes.module_token_farm;
+package com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
 

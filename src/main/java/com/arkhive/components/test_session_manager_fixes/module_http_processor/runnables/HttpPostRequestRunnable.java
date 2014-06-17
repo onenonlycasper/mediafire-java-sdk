@@ -1,7 +1,10 @@
-package com.arkhive.components.test_session_manager_fixes.module_http_processor.request_runnables;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor.runnables;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.*;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.exceptions.HttpException;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -36,7 +39,9 @@ public class HttpPostRequestRunnable implements Runnable {
             callback.httpRequestStarted(apiRequestObject);
         }
 
-        httpPreProcessor.processApiRequestObject(apiRequestObject);
+        if (httpPreProcessor != null) {
+            httpPreProcessor.processApiRequestObject(apiRequestObject);
+        }
 
         HttpURLConnection connection = null;
         InputStream inputStream = null;
@@ -117,7 +122,9 @@ public class HttpPostRequestRunnable implements Runnable {
             }
         }
 
-        httpPostProcessor.processApiRequestObject(apiRequestObject);
+        if (httpPostProcessor != null) {
+            httpPostProcessor.processApiRequestObject(apiRequestObject);
+        }
         if (callback != null) {
             callback.httpRequestFinished(apiRequestObject);
         }

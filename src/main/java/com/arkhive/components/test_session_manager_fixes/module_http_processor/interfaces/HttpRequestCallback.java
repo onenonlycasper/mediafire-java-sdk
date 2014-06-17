@@ -1,4 +1,4 @@
-package com.arkhive.components.test_session_manager_fixes.module_http_processor.request_runnables;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 

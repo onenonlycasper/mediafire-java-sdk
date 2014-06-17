@@ -1,9 +1,11 @@
-package com.arkhive.components.test_session_manager_fixes.module_api_descriptor;
+package com.arkhive.components.test_session_manager_fixes.module_api_descriptor.runnables;
 
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.request_runnables.HttpRequestCallback;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarmDistributor;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
 
 /**
  * Created by Chris Najar on 6/16/2014.

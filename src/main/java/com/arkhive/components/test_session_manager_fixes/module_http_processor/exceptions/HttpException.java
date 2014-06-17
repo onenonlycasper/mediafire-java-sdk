@@ -1,4 +1,4 @@
-package com.arkhive.components.test_session_manager_fixes.module_http_processor;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor.exceptions;
 
 /**
  * Created by Chris Najar on 6/15/2014.

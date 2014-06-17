@@ -1,5 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens;
 
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.interfaces.TokenInterface;
+
 /**
  * Created by Chris Najar on 6/15/2014.
  */
