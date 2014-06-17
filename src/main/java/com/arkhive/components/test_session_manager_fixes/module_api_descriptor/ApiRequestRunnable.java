@@ -1,6 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor;
 
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.request_runnables.HttpRequestCallback;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarmDistributor;
 
@@ -9,16 +10,22 @@ import com.arkhive.components.test_session_manager_fixes.module_token_farm.Token
  */
 public class ApiRequestRunnable implements Runnable, HttpRequestCallback {
     private static final String TAG = ApiRequestRunnable.class.getSimpleName();
+    private final HttpProcessor httpPreProcessor;
+    private final HttpProcessor httpPostProcessor;
     private ApiRequestRunnableCallback callback;
     private TokenFarmDistributor tokenFarmDistributor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
 
     public ApiRequestRunnable(ApiRequestRunnableCallback callback,
+                              HttpProcessor httpPreProcessor,
+                              HttpProcessor httpPostProcessor,
                               TokenFarmDistributor tokenFarmDistributor,
                               HttpPeriProcessor httpPeriProcessor,
                               ApiRequestObject apiRequestObject) {
         this.callback = callback;
+        this.httpPreProcessor = httpPreProcessor;
+        this.httpPostProcessor = httpPostProcessor;
         this.tokenFarmDistributor = tokenFarmDistributor;
         this.apiRequestObject = apiRequestObject;
         this.httpPeriProcessor = httpPeriProcessor;
@@ -27,26 +34,28 @@ public class ApiRequestRunnable implements Runnable, HttpRequestCallback {
     @Override
     public void run() {
         System.out.println(TAG + " run()");
-        // notify our callback that the request is being processed now
-        if (callback != null) {
-            callback.apiRequestProcessStarted();
-        }
-        // borrow a session token from the TokenFarm
-        tokenFarmDistributor.borrowSessionToken(apiRequestObject);
+        synchronized (this) {
+            // notify our callback that the request is being processed now
+            if (callback != null) {
+                callback.apiRequestProcessStarted();
+            }
+            // borrow a session token from the TokenFarm
+            tokenFarmDistributor.borrowSessionToken(apiRequestObject);
 
-        // send request to http handler
-        httpPeriProcessor.sendGetRequest(this, apiRequestObject);
-        // wait until we get a response from http handler (or 10 seconds pass)
-        try {
-            wait(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        // try to return the session token to the TokenFarm
-        tokenFarmDistributor.returnSessionToken(apiRequestObject);
-        // notify our callback that the request is being finished now
-        if (callback != null) {
-            callback.apiRequestProcessFinished(apiRequestObject);
+            // send request to http handler
+            httpPeriProcessor.sendGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
+            // wait until we get a response from http handler (or 10 seconds pass)
+            try {
+                wait(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // try to return the session token to the TokenFarm
+            tokenFarmDistributor.returnSessionToken(apiRequestObject);
+            // notify our callback that the request is being finished now
+            if (callback != null) {
+                callback.apiRequestProcessFinished(apiRequestObject);
+            }
         }
     }
 
@@ -58,6 +67,8 @@ public class ApiRequestRunnable implements Runnable, HttpRequestCallback {
     @Override
     public void httpRequestFinished(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " httpRequestFinished()");
-        notify();
+        synchronized (this) {
+            notify();
+        }
     }
 }

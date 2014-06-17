@@ -55,7 +55,7 @@ public class TokenFarm implements TokenFarmDistributor {
 
     private void getNewSessionToken() {
         System.out.println(TAG + " getNewSessionToken()");
-        GetSessionTokenRunnable getSessionTokenRunnable = new GetSessionTokenRunnable(this, httpPeriProcessor, applicationCredentials);
+        GetSessionTokenRunnable getSessionTokenRunnable = new GetSessionTokenRunnable(this, new NewSessionTokenHttpPreProcessor(), new NewSessionTokenHttpPostProcessor(), httpPeriProcessor, applicationCredentials);
         executor.execute(getSessionTokenRunnable);
     }
 
@@ -79,6 +79,8 @@ public class TokenFarm implements TokenFarmDistributor {
                 System.out.println(TAG + " interrupted, not adding: " + sessionToken.getTokenString());
                 getNewSessionToken();
             }
+        } else {
+            getNewSessionToken();
         }
     }
 

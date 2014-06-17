@@ -1,10 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_http_processor.request_runnables;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpException;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPostProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPreProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,9 +18,13 @@ public class HttpGetRequestRunnable implements Runnable {
     private HttpRequestCallback callback;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
+    private HttpProcessor httpPreProcessor;
+    private HttpProcessor httpPostProcessor;
 
-    public HttpGetRequestRunnable(HttpRequestCallback callback, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
+    public HttpGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         this.callback = callback;
+        this.httpPreProcessor = httpPreProcessor;
+        this.httpPostProcessor = httpPostProcessor;
         this.apiRequestObject = apiRequestObject;
         this.httpPeriProcessor = httpPeriProcessor;
     }
@@ -34,8 +35,6 @@ public class HttpGetRequestRunnable implements Runnable {
             callback.httpRequestStarted(apiRequestObject);
         }
 
-        HttpPreProcessor httpPreProcessor = httpPeriProcessor.getHttpPreProcessor();
-        HttpPostProcessor httpPostProcessor = httpPeriProcessor.getHttpPostProcessor();
         int connectionTimeout = httpPeriProcessor.getConnectionTimeout();
         int readTimeout = httpPeriProcessor.getReadTimeout();
 

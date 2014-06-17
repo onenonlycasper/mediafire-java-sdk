@@ -1,3 +1,4 @@
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.*;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.CredentialsException;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
@@ -42,6 +43,26 @@ public class DriverSessionTokenFarm {
             }
         }
 
-        
+        TheCallbackKing callback = new TheCallbackKing();
+        ApiRequestObject apiRequestObject = new ApiRequestObject("http://www.mediafire.com", "/api/folder/get_info.php");
+        LinkedHashMap<String, String> optionalParameters = new LinkedHashMap<String, String>();
+        optionalParameters.put("response_format", "json");
+        apiRequestObject.setOptionalParameters(optionalParameters);
+        ApiRequestRunnable apiRequestRunnable = new ApiRequestRunnable(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
+        Thread thread = new Thread(apiRequestRunnable);
+        thread.start();
+    }
+
+    public static class TheCallbackKing implements ApiRequestRunnableCallback {
+        private final String TAG = TheCallbackKing.class.getSimpleName();
+        @Override
+        public void apiRequestProcessStarted() {
+            System.out.println(TAG + " apiRequestProcessStarted()");
+        }
+
+        @Override
+        public void apiRequestProcessFinished(ApiRequestObject apiRequestObject) {
+            System.out.println(TAG + " apiRequestProcessFinished()");
+        }
     }
 }

@@ -1,7 +1,8 @@
-package com.arkhive.components.test_session_manager_fixes.module_http_processor;
+package com.arkhive.components.test_session_manager_fixes.module_token_farm;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -11,10 +12,12 @@ import com.google.gson.JsonParser;
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public final class HttpPostProcessor {
-    public HttpPostProcessor() {}
+public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
+    private static final String TAG = NewSessionTokenHttpPostProcessor.class.getSimpleName();
+    public NewSessionTokenHttpPostProcessor() {}
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + " processApiRequestObject()");
         String jsonResponse = apiRequestObject.getHttpResponseString();
         JsonElement jsonElement = getResponseElement(jsonResponse);
         if (jsonElement == null) {
@@ -30,19 +33,6 @@ public final class HttpPostProcessor {
         } else {
             apiRequestObject.setSessionTokenInvalid(false);
         }
-
-        if (apiResponse.needNewKey()) {
-            SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
-            updateSecretKey(sessionToken);
-        }
-    }
-
-    public void updateSecretKey(SessionToken sessionToken) {
-        String secretKey = sessionToken.getSecretKey();
-        long newKey = Long.valueOf(secretKey) * 16807;
-        newKey = newKey % 2147483647;
-        secretKey = String.valueOf(newKey);
-        sessionToken.setSecretKey(secretKey);
     }
 
     /**
@@ -53,6 +43,7 @@ public final class HttpPostProcessor {
      * @return The JsonElement created from the response string.
      */
     public static JsonElement getResponseElement(String response) {
+        System.out.println(TAG + " getResponseElement()");
         if (response == null) {
             return null;
         }

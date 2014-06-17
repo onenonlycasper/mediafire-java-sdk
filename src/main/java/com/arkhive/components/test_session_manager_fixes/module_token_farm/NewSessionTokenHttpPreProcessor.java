@@ -1,6 +1,7 @@
-package com.arkhive.components.test_session_manager_fixes.module_http_processor;
+package com.arkhive.components.test_session_manager_fixes.module_token_farm;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.Token;
 
@@ -13,9 +14,9 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public final class HttpPreProcessor {
-    private static final String TAG = HttpPreProcessor.class.getSimpleName();
-    public HttpPreProcessor() {}
+public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
+    private static final String TAG = NewSessionTokenHttpPreProcessor.class.getSimpleName();
+    public NewSessionTokenHttpPreProcessor() {}
 
     /**
      * processes an api request prior to making an http request.
@@ -64,7 +65,7 @@ public final class HttpPreProcessor {
 
         String generatedUri = stringBuilder.toString();
 
-        String signature = calculateSignatureForString(generatedUri);
+        String signature = createHash(generatedUri);
 
         StringBuilder fullUrlBuilder = new StringBuilder();
         fullUrlBuilder.append(domain);
@@ -136,7 +137,7 @@ public final class HttpPreProcessor {
     private String cleanupUrlString(String urlString) {
         System.out.println(TAG + " cleanupUrlString()");
         String cleanedUrlString;
-        if (urlString.contains("&")) {
+        if (urlString.contains("&") && !urlString.contains("?")) {
             cleanedUrlString = urlString.replaceFirst("&", "?");
         } else {
             cleanedUrlString = urlString;
@@ -152,7 +153,7 @@ public final class HttpPreProcessor {
      * @return - a String which represents the MD5 hash of the parameter passed UNLESS a NoSuchAlgorithmException occurs
      * in that case the original string will be returned.
      */
-    private String calculateSignatureForString(String hashTarget) {
+    private String createHash(String hashTarget) {
         String signature;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");

@@ -6,6 +6,7 @@ import com.arkhive.components.test_session_manager_fixes.module_token_farm.token
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.Token;
 
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -31,6 +32,10 @@ public final class ApiRequestObject {
     public ApiRequestObject(String domain, String uri) {
         this.domain = domain;
         this.uri = uri;
+        requiredParameters = new LinkedHashMap<String, String>();
+        optionalParameters = new LinkedHashMap<String, String>();
+        exceptionDuringRequest = new LinkedList<Exception>();
+        postHeaders = new LinkedHashMap<String, String>();
     }
 
     public final String getDomain() {
