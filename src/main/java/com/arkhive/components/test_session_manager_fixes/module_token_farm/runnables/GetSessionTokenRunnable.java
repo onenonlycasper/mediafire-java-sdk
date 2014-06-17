@@ -147,6 +147,11 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
         return signature;
     }
 
+    /**
+     * calculates a SHA-1 hash for a given hash string.
+     * @param hashTarget
+     * @return
+     */
     private String calculateSignatureForString(String hashTarget) {
         String signature;
         try {

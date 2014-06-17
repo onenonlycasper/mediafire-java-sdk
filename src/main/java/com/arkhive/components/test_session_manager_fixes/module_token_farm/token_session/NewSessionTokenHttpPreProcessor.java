@@ -2,13 +2,10 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm.toke
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.Token;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 /**
@@ -59,22 +56,11 @@ public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
             stringBuilder.append(constructParametersForUrl(optionalParameters));
         }
 
-        if (token != null) {
-            stringBuilder.append(constructParametersForUrl(token));
-        }
-
         String generatedUri = stringBuilder.toString();
-
-        String signature = createHash(generatedUri);
 
         StringBuilder fullUrlBuilder = new StringBuilder();
         fullUrlBuilder.append(domain);
         fullUrlBuilder.append(generatedUri);
-
-        if (token != null && SessionToken.class.isInstance(token)) {
-            fullUrlBuilder.append("&signature=");
-            fullUrlBuilder.append(signature);
-        }
 
         String completedUrl = fullUrlBuilder.toString();
 
@@ -109,25 +95,6 @@ public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
     }
 
     /**
-     * Returns the url portion of a request which contains the session token. in other words, &session_token=1234
-     * where 1234 is the value retrieved from the parameter passed.
-     *
-     * @param token - the Token to get the session token string from.
-     * @return a completed string.
-     */
-    private String constructParametersForUrl(Token token) {
-        System.out.println(TAG + " constructParametersForUrl(Token)");
-        StringBuilder stringBuilder = new StringBuilder();
-
-        if (token.getTokenString() != null) {
-            stringBuilder.append("&session_token=");
-            stringBuilder.append(token.getTokenString());
-        }
-
-        return stringBuilder.toString();
-    }
-
-    /**
      * replaces the first instance of & with ? to generate a proper uri:
      * example: /api/user/get_session_token&blah=something would be changed to /api/user/get_session_token?blah=something
      *
@@ -144,34 +111,5 @@ public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
         }
 
         return cleanedUrlString;
-    }
-
-    /**
-     * calculates an MD5 hash for a given string
-     *
-     * @param hashTarget - the string to get the md5 hash of.
-     * @return - a String which represents the MD5 hash of the parameter passed UNLESS a NoSuchAlgorithmException occurs
-     * in that case the original string will be returned.
-     */
-    private String createHash(String hashTarget) {
-        String signature;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-
-            md.update(hashTarget.getBytes());
-
-            byte byteData[] = md.digest();
-
-            //convert the byte to hex format method 1
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < byteData.length; i++) {
-                sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            signature = sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            signature = hashTarget;
-        }
-        return signature;
     }
 }
