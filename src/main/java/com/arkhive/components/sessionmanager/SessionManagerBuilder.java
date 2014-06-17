@@ -3,7 +3,8 @@ package com.arkhive.components.sessionmanager;
 import com.arkhive.components.credentials.Credentials;
 import com.arkhive.components.httplibrary.HttpInterface;
 
-/** Builder for a SessionManager object
+/**
+ * Builder for a SessionManager object
  * <br>
  * Allows for construction of a SessionManager object, and verifies that
  * all of the required parameters are set to acceptable values.
@@ -17,7 +18,8 @@ public class SessionManagerBuilder {
     protected Credentials credentials = null;
     protected HttpInterface httpInterface = null;
 
-    /** Sets the application id for the session manager
+    /**
+     * Sets the application id for the session manager
      * <br>
      * The application id is required to request a session
      * from the API.  If a null value is passed, the application
@@ -32,7 +34,8 @@ public class SessionManagerBuilder {
         return this;
     }
 
-    /** Sets the API key for the session manager
+    /**
+     * Sets the API key for the session manager
      * <br>
      * An API key is required to request a session from the API.  If
      * a null value is passed, the API key is left at the default value
@@ -41,11 +44,14 @@ public class SessionManagerBuilder {
      * @param value The value of the API key.
      */
     public SessionManagerBuilder apiKey(String value) {
-        if (value != null) { this.apiKey = value; }
+        if (value != null) {
+            this.apiKey = value;
+        }
         return this;
     }
 
-    /** Sets the domain used for API requests
+    /**
+     * Sets the domain used for API requests
      * <br>
      * This is the domain that is prepended to the API
      * URI in order to make a request to the web API system.
@@ -55,11 +61,14 @@ public class SessionManagerBuilder {
      * @param value The domain used for API requests.
      */
     public SessionManagerBuilder domain(String value) {
-        if (value != null) { this.domain = value; }
+        if (value != null) {
+            this.domain = value;
+        }
         return this;
     }
 
-    /** The minimum number of sessions to store in the
+    /**
+     * The minimum number of sessions to store in the
      * session pool.
      * <br>
      * This is the minimum number of sessions to store in the
@@ -69,14 +78,17 @@ public class SessionManagerBuilder {
      * not change the minimum session value.
      *
      * @param value The minimum number of sessions to hold in the
-     * session pool.
+     *              session pool.
      */
     public SessionManagerBuilder minSessions(int value) {
-        if (value > 0) { this.minSessions = value; }
+        if (value > 0) {
+            this.minSessions = value;
+        }
         return this;
     }
 
-    /** The maximum number of sessions to store in the
+    /**
+     * The maximum number of sessions to store in the
      * session pool.
      * <br>
      * This is the maximum number of session to store in the
@@ -89,11 +101,14 @@ public class SessionManagerBuilder {
      * @param value The maximum sessions to hold in the session pool.
      */
     public SessionManagerBuilder maxSessions(int value) {
-        if (value > 0) { this.maxSessions = value; }
+        if (value > 0) {
+            this.maxSessions = value;
+        }
         return this;
     }
 
-    /** Sets the Credentials used by the session manager.
+    /**
+     * Sets the Credentials used by the session manager.
      * <br>
      * A Credentials object is required to request a session from the API.
      * Passing a null to this method will result in the value not being
@@ -102,11 +117,14 @@ public class SessionManagerBuilder {
      * @param value The Credentials to be used by the session manager.
      */
     public SessionManagerBuilder credentials(Credentials value) {
-        if (value != null) { this.credentials = value; }
+        if (value != null) {
+            this.credentials = value;
+        }
         return this;
     }
 
-    /** Sets the HttpInterface to be used by the session manager.
+    /**
+     * Sets the HttpInterface to be used by the session manager.
      * <br>
      * A HttpInterface is required to request a session from the API.
      * Passing a null value to this method will result in the value not
@@ -115,11 +133,14 @@ public class SessionManagerBuilder {
      * @param value The HttpInterface to be used by the session manager.
      */
     public SessionManagerBuilder httpInterface(HttpInterface value) {
-        if (value != null) { this.httpInterface = value; }
+        if (value != null) {
+            this.httpInterface = value;
+        }
         return this;
     }
 
-    /** Constructs a new {@link SessionManager} object.
+    /**
+     * Constructs a new {@link SessionManager} object.
      * <br>
      * This method creates a new SessionManager, using the values
      * set in the other methods.  Before the SessionManager is created,
@@ -127,9 +148,8 @@ public class SessionManagerBuilder {
      * thrown if any of them  fail validation.
      * <br>
      *
-     * @throws IllegalStateException
-     *
      * @return A new {@link SessionManager}.
+     * @throws IllegalStateException
      */
     public SessionManager build() {
         validateApplicationId();
@@ -142,7 +162,8 @@ public class SessionManagerBuilder {
         return new SessionManager(this);
     }
 
-    /** Validates the value of the application id.
+    /**
+     * Validates the value of the application id.
      * <br>
      * Validates that the application id is set to something other
      * than an empty string.  If this validation fails, an IllegalStateException
@@ -156,7 +177,8 @@ public class SessionManagerBuilder {
         }
     }
 
-    /** Validates the value of the API key.
+    /**
+     * Validates the value of the API key.
      * <br>
      * Validates that the API key is not set to an empty string.  If
      * this validation falies, an IllegalStateException is thrown.
@@ -169,7 +191,8 @@ public class SessionManagerBuilder {
         }
     }
 
-    /** Validates the value of the domain setting.
+    /**
+     * Validates the value of the domain setting.
      * <br>
      * Validates that the domain is not set to an empty string.
      * If this validation fails, an IllegalStateException is thrown.
@@ -182,7 +205,8 @@ public class SessionManagerBuilder {
         }
     }
 
-    /** Validates the minimum sesssions setting.
+    /**
+     * Validates the minimum sesssions setting.
      * <br>
      * Validates that the minimum number of sessions is set to a value
      * greater than zero, and that it is less than the number of maximum sessions.
@@ -199,7 +223,8 @@ public class SessionManagerBuilder {
         }
     }
 
-    /** Validates the maximum sessions setting.
+    /**
+     * Validates the maximum sessions setting.
      * <br>
      * Validates that the maximum number of sessions is greater than zero, and
      * greater than the minimum number of sessions.  If the validation fails, an
@@ -216,7 +241,8 @@ public class SessionManagerBuilder {
         }
     }
 
-    /** Validates the credentials setting.
+    /**
+     * Validates the credentials setting.
      * <br>
      * Validates that the credentials value is not set to a null value.
      * If this validation fails then an IllegalStateException is thrown.
@@ -229,7 +255,8 @@ public class SessionManagerBuilder {
         }
     }
 
-    /** Validates the HttpInterface setting.
+    /**
+     * Validates the HttpInterface setting.
      * <br>
      * Validates that the HttpInterface is not set to a null value.
      * If the validation fails, an IllegalStateException is thrown.

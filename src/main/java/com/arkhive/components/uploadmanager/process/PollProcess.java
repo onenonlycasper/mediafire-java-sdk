@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
  * 3. get response
  * 4. check response data
  * 5. step 1 again until 2 minutes is up, there is an error, or status code 99 (no more requests for this key)
- * @author Chris Najar
  *
+ * @author Chris Najar
  */
 public class PollProcess implements Runnable {
     private static final String TAG = PollProcess.class.getSimpleName();
@@ -43,8 +43,9 @@ public class PollProcess implements Runnable {
     /**
      * Constructor for an upload with a listener. This constructor uses sleepTime for the loop sleep time with
      * loopAttempts for the loop attempts.
+     *
      * @param sessionManager - the session to use for this upload process
-     * @param uploadItem - the item to be uploaded
+     * @param uploadItem     - the item to be uploaded
      */
     public PollProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
         this.sessionManager = sessionManager;
@@ -54,7 +55,7 @@ public class PollProcess implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("run()");
+        System.out.println(TAG + " run()");
         poll();
     }
 
@@ -101,9 +102,9 @@ public class PollProcess implements Runnable {
             //create the pollupload response from the String we received from the get request sent by our httpinterface
             response = gson.fromJson(getResponseString(jsonResponse), PollResponse.class);
 
-            System.out.println("received error code: " + response.getErrorCode());
+            System.out.println(TAG + " received error code: " + response.getErrorCode());
             //check to see if we need to call pollUploadCompleted or loop again
-            switch(response.getErrorCode()) {
+            switch (response.getErrorCode()) {
                 case NO_ERROR:
                     //just because we had response/result "Success" doesn't mean everything is good.
                     //we need to find out if we should continue polling or not
@@ -112,22 +113,22 @@ public class PollProcess implements Runnable {
                     //      second  -   fileerror code no error? yes, carry on old chap!. no, cancel upload because error.
                     //      third   -   status code 99 (no more requests)? yes, weee! done!. no, continue.
                     if (response.getDoUpload().getResultCode() != PollResultCode.SUCCESS) {
-                        System.out.println("result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
+                        System.out.println(TAG + " result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
                         notifyManagerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getFileErrorCode() != PollFileErrorCode.NO_ERROR) {
-                        System.out.println("result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
-                        System.out.println("file path: " + uploadItem.getFileData().getFilePath());
-                        System.out.println("file hash: " + uploadItem.getFileData().getFileHash());
-                        System.out.println("file size: " + uploadItem.getFileData().getFileSize());
+                        System.out.println(TAG + " result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
+                        System.out.println(TAG + " file path: " + uploadItem.getFileData().getFilePath());
+                        System.out.println(TAG + " file hash: " + uploadItem.getFileData().getFileHash());
+                        System.out.println(TAG + " file size: " + uploadItem.getFileData().getFileSize());
                         notifyManagerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getStatusCode() == PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY) {
-                        System.out.println("status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
+                        System.out.println(TAG + " status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
                         notifyManagerCompleted(response);
                         return;
                     }
@@ -142,7 +143,7 @@ public class PollProcess implements Runnable {
             try {
                 Thread.sleep(TIME_BETWEEN_POLLS);
             } catch (InterruptedException e) {
-                System.out.println("Exception: " + e);
+                System.out.println(TAG + " Exception: " + e);
                 notifyManagerCompleted(response);
                 Thread.currentThread().interrupt();
             }
@@ -155,7 +156,7 @@ public class PollProcess implements Runnable {
     }
 
     public void notifyListenersException(UploadItem uploadItem, Exception exception) {
-        System.out.println("notifyListenersException()");
+        System.out.println(TAG + " notifyListenersException()");
         if (uploadManager != null) {
             uploadManager.onProcessException(uploadItem, exception);
         }
@@ -163,10 +164,11 @@ public class PollProcess implements Runnable {
 
     /**
      * notifies the listeners that this upload has successfully completed.
+     *
      * @param response - poll response.
      */
     public void notifyManagerCompleted(PollResponse response) {
-        System.out.println("notifyManagerCompleted()");
+        System.out.println(TAG + " notifyManagerCompleted()");
         if (uploadManager != null) {
             uploadManager.onPollCompleted(uploadItem, response);
         }
@@ -174,10 +176,11 @@ public class PollProcess implements Runnable {
 
     /**
      * notifies the upload manager that the process has been cancelled and then notifies other listeners.
+     *
      * @param response - poll response.
      */
     private void notifyManagerCancelled(PollResponse response) {
-        System.out.println("notifyManagerCancelled()");
+        System.out.println(TAG + " notifyManagerCancelled()");
         if (uploadManager != null) {
             uploadManager.onCancelled(uploadItem, response);
         }
@@ -185,10 +188,11 @@ public class PollProcess implements Runnable {
 
     /**
      * generates a HashMap of the GET parameters.
+     *
      * @return - map of request parameters.
      */
     private HashMap<String, String> generateGetParameters() {
-        System.out.println("generateGetParameters()");
+        System.out.println(TAG + " generateGetParameters()");
         HashMap<String, String> keyValue = new HashMap<String, String>();
         keyValue.put("key", uploadItem.getPollUploadKey());
         keyValue.put("response_format", "json");
@@ -199,7 +203,7 @@ public class PollProcess implements Runnable {
      * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
      */
     private void notifyManagerLostConnection() {
-        System.out.println("notifyManagerLostConnection()");
+        System.out.println(TAG + " notifyManagerLostConnection()");
         // notify listeners that connection was lost
         if (uploadManager != null) {
             uploadManager.onLostConnection(uploadItem);
@@ -222,6 +226,7 @@ public class PollProcess implements Runnable {
 
     /**
      * converts a String received from JSON format into a response String.
+     *
      * @param response - the response received in JSON format
      * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
      */

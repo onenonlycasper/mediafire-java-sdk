@@ -3,7 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 
 import java.util.concurrent.BlockingQueue;
@@ -14,17 +14,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Chris Najar on 6/16/2014.
  */
-public class TokenFarm implements GetSessionTokenRunnable.Callback {
+public class TokenFarm implements TokenFarmDistributor {
+    private static final String TAG = TokenFarm.class.getSimpleName();
     private ApplicationCredentials applicationCredentials;
     private HttpPeriProcessor httpPeriProcessor;
-    private PausableThreadPoolExecutor newSessionTokenExecutor;
+    private PausableThreadPoolExecutor executor;
     private BlockingQueue<SessionToken> sessionTokens;
 
     private TokenFarm(ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
         sessionTokens = new LinkedBlockingQueue<SessionToken>(6);
         this.applicationCredentials = applicationCredentials;
         this.httpPeriProcessor = httpPeriProcessor;
-        newSessionTokenExecutor = new PausableThreadPoolExecutor(6, 6, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(6), Executors.defaultThreadFactory());
+        executor = new PausableThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), Executors.defaultThreadFactory());
     }
 
     private static TokenFarm instance;
@@ -36,7 +37,7 @@ public class TokenFarm implements GetSessionTokenRunnable.Callback {
         }
         instance = new TokenFarm(applicationCredentials, httpPeriProcessor);
         instance.startup();
-        System.out.println("TokenFarm initialized");
+        System.out.println(TAG + " TokenFarm initialized");
         return instance;
     }
 
@@ -45,43 +46,83 @@ public class TokenFarm implements GetSessionTokenRunnable.Callback {
     }
 
     public void shutdown() {
-        System.out.println("TokenFarm shutting down");
+        System.out.println(TAG + " TokenFarm shutting down");
         // (TODO) do other stuff to clean up references.
         instance = null;
         sessionTokens.clear();
-        System.out.println("TokenFarm shut down");
+        System.out.println(TAG + " TokenFarm shut down");
     }
 
     private void getNewSessionToken() {
-        System.out.println("getNewSessionToken()");
+        System.out.println(TAG + " getNewSessionToken()");
         GetSessionTokenRunnable getSessionTokenRunnable = new GetSessionTokenRunnable(this, httpPeriProcessor, applicationCredentials);
-        newSessionTokenExecutor.execute(getSessionTokenRunnable);
+        executor.execute(getSessionTokenRunnable);
     }
 
     private void startup() {
-        System.out.println("startup()");
-        for(int i = 0; i < sessionTokens.remainingCapacity(); i++) {
+        System.out.println(TAG + " startup()");
+        for (int i = 0; i < sessionTokens.remainingCapacity(); i++) {
             getNewSessionToken();
         }
     }
 
     @Override
-    public void sessionTokenFetchCompleted(ApiRequestObject apiResponseObject) {
-        System.out.println("sessionTokenFetchCompleted()");
-        System.out.println("constructed url: " + apiResponseObject.getConstructedUrl());
-        System.out.println("response string: " + apiResponseObject.getHttpResponseString());
+    public void receiveNewSessionToken(ApiRequestObject apiResponseObject) {
+        System.out.println(TAG + " receiveNewSessionToken()");
         SessionToken sessionToken = (SessionToken) apiResponseObject.getToken();
-        System.out.println("session token:   " + sessionToken.getTokenString());
-        System.out.println("secret key:      " + sessionToken.getSecretKey());
-        System.out.println("time:            " + sessionToken.getTime());
-        System.out.println("pkey:            " + sessionToken.getPkey());
 
         if (!apiResponseObject.isSessionTokenInvalid()) {
             try {
                 sessionTokens.add(sessionToken);
+                System.out.println(TAG + " added " + sessionToken.getTokenString());
             } catch (IllegalStateException e) {
-                System.out.println("queue is full, not adding this session token");
+                System.out.println(TAG + " interrupted, not adding: " + sessionToken.getTokenString());
+                getNewSessionToken();
             }
+        }
+    }
+
+    @Override
+    public void borrowSessionToken(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + "borrowSessionToken");
+        SessionToken sessionToken = null;
+        try {
+            sessionToken = sessionTokens.take();
+            System.out.println(TAG + " session token borrowed: " + sessionToken.getTokenString());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            apiRequestObject.addExceptionDuringRequest(e);
+            System.out.println(TAG + " no session token borrowed, interrupted.");
+        }
+        apiRequestObject.setToken(sessionToken);
+    }
+
+    @Override
+    public void returnSessionToken(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + " returnSessionToken");
+        SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
+        boolean needToGetNewSessionToken = false;
+        if (sessionToken == null) {
+            System.out.println(TAG + " request object did not have a session token, but it should have. need new session token");
+            needToGetNewSessionToken = true;
+        }
+
+        if (sessionToken != null && apiRequestObject.isSessionTokenInvalid()) {
+            System.out.println(TAG + " not returning session token. it is invalid or signature calculation went bad. need new session token");
+            needToGetNewSessionToken = true;
+        } else {
+            System.out.println(TAG + " returning session token: " + sessionToken.getTokenString());
+            try {
+                sessionTokens.put(sessionToken);
+            } catch (InterruptedException e) {
+                System.out.println(TAG + " could not return session token, interrupted. need new session token");
+                needToGetNewSessionToken = true;
+            }
+        }
+
+        if (needToGetNewSessionToken) {
+            System.out.println(TAG + " fetching a new session token");
+            getNewSessionToken();
         }
     }
 }

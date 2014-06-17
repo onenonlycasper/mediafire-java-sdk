@@ -4,7 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-/**Contact representing a contact in the data string portion of the RawTrie data structure.
+/**
+ * Contact representing a contact in the data string portion of the RawTrie data structure.
+ *
  * @author Chris Najar
  */
 public class Contact {
@@ -22,6 +24,7 @@ public class Contact {
 
     /**
      * returns the raw data for this contact.
+     *
      * @return
      */
     public String getData() {
@@ -33,6 +36,7 @@ public class Contact {
 
     /**
      * returns the contact email.
+     *
      * @return
      */
     public String getEmail() {
@@ -44,6 +48,7 @@ public class Contact {
 
     /**
      * returns the contact id.
+     *
      * @return
      */
     public String getId() {
@@ -55,6 +60,7 @@ public class Contact {
 
     /**
      * returns the contact name (or email if no name provided).
+     *
      * @return
      */
     public String getName() {
@@ -66,6 +72,7 @@ public class Contact {
 
     /**
      * returns the avatar url.
+     *
      * @return
      */
     public String getAvatar() {
@@ -77,6 +84,7 @@ public class Contact {
 
     /**
      * returns the contact type.
+     *
      * @return
      */
     public String getType() {
@@ -94,12 +102,12 @@ public class Contact {
         List<String> fields = new LinkedList<String>();
         while (st.hasMoreElements()) {
             String field = (String) st.nextElement();
-//      System.out.println("field: " + field);
+//      System.out.println(TAG + " field: " + field);
             fields.add(field);
         }
 
         if (fields.size() != 5) {
-//      System.out.println("something went wrong, field size incorrect");
+//      System.out.println(TAG + " something went wrong, field size incorrect");
             return;
         }
 

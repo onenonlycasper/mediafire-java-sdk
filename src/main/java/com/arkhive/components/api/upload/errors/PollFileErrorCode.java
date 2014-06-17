@@ -3,8 +3,8 @@ package com.arkhive.components.api.upload.errors;
 /**
  * These are the file error codes as an enum which can be thrown
  * as per the dev wiki.
- * @author Chris Najar
  *
+ * @author Chris Najar
  */
 public enum PollFileErrorCode {
     NO_ERROR(0),
@@ -25,17 +25,20 @@ public enum PollFileErrorCode {
     UPDATE_REVISION_CONFLICT(16),
     ERROR_PATCHING_FILE(17),
     ACCOUNT_BLOCKED(18),
-    FAILED_TO_CREATE_PATH(19),
-    ;
+    FAILED_TO_CREATE_PATH(19),;
 
     private final int value;
 
-    private PollFileErrorCode(int value) { this.value = value; }
+    private PollFileErrorCode(int value) {
+        this.value = value;
+    }
 
-    public int getValue() { return this.value; }
+    public int getValue() {
+        return this.value;
+    }
 
     public static PollFileErrorCode fromInt(int value) {
-        for (final PollFileErrorCode e: values()) {
+        for (final PollFileErrorCode e : values()) {
             if (e.getValue() == value) {
                 return e;
             }
@@ -46,27 +49,59 @@ public enum PollFileErrorCode {
     @Override
     public String toString() {
         String returnMessage;
-        switch(this.value) {
-            case 0:   returnMessage = "No Error"; break;
-            case 1:   returnMessage = "File is larger than the maximum file size allowed"; break;
-            case 2:   returnMessage = "File size cannot be 0"; break;
+        switch (this.value) {
+            case 0:
+                returnMessage = "No Error";
+                break;
+            case 1:
+                returnMessage = "File is larger than the maximum file size allowed";
+                break;
+            case 2:
+                returnMessage = "File size cannot be 0";
+                break;
             case 3:
             case 4:
-            case 9:   returnMessage = "Found bad RAR file"; break;
-            case 5:   returnMessage = "Virus found"; break;
+            case 9:
+                returnMessage = "Found bad RAR file";
+                break;
+            case 5:
+                returnMessage = "Virus found";
+                break;
             case 6:
             case 8:
-            case 10:  returnMessage = "Unknown internal error"; break;
-            case 7:   returnMessage = "File hash or size mismatch"; break;
-            case 12:  returnMessage = "Failed to insert data into database"; break;
-            case 13:  returnMessage = "File name already exists in the same parent folder, skipping"; break;
-            case 14:  returnMessage = "Destination folder does not exist"; break;
-            case 15:  returnMessage = "Account storage limit reached"; break;
-            case 16:  returnMessage = "There was an update revision conflict"; break;
-            case 17:  returnMessage = "Error patching delta file"; break;
-            case 18:  returnMessage = "Account is blocked"; break;
-            case 19:  returnMessage = "Failure to create path"; break;
-            default:  returnMessage = "No error code associated with: " + this.value; break;
+            case 10:
+                returnMessage = "Unknown internal error";
+                break;
+            case 7:
+                returnMessage = "File hash or size mismatch";
+                break;
+            case 12:
+                returnMessage = "Failed to insert data into database";
+                break;
+            case 13:
+                returnMessage = "File name already exists in the same parent folder, skipping";
+                break;
+            case 14:
+                returnMessage = "Destination folder does not exist";
+                break;
+            case 15:
+                returnMessage = "Account storage limit reached";
+                break;
+            case 16:
+                returnMessage = "There was an update revision conflict";
+                break;
+            case 17:
+                returnMessage = "Error patching delta file";
+                break;
+            case 18:
+                returnMessage = "Account is blocked";
+                break;
+            case 19:
+                returnMessage = "Failure to create path";
+                break;
+            default:
+                returnMessage = "No error code associated with: " + this.value;
+                break;
         }
         return returnMessage;
     }

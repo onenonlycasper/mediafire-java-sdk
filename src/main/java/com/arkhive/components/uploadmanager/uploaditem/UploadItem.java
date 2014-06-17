@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
  * The only mandatory parameter that needs to be passed to
  * the constructor is a path, but the implementer of this
  * data structure can also pass specific upload options.
- * @author Chris Najar
  *
+ * @author Chris Najar
  */
 public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
@@ -29,12 +29,13 @@ public class UploadItem {
     /**
      * Constructor which takes a path and upload attempts.
      * Use this method when you want to customize the upload options for this UploadItem.
-     * @param path - file path on the device
+     *
+     * @param path          - file path on the device
      * @param uploadOptions - upload options to use for the upload item.
-     * Should use the single or dual argument constructor for the most part.
+     *                      Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, UploadOptions uploadOptions) {
-        System.out.println("UploadItem created");
+        System.out.println(TAG + " UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
@@ -62,6 +63,7 @@ public class UploadItem {
     /**
      * Constructor which takes a path and an image id
      * Use this method when you want to use default upload options for this UploadItem.
+     *
      * @param path - path to data
      */
     public UploadItem(String path) {
@@ -69,19 +71,19 @@ public class UploadItem {
     }
 
     public int getCheckCount() {
-        System.out.println("getCheckCount()");
+        System.out.println(TAG + " getCheckCount()");
         count++;
         return count;
     }
 
 
-
     /**
      * Called to get the Short file name.
+     *
      * @return the filename.
      */
     public String getFileName() {
-        System.out.println("getFileName()");
+        System.out.println(TAG + " getFileName()");
         if (!options.getCustomFileName().isEmpty()) {
             fileName = options.getCustomFileName();
         }
@@ -90,28 +92,31 @@ public class UploadItem {
 
     /**
      * CAlled to get the UploadItemFileData.
+     *
      * @return the file data struct.
      */
     public FileData getFileData() {
-        System.out.println("getFileData()");
+        System.out.println(TAG + " getFileData()");
         return fileData;
     }
 
     /**
      * Called to get the poll upload key.
+     *
      * @return - the poll upload key.
      */
     public String getPollUploadKey() {
-        System.out.println("getPollUploadKey()");
+        System.out.println(TAG + " getPollUploadKey()");
         return pollUploadKey;
     }
 
     /**
      * Called to get the UploadItemFileUploadOptions.
+     *
      * @return - the upload options struct.
      */
     public UploadOptions getUploadOptions() {
-        System.out.println("getUploadOptions()");
+        System.out.println(TAG + " getUploadOptions()");
         if (options == null) {
             options = new UploadOptions();
         }
@@ -120,10 +125,11 @@ public class UploadItem {
 
     /**
      * Called to get the UploadItemChunkData.
+     *
      * @return - the chunkdata struct.
      */
     public ChunkData getChunkData() {
-        System.out.println("getChunkData()");
+        System.out.println(TAG + " getChunkData()");
         if (chunkData == null) {
             chunkData = new ChunkData();
         }
@@ -132,10 +138,11 @@ public class UploadItem {
 
     /**
      * Called to get the ResumableUploadBitmap.
+     *
      * @return - the resumablebitmap struct.
      */
     public ResumableBitmap getBitmap() {
-        System.out.println("getBitmap()");
+        System.out.println(TAG + " getBitmap()");
         if (bitmap == null) {
             System.out.println(TAG + "   resumable bitmap reference lost");
             bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
@@ -145,28 +152,31 @@ public class UploadItem {
 
     /**
      * Sets the ResumableUploadBitmap.
+     *
      * @param bitmap - the resumablebitmap to set.
      */
     public void setBitmap(ResumableBitmap bitmap) {
-        System.out.println("setBitmap()");
+        System.out.println(TAG + " setBitmap()");
         this.bitmap = bitmap;
     }
 
     /**
      * Sets the poll upload key.
+     *
      * @param pollUploadKey - the polluploadkey to set.
      */
     public void setPollUploadKey(String pollUploadKey) {
-        System.out.println("setPollUploadKey()");
+        System.out.println(TAG + " setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
     }
 
     /**
      * sets the short file name given the path.
+     *
      * @param path path of the file.
      */
     private void setFileName(String path) {
-        System.out.println("setFileName()");
+        System.out.println(TAG + " setFileName()");
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {

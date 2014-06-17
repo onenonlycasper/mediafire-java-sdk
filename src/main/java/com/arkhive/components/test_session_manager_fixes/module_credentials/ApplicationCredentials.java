@@ -8,6 +8,7 @@ import java.util.Map;
  * Created by Chris Najar on 6/15/2014.
  */
 public class ApplicationCredentials implements CredentialsInterface {
+    private static final String TAG = ApplicationCredentials.class.getSimpleName();
     private static String MEDIAFIRE_PARAMETER_EMAIL = "email";
     private static String MEDIAFIRE_PARAMETER_PASSWORD = "password";
     private static String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
@@ -16,44 +17,62 @@ public class ApplicationCredentials implements CredentialsInterface {
 
     private Map<String, String> userCredentials = new HashMap<String, String>();
     private UserCredentialsType userCredentialsType;
+
     private boolean credentialsSet;
+    private boolean credentialsValid;
+
     private final String appId;
     private final String apiKey;
 
-    public ApplicationCredentials(String appId, String apiKey) throws CredentialsException {
-        if (appId == null || apiKey == null) {
-            throw new CredentialsException("appId and apiKey must not be null.");
-        }
+    private static ApplicationCredentials instance;
+
+    private ApplicationCredentials(String appId, String apiKey) {
         this.appId = appId;
         this.apiKey = apiKey;
         credentialsSet = false;
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
+    public static ApplicationCredentials newInstance(String appId, String apiKey) throws CredentialsException {
+        if (instance != null) {
+            throw new CredentialsException("an ApplicationCredentials instance already exists");
+        }
+
+        if (appId == null || apiKey == null) {
+            throw new CredentialsException("appId and apiKey must not be null");
+        }
+
+        instance = new ApplicationCredentials(appId, apiKey);
+        return instance;
+    }
+
+    public static ApplicationCredentials getInstance() {
+        return instance;
+    }
+
     /**
      * attempts to add user credentials.
      *
      * @param credentials - a map of user credentials based on the following:
-     * email : The email address of the user's MediaFire account
-     *                        AND
-     * password : The password of the user's MediaFire account.
-     *
-     *                        OR
-     *
-     * fb_access_token : The Facebook access token which corresponds with the user's MediaFire account
-     * (this must be obtained from Facebook's API).
-     *
-     *                        OR
-     *
-     * tw_oauth_token : The Twitter OAuth token which corresponds with the user's MediaFire account
-     * (this must be obtained from Twitter's API)
-     *                         AND
-     * tw_oauth_token_secret : The Twitter OAuth Token Secret Key (obtained from Twitter's API).
-     *
+     *                    email : The email address of the user's MediaFire account
+     *                    AND
+     *                    password : The password of the user's MediaFire account.
+     *                    <p/>
+     *                    OR
+     *                    <p/>
+     *                    fb_access_token : The Facebook access token which corresponds with the user's MediaFire account
+     *                    (this must be obtained from Facebook's API).
+     *                    <p/>
+     *                    OR
+     *                    <p/>
+     *                    tw_oauth_token : The Twitter OAuth token which corresponds with the user's MediaFire account
+     *                    (this must be obtained from Twitter's API)
+     *                    AND
+     *                    tw_oauth_token_secret : The Twitter OAuth Token Secret Key (obtained from Twitter's API).
      * @return - true if credentials are stored, false if not.
      */
     public boolean setUserCredentials(Map<String, String> credentials) throws CredentialsException {
-        System.out.println("addUserCredentials()");
+        System.out.println(TAG + " addUserCredentials()");
         if (credentialsSet) {
             throw new CredentialsException("credentials are already set. use clearCredentials()");
         }
@@ -86,7 +105,7 @@ public class ApplicationCredentials implements CredentialsInterface {
     }
 
     private void setCredentials(Map<String, String> credentials) {
-        System.out.println("setCredentials()");
+        System.out.println(TAG + " setCredentials()");
         credentialsSet = true;
         userCredentials = credentials;
     }
@@ -99,27 +118,36 @@ public class ApplicationCredentials implements CredentialsInterface {
         return userCredentials;
     }
 
-    private void clearCredentials() {
-        System.out.println("clearCredentials()");
+    public void clearCredentials() {
+        System.out.println(TAG + " clearCredentials()");
         userCredentials.clear();
         userCredentialsType = UserCredentialsType.UNSET;
         credentialsSet = false;
     }
 
     public boolean isCredentialsSet() {
-        System.out.println("isCredentialsSet()");
+        System.out.println(TAG + " isCredentialsSet()");
         return credentialsSet;
+    }
+
+    public boolean isCredentialsValid() {
+        System.out.println(TAG + " isCredentialsValid()");
+        return credentialsValid;
+    }
+
+    public void setCredentialsValid(boolean credentialsValid) {
+        this.credentialsValid = credentialsValid;
     }
 
     @Override
     public String getAppId() {
-        System.out.println("getAppId()");
+        System.out.println(TAG + " getAppId()");
         return appId;
     }
 
     @Override
     public String getApiKey() {
-        System.out.println("getApiKey()");
+        System.out.println(TAG + " getApiKey()");
         return apiKey;
     }
 

@@ -15,12 +15,14 @@ public interface CredentialsInterface {
 
     /**
      * Return the app id needed to perform API requests.
+     *
      * @return the app id.
      */
     public String getAppId();
 
     /**
      * Return the api key needed to perform API requests.
+     *
      * @return - the api key.
      */
     public String getApiKey();

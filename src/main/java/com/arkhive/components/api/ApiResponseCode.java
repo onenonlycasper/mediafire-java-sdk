@@ -2,8 +2,8 @@ package com.arkhive.components.api;
 
 /**
  * enum for all response codes for any API response root/result. (List received from Cliff)
- * @author Chris Najar
  *
+ * @author Chris Najar
  */
 public enum ApiResponseCode {
     NO_ERROR(0),
@@ -154,8 +154,7 @@ public enum ApiResponseCode {
     ERROR_INVALID_PRINT_SERVICE(241),
     ERROR_FOLDER_FILES_EXCEEDED(242),
     ERROR_ACCOUNT_TEMPORARILY_LOCKED(243),
-    ERROR_NON_US_USER(244),
-    ;
+    ERROR_NON_US_USER(244),;
 
     private final int value;
 
@@ -165,12 +164,16 @@ public enum ApiResponseCode {
     private static final int MAX_OBJECTS = 6000;
     private static final int FOLDER_DEPTH_LIMIT = 130;
 
-    private ApiResponseCode(int value) { this.value = value; }
+    private ApiResponseCode(int value) {
+        this.value = value;
+    }
 
-    public int getValue() { return this.value; }
+    public int getValue() {
+        return this.value;
+    }
 
     public static ApiResponseCode fromInt(int value) {
-        for (final ApiResponseCode e: values()) {
+        for (final ApiResponseCode e : values()) {
             if (e.getValue() == value) {
                 return e;
             }
@@ -181,167 +184,458 @@ public enum ApiResponseCode {
     @Override
     public String toString() {
         String returnMessage;
-        switch(this.value) {
-            case 0:     returnMessage = "Success"; break;
-            case 100:   returnMessage = "Internal server error"; break;
-            case 102:   returnMessage = "API Key is missing"; break;
-            case 103:   returnMessage = "The supplied API Key is invalid"; break;
-            case 104:   returnMessage = "Session token is missing"; break;
-            case 105:   returnMessage = "The supplied Session Token is expired or invalid"; break;
-            case 106:   returnMessage = "Unknown or invalid user"; break;
-            case 107:   returnMessage = "The Credentials you entered are invalid"; break;
-            case 108:   returnMessage = "Unknown or invalid user"; break;
-            case 109:   returnMessage = "Unknown or invalid Application ID"; break;
-            case 110:   returnMessage = "Unknown or Invalid QuickKey"; break;
-            case 111:   returnMessage = "Quick Key is missing"; break;
-            case 112:   returnMessage = "Unknown or invalid FolderKey"; break;
-            case 113:   returnMessage = "Folder Key is missing"; break;
-            case 114:   returnMessage = "Access denied"; break;
-            case 115:   returnMessage = "Cannot move/copy a Folder to itself or to one of its Sub-Folders"; break;
-            case 116:   returnMessage = "The date specified is not valid"; break;
-            case 117:   returnMessage = "Folder Name is missing"; break;
-            case 118:   returnMessage = "The File Name specified is invalid"; break;
-            case 119:   returnMessage = "You cannot register a Mediafire.com email address"; break;
-            case 120:   returnMessage = "The email address you specified is already in use"; break;
-            case 121:   returnMessage = "The email address you specified is found to be rejected/bounced"; break;
-            case 122:   returnMessage = "The email address you specified is malformed"; break;
-            case 123:   returnMessage = "The password you specified is malformed"; break;
-            case 124:   returnMessage = "The API Version is missing"; break;
-            case 125:   returnMessage = "The API version specified or the API Library is old for this call. "
-                    + "Please Specify a higher API version or update your API Library"; break;
-            case 126:   returnMessage = "This API call has been deprecated for the API version specified or the API "
-                    + "Library. Please refer to the API documentation for alternative calls"; break;
-            case 127:   returnMessage = "The signature you specified is invalid"; break;
-            case 128:   returnMessage = "Required parameters for this request are missing"; break;
-            case 129:   returnMessage = "One or more parameters for this request are invalid"; break;
-            case 130:   returnMessage = "Non premium account limitation reached"; break;
-            case 131:   returnMessage = "Cannot add a shared folder to its owner's account"; break;
-            case 132:   returnMessage = "Cannot remove a shared folder from its owner's account"; break;
-            case 133:   returnMessage = "Cannot add a shared folder from an anonymous account"; break;
-            case 134:   returnMessage = "Invalid DMCA user"; break;
-            case 135:   returnMessage = "IP out of range for DMCA"; break;
-            case 136:   returnMessage = "DMCA Ban limit exceeded"; break;
-            case 137:   returnMessage = "This contact already exists in the user's contact list"; break;
-            case 138:   returnMessage = "This contact does not exist"; break;
-            case 139:   returnMessage = "This group already exists in the user's contact list"; break;
-            case 140:   returnMessage = "This group does not exist"; break;
-            case 141:   returnMessage = "Unknown or invalid device"; break;
-            case 142:   returnMessage = "Unsupported or invalid file type"; break;
-            case 143:   returnMessage = "This file already exists"; break;
-            case 144:   returnMessage = "This folder already exists"; break;
-            case 145:   returnMessage = "The application trying to access the API is disabled"; break;
-            case 146:   returnMessage = "The application trying to access the API is suspended"; break;
-            case 147:   returnMessage = "Bulk downloading from multiple file owners is currently not supported"; break;
-            case 148:   returnMessage = "Bulk download requires the file owner or the downloader to be premium"; break;
-            case 149:   returnMessage = "The owner of the files is not a premium user. You need to confirm the download "
-                    + "using your own bandwidth"; break;
-            case 150:   returnMessage = "One or more files are too large to be included. Files must be "
-                    + ZIP_MAX_FILESIZE_READABLE + " or less in order to be included in the "
-                    + "zip file."; break;
-            case 151:   returnMessage = "The item you selected contained no files. You must select at least one file "
-                    + "to zip"; break;
-            case 152:   returnMessage = "None of the selected files were able to be zipped at this time"; break;
-            case 153:   returnMessage = "The total size of the zip file is larger than " + ZIP_MAX_TOTAL_FILESIZE
-                    + ". You need to confirm the download"; break;
-            case 154:   returnMessage = "Maximum number of files reached. Cannot add more than " + ZIP_MAX_FILES
-                    + " files"; break;
-            case 155:   returnMessage = "The files owner does not have enough bandwidth to download the zip file. "
-                    + "You need to confirm the download using your own bandwidth"; break;
-            case 156:   returnMessage = "You do not have enough bandwidth to download the zip file."; break;
-            case 157:   returnMessage = "Neither the owner of the files nor you have enough bandwidth to download "
-                    + "the zip file"; break;
-            case 158:   returnMessage = "This file exists already"; break;
-            case 159:   returnMessage = "This folder exists already"; break;
-            case 160:   returnMessage = "The Terms of Service acceptance token is invalid"; break;
-            case 161:   returnMessage = "You must accept the latest Terms of Service"; break;
-            case 162:   returnMessage = "The file(s)/folder(s) you upload/copy exceed your total storage limit"; break;
-            case 163:   returnMessage = "You have reached the limit accessing the API. Please try again later"; break;
-            case 164:   returnMessage = "These files have already been reported"; break;
-            case 165:   returnMessage = "These files no longer exist in our system"; break;
-            case 166:   returnMessage = "Cannot add a private folder to an account"; break;
-            case 167:   returnMessage = "Maximum depth of folder reached. Cannot add more than "
-                    + FOLDER_DEPTH_LIMIT; break;
-            case 168:   returnMessage = "Invalid Product Id"; break;
-            case 169:   returnMessage = "Upload Failed"; break;
-            case 170:   returnMessage = "Can't change plan to one that is not in the same class with the current"; break;
-            case 171:   returnMessage = "Can't change plan from/to business plan"; break;
-            case 172:   returnMessage = "Can't change plan, plan will be expiring or it has already expired."; break;
-            case 173:   returnMessage = "Must be a premium user to use this function"; break;
-            case 174:   returnMessage = "The URL specified is invalid"; break;
-            case 175:   returnMessage = "The Upload Key specified is invalid"; break;
-            case 176:   returnMessage = "The storage amount for this product is less than the total "
-                    + "size of your files."; break;
-            case 177:   returnMessage = "Cannot insert a duplicate entry"; break;
-            case 178:   returnMessage = "Cannot change to same plan"; break;
-            case 179:   returnMessage = "Must change to a current product"; break;
-            case 180:   returnMessage = "Cannot downgrade from a business account"; break;
-            case 181:   returnMessage = "Error upgrading to business account"; break;
-            case 182:   returnMessage = "You do not have enough credit to change to this plan. Please contact "
-                    + "customer service."; break;
-            case 183:   returnMessage = "Changing to this product would give you negative bandwidth."; break;
-            case 184:   returnMessage = "The account you are trying to link is already linked to another "
-                    + "MediaFire user."; break;
-            case 185:   returnMessage = "The specified Folder Name is invalid"; break;
-            case 186:   returnMessage = "Cannot download password-protected files in bulk"; break;
-            case 187:   returnMessage = "Found no server matching your request"; break;
-            case 188:   returnMessage = "You must be logged in to purchase a plan"; break;
-            case 189:   returnMessage = "You must agree to the reseller terms of service"; break;
-            case 190:   returnMessage = "Business seats cannot make purchases"; break;
-            case 191:   returnMessage = "This user is a banned buyer"; break;
-            case 192:   returnMessage = "Error with reseller credits"; break;
-            case 193:   returnMessage = "You may not purchase from this country"; break;
-            case 194:   returnMessage = "The subdomain is in use or invalid"; break;
-            case 195:   returnMessage = "This user has too many failed transactions"; break;
-            case 196:   returnMessage = "The credit card you have entered is invalid"; break;
-            case 197:   returnMessage = "You have purchased an account within the last 3 days"; break;
-            case 198:   returnMessage = "There was an error storing the invoice"; break;
-            case 199:   returnMessage = "A duplicate transaction has been submitted"; break;
-            case 200:   returnMessage = "Invalid card CCV code"; break;
-            case 201:   returnMessage = "This transaction has been declined"; break;
-            case 202:   returnMessage = "Prepaid card error"; break;
-            case 203:   returnMessage = "No response from MaxMind"; break;
-            case 204:   returnMessage = "High risk rating from MaxMind"; break;
-            case 205:   returnMessage = "Declined high risk rating from MaxMind"; break;
-            case 206:   returnMessage = "There was an error storing the credit card"; break;
-            case 207:   returnMessage = "Total number of files copied cannot exceed " + MAX_OBJECTS; break;
-            case 208:   returnMessage = "Another Asynchronous Operation is in progress. Please Retry later"; break;
-            case 209:   returnMessage = "This folder has already been deleted"; break;
-            case 210:   returnMessage = "This file has already been deleted"; break;
-            case 211:   returnMessage = "Items in the Trash Can cannot be modified"; break;
-            case 212:   returnMessage = "You cannot change from a free plan"; break;
-            case 213:   returnMessage = "You cannot report these files"; break;
-            case 214:   returnMessage = "The specified FileDrop Key is invalid"; break;
-            case 215:   returnMessage = "The call signature is missing"; break;
-            case 216:   returnMessage = "The email address provided must be greater than 3 characters"; break;
-            case 217:   returnMessage = "The email address provided must be less than 50 characters"; break;
-            case 218:   returnMessage = "Cannot register via Facebook. The Facebook Email is missing"; break;
-            case 219:   returnMessage = "The Facebook Email is already registered with a MediaFire account"; break;
-            case 220:   returnMessage = "Failed to authenticate to Facebook"; break;
-            case 221:   returnMessage = "Failed to authenticate to Twitter"; break;
-            case 222:   returnMessage = "The requested patch was not found or unknown"; break;
-            case 223:   returnMessage = "The revision you requested is invalid or cannot be restored"; break;
-            case 224:   returnMessage = "There is no active invoice to cancel"; break;
-            case 225:   returnMessage = "This application is not allowed to log to the database"; break;
-            case 226:   returnMessage = "Invalid installation ID"; break;
-            case 227:   returnMessage = "The provided incident and installation ID's do not match"; break;
-            case 228:   returnMessage = "The Facebook Access Token is required"; break;
-            case 229:   returnMessage = "The Twitter OAuth Token is required"; break;
-            case 230:   returnMessage = "This user has no associated avatar image"; break;
-            case 231:   returnMessage = "The provided software token is invalid"; break;
-            case 232:   returnMessage = "The email address of the sender is not yet validated"; break;
-            case 233:   returnMessage = "Failed to authenticate to Google"; break;
-            case 234:   returnMessage = "Failed to send message"; break;
-            case 235:   returnMessage = "You own this resource"; break;
-            case 236:   returnMessage = "You already follow this resource"; break;
-            case 237:   returnMessage = "You do not have access to this resource"; break;
-            case 238:   returnMessage = "This file has not changed; no need to update"; break;
-            case 239:   returnMessage = "Maximum number of allowed share for this resource is reached"; break;
-            case 240:   returnMessage = "Cannot grant permissions to the specified resource(s)"; break;
-            case 241:   returnMessage = "The service number provided is not a recognized service"; break;
-            case 242:   returnMessage = "The folder trying to be deleted has over 1000 files"; break;
-            case 243:   returnMessage = "This account is temporarily locked. Please, try again later"; break;
-            case 244:   returnMessage = "This service is available to US residents only"; break;
-            default:    returnMessage = "Unknown response code";
+        switch (this.value) {
+            case 0:
+                returnMessage = "Success";
+                break;
+            case 100:
+                returnMessage = "Internal server error";
+                break;
+            case 102:
+                returnMessage = "API Key is missing";
+                break;
+            case 103:
+                returnMessage = "The supplied API Key is invalid";
+                break;
+            case 104:
+                returnMessage = "Session token is missing";
+                break;
+            case 105:
+                returnMessage = "The supplied Session Token is expired or invalid";
+                break;
+            case 106:
+                returnMessage = "Unknown or invalid user";
+                break;
+            case 107:
+                returnMessage = "The Credentials you entered are invalid";
+                break;
+            case 108:
+                returnMessage = "Unknown or invalid user";
+                break;
+            case 109:
+                returnMessage = "Unknown or invalid Application ID";
+                break;
+            case 110:
+                returnMessage = "Unknown or Invalid QuickKey";
+                break;
+            case 111:
+                returnMessage = "Quick Key is missing";
+                break;
+            case 112:
+                returnMessage = "Unknown or invalid FolderKey";
+                break;
+            case 113:
+                returnMessage = "Folder Key is missing";
+                break;
+            case 114:
+                returnMessage = "Access denied";
+                break;
+            case 115:
+                returnMessage = "Cannot move/copy a Folder to itself or to one of its Sub-Folders";
+                break;
+            case 116:
+                returnMessage = "The date specified is not valid";
+                break;
+            case 117:
+                returnMessage = "Folder Name is missing";
+                break;
+            case 118:
+                returnMessage = "The File Name specified is invalid";
+                break;
+            case 119:
+                returnMessage = "You cannot register a Mediafire.com email address";
+                break;
+            case 120:
+                returnMessage = "The email address you specified is already in use";
+                break;
+            case 121:
+                returnMessage = "The email address you specified is found to be rejected/bounced";
+                break;
+            case 122:
+                returnMessage = "The email address you specified is malformed";
+                break;
+            case 123:
+                returnMessage = "The password you specified is malformed";
+                break;
+            case 124:
+                returnMessage = "The API Version is missing";
+                break;
+            case 125:
+                returnMessage = "The API version specified or the API Library is old for this call. "
+                        + "Please Specify a higher API version or update your API Library";
+                break;
+            case 126:
+                returnMessage = "This API call has been deprecated for the API version specified or the API "
+                        + "Library. Please refer to the API documentation for alternative calls";
+                break;
+            case 127:
+                returnMessage = "The signature you specified is invalid";
+                break;
+            case 128:
+                returnMessage = "Required parameters for this request are missing";
+                break;
+            case 129:
+                returnMessage = "One or more parameters for this request are invalid";
+                break;
+            case 130:
+                returnMessage = "Non premium account limitation reached";
+                break;
+            case 131:
+                returnMessage = "Cannot add a shared folder to its owner's account";
+                break;
+            case 132:
+                returnMessage = "Cannot remove a shared folder from its owner's account";
+                break;
+            case 133:
+                returnMessage = "Cannot add a shared folder from an anonymous account";
+                break;
+            case 134:
+                returnMessage = "Invalid DMCA user";
+                break;
+            case 135:
+                returnMessage = "IP out of range for DMCA";
+                break;
+            case 136:
+                returnMessage = "DMCA Ban limit exceeded";
+                break;
+            case 137:
+                returnMessage = "This contact already exists in the user's contact list";
+                break;
+            case 138:
+                returnMessage = "This contact does not exist";
+                break;
+            case 139:
+                returnMessage = "This group already exists in the user's contact list";
+                break;
+            case 140:
+                returnMessage = "This group does not exist";
+                break;
+            case 141:
+                returnMessage = "Unknown or invalid device";
+                break;
+            case 142:
+                returnMessage = "Unsupported or invalid file type";
+                break;
+            case 143:
+                returnMessage = "This file already exists";
+                break;
+            case 144:
+                returnMessage = "This folder already exists";
+                break;
+            case 145:
+                returnMessage = "The application trying to access the API is disabled";
+                break;
+            case 146:
+                returnMessage = "The application trying to access the API is suspended";
+                break;
+            case 147:
+                returnMessage = "Bulk downloading from multiple file owners is currently not supported";
+                break;
+            case 148:
+                returnMessage = "Bulk download requires the file owner or the downloader to be premium";
+                break;
+            case 149:
+                returnMessage = "The owner of the files is not a premium user. You need to confirm the download "
+                        + "using your own bandwidth";
+                break;
+            case 150:
+                returnMessage = "One or more files are too large to be included. Files must be "
+                        + ZIP_MAX_FILESIZE_READABLE + " or less in order to be included in the "
+                        + "zip file.";
+                break;
+            case 151:
+                returnMessage = "The item you selected contained no files. You must select at least one file "
+                        + "to zip";
+                break;
+            case 152:
+                returnMessage = "None of the selected files were able to be zipped at this time";
+                break;
+            case 153:
+                returnMessage = "The total size of the zip file is larger than " + ZIP_MAX_TOTAL_FILESIZE
+                        + ". You need to confirm the download";
+                break;
+            case 154:
+                returnMessage = "Maximum number of files reached. Cannot add more than " + ZIP_MAX_FILES
+                        + " files";
+                break;
+            case 155:
+                returnMessage = "The files owner does not have enough bandwidth to download the zip file. "
+                        + "You need to confirm the download using your own bandwidth";
+                break;
+            case 156:
+                returnMessage = "You do not have enough bandwidth to download the zip file.";
+                break;
+            case 157:
+                returnMessage = "Neither the owner of the files nor you have enough bandwidth to download "
+                        + "the zip file";
+                break;
+            case 158:
+                returnMessage = "This file exists already";
+                break;
+            case 159:
+                returnMessage = "This folder exists already";
+                break;
+            case 160:
+                returnMessage = "The Terms of Service acceptance token is invalid";
+                break;
+            case 161:
+                returnMessage = "You must accept the latest Terms of Service";
+                break;
+            case 162:
+                returnMessage = "The file(s)/folder(s) you upload/copy exceed your total storage limit";
+                break;
+            case 163:
+                returnMessage = "You have reached the limit accessing the API. Please try again later";
+                break;
+            case 164:
+                returnMessage = "These files have already been reported";
+                break;
+            case 165:
+                returnMessage = "These files no longer exist in our system";
+                break;
+            case 166:
+                returnMessage = "Cannot add a private folder to an account";
+                break;
+            case 167:
+                returnMessage = "Maximum depth of folder reached. Cannot add more than "
+                        + FOLDER_DEPTH_LIMIT;
+                break;
+            case 168:
+                returnMessage = "Invalid Product Id";
+                break;
+            case 169:
+                returnMessage = "Upload Failed";
+                break;
+            case 170:
+                returnMessage = "Can't change plan to one that is not in the same class with the current";
+                break;
+            case 171:
+                returnMessage = "Can't change plan from/to business plan";
+                break;
+            case 172:
+                returnMessage = "Can't change plan, plan will be expiring or it has already expired.";
+                break;
+            case 173:
+                returnMessage = "Must be a premium user to use this function";
+                break;
+            case 174:
+                returnMessage = "The URL specified is invalid";
+                break;
+            case 175:
+                returnMessage = "The Upload Key specified is invalid";
+                break;
+            case 176:
+                returnMessage = "The storage amount for this product is less than the total "
+                        + "size of your files.";
+                break;
+            case 177:
+                returnMessage = "Cannot insert a duplicate entry";
+                break;
+            case 178:
+                returnMessage = "Cannot change to same plan";
+                break;
+            case 179:
+                returnMessage = "Must change to a current product";
+                break;
+            case 180:
+                returnMessage = "Cannot downgrade from a business account";
+                break;
+            case 181:
+                returnMessage = "Error upgrading to business account";
+                break;
+            case 182:
+                returnMessage = "You do not have enough credit to change to this plan. Please contact "
+                        + "customer service.";
+                break;
+            case 183:
+                returnMessage = "Changing to this product would give you negative bandwidth.";
+                break;
+            case 184:
+                returnMessage = "The account you are trying to link is already linked to another "
+                        + "MediaFire user.";
+                break;
+            case 185:
+                returnMessage = "The specified Folder Name is invalid";
+                break;
+            case 186:
+                returnMessage = "Cannot download password-protected files in bulk";
+                break;
+            case 187:
+                returnMessage = "Found no server matching your request";
+                break;
+            case 188:
+                returnMessage = "You must be logged in to purchase a plan";
+                break;
+            case 189:
+                returnMessage = "You must agree to the reseller terms of service";
+                break;
+            case 190:
+                returnMessage = "Business seats cannot make purchases";
+                break;
+            case 191:
+                returnMessage = "This user is a banned buyer";
+                break;
+            case 192:
+                returnMessage = "Error with reseller credits";
+                break;
+            case 193:
+                returnMessage = "You may not purchase from this country";
+                break;
+            case 194:
+                returnMessage = "The subdomain is in use or invalid";
+                break;
+            case 195:
+                returnMessage = "This user has too many failed transactions";
+                break;
+            case 196:
+                returnMessage = "The credit card you have entered is invalid";
+                break;
+            case 197:
+                returnMessage = "You have purchased an account within the last 3 days";
+                break;
+            case 198:
+                returnMessage = "There was an error storing the invoice";
+                break;
+            case 199:
+                returnMessage = "A duplicate transaction has been submitted";
+                break;
+            case 200:
+                returnMessage = "Invalid card CCV code";
+                break;
+            case 201:
+                returnMessage = "This transaction has been declined";
+                break;
+            case 202:
+                returnMessage = "Prepaid card error";
+                break;
+            case 203:
+                returnMessage = "No response from MaxMind";
+                break;
+            case 204:
+                returnMessage = "High risk rating from MaxMind";
+                break;
+            case 205:
+                returnMessage = "Declined high risk rating from MaxMind";
+                break;
+            case 206:
+                returnMessage = "There was an error storing the credit card";
+                break;
+            case 207:
+                returnMessage = "Total number of files copied cannot exceed " + MAX_OBJECTS;
+                break;
+            case 208:
+                returnMessage = "Another Asynchronous Operation is in progress. Please Retry later";
+                break;
+            case 209:
+                returnMessage = "This folder has already been deleted";
+                break;
+            case 210:
+                returnMessage = "This file has already been deleted";
+                break;
+            case 211:
+                returnMessage = "Items in the Trash Can cannot be modified";
+                break;
+            case 212:
+                returnMessage = "You cannot change from a free plan";
+                break;
+            case 213:
+                returnMessage = "You cannot report these files";
+                break;
+            case 214:
+                returnMessage = "The specified FileDrop Key is invalid";
+                break;
+            case 215:
+                returnMessage = "The call signature is missing";
+                break;
+            case 216:
+                returnMessage = "The email address provided must be greater than 3 characters";
+                break;
+            case 217:
+                returnMessage = "The email address provided must be less than 50 characters";
+                break;
+            case 218:
+                returnMessage = "Cannot register via Facebook. The Facebook Email is missing";
+                break;
+            case 219:
+                returnMessage = "The Facebook Email is already registered with a MediaFire account";
+                break;
+            case 220:
+                returnMessage = "Failed to authenticate to Facebook";
+                break;
+            case 221:
+                returnMessage = "Failed to authenticate to Twitter";
+                break;
+            case 222:
+                returnMessage = "The requested patch was not found or unknown";
+                break;
+            case 223:
+                returnMessage = "The revision you requested is invalid or cannot be restored";
+                break;
+            case 224:
+                returnMessage = "There is no active invoice to cancel";
+                break;
+            case 225:
+                returnMessage = "This application is not allowed to log to the database";
+                break;
+            case 226:
+                returnMessage = "Invalid installation ID";
+                break;
+            case 227:
+                returnMessage = "The provided incident and installation ID's do not match";
+                break;
+            case 228:
+                returnMessage = "The Facebook Access Token is required";
+                break;
+            case 229:
+                returnMessage = "The Twitter OAuth Token is required";
+                break;
+            case 230:
+                returnMessage = "This user has no associated avatar image";
+                break;
+            case 231:
+                returnMessage = "The provided software token is invalid";
+                break;
+            case 232:
+                returnMessage = "The email address of the sender is not yet validated";
+                break;
+            case 233:
+                returnMessage = "Failed to authenticate to Google";
+                break;
+            case 234:
+                returnMessage = "Failed to send message";
+                break;
+            case 235:
+                returnMessage = "You own this resource";
+                break;
+            case 236:
+                returnMessage = "You already follow this resource";
+                break;
+            case 237:
+                returnMessage = "You do not have access to this resource";
+                break;
+            case 238:
+                returnMessage = "This file has not changed; no need to update";
+                break;
+            case 239:
+                returnMessage = "Maximum number of allowed share for this resource is reached";
+                break;
+            case 240:
+                returnMessage = "Cannot grant permissions to the specified resource(s)";
+                break;
+            case 241:
+                returnMessage = "The service number provided is not a recognized service";
+                break;
+            case 242:
+                returnMessage = "The folder trying to be deleted has over 1000 files";
+                break;
+            case 243:
+                returnMessage = "This account is temporarily locked. Please, try again later";
+                break;
+            case 244:
+                returnMessage = "This service is available to US residents only";
+                break;
+            default:
+                returnMessage = "Unknown response code";
         }
         return returnMessage;
     }

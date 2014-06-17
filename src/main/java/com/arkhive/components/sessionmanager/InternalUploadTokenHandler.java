@@ -11,12 +11,12 @@ import com.arkhive.components.sessionmanager.session.ActionTokenRequestHandler;
 import com.arkhive.components.sessionmanager.session.ActionTokenResponse;
 
 
-/** Handler for a request for a new upload action token.
- * <p>
+/**
+ * Handler for a request for a new upload action token.
+ * <p/>
  * Called when the request for a new upload action token is completed.
  * When the API call returns, create a new ActionTokenResponse, and notify
  * all of the handlers in the list.
- *
  */
 class InternalUploadTokenHandler implements ApiRequestHandler {
     /**

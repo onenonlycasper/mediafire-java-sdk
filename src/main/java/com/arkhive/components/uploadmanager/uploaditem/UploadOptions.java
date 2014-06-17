@@ -13,8 +13,8 @@ import java.util.Locale;
  * data structure and if they do not then a default
  * constructor is used with 5 max upload attempts,
  * resumable, and mandatory upload.
- * @author Chris Najar
  *
+ * @author Chris Najar
  */
 public class UploadOptions {
     private final boolean resumable;
@@ -30,7 +30,7 @@ public class UploadOptions {
     /**
      * Constructor for the upload options which takes parameters
      * set by implementor.
-
+     *
      * @param resumable - upload is resumable or not
      */
     public UploadOptions(boolean resumable) {
@@ -47,6 +47,7 @@ public class UploadOptions {
 
     /**
      * get the custom file name for an upload item.
+     *
      * @return - the custom file name. if the stored value is null then an empty string will be returned.
      */
     public String getCustomFileName() {
@@ -58,6 +59,7 @@ public class UploadOptions {
 
     /**
      * set a custom file name for an UploadItem.
+     *
      * @param customFileName - the file name desired. if null is passed, then an empty string will be set.
      */
     public void setCustomFileName(String customFileName) {
@@ -69,6 +71,7 @@ public class UploadOptions {
 
     /**
      * Gets the action on what to do if a file already exists in a users account.
+     *
      * @return the ActionOnInAccount representing how to handle a file already in a user account.
      */
     public ActionOnInAccount getActionOnInAccount() {
@@ -84,8 +87,10 @@ public class UploadOptions {
         }
         this.actionOnInAccount = actionOnInAccount;
     }
+
     /**
      * Gets the upload folder key option.
+     *
      * @return the upload folder key.
      */
     public String getUploadFolderKey() {
@@ -97,24 +102,31 @@ public class UploadOptions {
 
     /**
      * Gets the ActionOnDuplicate option.
+     *
      * @return 'keep', 'skip', 'replace'
      */
     public String getActionOnDuplicate() {
-        if (actionOnDuplicate == null) { setActionOnDuplicate(ActionOnDuplicate.KEEP); }
+        if (actionOnDuplicate == null) {
+            setActionOnDuplicate(ActionOnDuplicate.KEEP);
+        }
         return actionOnDuplicate;
     }
 
     /**
      * Gets the version control option.
+     *
      * @return create_patches, keep_revision, or none
      */
     public String getVersionControl() {
-        if (versionControl == null) { setVersionControl(VersionControl.KEEP_REVISION); }
+        if (versionControl == null) {
+            setVersionControl(VersionControl.KEEP_REVISION);
+        }
         return versionControl;
     }
 
     /**
      * Returns whether the resumable option is "yes" or "no".
+     *
      * @return "yes" if resumable, "no" otherwise
      */
     public String getResumable() {
@@ -127,7 +139,8 @@ public class UploadOptions {
 
     /**
      * Returns the path relative to myfiles root that will serve as the upload path.
-     * @return  The upload path.
+     *
+     * @return The upload path.
      */
     public String getUploadPath() {
         if (this.uploadPath == null) {
@@ -138,6 +151,7 @@ public class UploadOptions {
 
     /**
      * sets the upload folder key for this Upload Item. this is the destination folder key.
+     *
      * @param uploadFolderKey - the target folder key where the item will be uploaded.
      */
     public void setUploadFolderKey(String uploadFolderKey) {
@@ -156,21 +170,32 @@ public class UploadOptions {
     /*============================
      * private methods
      *============================*/
+
     /**
      * sets the version control option for this upload item.
+     *
      * @param control - which version control.
      */
     private void setVersionControl(VersionControl control) {
-        switch(control) {
-            case CREATE_PATCHES: versionControl = "create_patches"; break;
-            case KEEP_REVISION: versionControl = "keep_revision"; break;
-            case NONE: versionControl = "none"; break;
-            default: versionControl = "create_patches"; break;
+        switch (control) {
+            case CREATE_PATCHES:
+                versionControl = "create_patches";
+                break;
+            case KEEP_REVISION:
+                versionControl = "keep_revision";
+                break;
+            case NONE:
+                versionControl = "none";
+                break;
+            default:
+                versionControl = "create_patches";
+                break;
         }
     }
 
     /**
      * Called to get the Modification Time.
+     *
      * @return - the modification time.
      */
     public String getModificationTime() {
@@ -179,6 +204,7 @@ public class UploadOptions {
 
     /**
      * Sets the quick key.
+     *
      * @param quickKey - the quickkey to set.
      */
     public void setQuickKey(String quickKey) {
@@ -187,6 +213,7 @@ public class UploadOptions {
 
     /**
      * Called to get the quick key.
+     *
      * @return the quick key.
      */
     public String getQuickKey() {
@@ -195,6 +222,7 @@ public class UploadOptions {
 
     /**
      * Sets the modification time. A valid format must be entered.
+     *
      * @param modificationTime - the modification time to set.
      */
     public void setModificationTime(String modificationTime) {
@@ -215,34 +243,50 @@ public class UploadOptions {
 
     /**
      * sets the action on duplicate option for this upload item.
+     *
      * @param actionOnDuplicate - the action to take.
      */
     public void setActionOnDuplicate(ActionOnDuplicate actionOnDuplicate) {
-        switch(actionOnDuplicate) {
-            case KEEP:      this.actionOnDuplicate = "keep";    break;
-            case REPLACE:   this.actionOnDuplicate = "replace"; break;
-            case SKIP:      this.actionOnDuplicate = "skip";    break;
-            default:        this.actionOnDuplicate = "keep";    break;
+        switch (actionOnDuplicate) {
+            case KEEP:
+                this.actionOnDuplicate = "keep";
+                break;
+            case REPLACE:
+                this.actionOnDuplicate = "replace";
+                break;
+            case SKIP:
+                this.actionOnDuplicate = "skip";
+                break;
+            default:
+                this.actionOnDuplicate = "keep";
+                break;
         }
     }
 
     /**
      * enum for the upload option "action_on_duplicate"
      * in the GET request to be sent via upload/pre_upload.php.
-     * @author Chris Najar
      *
+     * @author Chris Najar
      */
-    public enum ActionOnDuplicate { KEEP, SKIP, REPLACE }
+    public enum ActionOnDuplicate {
+        KEEP, SKIP, REPLACE
+    }
 
     /**
      * enum for how to handle when an upload is already in a users account
      */
-    public enum ActionOnInAccount { UPLOAD_ALWAYS, UPLOAD_IF_NOT_IN_FOLDER, DO_NOT_UPLOAD}
+    public enum ActionOnInAccount {
+        UPLOAD_ALWAYS, UPLOAD_IF_NOT_IN_FOLDER, DO_NOT_UPLOAD
+    }
+
     /**
      * enum for the upload option "version_control"
      * in the POST request to be sent via upload/upload.php.
-     * @author Chris Najar
      *
+     * @author Chris Najar
      */
-    public enum VersionControl { CREATE_PATCHES, KEEP_REVISION, NONE }
+    public enum VersionControl {
+        CREATE_PATCHES, KEEP_REVISION, NONE
+    }
 }

@@ -3,9 +3,7 @@ package com.arkhive.components.api.filesystem.folder;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- *
  * @author Chris Najar
- *
  */
 public class FolderGetInfoResponse extends ApiResponse {
     //CHECKSTYLE:OFF
@@ -20,9 +18,7 @@ public class FolderGetInfoResponse extends ApiResponse {
     }
 
     /**
-     *
      * @author Chris Najar
-     *
      */
     public class FolderInfo {
         private String folderkey;

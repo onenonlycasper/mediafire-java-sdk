@@ -42,7 +42,9 @@ public class ApiResponse {
         return error == null;
     }
 
-    public final String getTime() { return time; }
+    public final String getTime() {
+        return time;
+    }
 
     public boolean needNewKey() {
         return new_key != null && "yes".equals(new_key);

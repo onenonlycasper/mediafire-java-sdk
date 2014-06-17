@@ -10,12 +10,12 @@ import com.arkhive.components.api.Utility;
 import com.arkhive.components.sessionmanager.session.ActionTokenRequestHandler;
 import com.arkhive.components.sessionmanager.session.ActionTokenResponse;
 
-/** Handler for a request for a new image action token.
- * <p>
+/**
+ * Handler for a request for a new image action token.
+ * <p/>
  * Called when the request for a new image action token is completed.
  * When the API call returns, create a new ActionTokenResponse, and notify
  * all handlers in the list.
- *
  */
 class InternalImageTokenHandler implements ApiRequestHandler {
     /**

@@ -1,12 +1,11 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_response.ApiResponse;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.ActionToken;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.Token;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.ActionToken;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.Token;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public final class ApiRequestObject {
     private LinkedList<Exception> exceptionDuringRequest;
     private String httpResponseString;
     private int httpResponseCode;
-    private HashMap<String, String> postHeaders;
+    private Map<String, String> postHeaders;
     private byte[] payload;
     private ActionToken actionToken;
     private SessionToken sessionToken;
@@ -103,11 +102,11 @@ public final class ApiRequestObject {
         this.httpResponseCode = httpResponseCode;
     }
 
-    public HashMap<String, String> getPostHeaders() {
+    public Map<String, String> getPostHeaders() {
         return postHeaders;
     }
 
-    public void setPostHeaders(HashMap<String, String> postHeaders) {
+    public void setPostHeaders(Map<String, String> postHeaders) {
         this.postHeaders = postHeaders;
     }
 
@@ -124,7 +123,7 @@ public final class ApiRequestObject {
     }
 
     public void setToken(Token token) {
-        if(ActionToken.class.isInstance(token)) {
+        if (ActionToken.class.isInstance(token)) {
             actionToken = (ActionToken) token;
             sessionToken = null;
         } else {

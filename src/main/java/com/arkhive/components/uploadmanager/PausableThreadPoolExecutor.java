@@ -16,6 +16,10 @@ public class PausableThreadPoolExecutor extends ThreadPoolExecutor {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, new ThreadPoolExecutor.DiscardOldestPolicy());
     }
 
+    public PausableThreadPoolExecutor(int poolSize, BlockingQueue<Runnable> workQueue) {
+        super(poolSize, poolSize, 0, TimeUnit.SECONDS, workQueue, Executors.defaultThreadFactory(), new ThreadPoolExecutor.DiscardOldestPolicy());
+    }
+
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);

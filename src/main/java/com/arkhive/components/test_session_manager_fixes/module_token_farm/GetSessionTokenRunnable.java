@@ -5,7 +5,8 @@ import com.arkhive.components.test_session_manager_fixes.module_credentials.Appl
 import com.arkhive.components.test_session_manager_fixes.module_credentials.CredentialsException;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPostProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.request_runnables.HttpRequestCallback;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.google.gson.Gson;
 
 import java.util.Map;
@@ -13,13 +14,15 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 6/16/2014.
  */
-public class GetSessionTokenRunnable implements Runnable {
-    private final Callback callback;
+public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
+    private static final String TAG = GetSessionTokenRunnable.class.getSimpleName();
+    private final TokenFarmDistributor callback;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
     private ApplicationCredentials applicationCredentials;
 
-    public GetSessionTokenRunnable(Callback callback, HttpPeriProcessor httpPeriProcessor,
+    public GetSessionTokenRunnable(TokenFarmDistributor callback,
+                                   HttpPeriProcessor httpPeriProcessor,
                                    ApplicationCredentials applicationCredentials) {
         this.callback = callback;
         this.httpPeriProcessor = httpPeriProcessor;
@@ -28,21 +31,30 @@ public class GetSessionTokenRunnable implements Runnable {
 
     @Override
     public void run() {
-        // create request object
-        apiRequestObject = createApiRequestObjectForNewSessionToken();
-        // send request to http handler
-        apiRequestObject = httpPeriProcessor.sendGetRequest(apiRequestObject);
-        // get the response string
-        String httpResponseString = apiRequestObject.getHttpResponseString();
-        // get the actual response in the form of GetSessionTokenResponse
-        GetSessionTokenResponse response =
-                new Gson().fromJson(HttpPostProcessor.getResponseElement(httpResponseString), GetSessionTokenResponse.class);
-        // attach the response to the object
-        apiRequestObject.setApiResponse(response);
-        // extract the SessionToken from the response
-        apiRequestObject.setToken(getSessionTokenFromApiRequestObject());
-        // now that we have our token, we need to make a callback to the token factory
-        callback.sessionTokenFetchCompleted(apiRequestObject);
+        System.out.println(TAG + " run()");
+        synchronized (this) {
+            // create request object
+            apiRequestObject = createApiRequestObjectForNewSessionToken();
+            // send request to http handler
+            httpPeriProcessor.sendGetRequest(this, apiRequestObject);
+            try {
+                wait(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                apiRequestObject.addExceptionDuringRequest(e);
+            }
+            // get the response string
+            String httpResponseString = apiRequestObject.getHttpResponseString();
+            // get the actual response in the form of GetSessionTokenResponse
+            GetSessionTokenResponse response =
+                    new Gson().fromJson(HttpPostProcessor.getResponseElement(httpResponseString), GetSessionTokenResponse.class);
+            // attach the response to the object
+            apiRequestObject.setApiResponse(response);
+            // extract the SessionToken from the response
+            apiRequestObject.setToken(getSessionTokenFromApiRequestObject());
+            // now that we have our token, we need to make a callback to the token factory
+            callback.receiveNewSessionToken(apiRequestObject);
+        }
     }
 
     private SessionToken getSessionTokenFromApiRequestObject() {
@@ -84,7 +96,17 @@ public class GetSessionTokenRunnable implements Runnable {
         return apiRequestObject;
     }
 
-    interface Callback {
-        void sessionTokenFetchCompleted(ApiRequestObject apiResponseObject);
+
+    @Override
+    public void httpRequestStarted(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + " httpRequestStarted()");
+    }
+
+    @Override
+    public void httpRequestFinished(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + " httpRequestFinished()");
+        synchronized (this) {
+            notify();
+        }
     }
 }

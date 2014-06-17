@@ -3,9 +3,7 @@ package com.arkhive.components.api.filesystem.folder;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- *
  * @author Chris Najar
- *
  */
 public class FolderDeleteResponse extends ApiResponse {
     //CHECKSTYLE:OFF
@@ -13,7 +11,9 @@ public class FolderDeleteResponse extends ApiResponse {
     private String device_revision;
     //CHECKSTYLE:ON
 
-    /** Gets the "device_Revision" JSON object.
+    /**
+     * Gets the "device_Revision" JSON object.
+     *
      * @return - int representation of this object.
      */
     public int getDeviceRevision() {
@@ -23,7 +23,9 @@ public class FolderDeleteResponse extends ApiResponse {
         return Integer.valueOf(device_revision);
     }
 
-    /**Retrieves the "myfiles_revision" JSON object class representation.
+    /**
+     * Retrieves the "myfiles_revision" JSON object class representation.
+     *
      * @return MyFilesRevision object.
      */
     public MyFilesRevision getMyFilesRevision() {
@@ -33,14 +35,18 @@ public class FolderDeleteResponse extends ApiResponse {
         return this.myfiles_revision;
     }
 
-    /** Class representation of "myfiles_revision" JSON object.
+    /**
+     * Class representation of "myfiles_revision" JSON object.
+     *
      * @author Chris Najar
      */
     public class MyFilesRevision {
         private String revision;
         private String epoch;
 
-        /** Returns JSON object "revision".
+        /**
+         * Returns JSON object "revision".
+         *
          * @return String representation of "revision".
          */
         public String getRevision() {
@@ -50,7 +56,9 @@ public class FolderDeleteResponse extends ApiResponse {
             return this.revision;
         }
 
-        /** Returns JSON object "epoch".
+        /**
+         * Returns JSON object "epoch".
+         *
          * @return long representation of "epoch".
          */
         public long getEpoch() {

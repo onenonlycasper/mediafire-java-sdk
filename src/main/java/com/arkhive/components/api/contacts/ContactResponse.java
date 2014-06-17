@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.arkhive.components.api.ApiResponse;
 
-/** Response from a request for contacts. */
+/**
+ * Response from a request for contacts.
+ */
 public class ContactResponse extends ApiResponse {
 
     private int count;
@@ -32,7 +34,9 @@ public class ContactResponse extends ApiResponse {
         return Arrays.asList(contacts);
     }
 
-    /** Holds a single contact response. */
+    /**
+     * Holds a single contact response.
+     */
     public class SingleContactResponse {
         //CHECKSTYLE:OFF
         private String display_name;
@@ -52,72 +56,100 @@ public class ContactResponse extends ApiResponse {
         private String created;
 
         public String displayName() {
-            if (display_name == null) { display_name  = ""; }
+            if (display_name == null) {
+                display_name = "";
+            }
             return display_name;
         }
 
         public String getFirstName() {
-            if (first_name == null) { first_name  = ""; }
+            if (first_name == null) {
+                first_name = "";
+            }
             return first_name;
         }
 
         public String getLastName() {
-            if (last_name == null) { last_name  = ""; }
+            if (last_name == null) {
+                last_name = "";
+            }
             return last_name;
         }
 
         public String getAvatar() {
-            if (avatar == null) { avatar  = ""; }
+            if (avatar == null) {
+                avatar = "";
+            }
             return avatar;
         }
 
         public String getEmail() {
-            if (email == null) { email  = ""; }
+            if (email == null) {
+                email = "";
+            }
             return email;
         }
 
         public String getPhone() {
-            if (phone == null) { phone  = ""; }
+            if (phone == null) {
+                phone = "";
+            }
             return phone;
         }
 
         public String getMeansOfContact() {
-            if (means_of_contact == null) { means_of_contact  = ""; }
+            if (means_of_contact == null) {
+                means_of_contact = "";
+            }
             return means_of_contact;
         }
 
         public String getBirthdate() {
-            if (birthdate == null) { birthdate  = ""; }
+            if (birthdate == null) {
+                birthdate = "";
+            }
             return birthdate;
         }
 
         public String getLocation() {
-            if (location == null) { location  = ""; }
+            if (location == null) {
+                location = "";
+            }
             return location;
         }
 
         public String getGender() {
-            if (gender == null) { gender  = ""; }
+            if (gender == null) {
+                gender = "";
+            }
             return gender;
         }
 
         public String getWebsite() {
-            if (website == null) { website  = ""; }
+            if (website == null) {
+                website = "";
+            }
             return website;
         }
 
         public String getCreatedDate() {
-            if (created == null) { created  = ""; }
+            if (created == null) {
+                created = "";
+            }
             return created;
         }
 
         public String getContactType() {
-            if (contact_type == null) { contact_type  = ""; }
+            if (contact_type == null) {
+                contact_type = "";
+            }
             return contact_type;
         }
 
         public String getContactKey() {
-            if (contact_key == null) { contact_key  = ""; }
+            if (contact_key == null) {
+                contact_key = "";
+            }
             return contact_key;
         }
     }

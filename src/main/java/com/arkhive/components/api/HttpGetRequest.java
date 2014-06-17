@@ -4,17 +4,20 @@ import com.arkhive.components.httplibrary.HttpInterface;
 
 import java.io.IOException;
 
-/** Class used to send a GET request to the web API. */
+/**
+ * Class used to send a GET request to the web API.
+ */
 public class HttpGetRequest implements Runnable {
     private final HttpRequestHandler handler;
     private final String call;
     private final HttpInterface httpInterface;
 
-    /** Initializes the HttpRequestRunner object.
+    /**
+     * Initializes the HttpRequestRunner object.
      *
-     * @param call  The URI to use for the API call.
-     * @param  httpInterface  The http interface used to make the API call.
-     * @param  handler  The callback to be executed when the API call has completed.
+     * @param call          The URI to use for the API call.
+     * @param httpInterface The http interface used to make the API call.
+     * @param handler       The callback to be executed when the API call has completed.
      */
     public HttpGetRequest(String call, HttpInterface httpInterface, HttpRequestHandler handler) {
         this.call = call;
@@ -22,8 +25,9 @@ public class HttpGetRequest implements Runnable {
         this.handler = handler;
     }
 
-    /** Perform the web API call.
-     *
+    /**
+     * Perform the web API call.
+     * <p/>
      * Performs a GET request to the MediaFire web API.  When the request has
      * completed, the callback function is executed.
      */

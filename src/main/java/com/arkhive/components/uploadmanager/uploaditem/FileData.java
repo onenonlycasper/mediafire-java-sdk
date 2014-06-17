@@ -13,8 +13,8 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * file information for an upload item.
- * @author Chris Najar
  *
+ * @author Chris Najar
  */
 public class FileData {
     private static final String TAG = FileData.class.getSimpleName();
@@ -24,7 +24,7 @@ public class FileData {
     private final Logger logger = LoggerFactory.getLogger(FileData.class);
 
     public FileData(String filePath) {
-        System.out.println("FileData object created");
+        System.out.println(TAG + " FileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
@@ -35,33 +35,36 @@ public class FileData {
 
     /**
      * Gets the filename.
+     *
      * @return
      */
     public String getFilePath() {
-        System.out.println("getFilePath()");
+        System.out.println(TAG + " getFilePath()");
         return filePath;
     }
 
     /**
      * gets the file size.
+     *
      * @return
      */
     public long getFileSize() {
-        System.out.println("getFilePath()");
+        System.out.println(TAG + " getFilePath()");
         return fileSize;
     }
 
     /**
      * gets the file hash.
+     *
      * @return
      */
     public String getFileHash() {
-        System.out.println("getFilePath()");
+        System.out.println(TAG + " getFilePath()");
         return fileHash;
     }
 
     public void setFileSize() {
-        System.out.println("setFileSize()");
+        System.out.println(TAG + " setFileSize()");
         File file = new File(getFilePath());
 //        FileInputStream fileInputStream;
 //        FileChannel channel;
@@ -86,11 +89,11 @@ public class FileData {
 //        }
         fileSize = file.length();
 
-        System.out.println("FILE SIZE IS SET TO: " + fileSize);
+        System.out.println(TAG + " FILE SIZE IS SET TO: " + fileSize);
     }
 
     public void setFileHash() {
-        System.out.println("setFileHash()");
+        System.out.println(TAG + " setFileHash()");
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;
@@ -138,6 +141,6 @@ public class FileData {
             fileUri = null;
             in = null;
         }
-        System.out.println("FILE HASH IS SET TO: " + fileHash);
+        System.out.println(TAG + " FILE HASH IS SET TO: " + fileHash);
     }
 }

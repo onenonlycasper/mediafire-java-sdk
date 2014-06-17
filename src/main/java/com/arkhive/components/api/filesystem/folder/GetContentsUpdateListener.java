@@ -6,10 +6,11 @@ import com.arkhive.components.api.filesystem.FileSystemItem;
 
 /**
  * listener for periodic updates on folder/get_content.php calls.
- * @author Chris Najar
  *
+ * @author Chris Najar
  */
 public interface GetContentsUpdateListener {
     public void contentsReceived(List<FileSystemItem> items);
+
     public void finishedReceivingContents();
 }

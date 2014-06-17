@@ -12,7 +12,9 @@ import com.arkhive.components.api.ApiResponse;
 import com.arkhive.components.api.Utility;
 import com.arkhive.components.sessionmanager.SessionManager;
 
-/** Adds a contact via the web api. */
+/**
+ * Adds a contact via the web api.
+ */
 public class ContactManagement {
     private static final String GET_URI = "/api/contact/add.php";
     private static final String DELETE_URI = "/api/contact/delete.php";

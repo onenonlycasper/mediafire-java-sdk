@@ -27,10 +27,10 @@ import java.util.Map;
  * @author Chris Najar
  */
 public class InstantProcess implements Runnable {
-    private static final String TAG         = InstantProcess.class.getSimpleName();
+    private static final String TAG = InstantProcess.class.getSimpleName();
     private static final String INSTANT_URI = "/api/upload/instant.php";
     private final SessionManager sessionManager;
-    private final UploadItem     uploadItem;
+    private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
     private final Logger logger = LoggerFactory.getLogger(InstantProcess.class);
 
@@ -42,7 +42,7 @@ public class InstantProcess implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("run()");
+        System.out.println(TAG + " run()");
         instant();
     }
 
@@ -122,7 +122,6 @@ public class InstantProcess implements Runnable {
      * generates the request parameter after we receive a UTF encoded filename.
      *
      * @param filename - the filename used to construct request paramater.
-     *
      * @return - a map containing the request paramaters.
      */
     private Map<String, String> generateRequestParameters(String filename) {
@@ -145,7 +144,6 @@ public class InstantProcess implements Runnable {
 
     /**
      * notifies listeners that this process has completed successfully.
-     *
      */
     private void notifyManagerCompleted() {
         //notify manager that the upload is completed
@@ -181,7 +179,6 @@ public class InstantProcess implements Runnable {
      * converts a String received from JSON format into a response String.
      *
      * @param response - the response received in JSON format
-     *
      * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
      */
     private String getResponseString(String response) {

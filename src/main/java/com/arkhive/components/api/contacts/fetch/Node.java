@@ -5,8 +5,8 @@ import java.util.List;
 
 /**
  * nodes.
- * @author Chris Najar
  *
+ * @author Chris Najar
  */
 public class Node {
     private final String data;
@@ -19,6 +19,7 @@ public class Node {
 
     /**
      * gets the data value stored in this node.
+     *
      * @return
      */
     public String getData() {
@@ -27,6 +28,7 @@ public class Node {
 
     /**
      * gets the children of this node.
+     *
      * @return
      */
     public List<Node> getChildren() {
@@ -35,6 +37,7 @@ public class Node {
 
     /**
      * adds a child node to this node.
+     *
      * @param node
      * @return
      */
@@ -48,13 +51,14 @@ public class Node {
 
     /**
      * returns this node data as an integer.
+     *
      * @return
      */
     public int getDataAsInteger() {
         if (!(data.contains("[") && data.contains("]"))) {
             throw new IllegalStateException("can't call this method if this isn't an end node");
         }
-//    System.out.println("getDataAsInteger() called");
+//    System.out.println(TAG + " getDataAsInteger() called");
         String cleaned = data.replace("[", "");
         cleaned = cleaned.replace("]", "");
 

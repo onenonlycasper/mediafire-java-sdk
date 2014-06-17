@@ -1,7 +1,6 @@
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.CredentialsException;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_session_token.SessionToken;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarmException;
 
@@ -17,7 +16,7 @@ public class DriverSessionTokenFarm {
         String appId = "35";
         ApplicationCredentials applicationCredentials = null;
         try {
-            applicationCredentials = new ApplicationCredentials(appId, apiKey);
+            applicationCredentials = ApplicationCredentials.newInstance(appId, apiKey);
         } catch (CredentialsException e) {
             e.printStackTrace();
             return;
@@ -43,11 +42,6 @@ public class DriverSessionTokenFarm {
             }
         }
 
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        
     }
 }
