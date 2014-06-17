@@ -48,7 +48,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
 
     @Override
     public void run() {
-        System.out.println(TAG + " run()");
+        System.out.println(TAG + " sendRequest()");
         synchronized (this) {
             // create request object
             apiRequestObject = createApiRequestObjectForNewSessionToken();

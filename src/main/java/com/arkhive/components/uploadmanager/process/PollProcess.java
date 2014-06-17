@@ -55,7 +55,7 @@ public class PollProcess implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(TAG + " run()");
+        System.out.println(TAG + " sendRequest()");
         poll();
     }
 

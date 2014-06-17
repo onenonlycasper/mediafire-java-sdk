@@ -42,7 +42,7 @@ public class CheckProcess implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(TAG + "  run()");
+        System.out.println(TAG + "  sendRequest()");
         uploadItem.getFileData().setFileSize();
         uploadItem.getFileData().setFileHash();
         check();
