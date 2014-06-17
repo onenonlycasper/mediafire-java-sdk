@@ -31,46 +31,45 @@ public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
     /**
      * creates a url given the values stored in an api request object
      *
-     * @param apiPostRequestObject - an api request object which has domain/uri/parameters/etc. values stored.
+     * @param apiRequestObject - an api request object which has domain/uri/parameters/etc. values stored.
      * @return a constructed URL object.
      */
-    private URL createUrl(ApiRequestObject apiPostRequestObject) {
+    private URL createUrl(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " createUrl(ApiPostRequestObject)");
-        String domain = apiPostRequestObject.getDomain();
-        String uri = apiPostRequestObject.getUri();
-        Map<String, String> requiredParameters = apiPostRequestObject.getRequiredParameters();
-        Map<String, String> optionalParameters = apiPostRequestObject.getOptionalParameters();
-        Token token = apiPostRequestObject.getToken();
+        // get references to the apiPostRequestObject that we will use.
+        String domain = apiRequestObject.getDomain();
+        String uri = apiRequestObject.getUri();
+        Map<String, String> requiredParameters = apiRequestObject.getRequiredParameters();
+        Map<String, String> optionalParameters = apiRequestObject.getOptionalParameters();
 
         StringBuilder stringBuilder = new StringBuilder();
-
+        //append domain if it exists
+        if (domain != null) {
+            stringBuilder.append(domain);
+        }
+        // append uri if it exists
         if (uri != null) {
             stringBuilder.append(uri);
         }
-
+        // append required parameters if they exist. get session token (for new st) is unique in that the signature
+        // is calculated in advance and attached to required parameters because the ApplicationCredentials are
+        // passed to the runnable so the signature is calculated there. it could be moved here though
         if (requiredParameters != null) {
             stringBuilder.append(constructParametersForUrl(requiredParameters));
         }
-
+        // append any optional parameters
         if (optionalParameters != null) {
             stringBuilder.append(constructParametersForUrl(optionalParameters));
         }
-
-        String generatedUri = stringBuilder.toString();
-
-        StringBuilder fullUrlBuilder = new StringBuilder();
-        fullUrlBuilder.append(domain);
-        fullUrlBuilder.append(generatedUri);
-
-        String completedUrl = fullUrlBuilder.toString();
-
-
+        // create a string based on the uri data.
+        String completedUrl = stringBuilder.toString();
+        // replace the first & with ? if no ? already exists.
         completedUrl = cleanupUrlString(completedUrl);
-
+        // return a URL object or null if the URL is malformed.
         try {
             return new URL(completedUrl);
         } catch (MalformedURLException e) {
-            apiPostRequestObject.addExceptionDuringRequest(e);
+            apiRequestObject.addExceptionDuringRequest(e);
             return null;
         }
     }
