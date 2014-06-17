@@ -31,6 +31,7 @@ public class HttpGetRequestRunnable implements Runnable {
 
     @Override
     public void run() {
+        System.out.println(TAG + " run()");
         if (callback != null) {
             callback.httpRequestStarted(apiRequestObject);
         }

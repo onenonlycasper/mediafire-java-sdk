@@ -14,6 +14,7 @@ import java.util.Map;
  * Created by Chris Najar on 6/16/2014.
  */
 public class HttpPostRequestRunnable implements Runnable {
+    private static final String TAG = HttpPostRequestRunnable.class.getSimpleName();
     private HttpRequestCallback callback;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
@@ -30,6 +31,7 @@ public class HttpPostRequestRunnable implements Runnable {
 
     @Override
     public void run() {
+        System.out.println(TAG + " run()");
         if (callback != null) {
             callback.httpRequestStarted(apiRequestObject);
         }
