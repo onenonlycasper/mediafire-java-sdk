@@ -2,7 +2,6 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm.runn
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
-import com.arkhive.components.test_session_manager_fixes.module_credentials.CredentialsException;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
@@ -101,19 +100,14 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     private ApiRequestObject createApiRequestObjectForNewSessionToken() {
         ApiRequestObject apiRequestObject = new ApiRequestObject("https://www.mediafire.com", "/api/1.0/user/get_session_token.php");
         Map<String, String> optionalParameters = constructOptionalParameters();
-        Map<String, String> requiredParameters = null;
-        try {
-            requiredParameters = constructRequiredParameters(applicationCredentials);
-        } catch (CredentialsException e) {
-            e.printStackTrace();
-        }
+        Map<String, String> requiredParameters = constructRequiredParameters(applicationCredentials);
         apiRequestObject.setRequiredParameters(optionalParameters);
         apiRequestObject.setOptionalParameters(requiredParameters);
 
         return apiRequestObject;
     }
 
-    private Map<String, String> constructRequiredParameters(ApplicationCredentials applicationCredentials) throws CredentialsException {
+    private Map<String, String> constructRequiredParameters(ApplicationCredentials applicationCredentials) {
         Map<String, String> requiredParameters = new LinkedHashMap<String, String>();
         requiredParameters.putAll(applicationCredentials.getCredentials());
         requiredParameters.put(REQUIRED_PARAMETER_APPLICATION_ID, applicationCredentials.getAppId());
@@ -128,7 +122,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
         return optionalParameters;
     }
 
-    private String calculateSignature(ApplicationCredentials applicationCredentials) throws CredentialsException {
+    private String calculateSignature(ApplicationCredentials applicationCredentials) {
         Map<String, String> credentialsMap = applicationCredentials.getCredentials();
         String appId = applicationCredentials.getAppId();
         String apiKey = applicationCredentials.getApiKey();

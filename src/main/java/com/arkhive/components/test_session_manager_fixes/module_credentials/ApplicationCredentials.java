@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 6/15/2014.
  */
-public class ApplicationCredentials implements CredentialsInterface {
+public final class ApplicationCredentials {
     private static final String TAG = ApplicationCredentials.class.getSimpleName();
     private static String MEDIAFIRE_PARAMETER_EMAIL = "email";
     private static String MEDIAFIRE_PARAMETER_PASSWORD = "password";
@@ -24,58 +24,22 @@ public class ApplicationCredentials implements CredentialsInterface {
     private final String appId;
     private final String apiKey;
 
-    private static ApplicationCredentials instance;
-
-    private ApplicationCredentials(String appId, String apiKey) {
+    public ApplicationCredentials(String appId, String apiKey) {
         this.appId = appId;
         this.apiKey = apiKey;
         credentialsSet = false;
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
-    public static ApplicationCredentials newInstance(String appId, String apiKey) throws CredentialsException {
-        if (instance != null) {
-            throw new CredentialsException("an ApplicationCredentials instance already exists");
-        }
-
-        if (appId == null || apiKey == null) {
-            throw new CredentialsException("appId and apiKey must not be null");
-        }
-
-        instance = new ApplicationCredentials(appId, apiKey);
-        return instance;
-    }
-
-    public static ApplicationCredentials getInstance() {
-        return instance;
-    }
-
     /**
      * attempts to add user credentials.
      *
      * @param credentials - a map of user credentials based on the following:
-     *                    email : The email address of the user's MediaFire account
-     *                    AND
-     *                    password : The password of the user's MediaFire account.
-     *                    <p/>
-     *                    OR
-     *                    <p/>
-     *                    fb_access_token : The Facebook access token which corresponds with the user's MediaFire account
-     *                    (this must be obtained from Facebook's API).
-     *                    <p/>
-     *                    OR
-     *                    <p/>
-     *                    tw_oauth_token : The Twitter OAuth token which corresponds with the user's MediaFire account
-     *                    (this must be obtained from Twitter's API)
-     *                    AND
-     *                    tw_oauth_token_secret : The Twitter OAuth Token Secret Key (obtained from Twitter's API).
+     *
      * @return - true if credentials are stored, false if not.
      */
-    public boolean setUserCredentials(Map<String, String> credentials) throws CredentialsException {
+    public boolean setUserCredentials(Map<String, String> credentials) {
         System.out.println(TAG + " addUserCredentials()");
-        if (credentialsSet) {
-            throw new CredentialsException("credentials are already set. use clearCredentials()");
-        }
         if (isFacebookCredentials(credentials)) {
             setCredentials(credentials);
             userCredentialsType = UserCredentialsType.FACEBOOK;
@@ -110,11 +74,7 @@ public class ApplicationCredentials implements CredentialsInterface {
         userCredentials = credentials;
     }
 
-    @Override
-    public Map<String, String> getCredentials() throws CredentialsException {
-        if (userCredentials == null || userCredentials.isEmpty()) {
-            throw new CredentialsException("invalid credentials");
-        }
+    public Map<String, String> getCredentials() {
         return userCredentials;
     }
 
@@ -139,13 +99,11 @@ public class ApplicationCredentials implements CredentialsInterface {
         this.credentialsValid = credentialsValid;
     }
 
-    @Override
     public String getAppId() {
         System.out.println(TAG + " getAppId()");
         return appId;
     }
 
-    @Override
     public String getApiKey() {
         System.out.println(TAG + " getApiKey()");
         return apiKey;

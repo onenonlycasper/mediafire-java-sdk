@@ -26,34 +26,16 @@ public class TokenFarm implements TokenFarmDistributor {
     private PausableThreadPoolExecutor executor;
     private BlockingQueue<SessionToken> sessionTokens;
 
-    private TokenFarm(ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
+    public TokenFarm(ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
         sessionTokens = new LinkedBlockingQueue<SessionToken>(6);
         this.applicationCredentials = applicationCredentials;
         this.httpPeriProcessor = httpPeriProcessor;
         executor = new PausableThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), Executors.defaultThreadFactory());
-    }
-
-    private static TokenFarm instance;
-
-    public static TokenFarm newInstance(ApplicationCredentials applicationCredentials,
-                                        HttpPeriProcessor httpPeriProcessor) throws TokenFarmException {
-        if (instance != null) {
-            throw new TokenFarmException("Cannot create a new instance without calling shutdown()");
-        }
-        instance = new TokenFarm(applicationCredentials, httpPeriProcessor);
-        instance.startup();
-        System.out.println(TAG + " TokenFarm initialized");
-        return instance;
-    }
-
-    public static TokenFarm getInstance() {
-        return instance;
+        startup();
     }
 
     public void shutdown() {
         System.out.println(TAG + " TokenFarm shutting down");
-        // (TODO) do other stuff to clean up references.
-        instance = null;
         sessionTokens.clear();
         System.out.println(TAG + " TokenFarm shut down");
     }

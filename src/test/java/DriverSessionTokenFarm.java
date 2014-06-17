@@ -2,7 +2,6 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.*
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.ApiRequestRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
-import com.arkhive.components.test_session_manager_fixes.module_credentials.CredentialsException;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.exceptions.TokenFarmException;
@@ -18,33 +17,16 @@ public class DriverSessionTokenFarm {
     public static void main(String[] args) {
         String apiKey = "1ngvq4h5rn8om4at7u9884z9i3sbww44b923w5ee";
         String appId = "35";
-        ApplicationCredentials applicationCredentials = null;
-        try {
-            applicationCredentials = ApplicationCredentials.newInstance(appId, apiKey);
-        } catch (CredentialsException e) {
-            e.printStackTrace();
-            return;
-        }
+        ApplicationCredentials applicationCredentials = new ApplicationCredentials(appId, apiKey);
 
         Map<String, String> userCredentials = new LinkedHashMap<String, String>();
         userCredentials.put("email", "arkhivetest@test.com");
         userCredentials.put("password", "74107410");
-        try {
-            applicationCredentials.setUserCredentials(userCredentials);
-        } catch (CredentialsException e) {
-            e.printStackTrace();
-        }
+        applicationCredentials.setUserCredentials(userCredentials);
 
         HttpPeriProcessor httpPeriProcessor = new HttpPeriProcessor(5000, 5000);
 
-        TokenFarm tokenFarm = TokenFarm.getInstance();
-        if (tokenFarm == null) {
-            try {
-                tokenFarm = TokenFarm.newInstance(applicationCredentials, httpPeriProcessor);
-            } catch (TokenFarmException e) {
-                e.printStackTrace();
-            }
-        }
+        TokenFarm tokenFarm = new TokenFarm(applicationCredentials, httpPeriProcessor);
 
         MyGoodRunnable goodRunnable = new MyGoodRunnable(tokenFarm, httpPeriProcessor);
         MyBadRunnable badRunnable = new MyBadRunnable(tokenFarm, httpPeriProcessor);
