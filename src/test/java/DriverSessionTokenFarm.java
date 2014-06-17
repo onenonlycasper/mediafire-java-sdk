@@ -48,13 +48,10 @@ public class DriverSessionTokenFarm {
 
         MyGoodRunnable goodRunnable = new MyGoodRunnable(tokenFarm, httpPeriProcessor);
         MyBadRunnable badRunnable = new MyBadRunnable(tokenFarm, httpPeriProcessor);
-        My404Runnable veryBadRunnable = new My404Runnable(tokenFarm, httpPeriProcessor);
         Thread goodThread = new Thread(goodRunnable);
         Thread badThread = new Thread(badRunnable);
-        Thread veryBadThread = new Thread(veryBadRunnable);
         goodThread.start();
         badThread.start();
-        veryBadThread.start();
 
     }
 
@@ -96,34 +93,6 @@ public class DriverSessionTokenFarm {
             for (int i = 0; i < 10; i++) {
                 TheCallbackKing callback = new TheCallbackKing();
                 ApiRequestObject apiRequestObject = new ApiRequestObject("http://www.mediafire.com", "/api/folder/get_info.php");
-                LinkedHashMap<String, String> optionalParameters = new LinkedHashMap<String, String>();
-                optionalParameters.put("response_format", "json");
-                apiRequestObject.setOptionalParameters(optionalParameters);
-                LinkedHashMap<String, String> requiredParameters = new LinkedHashMap<String, String>();
-                optionalParameters.put("folder_key", "asdfasdfasdfasdfasdfasdf");
-                apiRequestObject.setRequiredParameters(requiredParameters);
-                ApiRequestRunnable apiRequestRunnable = new ApiRequestRunnable(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
-                Thread thread = new Thread(apiRequestRunnable);
-                thread.start();
-            }
-        }
-    }
-
-    public static class My404Runnable implements Runnable {
-
-        private final TokenFarm tokenFarm;
-        private final HttpPeriProcessor httpPeriProcessor;
-
-        public My404Runnable(TokenFarm tokenFarm, HttpPeriProcessor httpPeriProcessor) {
-            this.tokenFarm = tokenFarm;
-            this.httpPeriProcessor = httpPeriProcessor;
-        }
-
-        @Override
-        public void run() {
-            for (int i = 0; i < 10; i++) {
-                TheCallbackKing callback = new TheCallbackKing();
-                ApiRequestObject apiRequestObject = new ApiRequestObject("http://www.mediafire.com", "/aii/folder/get_info.php");
                 LinkedHashMap<String, String> optionalParameters = new LinkedHashMap<String, String>();
                 optionalParameters.put("response_format", "json");
                 apiRequestObject.setOptionalParameters(optionalParameters);
