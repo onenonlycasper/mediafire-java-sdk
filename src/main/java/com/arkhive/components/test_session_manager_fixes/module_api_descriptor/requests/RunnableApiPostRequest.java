@@ -7,8 +7,8 @@ import com.arkhive.components.test_session_manager_fixes.module_http_processor.i
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
 
-public class ApiPostRequestRunnable implements Runnable, HttpRequestCallback {
-    private static final String TAG = ApiGetRequestRunnable.class.getSimpleName();
+public class RunnableApiPostRequest implements Runnable, HttpRequestCallback {
+    private static final String TAG = RunnableApiGetRequest.class.getSimpleName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ApiRequestRunnableCallback callback;
@@ -16,12 +16,12 @@ public class ApiPostRequestRunnable implements Runnable, HttpRequestCallback {
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
 
-    public ApiPostRequestRunnable(ApiRequestRunnableCallback callback,
-                                 HttpProcessor httpPreProcessor,
-                                 HttpProcessor httpPostProcessor,
-                                 TokenFarmDistributor tokenFarmDistributor,
-                                 HttpPeriProcessor httpPeriProcessor,
-                                 ApiRequestObject apiRequestObject) {
+    public RunnableApiPostRequest(ApiRequestRunnableCallback callback,
+                                  HttpProcessor httpPreProcessor,
+                                  HttpProcessor httpPostProcessor,
+                                  TokenFarmDistributor tokenFarmDistributor,
+                                  HttpPeriProcessor httpPeriProcessor,
+                                  ApiRequestObject apiRequestObject) {
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;

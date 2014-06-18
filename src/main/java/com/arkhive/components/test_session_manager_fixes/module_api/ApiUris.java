@@ -1,9 +1,9 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
 /**
- * Created by Chris Najar on 6/17/2014.
+ * Created by on 6/17/2014.
  */
-public class MediaFireApi {
+public class ApiUris {
     public static final String URI_CONTACT_ADD = "/api/contact/add.php";
     public static final String URI_CONTACT_DELETE = "/api/contact/delete.php";
     public static final String URI_CONTACT_FETCH = "/api/contact/fetch.php";

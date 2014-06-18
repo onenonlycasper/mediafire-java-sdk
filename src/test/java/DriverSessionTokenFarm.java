@@ -1,6 +1,6 @@
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.*;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.ApiGetRequestRunnable;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.RunnableApiGetRequest;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
@@ -60,8 +60,8 @@ public class DriverSessionTokenFarm {
                 LinkedHashMap<String, String> optionalParameters = new LinkedHashMap<String, String>();
                 optionalParameters.put("response_format", "json");
                 apiRequestObject.setOptionalParameters(optionalParameters);
-                ApiGetRequestRunnable apiGetRequestRunnable = new ApiGetRequestRunnable(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
-                Thread thread = new Thread(apiGetRequestRunnable);
+                RunnableApiGetRequest runnableApiGetRequest = new RunnableApiGetRequest(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
+                Thread thread = new Thread(runnableApiGetRequest);
                 thread.start();
             }
         }
@@ -88,8 +88,8 @@ public class DriverSessionTokenFarm {
                 LinkedHashMap<String, String> requiredParameters = new LinkedHashMap<String, String>();
                 optionalParameters.put("folder_key", "asdfasdfasdfasdfasdfasdf");
                 apiRequestObject.setRequiredParameters(requiredParameters);
-                ApiGetRequestRunnable apiGetRequestRunnable = new ApiGetRequestRunnable(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
-                Thread thread = new Thread(apiGetRequestRunnable);
+                RunnableApiGetRequest runnableApiGetRequest = new RunnableApiGetRequest(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
+                Thread thread = new Thread(runnableApiGetRequest);
                 thread.start();
             }
         }

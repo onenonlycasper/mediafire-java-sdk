@@ -7,8 +7,8 @@ import com.arkhive.components.test_session_manager_fixes.module_http_processor.i
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
 
-public class ApiGetRequestRunnable implements Runnable, HttpRequestCallback {
-    private static final String TAG = ApiGetRequestRunnable.class.getSimpleName();
+public class RunnableApiGetRequest implements Runnable, HttpRequestCallback {
+    private static final String TAG = RunnableApiGetRequest.class.getSimpleName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ApiRequestRunnableCallback callback;
@@ -16,7 +16,7 @@ public class ApiGetRequestRunnable implements Runnable, HttpRequestCallback {
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
 
-    public ApiGetRequestRunnable(ApiRequestRunnableCallback callback,
+    public RunnableApiGetRequest(ApiRequestRunnableCallback callback,
                                  HttpProcessor httpPreProcessor,
                                  HttpProcessor httpPostProcessor,
                                  TokenFarmDistributor tokenFarmDistributor,
