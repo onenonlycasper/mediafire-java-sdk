@@ -30,7 +30,6 @@ public class TokenFarm implements TokenFarmDistributor {
         this.applicationCredentials = applicationCredentials;
         this.httpPeriProcessor = httpPeriProcessor;
         executor = new PausableThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), Executors.defaultThreadFactory());
-        startup();
     }
 
     public void shutdown() {
@@ -45,7 +44,7 @@ public class TokenFarm implements TokenFarmDistributor {
         executor.execute(getSessionTokenRunnable);
     }
 
-    private void startup() {
+    public void startup() {
         System.out.println(TAG + " startup()");
         for (int i = 0; i < sessionTokens.remainingCapacity(); i++) {
             getNewSessionToken();

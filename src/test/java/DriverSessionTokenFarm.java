@@ -26,13 +26,22 @@ public class DriverSessionTokenFarm {
         HttpPeriProcessor httpPeriProcessor = new HttpPeriProcessor(5000, 5000);
 
         TokenFarm tokenFarm = new TokenFarm(applicationCredentials, httpPeriProcessor);
+        tokenFarm.startup();
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        MyGoodRunnable goodRunnable = new MyGoodRunnable(tokenFarm, httpPeriProcessor);
-        MyBadRunnable badRunnable = new MyBadRunnable(tokenFarm, httpPeriProcessor);
-        Thread goodThread = new Thread(goodRunnable);
-        Thread badThread = new Thread(badRunnable);
-        goodThread.start();
-        badThread.start();
+        for (int i = 0; i < 10; i++) {
+            MyGoodRunnable goodRunnable = new MyGoodRunnable(tokenFarm, httpPeriProcessor);
+//        MyBadRunnable badRunnable = new MyBadRunnable(tokenFarm, httpPeriProcessor);
+            Thread goodThread = new Thread(goodRunnable);
+//        Thread badThread = new Thread(badRunnable);
+            goodThread.start();
+//        badThread.start();
+        }
+
     }
 
     public static class MyGoodRunnable implements Runnable {

@@ -40,7 +40,6 @@ public class ApiGetRequestRunnable implements Runnable, HttpRequestCallback {
             }
             // borrow a session token from the TokenFarm
             tokenFarmDistributor.borrowSessionToken(apiRequestObject);
-
             // send request to http handler
             httpPeriProcessor.sendGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             // wait until we get a response from http handler (or 10 seconds pass)
