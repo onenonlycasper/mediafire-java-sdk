@@ -61,7 +61,7 @@ public class Api {
      * @param response A response string from a web API call.
      * @return The JsonElement created from the response string.
      */
-    static JsonElement getResponseElement(String response) {
+    public static JsonElement getResponseElement(String response) {
         if (response.length() == 0 || response.isEmpty() || response == null) {
             response = FAIL_RES;
         }
@@ -83,7 +83,7 @@ public class Api {
      * @param response - the response received in JSON format
      * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
      */
-    static String getResponseString(String response) {
+    public static String getResponseString(String response) {
         if (response.length() == 0 || response.isEmpty() || response == null) {
             response = FAIL_RES;
         }

@@ -12,19 +12,17 @@ public class RunnableApiPostRequest implements Runnable, HttpRequestCallback {
     private static final String TAG = RunnableApiGetRequest.class.getSimpleName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
-    private final Class<? extends ApiResponse> response;
     private ApiRequestRunnableCallback callback;
     private TokenFarmDistributor tokenFarmDistributor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
 
-    public RunnableApiPostRequest(Class<? extends ApiResponse> response, ApiRequestRunnableCallback callback,
+    public RunnableApiPostRequest(ApiRequestRunnableCallback callback,
                                   HttpProcessor httpPreProcessor,
                                   HttpProcessor httpPostProcessor,
                                   TokenFarmDistributor tokenFarmDistributor,
                                   HttpPeriProcessor httpPeriProcessor,
                                   ApiRequestObject apiRequestObject) {
-        this.response = response;
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;

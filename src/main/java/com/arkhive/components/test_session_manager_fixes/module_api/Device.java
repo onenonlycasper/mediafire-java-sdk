@@ -37,7 +37,7 @@ public class Device {
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();
-        return new Gson().fromJson(Api.getResponseElement(response), DeviceGetChangesResponse.class);
+        return new Gson().fromJson(Api.getResponseString(response), DeviceGetChangesResponse.class);
     }
 
     public DeviceGetStatusResponse getStatus(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
@@ -47,6 +47,6 @@ public class Device {
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();
-        return new Gson().fromJson(Api.getResponseElement(response), DeviceGetStatusResponse.class);
+        return new Gson().fromJson(Api.getResponseString(response), DeviceGetStatusResponse.class);
     }
 }
