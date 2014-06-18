@@ -1,10 +1,14 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
 import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.DeviceGetChangesResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.DeviceGetStatusResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadResumableResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.BlockingApiGetRequest;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.RunnableApiGetRequest;
+import com.google.gson.Gson;
 
 import java.util.Map;
 
@@ -28,19 +32,23 @@ public class Device {
         return runnableApiGetRequest;
     }
 
-    public void getChanges(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public DeviceGetChangesResponse getChanges(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_DEVICE_GET_CHANGES);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), DeviceGetChangesResponse.class);
     }
 
-    public void getStatus(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public DeviceGetStatusResponse getStatus(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_DEVICE_GET_STATUS);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), DeviceGetStatusResponse.class);
     }
 }

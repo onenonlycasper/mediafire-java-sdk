@@ -1,10 +1,13 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
 import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.ContactResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.SystemGetInfoResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.BlockingApiGetRequest;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.RunnableApiGetRequest;
+import com.google.gson.Gson;
 
 import java.util.Map;
 
@@ -20,11 +23,13 @@ public class System {
         return runnableApiGetRequest;
     }
 
-    public void getInfo(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public SystemGetInfoResponse getInfo(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_SYSTEM_GET_INFO);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), SystemGetInfoResponse.class);
     }
 }

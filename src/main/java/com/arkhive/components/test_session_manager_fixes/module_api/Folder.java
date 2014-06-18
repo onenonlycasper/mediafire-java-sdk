@@ -1,10 +1,12 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
 import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.*;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.BlockingApiGetRequest;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.RunnableApiGetRequest;
+import com.google.gson.Gson;
 
 import java.util.Map;
 
@@ -92,83 +94,105 @@ public class Folder {
         return runnableApiGetRequest;
     }
 
-    public void copy(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderCopyResponse copy(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_COPY);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderCopyResponse.class);
     }
 
-    public void getRevision(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderGetRevisionResponse getRevision(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_GET_REVISION);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderGetRevisionResponse.class);
     }
 
-    public void purge(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderPurgeResponse purge(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_PURGE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderPurgeResponse.class);
     }
 
-    public void move(MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderMoveResponse move(MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_MOVE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderMoveResponse.class);
     }
 
-    public void create(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderCreateResponse create(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_CREATE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderCreateResponse.class);
+
     }
 
-    public void delete(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderDeleteResponse delete(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_DELETE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderDeleteResponse.class);
     }
 
-    public void search(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderSearchResponse search(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_SEARCH);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderSearchResponse.class);
     }
 
-    public void update(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderUpdateResponse update(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_UPDATE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderUpdateResponse.class);
     }
 
-    public void getContents(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderGetContentsResponse getContents(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_GET_CONTENT);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderGetContentsResponse.class);
     }
 
-    public void getInfo(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public FolderGetInfoResponse getInfo(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_GET_INFO);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), FolderGetInfoResponse.class);
+
     }
 }

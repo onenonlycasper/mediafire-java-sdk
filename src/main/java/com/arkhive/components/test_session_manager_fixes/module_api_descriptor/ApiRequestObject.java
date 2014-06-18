@@ -47,7 +47,9 @@ public final class ApiRequestObject {
     }
 
     public final void setRequiredParameters(Map<String, String> requiredParameters) {
-        this.requiredParameters = requiredParameters;
+        if (requiredParameters != null) {
+            this.requiredParameters = requiredParameters;
+        }
     }
 
     public final Map<String, String> getRequiredParameters() {
@@ -55,7 +57,9 @@ public final class ApiRequestObject {
     }
 
     public final void setOptionalParameters(Map<String, String> optionalParameters) {
-        this.optionalParameters = optionalParameters;
+        if (optionalParameters != null) {
+            this.optionalParameters = optionalParameters;
+        }
     }
 
     public final Map<String, String> getOptionalParameters() {

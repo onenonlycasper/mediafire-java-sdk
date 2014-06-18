@@ -13,7 +13,7 @@ public class MediaFire {
     private ApplicationCredentials applicationCredentials;
     private TokenFarm tokenFarm;
     private Configuration configuration;
-    private static Api api;
+    private Api api;
 
     private static MediaFire instance;
 
@@ -22,7 +22,7 @@ public class MediaFire {
         httpPeriProcessor = new HttpPeriProcessor(configuration);
         applicationCredentials = new ApplicationCredentials(configuration);
         tokenFarm = new TokenFarm(applicationCredentials, httpPeriProcessor);
-
+        api = new Api(tokenFarm, httpPeriProcessor);
     }
 
     public static MediaFire getInstance() {
@@ -35,7 +35,6 @@ public class MediaFire {
         } else {
             instance.shutdown();
             instance = new MediaFire(configuration);
-            api = new Api(instance);
         }
 
         return instance;

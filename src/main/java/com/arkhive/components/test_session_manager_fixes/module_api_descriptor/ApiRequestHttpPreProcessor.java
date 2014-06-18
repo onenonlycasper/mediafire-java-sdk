@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -55,7 +56,13 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
         }
 
         if (optionalParameters != null) {
+            if (!optionalParameters.containsKey("response_format")) {
+                optionalParameters.put("response_format", "json");
+            }
             stringBuilder.append(constructParametersForUrl(optionalParameters));
+        } else {
+            optionalParameters = new LinkedHashMap<String, String>();
+            optionalParameters.put("response_format", "json");
         }
 
         if (token != null) {
