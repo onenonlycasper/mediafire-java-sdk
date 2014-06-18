@@ -3,7 +3,7 @@ package com.arkhive.components.api;
 /**
  * enum for all response codes for any API response root/result. (List received from Cliff)
  *
- * @author Chris Najar
+ * @author
  */
 public enum ApiResponseCode {
     NO_ERROR(0),

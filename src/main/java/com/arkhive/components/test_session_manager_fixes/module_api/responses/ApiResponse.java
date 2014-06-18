@@ -1,7 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 
 /**
- * Created by Chris Najar on 6/15/2014.
+ * Created by  on 6/15/2014.
  */
 public class ApiResponse {
     private String action;

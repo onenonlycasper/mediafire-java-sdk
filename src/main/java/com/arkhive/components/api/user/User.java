@@ -16,7 +16,7 @@ import com.arkhive.components.api.Utility;
 import com.arkhive.components.sessionmanager.SessionManager;
 
 /**
- * @author Chris Najar
+ * @author
  */
 public class User {
     private static final String GET_INFO_URI = "/api/user/get_info.php";

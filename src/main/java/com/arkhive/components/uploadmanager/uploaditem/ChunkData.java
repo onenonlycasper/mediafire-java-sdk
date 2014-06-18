@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * only be received after getting a response
  * from calling pre upload.
  *
- * @author Chris Najar
+ * @author
  */
 public class ChunkData {
     private int unitSize;

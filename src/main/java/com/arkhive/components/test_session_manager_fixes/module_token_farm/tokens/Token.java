@@ -3,7 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm.toke
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.interfaces.TokenInterface;
 
 /**
- * Created by Chris Najar on 6/15/2014.
+ * Created by  on 6/15/2014.
  */
 public abstract class Token implements TokenInterface {
     private static final String TAG = Token.class.getSimpleName();

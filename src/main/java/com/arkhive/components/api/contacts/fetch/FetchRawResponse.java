@@ -5,7 +5,7 @@ import com.arkhive.components.api.contacts.ContactResponse;
 /**
  * Fetch response.
  *
- * @author Chris Najar
+ * @author
  */
 public class FetchRawResponse extends ContactResponse {
     //CHECKSTYLE:OFF

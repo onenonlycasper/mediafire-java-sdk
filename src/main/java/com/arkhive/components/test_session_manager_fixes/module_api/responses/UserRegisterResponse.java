@@ -5,7 +5,7 @@ import com.arkhive.components.api.ApiResponse;
 /**
  * response class for user registration.
  *
- * @author Chris Najar
+ * @author
  */
 public class UserRegisterResponse extends ApiResponse {
     String email;

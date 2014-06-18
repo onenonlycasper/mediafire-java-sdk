@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * 4. check response data
  * 5. step 1 again until 2 minutes is up, there is an error, or status code 99 (no more requests for this key)
  *
- * @author Chris Najar
+ * @author
  */
 public class PollProcess implements Runnable {
     private static final String TAG = PollProcess.class.getSimpleName();

@@ -3,7 +3,6 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.exceptions.TokenFarmException;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables.GetSessionTokenRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session.NewSessionTokenHttpPostProcessor;
@@ -17,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Chris Najar on 6/16/2014.
+ * Created by  on 6/16/2014.
  */
 public class TokenFarm implements TokenFarmDistributor {
     private static final String TAG = TokenFarm.class.getSimpleName();

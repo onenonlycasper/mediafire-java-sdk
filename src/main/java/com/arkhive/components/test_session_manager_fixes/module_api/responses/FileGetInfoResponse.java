@@ -3,7 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- * @author Chris Najar
+ * @author
  */
 public class FileGetInfoResponse extends ApiResponse {
     //CHECKSTYLE:OFF
@@ -20,7 +20,7 @@ public class FileGetInfoResponse extends ApiResponse {
     /**
      * class representing contents of "file_info" jsonobject.
      *
-     * @author Chris Najar
+     * @author
      */
     public class FileInfo {
         //CHECKSTYLE:OFF

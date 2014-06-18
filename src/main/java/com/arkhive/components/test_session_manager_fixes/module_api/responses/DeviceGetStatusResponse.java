@@ -3,7 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- * Created by Chris Najar on 4/15/2014.
+ * Created by  on 4/15/2014.
  */
 public class DeviceGetStatusResponse extends ApiResponse {
     private String async_jobs_in_progress;

@@ -25,7 +25,7 @@ import java.util.concurrent.*;
  * UploadManager moves UploadItems from a Collection into Threads.
  * Number of threads that will be started is limited to the maximumThreadCount (default = 5)
  *
- * @author Chris Najar
+ * @author
  */
 public class UploadManager implements UploadListenerManager {
     private static final String TAG = UploadManager.class.getSimpleName();

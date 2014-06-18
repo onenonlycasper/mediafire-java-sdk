@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * Created by Chris Najar on 6/15/2014.
+ * Created by  on 6/15/2014.
  */
 public final class ApiRequestHttpPostProcessor implements HttpProcessor {
     private static final String TAG = ApiRequestHttpPostProcessor.class.getSimpleName();

@@ -6,7 +6,7 @@ import java.util.List;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- * @author Chris Najar
+ * @author
  */
 public class FileGetLinksResponse extends ApiResponse {
     //CHECKSTYLE:OFF
@@ -40,7 +40,7 @@ public class FileGetLinksResponse extends ApiResponse {
     /**
      * class representing a link.
      *
-     * @author Chris Najar
+     * @author
      */
     public class Link {
         private String quickkey;

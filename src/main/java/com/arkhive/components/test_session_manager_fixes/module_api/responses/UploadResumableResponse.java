@@ -6,7 +6,7 @@ import com.arkhive.components.api.upload.errors.ResumableResultCode;
 /**
  * This data structure represents response received by the response received from api call /api/upload/resumable.php.
  *
- * @author Chris Najar
+ * @author
  */
 public class UploadResumableResponse extends ApiResponse {
     private String server;
@@ -15,7 +15,7 @@ public class UploadResumableResponse extends ApiResponse {
     /**
      * Data structure which is part of the response received by /api/upload/resumable.php.
      *
-     * @author Chris Najar
+     * @author
      */
     public class DoUpload {
         private String result;

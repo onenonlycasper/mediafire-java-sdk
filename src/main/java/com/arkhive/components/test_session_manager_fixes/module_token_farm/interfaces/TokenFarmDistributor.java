@@ -3,7 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm.inte
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 
 /**
- * Created by Chris Najar on 6/16/2014.
+ * Created by  on 6/16/2014.
  */
 public interface TokenFarmDistributor {
     public void borrowSessionToken(ApiRequestObject apiRequestObject);

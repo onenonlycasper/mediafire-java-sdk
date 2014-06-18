@@ -5,7 +5,7 @@ package com.arkhive.components.api.upload.errors;
  * appear in the data structure returned by the pre upload
  * response as called by /api/upload/pre_upload.php.
  *
- * @author Chris Najar
+ * @author
  */
 public enum CheckResponseErrorCode {
     NON_OWNER_UPLOAD_WITHOUT_WRITE_PERMISSIONS_TO_FOLDER(114),

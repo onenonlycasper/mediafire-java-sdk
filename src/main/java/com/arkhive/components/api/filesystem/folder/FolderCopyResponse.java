@@ -6,7 +6,7 @@ import java.util.List;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- * @author Chris Najar
+ * @author
  */
 public class FolderCopyResponse extends ApiResponse {
     private String asynchronous;

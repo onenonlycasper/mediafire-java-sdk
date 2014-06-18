@@ -11,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Created by Chris Najar on 6/15/2014.
+ * Created by  on 6/15/2014.
  */
 public final class HttpPeriProcessor {
     private static final String TAG = HttpPeriProcessor.class.getSimpleName();

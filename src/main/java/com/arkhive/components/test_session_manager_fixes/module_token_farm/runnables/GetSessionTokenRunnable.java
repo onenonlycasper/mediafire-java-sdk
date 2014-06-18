@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 6/16/2014.
+ * Created by  on 6/16/2014.
  */
 public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     private static final String TAG = GetSessionTokenRunnable.class.getSimpleName();

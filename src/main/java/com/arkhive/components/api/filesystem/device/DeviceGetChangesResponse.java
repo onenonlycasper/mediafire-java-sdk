@@ -9,7 +9,7 @@ import com.arkhive.components.api.filesystem.FileSystemItem;
 /**
  * Class representing api/device/get_changes.php response.
  *
- * @author Chris Najar
+ * @author
  *         {"response":{"action":"device\/get_changes","updated":{"files":[],"folders":[]},"deleted":{"files":[],"folders":[]},"device_revision":"15260","changes_list_block":"500","result":"Success","new_key":"yes","current_api_version":"2.14"}}
  */
 public class DeviceGetChangesResponse extends ApiResponse {
@@ -53,7 +53,7 @@ public class DeviceGetChangesResponse extends ApiResponse {
     /**
      * class representing a collection of files and folders which have been changed.
      *
-     * @author Chris Najar
+     * @author
      */
     public class ChangedItems {
         private List<File> files;
@@ -101,7 +101,7 @@ public class DeviceGetChangesResponse extends ApiResponse {
     /**
      * class representing a file that has been changed.
      *
-     * @author Chris Najar
+     * @author
      */
     public class File {
         private String quickkey;
@@ -175,7 +175,7 @@ public class DeviceGetChangesResponse extends ApiResponse {
     /**
      * class representing a folder that has been changed.
      *
-     * @author Chris Najar
+     * @author
      */
     public class Folder {
         private String folderkey;

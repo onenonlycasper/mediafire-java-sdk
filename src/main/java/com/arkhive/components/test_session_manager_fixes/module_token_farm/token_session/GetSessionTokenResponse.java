@@ -3,7 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm.toke
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
 
 /**
- * Created by Chris Najar on 6/16/2014.
+ * Created by  on 6/16/2014.
  */
 public class GetSessionTokenResponse extends ApiResponse {
     private String session_token;

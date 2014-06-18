@@ -5,7 +5,7 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 /**
  * interface aimed at UI class which wants to listen to the upload process.
  *
- * @author Chris Najar
+ * @author
  */
 public interface UploadListenerUI {
 

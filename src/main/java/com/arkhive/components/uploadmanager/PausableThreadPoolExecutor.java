@@ -5,7 +5,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by Chris Najar on 5/24/2014.
+ * Created by  on 5/24/2014.
  */
 public class PausableThreadPoolExecutor extends ThreadPoolExecutor {
     private boolean isPaused;

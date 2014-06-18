@@ -1,10 +1,9 @@
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.*;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.ApiRequestRunnable;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.ApiGetRequestRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.exceptions.TokenFarmException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,7 +33,6 @@ public class DriverSessionTokenFarm {
         Thread badThread = new Thread(badRunnable);
         goodThread.start();
         badThread.start();
-
     }
 
     public static class MyGoodRunnable implements Runnable {
@@ -47,14 +45,14 @@ public class DriverSessionTokenFarm {
 
         @Override
         public void run() {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 50; i++) {
                 TheCallbackKing callback = new TheCallbackKing();
                 ApiRequestObject apiRequestObject = new ApiRequestObject("http://www.mediafire.com", "/api/folder/get_info.php");
                 LinkedHashMap<String, String> optionalParameters = new LinkedHashMap<String, String>();
                 optionalParameters.put("response_format", "json");
                 apiRequestObject.setOptionalParameters(optionalParameters);
-                ApiRequestRunnable apiRequestRunnable = new ApiRequestRunnable(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
-                Thread thread = new Thread(apiRequestRunnable);
+                ApiGetRequestRunnable apiGetRequestRunnable = new ApiGetRequestRunnable(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
+                Thread thread = new Thread(apiGetRequestRunnable);
                 thread.start();
             }
         }
@@ -81,8 +79,8 @@ public class DriverSessionTokenFarm {
                 LinkedHashMap<String, String> requiredParameters = new LinkedHashMap<String, String>();
                 optionalParameters.put("folder_key", "asdfasdfasdfasdfasdfasdf");
                 apiRequestObject.setRequiredParameters(requiredParameters);
-                ApiRequestRunnable apiRequestRunnable = new ApiRequestRunnable(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
-                Thread thread = new Thread(apiRequestRunnable);
+                ApiGetRequestRunnable apiGetRequestRunnable = new ApiGetRequestRunnable(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
+                Thread thread = new Thread(apiGetRequestRunnable);
                 thread.start();
             }
         }

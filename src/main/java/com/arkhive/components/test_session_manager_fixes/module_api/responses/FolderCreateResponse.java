@@ -3,7 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- * @author Chris Najar
+ * @author
  */
 public class FolderCreateResponse extends ApiResponse {
     //CHECKSTYLE:OFF

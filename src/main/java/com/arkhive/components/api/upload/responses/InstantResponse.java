@@ -5,7 +5,7 @@ import com.arkhive.components.api.ApiResponse;
 /**
  * This class represents the response received as a data structure when making the api call api/upload/pre_upload.php.
  *
- * @author Chris Najar
+ * @author
  */
 public class InstantResponse extends ApiResponse {
     private String quickkey;
@@ -19,7 +19,7 @@ public class InstantResponse extends ApiResponse {
     /**
      * This class represents part of the data structure for the upload/instant.php response.
      *
-     * @author Chris Najar
+     * @author
      */
     public class Revision {
         private String revision;

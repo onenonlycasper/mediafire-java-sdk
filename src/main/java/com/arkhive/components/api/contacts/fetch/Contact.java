@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 /**
  * Contact representing a contact in the data string portion of the RawTrie data structure.
  *
- * @author Chris Najar
+ * @author
  */
 public class Contact {
     private String data;

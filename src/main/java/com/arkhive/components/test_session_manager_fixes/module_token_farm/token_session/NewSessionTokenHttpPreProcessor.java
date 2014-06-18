@@ -2,14 +2,13 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm.toke
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.Token;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 6/15/2014.
+ * Created by  on 6/15/2014.
  */
 public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
     private static final String TAG = NewSessionTokenHttpPreProcessor.class.getSimpleName();

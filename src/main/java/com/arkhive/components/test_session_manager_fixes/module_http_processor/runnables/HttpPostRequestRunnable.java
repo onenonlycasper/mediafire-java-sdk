@@ -2,7 +2,6 @@ package com.arkhive.components.test_session_manager_fixes.module_http_processor.
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.*;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.exceptions.HttpException;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 
@@ -14,7 +13,7 @@ import java.net.URL;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 6/16/2014.
+ * Created by  on 6/16/2014.
  */
 public class HttpPostRequestRunnable implements Runnable {
     private static final String TAG = HttpPostRequestRunnable.class.getSimpleName();
@@ -51,7 +50,7 @@ public class HttpPostRequestRunnable implements Runnable {
             URL url = apiRequestObject.getConstructedUrl();
 
             if (url == null) {
-                apiRequestObject.addExceptionDuringRequest(new HttpException("HttpPreProcessorGET produced a null URL"));
+                apiRequestObject.addExceptionDuringRequest(new Exception("HttpPostRequestRunnable produced a null URL"));
                 if (callback != null) {
                     callback.httpRequestFinished(apiRequestObject);
                 }

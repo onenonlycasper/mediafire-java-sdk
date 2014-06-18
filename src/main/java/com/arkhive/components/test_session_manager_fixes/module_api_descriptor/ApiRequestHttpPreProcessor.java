@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 6/15/2014.
+ * Created by  on 6/15/2014.
  */
 public final class ApiRequestHttpPreProcessor implements HttpProcessor {
     private static final String TAG = ApiRequestHttpPreProcessor.class.getSimpleName();

@@ -3,7 +3,7 @@ package com.arkhive.components.api;
 /**
  * class to be extended by all api response classes. This class contains the common response fields.
  *
- * @author Chris Najar
+ * @author
  */
 public class ApiResponse {
     private String action;

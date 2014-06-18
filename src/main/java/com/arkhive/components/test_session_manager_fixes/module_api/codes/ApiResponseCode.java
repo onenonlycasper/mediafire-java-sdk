@@ -3,7 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.module_api.codes;
 /**
  * enum for all response codes for any API response root/result. (List received from Cliff)
  *
- * @author Chris Najar
+ * @author
  */
 public enum ApiResponseCode {
     NO_ERROR(0),

@@ -9,7 +9,7 @@ import com.arkhive.components.api.filesystem.folder.FolderGetContentsResponse.Fi
 import com.arkhive.components.api.filesystem.folder.FolderGetContentsResponse.Folder;
 
 /**
- * @author Chris Najar
+ * @author
  */
 public class Converter {
 

@@ -8,7 +8,7 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 /**
  * interface aimed at being used by a class that manages the upload process.
  *
- * @author Chris Najar
+ * @author
  */
 public interface UploadListenerManager {
     /**

@@ -3,7 +3,7 @@ package com.arkhive.components.api.filesystem.folder;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- * @author Chris Najar
+ * @author
  */
 public class FolderMoveResponse extends ApiResponse {
     //CHECKSTYLE:OFF
@@ -28,7 +28,7 @@ public class FolderMoveResponse extends ApiResponse {
     /**
      * Class representation of "myfiles_revision" JSON object.
      *
-     * @author Chris Najar
+     * @author
      */
     public class MyFilesRevision {
         private String revision;

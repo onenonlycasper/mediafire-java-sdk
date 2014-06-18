@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * the constructor is a path, but the implementer of this
  * data structure can also pass specific upload options.
  *
- * @author Chris Najar
+ * @author
  */
 public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();

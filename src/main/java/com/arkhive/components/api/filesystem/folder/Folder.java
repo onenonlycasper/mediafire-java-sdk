@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 /**
- * @author Chris Najar
+ * @author
  */
 public class Folder {
     private static final String COPY_URI = "/api/folder/copy.php";
@@ -351,7 +351,7 @@ public class Folder {
     /**
      * Content Type for folder/get_content.php parameter.
      *
-     * @author Chris Najar
+     * @author
      */
     public enum ContentType {
         FILES, FOLDERS;

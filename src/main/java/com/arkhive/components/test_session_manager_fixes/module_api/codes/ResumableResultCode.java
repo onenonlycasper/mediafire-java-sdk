@@ -5,7 +5,7 @@ package com.arkhive.components.test_session_manager_fixes.module_api.codes;
  * returned by the api/upload/upload.php response
  * data structure's field result.
  *
- * @author Chris Najar
+ * @author
  */
 public enum ResumableResultCode {
     NO_ERROR(0),

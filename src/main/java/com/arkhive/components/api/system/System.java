@@ -17,7 +17,7 @@ import com.arkhive.components.sessionmanager.SessionManager;
 /**
  * api calls to /api/system.
  *
- * @author Chris Najar
+ * @author
  */
 public class System {
     private static final String GET_INFO_URI = "/api/system/get_info.php";

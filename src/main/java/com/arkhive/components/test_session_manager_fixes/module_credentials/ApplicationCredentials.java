@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 6/15/2014.
+ * Created by  on 6/15/2014.
  */
 public final class ApplicationCredentials {
     private static final String TAG = ApplicationCredentials.class.getSimpleName();

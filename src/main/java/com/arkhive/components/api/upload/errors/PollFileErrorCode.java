@@ -4,7 +4,7 @@ package com.arkhive.components.api.upload.errors;
  * These are the file error codes as an enum which can be thrown
  * as per the dev wiki.
  *
- * @author Chris Najar
+ * @author
  */
 public enum PollFileErrorCode {
     NO_ERROR(0),

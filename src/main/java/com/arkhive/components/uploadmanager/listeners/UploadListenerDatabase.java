@@ -5,7 +5,7 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 /**
  * interface aimed at being used by a custom ContentProvider.
  *
- * @author Chris Najar
+ * @author
  */
 public interface UploadListenerDatabase {
 

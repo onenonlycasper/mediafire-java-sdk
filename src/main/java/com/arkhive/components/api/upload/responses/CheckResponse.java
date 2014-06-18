@@ -8,7 +8,7 @@ import com.arkhive.components.api.ApiResponse;
 /**
  * This class represents the data structure received (response) by a call to /api/upload/check.php.
  *
- * @author Chris Najar
+ * @author
  */
 public class CheckResponse extends ApiResponse {
     private String hash_exists;
@@ -26,7 +26,7 @@ public class CheckResponse extends ApiResponse {
     /**
      * This class represents part of the data structure for the pre-upload response.
      *
-     * @author Chris Najar
+     * @author
      */
     public class ResumableUpload {
         private String all_units_ready;
@@ -63,7 +63,7 @@ public class CheckResponse extends ApiResponse {
     /**
      * This class represents part of the data structure received from upload/check.php response.
      *
-     * @author Chris Najar
+     * @author
      */
     public class Bitmap {
         private String count;

@@ -4,7 +4,7 @@ package com.arkhive.components.api.upload.errors;
  * This enumeration covers the result codes in the response
  * received when calling /api/upload/poll_upload.php.
  *
- * @author Chris Najar
+ * @author
  */
 public enum PollResultCode {
     SUCCESS(0),

@@ -9,7 +9,7 @@ import com.arkhive.components.api.upload.errors.PollStatusCode;
  * This class represents the data structure received (response)
  * by a call to /api/upload/poll_upload.php.
  *
- * @author Chris Najar
+ * @author
  */
 public class PollResponse extends ApiResponse {
     private DoUpload doupload;
@@ -17,7 +17,7 @@ public class PollResponse extends ApiResponse {
     /**
      * This represents the doupload portion of the poll upload response data structure.
      *
-     * @author Chris Najar
+     * @author
      */
     public class DoUpload {
         private String result;

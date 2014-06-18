@@ -4,7 +4,7 @@ package com.arkhive.components.test_session_manager_fixes.module_api.codes;
  * This enum represents the values that the poll upload
  * response data structure can return under status code.
  *
- * @author Chris Najar
+ * @author
  */
 public enum PollStatusCode {
     UNKNOWN_OR_NO_STATUS_AVAILABLE_FOR_THIS_KEY(0),

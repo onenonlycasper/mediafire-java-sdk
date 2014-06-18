@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * file information for an upload item.
  *
- * @author Chris Najar
+ * @author
  */
 public class FileData {
     private static final String TAG = FileData.class.getSimpleName();

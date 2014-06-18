@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author Chris Najar
+ * @author
  */
 public class FolderGetContentsResponse extends ApiResponse {
     public FolderContents folder_content;
@@ -19,7 +19,7 @@ public class FolderGetContentsResponse extends ApiResponse {
     }
 
     /**
-     * @author Chris Najar
+     * @author
      */
     public class FolderContents {
         public String chunk_size;
@@ -65,7 +65,7 @@ public class FolderGetContentsResponse extends ApiResponse {
     }
 
     /**
-     * @author Chris Najar
+     * @author
      */
     public class Folder {
         private String folderkey;
@@ -191,7 +191,7 @@ public class FolderGetContentsResponse extends ApiResponse {
     }
 
     /**
-     * @author Chris Najar
+     * @author
      */
     public class File {
         private String quickkey;

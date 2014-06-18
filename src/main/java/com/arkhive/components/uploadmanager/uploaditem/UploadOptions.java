@@ -14,7 +14,7 @@ import java.util.Locale;
  * constructor is used with 5 max upload attempts,
  * resumable, and mandatory upload.
  *
- * @author Chris Najar
+ * @author
  */
 public class UploadOptions {
     private final boolean resumable;
@@ -269,7 +269,7 @@ public class UploadOptions {
      *
      * @author Chris Najar
      */
-    public enum ActionOnDuplicate {
+     public enum ActionOnDuplicate {
         KEEP, SKIP, REPLACE
     }
 

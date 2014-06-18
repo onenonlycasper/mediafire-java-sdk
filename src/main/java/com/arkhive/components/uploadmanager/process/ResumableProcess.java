@@ -24,7 +24,7 @@ import java.util.HashMap;
 /**
  * Runnable for making api call to upload/resumable.php. *
  *
- * @author Chris Najar
+ * @author
  */
 public class ResumableProcess implements Runnable {
     private static final String TAG = ResumableProcess.class.getSimpleName();

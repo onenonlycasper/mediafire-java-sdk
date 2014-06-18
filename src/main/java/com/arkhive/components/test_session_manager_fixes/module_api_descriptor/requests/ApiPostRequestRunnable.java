@@ -7,11 +7,8 @@ import com.arkhive.components.test_session_manager_fixes.module_http_processor.i
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
 
-/**
- * Created by Chris Najar on 6/16/2014.
- */
-public class ApiRequestRunnable implements Runnable, HttpRequestCallback {
-    private static final String TAG = ApiRequestRunnable.class.getSimpleName();
+public class ApiPostRequestRunnable implements Runnable, HttpRequestCallback {
+    private static final String TAG = ApiGetRequestRunnable.class.getSimpleName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ApiRequestRunnableCallback callback;
@@ -19,12 +16,12 @@ public class ApiRequestRunnable implements Runnable, HttpRequestCallback {
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
 
-    public ApiRequestRunnable(ApiRequestRunnableCallback callback,
-                              HttpProcessor httpPreProcessor,
-                              HttpProcessor httpPostProcessor,
-                              TokenFarmDistributor tokenFarmDistributor,
-                              HttpPeriProcessor httpPeriProcessor,
-                              ApiRequestObject apiRequestObject) {
+    public ApiPostRequestRunnable(ApiRequestRunnableCallback callback,
+                                 HttpProcessor httpPreProcessor,
+                                 HttpProcessor httpPostProcessor,
+                                 TokenFarmDistributor tokenFarmDistributor,
+                                 HttpPeriProcessor httpPeriProcessor,
+                                 ApiRequestObject apiRequestObject) {
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
@@ -43,12 +40,11 @@ public class ApiRequestRunnable implements Runnable, HttpRequestCallback {
             }
             // borrow a session token from the TokenFarm
             tokenFarmDistributor.borrowSessionToken(apiRequestObject);
-
             // send request to http handler
-            httpPeriProcessor.sendGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
+            httpPeriProcessor.sendPostRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             // wait until we get a response from http handler (or 10 seconds pass)
             try {
-                wait(10000);
+                wait(35000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

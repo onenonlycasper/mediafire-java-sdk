@@ -4,7 +4,7 @@ package com.arkhive.components.test_session_manager_fixes.module_api.codes;
  * These are the file error codes as an enum which can be thrown
  * as per the dev wiki.
  *
- * @author Chris Najar
+ * @author
  */
 public enum PollFileErrorCode {
     NO_ERROR(0),

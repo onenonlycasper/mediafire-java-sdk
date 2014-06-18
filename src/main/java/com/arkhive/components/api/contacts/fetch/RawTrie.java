@@ -23,7 +23,7 @@ import sun.misc.BASE64Decoder;
 /**
  * raw auto complete trie.
  *
- * @author Chris Najar
+ * @author
  */
 public class RawTrie {
     private final String data;

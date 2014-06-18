@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Runnable for making a call to upload/instant.php.
  *
- * @author Chris Najar
+ * @author
  */
 public class InstantProcess implements Runnable {
     private static final String TAG = InstantProcess.class.getSimpleName();

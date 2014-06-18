@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Runnable for making a call to upload/check.php.
  *
- * @author Chris Najar
+ * @author
  */
 public class CheckProcess implements Runnable {
     private static final String TAG = CheckProcess.class.getSimpleName();

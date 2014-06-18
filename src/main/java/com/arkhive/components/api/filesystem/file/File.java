@@ -224,7 +224,7 @@ public class File {
     /**
      * A simple enum for passing link type which is used in the getLinks() method.
      *
-     * @author Chris Najar
+     * @author
      */
     public enum LinkType {
         VIEW, EDIT, NORMAL, ONE_TIME_DOWNLOAD, DIRECT_DOWNLOAD, ALL,

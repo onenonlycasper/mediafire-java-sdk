@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * which is received from the pre upload response
  * which is made by calling api/upload/pre_upload.php.
  *
- * @author Chris Najar
+ * @author
  */
 public class ResumableBitmap {
     private final int count;

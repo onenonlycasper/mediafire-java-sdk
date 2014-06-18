@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * nodes.
  *
- * @author Chris Najar
+ * @author
  */
 public class Node {
     private final String data;
