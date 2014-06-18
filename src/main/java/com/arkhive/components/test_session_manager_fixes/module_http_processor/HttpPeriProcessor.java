@@ -18,30 +18,22 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public final class HttpPeriProcessor {
     private static final String TAG = HttpPeriProcessor.class.getSimpleName();
-    private int connectionTimeout = Configuration.DEFAULT_HTTP_CONNECTION_TIMEOUT;
-    private int readTimeout = Configuration.DEFAULT_HTTP_READ_TIMEOUT;
+    private final Configuration configuration;
     private BlockingQueue<Runnable> workQueue;
     private PausableThreadPoolExecutor executor;
 
-    public HttpPeriProcessor() {
+    public HttpPeriProcessor(Configuration configuration) {
+        this.configuration = configuration;
         workQueue = new LinkedBlockingQueue<Runnable>();
-        executor = new PausableThreadPoolExecutor(10, workQueue);
+        executor = new PausableThreadPoolExecutor(configuration.getHttpPoolSize(), workQueue);
     }
 
     public int getConnectionTimeout() {
-        return connectionTimeout;
-    }
-
-    public void setConnectionTimeout(int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
+        return configuration.getHttpConnectionTimeout();
     }
 
     public int getReadTimeout() {
-        return readTimeout;
-    }
-
-    public void setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
+        return configuration.getHttpReadTimeout();
     }
 
     public void sendGetRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {

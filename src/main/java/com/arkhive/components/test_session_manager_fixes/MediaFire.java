@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes;
 
+import com.arkhive.components.test_session_manager_fixes.module_api.Api;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
@@ -12,14 +13,16 @@ public class MediaFire {
     private ApplicationCredentials applicationCredentials;
     private TokenFarm tokenFarm;
     private Configuration configuration;
+    private static Api api;
 
     private static MediaFire instance;
 
     private MediaFire(Configuration configuration) {
         this.configuration = configuration;
-        httpPeriProcessor = new HttpPeriProcessor();
-        applicationCredentials = new ApplicationCredentials();
+        httpPeriProcessor = new HttpPeriProcessor(configuration);
+        applicationCredentials = new ApplicationCredentials(configuration);
         tokenFarm = new TokenFarm(applicationCredentials, httpPeriProcessor);
+
     }
 
     public static MediaFire getInstance() {
@@ -31,18 +34,19 @@ public class MediaFire {
             instance = new MediaFire(configuration);
         } else {
             instance.shutdown();
+            instance = new MediaFire(configuration);
+            api = new Api(instance);
         }
 
         return instance;
     }
 
+    public Api apiCall() {
+        return api;
+    }
+
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
-        httpPeriProcessor.setConnectionTimeout(configuration.getHttpConnectionTimeout());
-        httpPeriProcessor.setReadTimeout(configuration.getHttpReadTimeout());
-        httpPeriProcessor.setCorePoolSize(configuration);
-        tokenFarm.setMinimumSessionTokens(configuration.getMinimumSessionTokens());
-        tokenFarm.setMaximumSessionTokens(configuration.getMaximumSessionTokens());
     }
 
     public HttpPeriProcessor getHttpPeriProcessor() {
@@ -61,13 +65,24 @@ public class MediaFire {
         return tokenFarm;
     }
 
+    /**
+     * Stars the Token Farm. This does nothing if application credentials have not been set. To set
+     * application credentials as validated then call ApplicationCredentials.setCredentialsValid(true)
+     */
     public void startup() {
-        tokenFarm.startup();
+        if (applicationCredentials.isCredentialsValid()) {
+            tokenFarm.startup();
+        }
     }
 
+    /**
+     * Shuts down the modules used by MediaFire and clears application credentials. A new instance of MediaFire will
+     * need to be created via MediaFire.newInstance(...)
+     */
     public void shutdown() {
         httpPeriProcessor.shutdown();
         tokenFarm.shutdown();
         applicationCredentials.clearCredentials();
+        instance = null;
     }
 }

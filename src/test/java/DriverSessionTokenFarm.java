@@ -7,6 +7,7 @@ import com.arkhive.components.test_session_manager_fixes.module_credentials.Appl
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,7 +27,12 @@ public class DriverSessionTokenFarm {
         configuration.setSessionTokensInBlockingQueueMinMax(1, 6);
 
         MediaFire mediaFire = MediaFire.newInstance(configuration);
+
+        Map<String, String> credentials = new HashMap<String, String>();
+        credentials.put("email", "arkhivetest@test.com");
+        credentials.put("password", "74107410");
+        mediaFire.getApplicationCredentials().setUserCredentials(credentials);
+        mediaFire.getApplicationCredentials().setCredentialsValid(true);
         mediaFire.startup();
     }
-
 }

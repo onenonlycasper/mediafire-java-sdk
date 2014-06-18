@@ -55,11 +55,11 @@ public class TokenFarm implements TokenFarmDistributor {
     }
 
     @Override
-    public void receiveNewSessionToken(ApiRequestObject apiResponseObject) {
+    public void receiveNewSessionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " receiveNewSessionToken()");
-        SessionToken sessionToken = (SessionToken) apiResponseObject.getToken();
-
-        if (!apiResponseObject.isSessionTokenInvalid()) {
+        SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
+        printInfo(apiRequestObject);
+        if (!apiRequestObject.isSessionTokenInvalid() && sessionToken != null) {
             try {
                 sessionTokens.add(sessionToken);
                 System.out.println(TAG + " added " + sessionToken.getTokenString());
@@ -70,6 +70,11 @@ public class TokenFarm implements TokenFarmDistributor {
         } else {
             getNewSessionToken();
         }
+    }
+
+    private void printInfo(ApiRequestObject apiResponseObject) {
+        System.out.println(TAG + " response string: " + apiResponseObject.getHttpResponseString());
+        System.out.println(TAG + " original url   : " + apiResponseObject.getConstructedUrl());
     }
 
     @Override

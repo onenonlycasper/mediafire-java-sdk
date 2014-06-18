@@ -1,5 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_credentials;
 
+import com.arkhive.components.test_session_manager_fixes.Configuration;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,8 +32,8 @@ public final class ApplicationCredentials {
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
-    public ApplicationCredentials() {
-        this(null, null);
+    public ApplicationCredentials(Configuration configuration) {
+        this(configuration.getAppId(), configuration.getApiKey());
     }
 
     /**

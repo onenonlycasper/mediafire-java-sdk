@@ -78,7 +78,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
         SessionToken sessionToken = null;
         // get the response from the api request object
         GetSessionTokenResponse response = (GetSessionTokenResponse) apiRequestObject.getApiResponse();
-        // extract the token string from the response object
+        // extract the token string and other values from the response object to set the values to the session token
         String tokenString = response.getSessionToken();
         String secretKey = response.getSecretKey();
         String time = response.getTime();
