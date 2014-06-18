@@ -1,6 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 
-import com.arkhive.components.api.ApiResponse;
+
 
 /**
  * This class represents the response received as a data structure when making the api call api/upload/pre_upload.php.

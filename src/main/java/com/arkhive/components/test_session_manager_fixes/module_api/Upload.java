@@ -57,7 +57,7 @@ public class Upload {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_CHECK);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadCheckResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -65,7 +65,7 @@ public class Upload {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_INSTANT);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadInstantResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -73,7 +73,7 @@ public class Upload {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_RESUMABLE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadResumableResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -81,7 +81,7 @@ public class Upload {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_POLL_UPLOAD);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadPollResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 }

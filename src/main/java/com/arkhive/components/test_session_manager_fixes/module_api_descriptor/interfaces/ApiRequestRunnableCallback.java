@@ -6,7 +6,7 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.A
 /**
  * Created by  on 6/16/2014.
  */
-public interface ApiRequestRunnableCallback {
+public interface ApiRequestRunnableCallback<T extends ApiResponse> {
     public void apiRequestProcessStarted();
-    public void apiRequestProcessFinished(ApiRequestObject apiRequestObject);
+    public void apiRequestProcessFinished(T apiResponse);
 }

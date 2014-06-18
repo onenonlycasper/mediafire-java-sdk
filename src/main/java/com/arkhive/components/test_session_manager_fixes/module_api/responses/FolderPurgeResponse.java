@@ -1,8 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 
-import com.arkhive.components.api.*;
-
-public class FolderPurgeResponse extends com.arkhive.components.api.ApiResponse {
+public class FolderPurgeResponse extends ApiResponse {
     //CHECKSTYLE:OFF
     private MyFilesRevision myfiles_revision;
     private String device_revision;

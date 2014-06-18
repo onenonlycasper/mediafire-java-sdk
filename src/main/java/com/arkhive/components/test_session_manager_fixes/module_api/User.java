@@ -1,6 +1,8 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UserSetAvatarResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UserGetAvatarResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.UserGetInfoResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.UserRegisterResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
@@ -99,7 +101,7 @@ public class User {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_INFO);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UserGetInfoResponse.class, callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -107,7 +109,7 @@ public class User {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_REGISTER);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UserRegisterResponse.class, callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -115,7 +117,7 @@ public class User {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_LINK_FACEBOOK);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(ApiResponse.class, callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -123,7 +125,7 @@ public class User {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_LINK_TWITTER);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(ApiResponse.class, callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -131,7 +133,7 @@ public class User {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_UNLINK_FACEBOOK);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(ApiResponse.class, callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -139,7 +141,7 @@ public class User {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_UNLINK_TWITTER);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(ApiResponse.class, callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -147,7 +149,7 @@ public class User {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_AVATAR);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UserGetAvatarResponse.class, callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -155,7 +157,7 @@ public class User {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_SET_AVATAR);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UserSetAvatarResponse.class, callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 }

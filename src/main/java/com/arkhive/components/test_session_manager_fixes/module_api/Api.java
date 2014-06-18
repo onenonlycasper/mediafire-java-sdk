@@ -2,6 +2,7 @@ package com.arkhive.components.test_session_manager_fixes.module_api;
 
 import com.arkhive.components.test_session_manager_fixes.MediaFire;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UserGetInfoResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
@@ -46,8 +47,8 @@ public class Api {
         return new BlockingApiGetRequest(new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
     }
 
-    static RunnableApiGetRequest createApiGetRequestRunnable(ApiRequestRunnableCallback callback, ApiRequestObject apiRequestObject) {
-        return new RunnableApiGetRequest(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
+    static <T extends ApiResponse> RunnableApiGetRequest<T> createApiGetRequestRunnable(Class<T> clazz, ApiRequestRunnableCallback<T> callback, ApiRequestObject apiRequestObject) {
+        return new RunnableApiGetRequest(clazz, callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
     }
 
 

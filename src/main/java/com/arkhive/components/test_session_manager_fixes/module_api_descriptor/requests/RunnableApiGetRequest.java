@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests;
 
+import com.arkhive.components.test_session_manager_fixes.module_api.Api;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
@@ -7,22 +8,26 @@ import com.arkhive.components.test_session_manager_fixes.module_http_processor.H
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
+import com.google.gson.Gson;
 
-public class RunnableApiGetRequest implements Runnable, HttpRequestCallback {
+public class RunnableApiGetRequest<T extends ApiResponse> implements Runnable, HttpRequestCallback {
     private static final String TAG = RunnableApiGetRequest.class.getSimpleName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
-    private ApiRequestRunnableCallback callback;
+    private Class<T> clazz;
+    private ApiRequestRunnableCallback<T> callback;
     private TokenFarmDistributor tokenFarmDistributor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
 
-    public RunnableApiGetRequest(ApiRequestRunnableCallback callback,
-                                 HttpProcessor httpPreProcessor,
-                                 HttpProcessor httpPostProcessor,
-                                 TokenFarmDistributor tokenFarmDistributor,
-                                 HttpPeriProcessor httpPeriProcessor,
-                                 ApiRequestObject apiRequestObject) {
+    public RunnableApiGetRequest(Class<T> clazz,
+                                     ApiRequestRunnableCallback<T> callback,
+                                     HttpProcessor httpPreProcessor,
+                                     HttpProcessor httpPostProcessor,
+                                     TokenFarmDistributor tokenFarmDistributor,
+                                     HttpPeriProcessor httpPeriProcessor,
+                                     ApiRequestObject apiRequestObject) {
+        this.clazz = clazz;
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
@@ -53,7 +58,7 @@ public class RunnableApiGetRequest implements Runnable, HttpRequestCallback {
             tokenFarmDistributor.returnSessionToken(apiRequestObject);
             // notify our callback that the request is being finished now
             if (callback != null) {
-                callback.apiRequestProcessFinished(apiRequestObject);
+                callback.apiRequestProcessFinished(new Gson().fromJson(Api.getResponseString(apiRequestObject.getHttpResponseString()), clazz));
             }
         }
     }
