@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_token_farm;
 
+import com.arkhive.components.test_session_manager_fixes.Configuration;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
@@ -24,9 +25,11 @@ public class TokenFarm implements TokenFarmDistributor {
     private HttpPeriProcessor httpPeriProcessor;
     private PausableThreadPoolExecutor executor;
     private BlockingQueue<SessionToken> sessionTokens;
+    private int minimumSessionTokens = Configuration.DEFAULT_MINIMUM_SESSION_TOKENS;
+    private int maximumSessionTokens = Configuration.DEFAULT_MAXIMUM_SESSION_TOKENS;
 
     public TokenFarm(ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
-        sessionTokens = new LinkedBlockingQueue<SessionToken>(6);
+        sessionTokens = new LinkedBlockingQueue<SessionToken>(maximumSessionTokens);
         this.applicationCredentials = applicationCredentials;
         this.httpPeriProcessor = httpPeriProcessor;
         executor = new PausableThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), Executors.defaultThreadFactory());
@@ -35,7 +38,7 @@ public class TokenFarm implements TokenFarmDistributor {
     public void shutdown() {
         System.out.println(TAG + " TokenFarm shutting down");
         sessionTokens.clear();
-        System.out.println(TAG + " TokenFarm shut down");
+        executor.shutdownNow();
     }
 
     private void getNewSessionToken() {
@@ -111,5 +114,21 @@ public class TokenFarm implements TokenFarmDistributor {
             System.out.println(TAG + " fetching a new session token");
             getNewSessionToken();
         }
+    }
+
+    public void setMinimumSessionTokens(int minimumSessionTokens) {
+        this.minimumSessionTokens = minimumSessionTokens;
+    }
+
+    public int getMinimumSessionTokens() {
+        return minimumSessionTokens;
+    }
+
+    public void setMaximumSessionTokens(int maximumSessionTokens) {
+        this.maximumSessionTokens = maximumSessionTokens;
+    }
+
+    public int getMaximumSessionTokens() {
+        return maximumSessionTokens;
     }
 }

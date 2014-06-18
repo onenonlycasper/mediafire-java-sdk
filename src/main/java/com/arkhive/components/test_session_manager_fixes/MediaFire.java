@@ -13,14 +13,48 @@ public class MediaFire {
     private TokenFarm tokenFarm;
     private Configuration configuration;
 
-    public MediaFire() {}
+    private static MediaFire instance;
+
+    private MediaFire(Configuration configuration) {
+        this.configuration = configuration;
+        httpPeriProcessor = new HttpPeriProcessor();
+        applicationCredentials = new ApplicationCredentials();
+        tokenFarm = new TokenFarm(applicationCredentials, httpPeriProcessor);
+    }
+
+    public static MediaFire getInstance() {
+        return instance;
+    }
+
+    public static MediaFire newInstance(Configuration configuration) {
+        if (instance == null) {
+            instance = new MediaFire(configuration);
+        } else {
+            instance.shutdown();
+        }
+
+        return instance;
+    }
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+        httpPeriProcessor.setConnectionTimeout(configuration.getHttpConnectionTimeout());
+        httpPeriProcessor.setReadTimeout(configuration.getHttpReadTimeout());
+        httpPeriProcessor.setCorePoolSize(configuration);
+        tokenFarm.setMinimumSessionTokens(configuration.getMinimumSessionTokens());
+        tokenFarm.setMaximumSessionTokens(configuration.getMaximumSessionTokens());
     }
 
     public HttpPeriProcessor getHttpPeriProcessor() {
         return httpPeriProcessor;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public ApplicationCredentials getApplicationCredentials() {
+        return applicationCredentials;
     }
 
     public TokenFarm getTokenFarm() {
@@ -28,10 +62,12 @@ public class MediaFire {
     }
 
     public void startup() {
-
+        tokenFarm.startup();
     }
 
     public void shutdown() {
-
+        httpPeriProcessor.shutdown();
+        tokenFarm.shutdown();
+        applicationCredentials.clearCredentials();
     }
 }

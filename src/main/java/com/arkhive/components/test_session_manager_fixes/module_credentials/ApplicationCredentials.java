@@ -18,17 +18,20 @@ public final class ApplicationCredentials {
     private Map<String, String> userCredentials = new HashMap<String, String>();
     private UserCredentialsType userCredentialsType;
 
-    private boolean credentialsSet;
     private boolean credentialsValid;
 
-    private final String appId;
-    private final String apiKey;
+    private String appId;
+    private String apiKey;
 
     public ApplicationCredentials(String appId, String apiKey) {
         this.appId = appId;
         this.apiKey = apiKey;
-        credentialsSet = false;
+        credentialsValid = false;
         userCredentialsType = UserCredentialsType.UNSET;
+    }
+
+    public ApplicationCredentials() {
+        this(null, null);
     }
 
     /**
@@ -70,7 +73,6 @@ public final class ApplicationCredentials {
 
     private void setCredentials(Map<String, String> credentials) {
         System.out.println(TAG + " setCredentials()");
-        credentialsSet = true;
         userCredentials = credentials;
     }
 
@@ -82,12 +84,6 @@ public final class ApplicationCredentials {
         System.out.println(TAG + " clearCredentials()");
         userCredentials.clear();
         userCredentialsType = UserCredentialsType.UNSET;
-        credentialsSet = false;
-    }
-
-    public boolean isCredentialsSet() {
-        System.out.println(TAG + " isCredentialsSet()");
-        return credentialsSet;
     }
 
     public boolean isCredentialsValid() {
