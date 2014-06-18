@@ -40,6 +40,8 @@ public class ApiUris {
     public static final String URI_DEVICE_GET_CHANGES = "/api/device/get_changes.php";
     public static final String URI_DEVICE_GET_STATUS = "/api/device/get_status.php";
 
-    public static final String DOMAIN_HTTP = "http://www.mediafire.com";
-    public static final String DOMAIN_HTTPS = "https://www.mediafire.com";
+    public static final String LIVE_HTTP = "http://www.mediafire.com";
+    public static final String LIVE_HTTPS = "https://www.mediafire.com";
+    public static final String DEV_HTTP = "http://dev.mediafire.com";
+    public static final String DEV_HTTPS = "https://dev.mediafire.com";
 }

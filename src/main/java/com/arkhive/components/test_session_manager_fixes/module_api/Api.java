@@ -1,6 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
 import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;

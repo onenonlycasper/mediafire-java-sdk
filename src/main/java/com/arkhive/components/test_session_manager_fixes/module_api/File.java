@@ -1,6 +1,5 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
-import com.arkhive.components.test_session_manager_fixes.MediaFire;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.*;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
@@ -15,7 +14,7 @@ import java.util.Map;
  */
 public class File {
     public Runnable copy(ApiRequestRunnableCallback callback,  Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_COPY);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_COPY);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -23,7 +22,7 @@ public class File {
     }
 
     public Runnable delete(ApiRequestRunnableCallback callback,  Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_DELETE);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_DELETE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -31,7 +30,7 @@ public class File {
     }
 
     public Runnable purge(ApiRequestRunnableCallback callback,  Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_PURGE);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_PURGE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -39,7 +38,7 @@ public class File {
     }
 
     public Runnable move(ApiRequestRunnableCallback callback,  Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_MOVE);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_MOVE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -47,7 +46,7 @@ public class File {
     }
 
     public Runnable update(ApiRequestRunnableCallback callback,  Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_UPDATE);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_UPDATE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -55,7 +54,7 @@ public class File {
     }
 
     public Runnable getInfo(ApiRequestRunnableCallback callback,  Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_GET_INFO);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_GET_INFO);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -64,7 +63,7 @@ public class File {
 
 
     public Runnable getLinks(ApiRequestRunnableCallback callback,  Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_GET_LINKS);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_GET_LINKS);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -72,7 +71,7 @@ public class File {
     }
 
     public FileCopyResponse copy(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_COPY);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_COPY);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
@@ -83,7 +82,7 @@ public class File {
     }
 
     public ApiResponse delete(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_DELETE);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_DELETE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
@@ -93,7 +92,7 @@ public class File {
     }
 
     public ApiResponse purge(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_PURGE);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_PURGE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
@@ -103,7 +102,7 @@ public class File {
     }
 
     public ApiResponse move(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_MOVE);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_MOVE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
@@ -113,7 +112,7 @@ public class File {
     }
 
     public ApiResponse update(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_UPDATE);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_UPDATE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
@@ -123,7 +122,7 @@ public class File {
     }
 
     public FileGetInfoResponse getInfo(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_GET_INFO);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_GET_INFO);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
@@ -134,7 +133,7 @@ public class File {
 
 
     public FileGetLinksResponse getLinks(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FILE_GET_LINKS);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_GET_LINKS);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);

@@ -1,15 +1,10 @@
 import com.arkhive.components.test_session_manager_fixes.Configuration;
 import com.arkhive.components.test_session_manager_fixes.MediaFire;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.DeviceGetChangesResponse;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.SystemGetInfoResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.*;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.*;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.RunnableApiGetRequest;
-import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
+import com.google.gson.Gson;
 
-import javax.print.attribute.standard.Media;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -44,27 +39,13 @@ public class DriverSessionTokenFarm {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Callback callback = new Callback();
-        if (mediaFire == null) {
-            System.out.println(TAG + " mediafire object is null");
-        }
 
-        if (mediaFire.apiCall() == null) {
-            System.out.println(TAG + " mediafire.apiCall() is null");
-        }
-
-        if (mediaFire.apiCall().system == null) {
-            System.out.println(TAG + " mediafire.apiCall().system is null");
-        }
-
-        System.out.println(TAG + " MAKING API CALL");
-        Runnable runnable = mediaFire.apiCall().system.getInfo(callback, null, null);
-        Thread thread = new Thread(runnable);
-        thread.start();
-        SystemGetInfoResponse response = mediaFire.apiCall().system.getInfo(null, null);
-        System.out.println(response.getTermsOfService().getTerms());
-
-        DeviceGetChangesResponse response2 = mediaFire.apiCall().device.getChanges(null, null);
+        System.out.println(TAG + " MAKING API CALLS");
+        SystemGetInfoResponse call1 = mediaFire.apiCall().system.getInfo(null, null);
+        DeviceGetStatusResponse call2 = mediaFire.apiCall().device.getStatus(null, null);
+        FolderGetContentsResponse call3 = mediaFire.apiCall().folder.getContents(null, null);
+        FolderGetInfoResponse call4 = mediaFire.apiCall().folder.getInfo(null, null);
+        UserGetInfoResponse call5 = mediaFire.apiCall().user.getInfo(null, null);
     }
 
     public static class Callback implements ApiRequestRunnableCallback {
@@ -77,6 +58,7 @@ public class DriverSessionTokenFarm {
         @Override
         public void apiRequestProcessFinished(ApiRequestObject apiRequestObject) {
             System.out.println(TAG + " apiRequestProcessFinished");
+
             System.out.println(TAG + " http response code: " + apiRequestObject.getHttpResponseCode());
             System.out.println(TAG + " http response code: " + apiRequestObject.getHttpResponseString());
         }

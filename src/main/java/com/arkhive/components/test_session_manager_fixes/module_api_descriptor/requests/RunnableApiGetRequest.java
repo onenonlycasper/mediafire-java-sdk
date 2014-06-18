@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests;
 
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;

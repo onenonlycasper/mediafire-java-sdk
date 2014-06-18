@@ -1,6 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
-import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ContactResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
@@ -14,24 +14,28 @@ import java.util.Map;
  * Created by on 6/18/2014.
  */
 public class Contact {
-    public void addContact(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_CONTACT_ADD);
+    public ApiResponse addContact(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_CONTACT_ADD);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), ApiResponse.class);
     }
 
-    public void deleteContact(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_CONTACT_DELETE);
+    public ApiResponse deleteContact(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_CONTACT_DELETE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
+        String response = apiRequestObject.getHttpResponseString();
+        return new Gson().fromJson(Api.getResponseString(response), ApiResponse.class);
     }
 
     public ContactResponse fetchContacts(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_CONTACT_FETCH);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_CONTACT_FETCH);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
@@ -41,7 +45,7 @@ public class Contact {
     }
 
     public Runnable addContact(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_CONTACT_ADD);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_CONTACT_ADD);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -49,7 +53,7 @@ public class Contact {
     }
 
     public Runnable deleteContact(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_CONTACT_DELETE);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_CONTACT_DELETE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -57,7 +61,7 @@ public class Contact {
     }
 
     public Runnable fetchContacts(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_CONTACT_FETCH);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_CONTACT_FETCH);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);

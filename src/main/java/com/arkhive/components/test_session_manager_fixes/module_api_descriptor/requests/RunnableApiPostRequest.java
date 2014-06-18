@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests;
 
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
@@ -11,17 +12,19 @@ public class RunnableApiPostRequest implements Runnable, HttpRequestCallback {
     private static final String TAG = RunnableApiGetRequest.class.getSimpleName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
+    private final Class<? extends ApiResponse> response;
     private ApiRequestRunnableCallback callback;
     private TokenFarmDistributor tokenFarmDistributor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
 
-    public RunnableApiPostRequest(ApiRequestRunnableCallback callback,
+    public RunnableApiPostRequest(Class<? extends ApiResponse> response, ApiRequestRunnableCallback callback,
                                   HttpProcessor httpPreProcessor,
                                   HttpProcessor httpPostProcessor,
                                   TokenFarmDistributor tokenFarmDistributor,
                                   HttpPeriProcessor httpPeriProcessor,
                                   ApiRequestObject apiRequestObject) {
+        this.response = response;
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;

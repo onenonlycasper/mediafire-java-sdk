@@ -1,9 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
-import com.arkhive.components.test_session_manager_fixes.MediaFire;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.DeviceGetChangesResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.DeviceGetStatusResponse;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadResumableResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.BlockingApiGetRequest;
@@ -17,7 +15,7 @@ import java.util.Map;
  */
 public class Device {
     public Runnable getChanges(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_DEVICE_GET_CHANGES);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_DEVICE_GET_CHANGES);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -25,7 +23,7 @@ public class Device {
     }
 
     public Runnable getStatus(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_DEVICE_GET_STATUS);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_DEVICE_GET_STATUS);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
@@ -33,22 +31,22 @@ public class Device {
     }
 
     public DeviceGetChangesResponse getChanges(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_DEVICE_GET_CHANGES);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_DEVICE_GET_CHANGES);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();
-        return new Gson().fromJson(Api.getResponseString(response), DeviceGetChangesResponse.class);
+        return new Gson().fromJson(Api.getResponseElement(response), DeviceGetChangesResponse.class);
     }
 
     public DeviceGetStatusResponse getStatus(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_DEVICE_GET_STATUS);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_DEVICE_GET_STATUS);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();
-        return new Gson().fromJson(Api.getResponseString(response), DeviceGetStatusResponse.class);
+        return new Gson().fromJson(Api.getResponseElement(response), DeviceGetStatusResponse.class);
     }
 }
