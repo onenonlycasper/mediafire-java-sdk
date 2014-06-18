@@ -7,6 +7,7 @@ import com.arkhive.components.test_session_manager_fixes.module_credentials.Appl
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
 
+import javax.print.attribute.standard.Media;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,5 +35,7 @@ public class DriverSessionTokenFarm {
         mediaFire.getApplicationCredentials().setUserCredentials(credentials);
         mediaFire.getApplicationCredentials().setCredentialsValid(true);
         mediaFire.startup();
+
+
     }
 }

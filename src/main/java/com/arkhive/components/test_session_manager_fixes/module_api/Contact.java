@@ -36,27 +36,27 @@ public class Contact {
         apiGetRequestRunnable.sendRequest();
     }
 
-    public Runnable addContact(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable addContact(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_CONTACT_ADD);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable deleteContact(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable deleteContact(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_CONTACT_DELETE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable fetchContacts(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable fetchContacts(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_CONTACT_FETCH);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 }

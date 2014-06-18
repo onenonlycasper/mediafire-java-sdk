@@ -12,19 +12,19 @@ import java.util.Map;
  * Created by Chris Najar on 6/18/2014.
  */
 public class Device {
-    public Runnable getChanges(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable getChanges(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_DEVICE_GET_CHANGES);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable getStatus(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable getStatus(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_DEVICE_GET_STATUS);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 

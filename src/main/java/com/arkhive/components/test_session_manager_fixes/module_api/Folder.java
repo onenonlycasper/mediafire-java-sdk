@@ -16,7 +16,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_COPY);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -24,7 +24,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_GET_REVISION);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -32,7 +32,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_PURGE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -40,7 +40,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_MOVE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -48,7 +48,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_CREATE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -56,7 +56,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_DELETE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -64,7 +64,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_SEARCH);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -72,7 +72,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_UPDATE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -80,7 +80,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_GET_CONTENT);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -88,7 +88,7 @@ public class Folder {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_FOLDER_GET_INFO);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 

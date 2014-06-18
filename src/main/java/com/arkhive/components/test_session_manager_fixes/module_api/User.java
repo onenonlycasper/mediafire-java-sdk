@@ -76,67 +76,67 @@ public class User {
         apiGetRequestRunnable.sendRequest();
     }
 
-    public Runnable getInfo(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable getInfo(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_USER_GET_INFO);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable register(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable register(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_USER_REGISTER);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable linkFacebook(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable linkFacebook(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_USER_LINK_FACEBOOK);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable linkTwitter(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable linkTwitter(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_USER_LINK_TWITTER);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable unlinkFacebook(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable unlinkFacebook(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_USER_UNLINK_FACEBOOK);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable unlinkTwitter(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable unlinkTwitter(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_USER_UNLINK_TWITTER);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable getAvatar(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable getAvatar(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_USER_GET_AVATAR);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable setAvatar(ApiRequestRunnableCallback callback, MediaFire mediaFire, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable setAvatar(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.DOMAIN_HTTP, ApiUris.URI_USER_SET_AVATAR);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback, mediaFire, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(callback,  apiRequestObject);
         return runnableApiGetRequest;
     }
 }

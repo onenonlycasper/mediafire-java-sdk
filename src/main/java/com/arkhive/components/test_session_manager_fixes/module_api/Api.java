@@ -40,7 +40,7 @@ public class Api {
         return new BlockingApiGetRequest(new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
     }
 
-    static RunnableApiGetRequest createApiGetRequestRunnable(ApiRequestRunnableCallback callback, MediaFire mediaFire, ApiRequestObject apiRequestObject) {
+    static RunnableApiGetRequest createApiGetRequestRunnable(ApiRequestRunnableCallback callback, ApiRequestObject apiRequestObject) {
         TokenFarm tokenFarm = mediaFire.getTokenFarm();
         HttpPeriProcessor httpPeriProcessor = mediaFire.getHttpPeriProcessor();
         return new RunnableApiGetRequest(callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
