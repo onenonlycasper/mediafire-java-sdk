@@ -21,7 +21,7 @@ public class MediaFire {
         this.configuration = configuration;
         httpPeriProcessor = new HttpPeriProcessor(configuration);
         applicationCredentials = new ApplicationCredentials(configuration);
-        tokenFarm = new TokenFarm(applicationCredentials, httpPeriProcessor);
+        tokenFarm = new TokenFarm(configuration, applicationCredentials, httpPeriProcessor);
         api = new Api(tokenFarm, httpPeriProcessor);
     }
 
