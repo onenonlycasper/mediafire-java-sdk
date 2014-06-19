@@ -1,9 +1,11 @@
 package com.arkhive.components.test_session_manager_fixes;
 
 import com.arkhive.components.test_session_manager_fixes.module_api.Api;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.ActionToken;
 
 /**
  * Created by Chris Najar on 6/17/2014.
@@ -12,13 +14,11 @@ public class MediaFire {
     private HttpPeriProcessor httpPeriProcessor;
     private ApplicationCredentials applicationCredentials;
     private TokenFarm tokenFarm;
-    private Configuration configuration;
     private Api api;
 
     private static MediaFire instance;
 
     private MediaFire(Configuration configuration) {
-        this.configuration = configuration;
         httpPeriProcessor = new HttpPeriProcessor(configuration);
         applicationCredentials = new ApplicationCredentials(configuration);
         tokenFarm = new TokenFarm(configuration, applicationCredentials, httpPeriProcessor);
@@ -44,9 +44,9 @@ public class MediaFire {
         return api;
     }
 
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
-    }
+//    public void setConfiguration(Configuration configuration) {
+//        this.configuration = configuration;
+//    }
 
 //    public HttpPeriProcessor getHttpPeriProcessor() {
 //        return httpPeriProcessor;
