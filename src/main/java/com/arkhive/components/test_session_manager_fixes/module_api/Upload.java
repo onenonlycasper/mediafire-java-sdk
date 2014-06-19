@@ -3,8 +3,7 @@ package com.arkhive.components.test_session_manager_fixes.module_api;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.*;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.BlockingApiGetRequest;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.RunnableApiGetRequest;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.*;
 import com.google.gson.Gson;
 
 import java.util.Map;
@@ -42,7 +41,7 @@ public class Upload {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_INSTANT);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
+        BlockingApiGetRequestUploadToken apiGetRequestRunnable = Api.createBlockingApiGetRequestUploadToken(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();
         return new Gson().fromJson(Api.getResponseString(response), UploadInstantResponse.class);
@@ -55,7 +54,7 @@ public class Upload {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_INSTANT);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadInstantResponse.class, callback, apiRequestObject);
+        RunnableApiGetRequestUploadToken runnableApiGetRequest = Api.createApiGetRequestRunnableUploadToken(UploadInstantResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
     //TODO: replace RunnableApiGetRequest with new class RunnableApiGetRequestUploadToken and fetch upload token instead of session token
@@ -66,7 +65,7 @@ public class Upload {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_RESUMABLE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadResumableResponse.class, callback, apiRequestObject);
+        RunnableApiPostRequestUploadToken runnableApiGetRequest = Api.createApiPostRequestRunnableUploadToken(UploadResumableResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
     //TODO: replace BlockingApiGetRequest with new class BlockingApiGetRequestUploadToken and fetch upload token instead of session token
@@ -76,7 +75,7 @@ public class Upload {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_RESUMABLE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
+        BlockingApiPostRequestUploadToken apiGetRequestRunnable = Api.createBlockingApiPostRequestUploadToken(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();
         return new Gson().fromJson(Api.getResponseString(response), UploadResumableResponse.class);
