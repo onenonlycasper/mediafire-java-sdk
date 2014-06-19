@@ -1,22 +1,19 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
-import com.arkhive.components.test_session_manager_fixes.MediaFire;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.UserGetInfoResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadInstantResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadResumableResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.BlockingApiGetRequest;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.RunnableApiGetRequest;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.*;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import java.util.Map;
 
 /**
  * Created by  on 6/17/2014.
@@ -45,14 +42,52 @@ public class Api {
         contact = new Contact();
     }
 
-    static BlockingApiGetRequest createBlockingApiGetRequest(ApiRequestObject apiRequestObject) {
-        return new BlockingApiGetRequest(new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
+    static BlockingApiGetRequest createBlockingApiGetRequest(
+            ApiRequestObject apiRequestObject) {
+        return new BlockingApiGetRequest(
+                new ApiRequestHttpPreProcessor(),
+                new ApiRequestHttpPostProcessor(),
+                tokenFarm,
+                httpPeriProcessor,
+                apiRequestObject);
     }
 
-    static <T extends ApiResponse> RunnableApiGetRequest<T> createApiGetRequestRunnable(Class<T> clazz, ApiRequestRunnableCallback<T> callback, ApiRequestObject apiRequestObject) {
-        return new RunnableApiGetRequest(clazz, callback, new ApiRequestHttpPreProcessor(), new ApiRequestHttpPostProcessor(), tokenFarm, httpPeriProcessor, apiRequestObject);
+    static <T extends ApiResponse> RunnableApiGetRequest<T> createApiGetRequestRunnable(
+            Class<T> clazz,
+            ApiRequestRunnableCallback<T> callback,
+            ApiRequestObject apiRequestObject) {
+        return new RunnableApiGetRequest(
+                clazz, callback,
+                new ApiRequestHttpPreProcessor(),
+                new ApiRequestHttpPostProcessor(),
+                tokenFarm, httpPeriProcessor,
+                apiRequestObject);
     }
 
+
+    public static BlockingApiGetRequestUploadToken createBlockingApiGetRequestUploadToken(
+            ApiRequestObject apiRequestObject) {
+        return null;
+    }
+
+    static <T extends ApiResponse>RunnableApiGetRequestUploadToken createApiGetRequestRunnableUploadToken(
+            Class<UploadInstantResponse> uploadInstantResponseClass,
+            ApiRequestRunnableCallback callback,
+            ApiRequestObject apiRequestObject) {
+        return null;
+    }
+
+    public static BlockingApiPostRequestUploadToken createBlockingApiPostRequestUploadToken(
+            ApiRequestObject apiRequestObject) {
+        return null;
+    }
+
+    static <T extends ApiResponse>RunnableApiPostRequestUploadToken createApiPostRequestRunnableUploadToken(
+            Class<UploadResumableResponse> uploadResumableResponseClass,
+            ApiRequestRunnableCallback callback,
+            ApiRequestObject apiRequestObject) {
+        return null;
+    }
 
 
     /**
