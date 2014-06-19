@@ -1,15 +1,22 @@
 package com.arkhive.components.test_session_manager_fixes.module_token_farm;
 
+import com.arkhive.components.sessionmanager.session.ActionTokenResponse;
 import com.arkhive.components.test_session_manager_fixes.Configuration;
 import com.arkhive.components.test_session_manager_fixes.module_api.ApiUris;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.RunnableApiGetRequest;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.runnables.HttpGetRequestRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables.GetImageActionTokenRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables.GetSessionTokenRunnable;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables.GetUploadActionTokenRunnable;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_action.GetActionTokenResponse;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_action.NewActionTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session.NewSessionTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session.NewSessionTokenHttpPreProcessor;
@@ -23,18 +30,27 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by  on 6/16/2014.
  */
-public class TokenFarm implements TokenFarmDistributor, HttpRequestCallback {
+public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallback<GetActionTokenResponse> {
     private static final String TAG = TokenFarm.class.getSimpleName();
-    private ApplicationCredentials applicationCredentials;
-    private HttpPeriProcessor httpPeriProcessor;
-    private PausableThreadPoolExecutor executor;
-    private BlockingQueue<SessionToken> sessionTokens;
+    private final Lock borrowImageTokenLock = new ReentrantLock();
+    private final Lock borrowUploadTokenLock = new ReentrantLock();
+    private final Condition imageTokenNotExpired = borrowImageTokenLock.newCondition();
+    private final Condition uploadTokenNotExpired = borrowUploadTokenLock.newCondition();
+    private final ApplicationCredentials applicationCredentials;
+    private final HttpPeriProcessor httpPeriProcessor;
+    private final PausableThreadPoolExecutor executor;
+    private final BlockingQueue<SessionToken> sessionTokens;
     private ActionToken uploadActionToken;
     private ActionToken imageActionToken;
+    private Object imageTokenLock = new Object();
+    private Object uploadTokenLock = new Object();
     private int minimumSessionTokens = Configuration.DEFAULT_MINIMUM_SESSION_TOKENS;
     private int maximumSessionTokens = Configuration.DEFAULT_MAXIMUM_SESSION_TOKENS;
 
@@ -50,44 +66,45 @@ public class TokenFarm implements TokenFarmDistributor, HttpRequestCallback {
     public void shutdown() {
         System.out.println(TAG + " TokenFarm shutting down");
         sessionTokens.clear();
+        borrowImageTokenLock.unlock();
+        borrowUploadTokenLock.unlock();
+        imageTokenNotExpired.signal();
+        uploadTokenNotExpired.signal();
+        imageActionToken = null;
+        uploadActionToken = null;
         executor.shutdownNow();
     }
 
     private void getNewSessionToken() {
         System.out.println(TAG + " getNewSessionToken()");
-        GetSessionTokenRunnable getSessionTokenRunnable = new GetSessionTokenRunnable(this, new NewSessionTokenHttpPreProcessor(), new NewSessionTokenHttpPostProcessor(), httpPeriProcessor, applicationCredentials);
+        GetSessionTokenRunnable getSessionTokenRunnable =
+                new GetSessionTokenRunnable(
+                        this,
+                        new NewSessionTokenHttpPreProcessor(),
+                        new NewSessionTokenHttpPostProcessor(),
+                        httpPeriProcessor,
+                        applicationCredentials);
         executor.execute(getSessionTokenRunnable);
     }
 
     private void getNewImageActionToken() {
         System.out.println(TAG + " getNewImageActionToken()");
-        if (imageActionToken != null && !imageActionToken.isExpired()) {
-            return;
-        }
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
-        Map<String, String> requiredParameters = new LinkedHashMap<String, String>();
-        requiredParameters.put("type", "image");
-        apiRequestObject.setRequiredParameters(requiredParameters);
-        Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
-        optionalParameters.put("lifespan", "1440");
-        apiRequestObject.setOptionalParameters(optionalParameters);
-        // 1 - callback is TokenFarm, callback is where processing occurs for action token.
-        // 2 - pre processor is same for regular requests since we ask TokenFarm for session token.
-        // 3 - post processor is different than regular api request because we don't "return" the token
-        // 4 - generated api request object with 24 hr lifespan and image type
-        // 5 - sending the request
-        HttpGetRequestRunnable getNewImageActionTokenRunnable =
-                new HttpGetRequestRunnable(
-                        this, // 1
-                        new ApiRequestHttpPreProcessor(), // 2
-                        new NewActionTokenHttpPostProcessor(), // 3
-                        apiRequestObject, // 4
-                        httpPeriProcessor); //5
-        executor.execute(getNewImageActionTokenRunnable);
+        GetImageActionTokenRunnable getImageActionTokenRunnable =
+                new GetImageActionTokenRunnable(
+                        new ApiRequestHttpPreProcessor(),
+                        new ApiRequestHttpPostProcessor(),
+                        this, httpPeriProcessor);
+        executor.execute(getImageActionTokenRunnable);
     }
 
     private void getNewUploadActionToken() {
         System.out.println(TAG + " getNewUploadActionToken()");
+        GetUploadActionTokenRunnable getUploadActionTokenRunnable =
+                new GetUploadActionTokenRunnable(
+                        new ApiRequestHttpPreProcessor(),
+                        new ApiRequestHttpPostProcessor(),
+                        this, httpPeriProcessor);
+        executor.execute(getUploadActionTokenRunnable);
     }
 
     public void startup() {
@@ -137,12 +154,14 @@ public class TokenFarm implements TokenFarmDistributor, HttpRequestCallback {
         SessionToken sessionToken = apiRequestObject.getSessionToken();
         boolean needToGetNewSessionToken = false;
         if (sessionToken == null) {
-            System.out.println(TAG + " request object did not have a session token, but it should have. need new session token");
+            System.out.println(TAG + " request object did not have a session token, " +
+                    "but it should have. need new session token");
             needToGetNewSessionToken = true;
         }
 
-        if (sessionToken != null && apiRequestObject.isSessionTokenInvalid()) {
-            System.out.println(TAG + " not returning session token. it is invalid or signature calculation went bad. need new session token");
+        if (sessionToken == null || apiRequestObject.isSessionTokenInvalid()) {
+            System.out.println(TAG + " not returning session token. it is invalid or signature " +
+                    "calculation went bad. need new session token");
             needToGetNewSessionToken = true;
         } else {
             System.out.println(TAG + " returning session token: " + sessionToken.getTokenString());
@@ -161,69 +180,124 @@ public class TokenFarm implements TokenFarmDistributor, HttpRequestCallback {
     }
 
     @Override
-    public void borrowActionToken(ApiRequestObject apiRequestObject, ActionToken.Type type) {
-        System.out.println(TAG + "borrowActionToken");
-        // if either the image action token or upload action token is expired or nearing expiration (4 hours)
-        // then request a new one before delivering. need to put wait on thread until the token is received.
+    public void borrowImageActionToken(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + "borrowImageActionToken");
+        // lock and fetch new token if necessary
+        borrowImageTokenLock.lock();
         if (imageActionToken == null || imageActionToken.isExpired()) {
+            getNewImageActionToken();
+        }
+        try {
+            // wait while we get an image action token, condition is that image
+            // action token is null or action token is expired or action token
+            // string is null
+            while (imageActionToken == null ||
+                    imageActionToken.isExpired() ||
+                    imageActionToken.getTokenString() == null) {
+                imageTokenNotExpired.await(45, TimeUnit.SECONDS);
+            }
+        } catch (InterruptedException e) {
+          apiRequestObject.addExceptionDuringRequest(e);
+        } finally {
+            borrowImageTokenLock.unlock();
+        }
+        // attach new one to apiRequestObject
+        apiRequestObject.setActionToken(imageActionToken);
+    }
 
+
+    @Override
+    public void borrowUploadActionToken(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + "borrowUploadActionToken");
+        // lock and fetch new token if necessary
+        borrowUploadTokenLock.lock();
+        if (uploadActionToken == null || uploadActionToken.isExpired()) {
+            getNewImageActionToken();
         }
-        if (type == ActionToken.Type.IMAGE) {
-            apiRequestObject.setActionToken(imageActionToken);
-        } else {
-            apiRequestObject.setActionToken(uploadActionToken);
+        try {
+            // wait while we get an image action token, condition is that image
+            // action token is null or action token is expired or action token
+            // string is null
+            while (uploadActionToken == null ||
+                    uploadActionToken.isExpired() ||
+                    uploadActionToken.getTokenString() == null) {
+                uploadTokenNotExpired.await(45, TimeUnit.SECONDS);
+            }
+        } catch (InterruptedException e) {
+            apiRequestObject.addExceptionDuringRequest(e);
+        } finally {
+            borrowUploadTokenLock.unlock();
         }
+        // attach new one to apiRequestObject
+        apiRequestObject.setActionToken(imageActionToken);
     }
 
     @Override
     public void receiveNewImageActionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " receiveNewImageActionToken()");
-        ActionToken actionToken = apiRequestObject.getActionToken();
-        if (!apiRequestObject.isActionTokenInvalid() && actionToken != null) {
-            // if we already have an upload action token then update the string user Token.setTokenString()
-            // if we do not have an upload action token then create a new one and set it.
-            if (imageActionToken != null) {
-                imageActionToken.setTokenString(actionToken.getTokenString());
-                System.out.println(TAG + " updated ActionToken: " + imageActionToken.getTokenString());
-            } else {
-                imageActionToken = ActionToken.newInstance(ActionToken.Type.IMAGE);
-                System.out.println(TAG + " added ActionToken: " + imageActionToken.getTokenString());
+        synchronized (imageTokenLock) {
+            if (imageActionToken != null &&
+                    !imageActionToken.isExpired() &&
+                    imageActionToken.getTokenString() != null) {
+                System.out.println(TAG + " received action token: " + imageActionToken.getTokenString() +
+                        ", type: " + imageActionToken.getType().toString() +
+                        ", expired: " + imageActionToken.isExpired());
+                return;
             }
-        } else {
-            getNewImageActionToken();
+            ActionToken actionToken = apiRequestObject.getActionToken();
+
+            if (actionToken == null) {
+                System.out.println(TAG + " action token received is null");
+            } else if (actionToken.getTokenString() == null) {
+                System.out.println(TAG + " action token received is null");
+            } else if (apiRequestObject.isActionTokenInvalid()) {
+                System.out.println(TAG + " action token received is invalid");
+            } else if (actionToken.getType() != ActionToken.Type.IMAGE) {
+                System.out.println(TAG + " action token received is not image type");
+            } else {
+                imageActionToken = actionToken;
+                System.out.println(TAG + " received action token: " + imageActionToken.getTokenString() +
+                        ", type: " + imageActionToken.getType().toString() +
+                        ", expired: " + imageActionToken.isExpired());
+            }
         }
     }
 
     @Override
     public void receiveNewUploadActionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " receiveNewUploadActionToken()");
-        ActionToken actionToken = apiRequestObject.getActionToken();
-        if (!apiRequestObject.isActionTokenInvalid() && actionToken != null) {
-            // if we already have an upload action token then update the string user Token.setTokenString()
-            // if we do not have an upload action token then create a new one and set it.
-            if (uploadActionToken != null) {
-                uploadActionToken.setTokenString(actionToken.getTokenString());
-                System.out.println(TAG + " updated ActionToken: " + uploadActionToken.getTokenString());
-            } else {
-                uploadActionToken = ActionToken.newInstance(ActionToken.Type.UPLOAD);
-                System.out.println(TAG + " added ActionToken: " + uploadActionToken.getTokenString());
+        synchronized (uploadTokenLock) {
+            if (uploadActionToken != null &&
+                    !uploadActionToken.isExpired() &&
+                    uploadActionToken.getTokenString() != null) {
+                System.out.println(TAG + " received action token: " + uploadActionToken.getTokenString() +
+                        ", type: " + uploadActionToken.getType().toString() +
+                        ", expired: " + uploadActionToken.isExpired());
+                return;
             }
-        } else {
-            getNewUploadActionToken();
+            ActionToken actionToken = apiRequestObject.getActionToken();
+            if (actionToken == null) {
+                System.out.println(TAG + " action token received is null");
+            } else if (actionToken.getTokenString() == null) {
+                System.out.println(TAG + " action token received is null");
+            } else if (apiRequestObject.isActionTokenInvalid()) {
+                System.out.println(TAG + " action token received is invalid");
+            } else if (actionToken.getType() != ActionToken.Type.UPLOAD) {
+                System.out.println(TAG + " action token received is not upload type");
+            } else {
+                uploadActionToken = actionToken;
+                System.out.println(TAG + " received action token: " + uploadActionToken.getTokenString() +
+                        ", type: " + uploadActionToken.getType().toString() +
+                        ", expired: " + uploadActionToken.isExpired());
+            }
         }
     }
 
-    /**
-     * HttpRequestCallback which is needed for callbacks from requesting ActionToken.
-     * @param apiRequestObject - the apiRequestObject
-     */
     @Override
-    public void httpRequestStarted(ApiRequestObject apiRequestObject) {
-
-    }
+    public void apiRequestProcessStarted() {}
 
     @Override
-    public void httpRequestFinished(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " httpRequestFinished()");
+    public void apiRequestProcessFinished(GetActionTokenResponse gsonResponse) {
+        System.out.println(TAG + " apiRequestProcessFinished()");
     }
 }
