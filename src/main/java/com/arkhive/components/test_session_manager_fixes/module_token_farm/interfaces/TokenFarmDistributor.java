@@ -11,7 +11,8 @@ public interface TokenFarmDistributor {
     public void returnSessionToken(ApiRequestObject apiRequestObject);
     public void receiveNewSessionToken(ApiRequestObject apiRequestObject);
 
-    public void borrowActionToken(ApiRequestObject apiRequestObject, ActionToken.Type type);
+    public void borrowUploadActionToken(ApiRequestObject apiRequestObject);
+    public void borrowImageActionToken(ApiRequestObject apiRequestObject);
     public void receiveNewImageActionToken(ApiRequestObject apiRequestObject);
     public void receiveNewUploadActionToken(ApiRequestObject apiRequestObject);
 }
