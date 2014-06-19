@@ -31,6 +31,7 @@ public class Api {
     public System system;
     public Device device;
     public Upload upload;
+    public Contact contact;
 
     public Api(TokenFarm tokenFarm, HttpPeriProcessor httpPeriProcessor) {
         this.tokenFarm = tokenFarm;
@@ -41,6 +42,7 @@ public class Api {
         system = new System();
         device = new Device();
         upload = new Upload();
+        contact = new Contact();
     }
 
     static BlockingApiGetRequest createBlockingApiGetRequest(ApiRequestObject apiRequestObject) {

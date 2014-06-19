@@ -39,7 +39,7 @@ public class ApiResponse {
     }
 
     public final boolean hasError() {
-        return error == null;
+        return error != null;
     }
 
     public final String getTime() {
