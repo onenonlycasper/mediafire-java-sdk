@@ -43,7 +43,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
         String uri = apiPostRequestObject.getUri();
         Map<String, String> requiredParameters = apiPostRequestObject.getRequiredParameters();
         Map<String, String> optionalParameters = apiPostRequestObject.getOptionalParameters();
-        Token token = apiPostRequestObject.getToken();
+        Token token = apiPostRequestObject.getSessionToken();
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -105,7 +105,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
     private String createPreHashStringForApiCallSignature(ApiRequestObject apiRequestObject, String generatedUri) {
         // formula is session token secret key + time + uri (concatenated)
         // get session token from api request object
-        SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
+        SessionToken sessionToken = (SessionToken) apiRequestObject.getSessionToken();
         // get secret key from session token
         String secretKeyString = sessionToken.getSecretKey();
         int secretKey = Integer.valueOf(secretKeyString) % 256;

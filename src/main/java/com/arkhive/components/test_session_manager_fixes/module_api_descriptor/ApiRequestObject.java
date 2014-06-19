@@ -28,6 +28,7 @@ public final class ApiRequestObject {
     private ActionToken actionToken;
     private SessionToken sessionToken;
     private boolean sessionTokenInvalid;
+    private boolean actionTokenInvalid;
 
     public ApiRequestObject(String domain, String uri) {
         this.domain = domain;
@@ -127,18 +128,20 @@ public final class ApiRequestObject {
         this.payload = payload;
     }
 
-    public Token getToken() {
-        return actionToken == null ? sessionToken : actionToken;
+    public SessionToken getSessionToken() {
+        return sessionToken;
     }
 
-    public void setToken(Token token) {
-        if (ActionToken.class.isInstance(token)) {
-            actionToken = (ActionToken) token;
-            sessionToken = null;
-        } else {
-            sessionToken = (SessionToken) token;
-            actionToken = null;
-        }
+    public void setSessionToken(SessionToken sessionToken) {
+        this.sessionToken = sessionToken;
+    }
+
+    public ActionToken getActionToken() {
+        return actionToken;
+    }
+
+    public void setActionToken(ActionToken actionToken) {
+        this.actionToken = actionToken;
     }
 
     public boolean isSessionTokenInvalid() {
@@ -147,5 +150,13 @@ public final class ApiRequestObject {
 
     public void setSessionTokenInvalid(boolean sessionTokenInvalid) {
         this.sessionTokenInvalid = sessionTokenInvalid;
+    }
+
+    public boolean isActionTokenInvalid() {
+        return actionTokenInvalid;
+    }
+
+    public void setActionTokenInvalid(boolean actionTokenInvalid) {
+        this.actionTokenInvalid = actionTokenInvalid;
     }
 }

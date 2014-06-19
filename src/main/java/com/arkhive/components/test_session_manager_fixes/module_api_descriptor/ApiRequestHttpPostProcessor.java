@@ -17,7 +17,7 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " processApiRequestObject()");
-        if (apiRequestObject.getToken() != null) {
+        if (apiRequestObject.getSessionToken() != null) {
             printData(apiRequestObject);
         }
         String jsonResponse = apiRequestObject.getHttpResponseString();
@@ -38,7 +38,7 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
 
         if (apiResponse.needNewKey()) {
             System.out.println(TAG + " need new key");
-            SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
+            SessionToken sessionToken = apiRequestObject.getSessionToken();
             updateSecretKey(sessionToken);
         }
     }
@@ -93,9 +93,9 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
             System.out.println(TAG + " required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
         }
 
-        System.out.println(TAG + " token used: " + apiRequestObject.getToken().getTokenString());
-        if (SessionToken.class.isInstance(apiRequestObject.getToken())) {
-            SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
+        System.out.println(TAG + " token used: " + apiRequestObject.getSessionToken().getTokenString());
+        if (SessionToken.class.isInstance(apiRequestObject.getSessionToken())) {
+            SessionToken sessionToken = (SessionToken) apiRequestObject.getSessionToken();
             System.out.println(TAG + " session token secret key used: " + sessionToken.getSecretKey());
             System.out.println(TAG + " session token time used: " + sessionToken.getTime());
         }

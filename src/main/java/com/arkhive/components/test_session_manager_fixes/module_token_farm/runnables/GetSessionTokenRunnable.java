@@ -67,7 +67,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
             // attach the response to the object
             apiRequestObject.setApiResponse(response);
             // extract the SessionToken from the response
-            apiRequestObject.setToken(getSessionTokenFromApiRequestObject());
+            apiRequestObject.setSessionToken(getSessionTokenFromApiRequestObject());
             // now that we have our token, we need to make a callback to the token factory
             callback.receiveNewSessionToken(apiRequestObject);
         }
@@ -88,7 +88,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
         // if the token string is null then there was some sort of a problem so do not attach the session token object
         // to the api request object
         if (tokenString != null) {
-            sessionToken = SessionToken.newInstance("ST from " + Thread.currentThread().getName());
+            sessionToken = SessionToken.newInstance();
             sessionToken.setTokenString(tokenString);
             sessionToken.setSecretKey(secretKey);
             sessionToken.setTime(time);

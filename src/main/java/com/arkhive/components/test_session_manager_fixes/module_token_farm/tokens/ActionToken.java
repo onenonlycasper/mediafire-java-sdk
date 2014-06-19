@@ -6,17 +6,17 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm.toke
 public final class ActionToken extends Token {
     private final Type type;
 
-    private ActionToken(Type type, String id) {
-        super(id);
+    private ActionToken(Type type) {
+        super();
         this.type = type;
     }
 
-    public static ActionToken newInstance(Type type, String id) {
+    public static ActionToken newInstance(Type type) {
         if (type == null) {
             return null;
         }
 
-        return new ActionToken(type, id);
+        return new ActionToken(type);
     }
 
     public Type getType() {

@@ -8,6 +8,7 @@ import com.arkhive.components.test_session_manager_fixes.module_token_farm.inter
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables.GetSessionTokenRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session.NewSessionTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session.NewSessionTokenHttpPreProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.ActionToken;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 
@@ -25,6 +26,8 @@ public class TokenFarm implements TokenFarmDistributor {
     private HttpPeriProcessor httpPeriProcessor;
     private PausableThreadPoolExecutor executor;
     private BlockingQueue<SessionToken> sessionTokens;
+    private ActionToken uploadActionToken;
+    private ActionToken imageActionToken;
     private int minimumSessionTokens = Configuration.DEFAULT_MINIMUM_SESSION_TOKENS;
     private int maximumSessionTokens = Configuration.DEFAULT_MAXIMUM_SESSION_TOKENS;
 
@@ -47,18 +50,27 @@ public class TokenFarm implements TokenFarmDistributor {
         executor.execute(getSessionTokenRunnable);
     }
 
+    private void getNewImageActionToken() {
+        System.out.println(TAG + " getNewImageActionToken()");
+    }
+
+    private void getNewUploadActionToken() {
+        System.out.println(TAG + " getNewUploadActionToken()");
+    }
+
     public void startup() {
         System.out.println(TAG + " startup()");
         for (int i = 0; i < sessionTokens.remainingCapacity(); i++) {
             getNewSessionToken();
         }
+        getNewImageActionToken();
+        getNewUploadActionToken();
     }
 
     @Override
     public void receiveNewSessionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " receiveNewSessionToken()");
-        SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
-        printInfo(apiRequestObject);
+        SessionToken sessionToken = (SessionToken) apiRequestObject.getSessionToken();
         if (!apiRequestObject.isSessionTokenInvalid() && sessionToken != null) {
             try {
                 sessionTokens.add(sessionToken);
@@ -70,11 +82,6 @@ public class TokenFarm implements TokenFarmDistributor {
         } else {
             getNewSessionToken();
         }
-    }
-
-    private void printInfo(ApiRequestObject apiResponseObject) {
-        System.out.println(TAG + " response string: " + apiResponseObject.getHttpResponseString());
-        System.out.println(TAG + " original url   : " + apiResponseObject.getConstructedUrl());
     }
 
     @Override
@@ -89,13 +96,13 @@ public class TokenFarm implements TokenFarmDistributor {
             apiRequestObject.addExceptionDuringRequest(e);
             System.out.println(TAG + " no session token borrowed, interrupted.");
         }
-        apiRequestObject.setToken(sessionToken);
+        apiRequestObject.setSessionToken(sessionToken);
     }
 
     @Override
     public void returnSessionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " returnSessionToken");
-        SessionToken sessionToken = (SessionToken) apiRequestObject.getToken();
+        SessionToken sessionToken = apiRequestObject.getSessionToken();
         boolean needToGetNewSessionToken = false;
         if (sessionToken == null) {
             System.out.println(TAG + " request object did not have a session token, but it should have. need new session token");
@@ -118,6 +125,49 @@ public class TokenFarm implements TokenFarmDistributor {
         if (needToGetNewSessionToken) {
             System.out.println(TAG + " fetching a new session token");
             getNewSessionToken();
+        }
+    }
+
+    @Override
+    public void borrowActionToken(ApiRequestObject apiRequestObject, ActionToken.Type type) {
+        System.out.println(TAG + "borrowActionToken");
+    }
+
+    @Override
+    public void receiveNewImageActionToken(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + " receiveNewImageActionToken()");
+        ActionToken actionToken = apiRequestObject.getActionToken();
+        if (!apiRequestObject.isActionTokenInvalid() && actionToken != null) {
+            // if we already have an upload action token then update the string user Token.setTokenString()
+            // if we do not have an upload action token then create a new one and set it.
+            if (imageActionToken != null) {
+                imageActionToken.setTokenString(actionToken.getTokenString());
+                System.out.println(TAG + " updated ActionToken: " + imageActionToken.getTokenString());
+            } else {
+                imageActionToken = ActionToken.newInstance(ActionToken.Type.IMAGE);
+                System.out.println(TAG + " added ActionToken: " + imageActionToken.getTokenString());
+            }
+        } else {
+            getNewImageActionToken();
+        }
+    }
+
+    @Override
+    public void receiveNewUploadActionToken(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + " receiveNewUploadActionToken()");
+        ActionToken actionToken = apiRequestObject.getActionToken();
+        if (!apiRequestObject.isActionTokenInvalid() && actionToken != null) {
+            // if we already have an upload action token then update the string user Token.setTokenString()
+            // if we do not have an upload action token then create a new one and set it.
+            if (uploadActionToken != null) {
+                uploadActionToken.setTokenString(actionToken.getTokenString());
+                System.out.println(TAG + " updated ActionToken: " + uploadActionToken.getTokenString());
+            } else {
+                uploadActionToken = ActionToken.newInstance(ActionToken.Type.UPLOAD);
+                System.out.println(TAG + " added ActionToken: " + uploadActionToken.getTokenString());
+            }
+        } else {
+            getNewUploadActionToken();
         }
     }
 

@@ -7,27 +7,18 @@ import com.arkhive.components.test_session_manager_fixes.module_token_farm.token
  */
 public abstract class Token implements TokenInterface {
     private static final String TAG = Token.class.getSimpleName();
-    private String token;
-    private final String id;
+    private volatile String token;
 
-    protected Token(String id) {
-        System.out.println(TAG + " Token created: " + id);
-        this.id = id;
-    }
-
-    public String getId() {
-        System.out.println(TAG + " getId()");
-        return id;
-    }
+    protected Token() {}
 
     @Override
-    public String getTokenString() {
+    public synchronized String getTokenString() {
         System.out.println(TAG + " getTokenString()");
         return token;
     }
 
     @Override
-    public void setTokenString(String token) {
+    public synchronized void setTokenString(String token) {
         System.out.println(TAG + " setTokenString()");
         this.token = token;
     }

@@ -5,15 +5,15 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm.toke
  */
 public final class SessionToken extends Token {
     private String time;
-    private String secretKey;
+    private volatile String secretKey;
     private String pkey;
 
-    private SessionToken(String id) {
-        super(id);
+    private SessionToken() {
+        super();
     }
 
-    public static SessionToken newInstance(String id) {
-        return new SessionToken(id);
+    public static SessionToken newInstance() {
+        return new SessionToken();
     }
 
     public void setTime(String time) {
@@ -28,14 +28,8 @@ public final class SessionToken extends Token {
         this.secretKey = secretKey;
     }
 
-    public String getSecretKey() {
+    public synchronized String getSecretKey() {
         return secretKey;
-    }
-
-    public void updateSecretKey() {
-        long newKey = Long.valueOf(secretKey) * 16807;
-        newKey = newKey % 2147483647;
-        secretKey = String.valueOf(newKey);
     }
 
     public void setPkey(String pkey) {
