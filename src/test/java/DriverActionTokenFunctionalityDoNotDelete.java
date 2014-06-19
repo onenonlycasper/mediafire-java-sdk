@@ -1,5 +1,6 @@
 import com.arkhive.components.test_session_manager_fixes.Configuration;
 import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,5 +33,11 @@ public class DriverActionTokenFunctionalityDoNotDelete {
         mediaFire.getApplicationCredentials().setUserCredentials(credentials);
         mediaFire.getApplicationCredentials().setCredentialsValid(true);
         mediaFire.startup();
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
