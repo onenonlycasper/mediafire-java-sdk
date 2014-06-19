@@ -1,5 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables;
 
+import com.arkhive.components.test_session_manager_fixes.Configuration;
+import com.arkhive.components.test_session_manager_fixes.module_api.ApiUris;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
@@ -54,7 +56,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
             // send request to http handler
             httpPeriProcessor.sendGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             try {
-                wait(10000);
+                wait(Configuration.DEFAULT_HTTP_CONNECTION_TIMEOUT);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 apiRequestObject.addExceptionDuringRequest(e);
@@ -98,7 +100,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     }
 
     private ApiRequestObject createApiRequestObjectForNewSessionToken() {
-        ApiRequestObject apiRequestObject = new ApiRequestObject("https://www.mediafire.com", "/api/1.0/user/get_session_token.php");
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTPS, ApiUris.URI_USER_GET_SESSION_TOKEN);
         Map<String, String> optionalParameters = constructOptionalParameters();
         Map<String, String> requiredParameters = constructRequiredParameters(applicationCredentials);
         apiRequestObject.setRequiredParameters(optionalParameters);

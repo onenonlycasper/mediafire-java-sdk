@@ -44,4 +44,7 @@ public class ApiUris {
     public static final String LIVE_HTTPS = "https://www.mediafire.com";
     public static final String DEV_HTTP = "http://dev.mediafire.com";
     public static final String DEV_HTTPS = "https://dev.mediafire.com";
+
+    public static final String URI_USER_GET_SESSION_TOKEN = "/api/1.0/user/get_session_token.php";
+    public static final String URI_USER_GET_ACTION_TOKEN = "/api/1.0/user/get_action_token.php";
 }
