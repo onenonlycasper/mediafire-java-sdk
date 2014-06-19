@@ -37,7 +37,7 @@ public class ApiUris {
     public static final String URI_UPLOAD_INSTANT = "/api/upload/instant.php";
     public static final String URI_UPLOAD_POLL_UPLOAD = "/api/upload/poll_upload.php";
     public static final String URI_UPLOAD_RESUMABLE = "/api/upload/resumable.php";
-    public static final String URI_DEVICE_GET_CHANGES = "/api/device/get_changes.php";
+    public static final String URI_DEVICE_GET_CHANGES = "/api/1.0/device/get_changes.php";
     public static final String URI_DEVICE_GET_STATUS = "/api/device/get_status.php";
 
     public static final String LIVE_HTTP = "http://www.mediafire.com";

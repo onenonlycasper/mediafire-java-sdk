@@ -58,7 +58,8 @@ public class RunnableApiPostRequest<T extends ApiResponse> implements Runnable, 
             tokenFarmDistributor.returnSessionToken(apiRequestObject);
             // notify our callback that the request is being finished now
             if (callback != null) {
-                callback.apiRequestProcessFinished(new Gson().fromJson(Api.getResponseString(apiRequestObject.getHttpResponseString()), clazz));
+                T response = new Gson().fromJson(Api.getResponseString(apiRequestObject.getHttpResponseString()), clazz);
+                callback.apiRequestProcessFinished(response);
             }
         }
     }
