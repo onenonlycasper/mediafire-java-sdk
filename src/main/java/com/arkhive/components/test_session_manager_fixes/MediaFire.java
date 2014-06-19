@@ -48,21 +48,21 @@ public class MediaFire {
         this.configuration = configuration;
     }
 
-    public HttpPeriProcessor getHttpPeriProcessor() {
-        return httpPeriProcessor;
-    }
+//    public HttpPeriProcessor getHttpPeriProcessor() {
+//        return httpPeriProcessor;
+//    }
 
-    public Configuration getConfiguration() {
-        return configuration;
-    }
+//    public Configuration getConfiguration() {
+//        return configuration;
+//    }
 
     public ApplicationCredentials getApplicationCredentials() {
         return applicationCredentials;
     }
 
-    public TokenFarm getTokenFarm() {
-        return tokenFarm;
-    }
+//    public TokenFarm getTokenFarm() {
+//        return tokenFarm;
+//    }
 
     /**
      * Stars the Token Farm. This does nothing if application credentials have not been set. To set
