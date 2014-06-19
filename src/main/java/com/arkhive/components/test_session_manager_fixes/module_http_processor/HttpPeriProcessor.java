@@ -48,10 +48,6 @@ public final class HttpPeriProcessor {
         executor.execute(httpPostRequestRunnable);
     }
 
-    public void setCorePoolSize(Configuration configuration) {
-        executor.setCorePoolSize(configuration.getHttpPoolSize());
-    }
-
     public void shutdown() {
         System.out.println(TAG + " HttpPeriProcessor shutting down");
         executor.pause();
