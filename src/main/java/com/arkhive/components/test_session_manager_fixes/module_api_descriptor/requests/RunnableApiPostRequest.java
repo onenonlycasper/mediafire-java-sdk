@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests;
 
+import com.arkhive.components.test_session_manager_fixes.Configuration;
 import com.arkhive.components.test_session_manager_fixes.module_api.Api;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
@@ -50,7 +51,7 @@ public class RunnableApiPostRequest<T extends ApiResponse> implements Runnable, 
             httpPeriProcessor.sendPostRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             // wait until we get a response from http handler (or 10 seconds pass)
             try {
-                wait(35000);
+                wait(Configuration.DEFAULT_HTTP_CONNECTION_TIMEOUT);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

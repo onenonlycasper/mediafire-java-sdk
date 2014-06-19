@@ -1,5 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests;
 
+import com.arkhive.components.test_session_manager_fixes.Configuration;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
@@ -35,7 +36,7 @@ public class BlockingApiGetRequest implements HttpRequestCallback {
             httpPeriProcessor.sendGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             // wait until we get a response from http handler (or 10 seconds pass)
             try {
-                wait(10000);
+                wait(Configuration.DEFAULT_HTTP_CONNECTION_TIMEOUT);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
