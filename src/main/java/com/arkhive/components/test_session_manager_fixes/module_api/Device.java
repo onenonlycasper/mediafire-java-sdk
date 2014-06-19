@@ -14,23 +14,20 @@ import java.util.Map;
  * Created by Chris Najar on 6/18/2014.
  */
 public class Device {
-    public Runnable getChanges(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable getChanges(
+            ApiRequestRunnableCallback callback, Map<String,
+            String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_DEVICE_GET_CHANGES);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(DeviceGetChangesResponse.class, callback, apiRequestObject);
+        RunnableApiGetRequest runnableApiGetRequest =
+                Api.createApiGetRequestRunnable(DeviceGetChangesResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
-    public Runnable getStatus(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_DEVICE_GET_STATUS);
-        apiRequestObject.setOptionalParameters(optionalParameters);
-        apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(DeviceGetStatusResponse.class, callback, apiRequestObject);
-        return runnableApiGetRequest;
-    }
-
-    public DeviceGetChangesResponse getChanges(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public DeviceGetChangesResponse getChanges(
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_DEVICE_GET_CHANGES);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
@@ -40,7 +37,20 @@ public class Device {
         return new Gson().fromJson(Api.getResponseString(response), DeviceGetChangesResponse.class);
     }
 
-    public DeviceGetStatusResponse getStatus(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable getStatus(
+            ApiRequestRunnableCallback callback,
+            Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_DEVICE_GET_STATUS);
+        apiRequestObject.setOptionalParameters(optionalParameters);
+        apiRequestObject.setRequiredParameters(requiredParameters);
+        RunnableApiGetRequest runnableApiGetRequest =
+                Api.createApiGetRequestRunnable(DeviceGetStatusResponse.class, callback, apiRequestObject);
+        return runnableApiGetRequest;
+    }
+
+    public DeviceGetStatusResponse getStatus(
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_DEVICE_GET_STATUS);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
