@@ -1,17 +1,24 @@
 package com.arkhive.components.test_session_manager_fixes.module_token_farm;
 
 import com.arkhive.components.test_session_manager_fixes.Configuration;
+import com.arkhive.components.test_session_manager_fixes.module_api.ApiUris;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.runnables.HttpGetRequestRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables.GetSessionTokenRunnable;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_action.NewActionTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session.NewSessionTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session.NewSessionTokenHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.ActionToken;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -20,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by  on 6/16/2014.
  */
-public class TokenFarm implements TokenFarmDistributor {
+public class TokenFarm implements TokenFarmDistributor, HttpRequestCallback {
     private static final String TAG = TokenFarm.class.getSimpleName();
     private ApplicationCredentials applicationCredentials;
     private HttpPeriProcessor httpPeriProcessor;
@@ -31,7 +38,9 @@ public class TokenFarm implements TokenFarmDistributor {
     private int minimumSessionTokens = Configuration.DEFAULT_MINIMUM_SESSION_TOKENS;
     private int maximumSessionTokens = Configuration.DEFAULT_MAXIMUM_SESSION_TOKENS;
 
-    public TokenFarm(ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
+    public TokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
+        minimumSessionTokens = configuration.getMinimumSessionTokens();
+        maximumSessionTokens = configuration.getMaximumSessionTokens();
         sessionTokens = new LinkedBlockingQueue<SessionToken>(maximumSessionTokens);
         this.applicationCredentials = applicationCredentials;
         this.httpPeriProcessor = httpPeriProcessor;
@@ -52,6 +61,29 @@ public class TokenFarm implements TokenFarmDistributor {
 
     private void getNewImageActionToken() {
         System.out.println(TAG + " getNewImageActionToken()");
+        if (imageActionToken != null && !imageActionToken.isExpired()) {
+            return;
+        }
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
+        Map<String, String> requiredParameters = new LinkedHashMap<String, String>();
+        requiredParameters.put("type", "image");
+        apiRequestObject.setRequiredParameters(requiredParameters);
+        Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
+        optionalParameters.put("lifespan", "1440");
+        apiRequestObject.setOptionalParameters(optionalParameters);
+        // 1 - callback is TokenFarm, callback is where processing occurs for action token.
+        // 2 - pre processor is same for regular requests since we ask TokenFarm for session token.
+        // 3 - post processor is different than regular api request because we don't "return" the token
+        // 4 - generated api request object with 24 hr lifespan and image type
+        // 5 - sending the request
+        HttpGetRequestRunnable getNewImageActionTokenRunnable =
+                new HttpGetRequestRunnable(
+                        this, // 1
+                        new ApiRequestHttpPreProcessor(), // 2
+                        new NewActionTokenHttpPostProcessor(), // 3
+                        apiRequestObject, // 4
+                        httpPeriProcessor); //5
+        executor.execute(getNewImageActionTokenRunnable);
     }
 
     private void getNewUploadActionToken() {
@@ -70,7 +102,7 @@ public class TokenFarm implements TokenFarmDistributor {
     @Override
     public void receiveNewSessionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " receiveNewSessionToken()");
-        SessionToken sessionToken = (SessionToken) apiRequestObject.getSessionToken();
+        SessionToken sessionToken = apiRequestObject.getSessionToken();
         if (!apiRequestObject.isSessionTokenInvalid() && sessionToken != null) {
             try {
                 sessionTokens.add(sessionToken);
@@ -131,6 +163,16 @@ public class TokenFarm implements TokenFarmDistributor {
     @Override
     public void borrowActionToken(ApiRequestObject apiRequestObject, ActionToken.Type type) {
         System.out.println(TAG + "borrowActionToken");
+        // if either the image action token or upload action token is expired or nearing expiration (4 hours)
+        // then request a new one before delivering. need to put wait on thread until the token is received.
+        if (imageActionToken == null || imageActionToken.isExpired()) {
+
+        }
+        if (type == ActionToken.Type.IMAGE) {
+            apiRequestObject.setActionToken(imageActionToken);
+        } else {
+            apiRequestObject.setActionToken(uploadActionToken);
+        }
     }
 
     @Override
@@ -171,19 +213,17 @@ public class TokenFarm implements TokenFarmDistributor {
         }
     }
 
-    public void setMinimumSessionTokens(int minimumSessionTokens) {
-        this.minimumSessionTokens = minimumSessionTokens;
+    /**
+     * HttpRequestCallback which is needed for callbacks from requesting ActionToken.
+     * @param apiRequestObject - the apiRequestObject
+     */
+    @Override
+    public void httpRequestStarted(ApiRequestObject apiRequestObject) {
+
     }
 
-    public int getMinimumSessionTokens() {
-        return minimumSessionTokens;
-    }
-
-    public void setMaximumSessionTokens(int maximumSessionTokens) {
-        this.maximumSessionTokens = maximumSessionTokens;
-    }
-
-    public int getMaximumSessionTokens() {
-        return maximumSessionTokens;
+    @Override
+    public void httpRequestFinished(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + " httpRequestFinished()");
     }
 }
