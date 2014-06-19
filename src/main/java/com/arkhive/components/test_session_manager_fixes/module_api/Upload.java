@@ -13,7 +13,9 @@ import java.util.Map;
  * Created by Chris Najar on 6/18/2014.
  */
 public class Upload {
-    public UploadCheckResponse checkUpload(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public UploadCheckResponse checkUpload(
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_CHECK);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
@@ -23,7 +25,20 @@ public class Upload {
         return new Gson().fromJson(Api.getResponseString(response), UploadCheckResponse.class);
     }
 
-    public UploadInstantResponse instantUpload(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable checkUpload(
+            ApiRequestRunnableCallback callback,
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_CHECK);
+        apiRequestObject.setOptionalParameters(optionalParameters);
+        apiRequestObject.setRequiredParameters(requiredParameters);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadCheckResponse.class, callback, apiRequestObject);
+        return runnableApiGetRequest;
+    }
+    //TODO: replace BlockingApiGetRequest with new class BlockingApiGetRequestUploadToken and fetch upload token instead of session token
+    public UploadInstantResponse instantUpload(
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_INSTANT);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
@@ -32,8 +47,32 @@ public class Upload {
         String response = apiRequestObject.getHttpResponseString();
         return new Gson().fromJson(Api.getResponseString(response), UploadInstantResponse.class);
     }
-
-    public UploadResumableResponse resumableUpload(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    //TODO: replace RunnableApiGetRequest with new class RunnableApiGetRequestUploadToken and fetch upload token instead of session token
+    public Runnable instantUpload(
+            ApiRequestRunnableCallback callback,
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_INSTANT);
+        apiRequestObject.setOptionalParameters(optionalParameters);
+        apiRequestObject.setRequiredParameters(requiredParameters);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadInstantResponse.class, callback, apiRequestObject);
+        return runnableApiGetRequest;
+    }
+    //TODO: replace RunnableApiGetRequest with new class RunnableApiGetRequestUploadToken and fetch upload token instead of session token
+    public Runnable resumableUpload(
+            ApiRequestRunnableCallback callback,
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_RESUMABLE);
+        apiRequestObject.setOptionalParameters(optionalParameters);
+        apiRequestObject.setRequiredParameters(requiredParameters);
+        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadResumableResponse.class, callback, apiRequestObject);
+        return runnableApiGetRequest;
+    }
+    //TODO: replace BlockingApiGetRequest with new class BlockingApiGetRequestUploadToken and fetch upload token instead of session token
+    public UploadResumableResponse resumableUpload(
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_RESUMABLE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
@@ -43,7 +82,9 @@ public class Upload {
         return new Gson().fromJson(Api.getResponseString(response), UploadResumableResponse.class);
     }
 
-    public UploadPollResponse pollUpload(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public UploadPollResponse pollUpload(
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_POLL_UPLOAD);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
@@ -53,31 +94,10 @@ public class Upload {
         return new Gson().fromJson(Api.getResponseString(response), UploadPollResponse.class);
     }
 
-    public Runnable checkUpload(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_CHECK);
-        apiRequestObject.setOptionalParameters(optionalParameters);
-        apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadCheckResponse.class, callback, apiRequestObject);
-        return runnableApiGetRequest;
-    }
-
-    public Runnable instantUpload(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_INSTANT);
-        apiRequestObject.setOptionalParameters(optionalParameters);
-        apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadInstantResponse.class, callback, apiRequestObject);
-        return runnableApiGetRequest;
-    }
-
-    public Runnable resumableUpload(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_RESUMABLE);
-        apiRequestObject.setOptionalParameters(optionalParameters);
-        apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadResumableResponse.class, callback, apiRequestObject);
-        return runnableApiGetRequest;
-    }
-
-    public Runnable pollUpload(ApiRequestRunnableCallback callback, Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable pollUpload(
+            ApiRequestRunnableCallback callback,
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_POLL_UPLOAD);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);

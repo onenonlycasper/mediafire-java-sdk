@@ -13,7 +13,9 @@ import java.util.Map;
  * Created by Chris Najar on 6/18/2014.
  */
 public class System {
-    public Runnable getInfo(ApiRequestRunnableCallback callback,Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public Runnable getInfo(
+            ApiRequestRunnableCallback callback,Map<String,
+            String> requiredParameters, Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_SYSTEM_GET_INFO);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
@@ -21,7 +23,9 @@ public class System {
         return runnableApiGetRequest;
     }
 
-    public SystemGetInfoResponse getInfo(Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
+    public SystemGetInfoResponse getInfo(
+            Map<String, String> requiredParameters,
+            Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_SYSTEM_GET_INFO);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
