@@ -1,11 +1,9 @@
 package com.arkhive.components.test_session_manager_fixes;
 
 import com.arkhive.components.test_session_manager_fixes.module_api.Api;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.ActionToken;
 
 /**
  * Created by Chris Najar on 6/17/2014.
@@ -48,9 +46,9 @@ public class MediaFire {
 //        this.configuration = configuration;
 //    }
 
-//    public HttpPeriProcessor getHttpPeriProcessor() {
-//        return httpPeriProcessor;
-//    }
+    public HttpPeriProcessor getHttpPeriProcessor() {
+        return httpPeriProcessor;
+    }
 
 //    public Configuration getConfiguration() {
 //        return configuration;
@@ -60,9 +58,9 @@ public class MediaFire {
         return applicationCredentials;
     }
 
-//    public TokenFarm getTokenFarm() {
-//        return tokenFarm;
-//    }
+    public TokenFarm getTokenFarm() {
+        return tokenFarm;
+    }
 
     /**
      * Stars the Token Farm. This does nothing if application credentials have not been set. To set

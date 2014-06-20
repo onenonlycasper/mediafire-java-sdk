@@ -1,22 +1,20 @@
-package com.arkhive.components.test_session_manager_fixes.module_api_descriptor;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors;
 
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.Token;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by  on 6/15/2014.
+ * Created by on 6/19/2014.
  */
-public final class ApiRequestHttpPreProcessor implements HttpProcessor {
-    private static final String TAG = ApiRequestHttpPreProcessor.class.getSimpleName();
-    public ApiRequestHttpPreProcessor() {}
+public class UploadTokenHttpPreProcessor implements HttpProcessor {
+    private static final String TAG = UploadTokenHttpPreProcessor.class.getSimpleName();
+    public UploadTokenHttpPreProcessor() {}
 
     /**
      * processes an api request prior to making an http request.
@@ -43,7 +41,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
         String uri = apiPostRequestObject.getUri();
         Map<String, String> requiredParameters = apiPostRequestObject.getRequiredParameters();
         Map<String, String> optionalParameters = apiPostRequestObject.getOptionalParameters();
-        Token token = apiPostRequestObject.getSessionToken();
+        Token token = apiPostRequestObject.getActionToken();
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -74,25 +72,11 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
         // prior to generating the signature we need to clean up the url (replace first & with ?)
         generatedUri = cleanupUrlString(generatedUri);
 
-        // if there is a token attached to the api request object then we need to calculate the signature correctly
-        // using information from the attached session token and the uri (which contains uri, token, parameters, etc.
-        String signature;
-        signature = createPreHashStringForApiCallSignature(apiPostRequestObject, generatedUri);
-        signature = createHash(signature);
-
         StringBuilder fullUrlBuilder = new StringBuilder();
         fullUrlBuilder.append(domain);
         fullUrlBuilder.append(generatedUri);
 
-        if (token != null && SessionToken.class.isInstance(token)) {
-            fullUrlBuilder.append("&signature=");
-            fullUrlBuilder.append(signature);
-        }
-
         String completedUrl = fullUrlBuilder.toString();
-
-
-        completedUrl = cleanupUrlString(completedUrl);
 
         try {
             return new URL(completedUrl);
@@ -100,24 +84,6 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
             apiPostRequestObject.addExceptionDuringRequest(e);
             return null;
         }
-    }
-
-    private String createPreHashStringForApiCallSignature(ApiRequestObject apiRequestObject, String generatedUri) {
-        // formula is session token secret key + time + uri (concatenated)
-        // get session token from api request object
-        SessionToken sessionToken = apiRequestObject.getSessionToken();
-        // get secret key from session token
-        String secretKeyString = sessionToken.getSecretKey();
-        int secretKey = Integer.valueOf(secretKeyString) % 256;
-        // get time from session token
-        String time = sessionToken.getTime();
-        // construct pre hash signature
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(secretKey);
-        stringBuilder.append(time);
-        stringBuilder.append(generatedUri);
-        // return constructed pre hash signature
-        return stringBuilder.toString();
     }
 
     /**
@@ -140,10 +106,10 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
     }
 
     /**
-     * Returns the url portion of a request which contains the session token. in other words, &session_token=1234
+     * Returns the url portion of a request which contains the action token. in other words, &session_token=1234
      * where 1234 is the value retrieved from the parameter passed.
      *
-     * @param token - the Token to get the session token string from.
+     * @param token - the Token to get the action token string from.
      * @return a completed string.
      */
     private String constructParametersForUrl(Token token) {
@@ -175,34 +141,5 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
         }
 
         return cleanedUrlString;
-    }
-
-    /**
-     * calculates an MD5 hash for a given string
-     *
-     * @param hashTarget - the string to get the md5 hash of.
-     * @return - a String which represents the MD5 hash of the parameter passed UNLESS a NoSuchAlgorithmException occurs
-     * in that case the original string will be returned.
-     */
-    private String createHash(String hashTarget) {
-        String signature;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-
-            md.update(hashTarget.getBytes());
-
-            byte byteData[] = md.digest();
-
-            //convert the byte to hex format method 1
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < byteData.length; i++) {
-                sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            signature = sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            signature = hashTarget;
-        }
-        return signature;
     }
 }

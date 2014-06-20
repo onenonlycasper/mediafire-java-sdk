@@ -3,12 +3,12 @@ package com.arkhive.components.test_session_manager_fixes.module_token_farm.runn
 import com.arkhive.components.test_session_manager_fixes.Configuration;
 import com.arkhive.components.test_session_manager_fixes.module_api.Api;
 import com.arkhive.components.test_session_manager_fixes.module_api.ApiUris;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.GetActionTokenResponse;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_action.GetActionTokenResponse;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.ActionToken;
 import com.google.gson.Gson;
 

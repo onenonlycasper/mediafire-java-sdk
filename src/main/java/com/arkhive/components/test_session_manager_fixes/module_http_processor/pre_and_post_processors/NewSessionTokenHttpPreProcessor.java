@@ -1,4 +1,4 @@
-package com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors;
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;

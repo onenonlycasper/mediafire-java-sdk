@@ -1,6 +1,7 @@
 import com.arkhive.components.test_session_manager_fixes.Configuration;
 import com.arkhive.components.test_session_manager_fixes.MediaFire;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,6 +39,40 @@ public class DriverActionTokenFunctionalityDoNotDelete {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        Map<String, String> params = new LinkedHashMap<String, String>();
+        params.put("filename", "IMAG1705.jpg");
+        params.put("hash", "d63c288c572865309fb4da37b4c9874181eb69459643203f4a8937603d25f529");
+        params.put("size", "1210118");
+        System.out.println(TAG + " MAKING API CALLS");
+        for (int i = 0; i < 50; i++) {
+            System.out.println("loop: " + i);
+            new Thread(mediaFire.apiCall().upload.instantUpload(new GenericCallback(), params, null)).start();
+        }
+    }
+
+    public static class GenericCallback implements ApiRequestRunnableCallback {
+        @Override
+        public void apiRequestProcessStarted() {
+            System.out.println("apiRequestProcessStarted()");
+        }
+        @Override
+        public void apiRequestProcessFinished(ApiResponse gsonResponse) {
+            System.out.println("apiRequestProcessFinished()");
+            if (gsonResponse.hasError()) {
+                errors++;
+            }
+
+            if (gsonResponse.getError() == 105) {
+                sessionTokenErrors++;
+            }
+
+            if (gsonResponse.getError() == 127) {
+                signatureErrors++;
+            }
+            System.out.println("Total Errors:         " + errors);
+            System.out.println("Session Token Errors: " + sessionTokenErrors);
+            System.out.println("Signature Errors:     " + signatureErrors);
         }
     }
 }

@@ -1,23 +1,23 @@
-package com.arkhive.components.test_session_manager_fixes.module_api_descriptor;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors;
 
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * Created by  on 6/15/2014.
+ * Created by Chris Najar on 6/19/2014.
  */
-public final class ApiRequestHttpPostProcessor implements HttpProcessor {
+public class UploadTokenHttpPostProcessor implements HttpProcessor {
     private static final String TAG = ApiRequestHttpPostProcessor.class.getSimpleName();
-    public ApiRequestHttpPostProcessor() {}
+    public UploadTokenHttpPostProcessor() {}
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " processApiRequestObject()");
-        if (apiRequestObject.getSessionToken() != null) {
+        if (apiRequestObject.getActionToken() != null) {
             printData(apiRequestObject);
         }
         String jsonResponse = apiRequestObject.getHttpResponseString();
@@ -28,30 +28,13 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
 
         // get the generic api response from the response.
         ApiResponse apiResponse = new Gson().fromJson(jsonElement, ApiResponse.class);
-        // if the session token is invalid or expired then set the flag (so TokenFarm knows)
+        // if the action token is invalid or expired then set the flag (so TokenFarm knows)
         // if the signature is invalid then set the flag (so TokenFarm knows)
         if (apiResponse.getError() == 105 || apiResponse.getError() == 127) {
-            apiRequestObject.setSessionTokenInvalid(true);
+            apiRequestObject.setActionTokenInvalid(true);
         } else {
-            apiRequestObject.setSessionTokenInvalid(false);
+            apiRequestObject.setActionTokenInvalid(false);
         }
-
-        if (apiResponse.needNewKey()) {
-            System.out.println(TAG + " need new key");
-            SessionToken sessionToken = apiRequestObject.getSessionToken();
-            updateSecretKey(sessionToken);
-        }
-    }
-
-    public void updateSecretKey(SessionToken sessionToken) {
-        System.out.println(TAG + " updateSecretKey()");
-        String secretKey = sessionToken.getSecretKey();
-        long newKey = Long.valueOf(secretKey) * 16807;
-        newKey = newKey % 2147483647;
-        System.out.println(TAG + " updated secret key from: " + secretKey + " to " + newKey);
-        secretKey = String.valueOf(newKey);
-        sessionToken.setSecretKey(secretKey);
-
     }
 
     /**
@@ -93,12 +76,7 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
             System.out.println(TAG + " required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
         }
 
-        System.out.println(TAG + " token used: " + apiRequestObject.getSessionToken().getTokenString());
-        if (SessionToken.class.isInstance(apiRequestObject.getSessionToken())) {
-            SessionToken sessionToken = (SessionToken) apiRequestObject.getSessionToken();
-            System.out.println(TAG + " session token secret key used: " + sessionToken.getSecretKey());
-            System.out.println(TAG + " session token time used: " + sessionToken.getTime());
-        }
+        System.out.println(TAG + " token used: " + apiRequestObject.getActionToken().getTokenString());
         System.out.println(TAG + " original url: " + apiRequestObject.getConstructedUrl());
     }
 }

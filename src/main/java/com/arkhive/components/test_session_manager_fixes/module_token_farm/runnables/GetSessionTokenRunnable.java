@@ -7,8 +7,8 @@ import com.arkhive.components.test_session_manager_fixes.module_credentials.Appl
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session.GetSessionTokenResponse;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session.NewSessionTokenHttpPostProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.GetSessionTokenResponse;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.NewSessionTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.google.gson.Gson;

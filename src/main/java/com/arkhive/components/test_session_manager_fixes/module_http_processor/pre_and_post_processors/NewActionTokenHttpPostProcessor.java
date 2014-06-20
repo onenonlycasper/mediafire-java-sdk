@@ -1,7 +1,7 @@
-package com.arkhive.components.test_session_manager_fixes.module_token_farm.token_session;
+package com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors;
 
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -9,14 +9,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * Created by  on 6/15/2014.
+ * Created by on 6/18/2014.
  */
-public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
-    private static final String TAG = NewSessionTokenHttpPostProcessor.class.getSimpleName();
-    public NewSessionTokenHttpPostProcessor() {}
+public class NewActionTokenHttpPostProcessor implements HttpProcessor {
+    private static final String TAG = NewActionTokenHttpPostProcessor.class.getSimpleName();
 
+    @Override
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " processApiRequestObject()");
+        if (apiRequestObject.getActionToken() != null) {
+            printData(apiRequestObject);
+        }
         String jsonResponse = apiRequestObject.getHttpResponseString();
         JsonElement jsonElement = getResponseElement(jsonResponse);
         if (jsonElement == null) {
@@ -28,9 +31,9 @@ public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
         // if the session token is invalid or expired then set the flag (so TokenFarm knows)
         // if the signature is invalid then set the flag (so TokenFarm knows)
         if (apiResponse.getError() == 105 || apiResponse.getError() == 127) {
-            apiRequestObject.setSessionTokenInvalid(true);
+            apiRequestObject.setActionTokenInvalid(true);
         } else {
-            apiRequestObject.setSessionTokenInvalid(false);
+            apiRequestObject.setActionTokenInvalid(false);
         }
     }
 
@@ -60,4 +63,21 @@ public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
         }
         return returnJson;
     }
+
+    public void printData(ApiRequestObject apiRequestObject) {
+        System.out.println(TAG + " response code: " + apiRequestObject.getHttpResponseCode());
+        System.out.println(TAG + " response string: " + apiRequestObject.getHttpResponseString());
+        System.out.println(TAG + " domain used: " + apiRequestObject.getDomain());
+        System.out.println(TAG + " uri used: " + apiRequestObject.getUri());
+        for (String key : apiRequestObject.getRequiredParameters().keySet()) {
+            System.out.println(TAG + " required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
+        }
+        for (String key : apiRequestObject.getOptionalParameters().keySet()) {
+            System.out.println(TAG + " required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
+        }
+
+        System.out.println(TAG + " token used: " + apiRequestObject.getActionToken().getTokenString());
+        System.out.println(TAG + " original url: " + apiRequestObject.getConstructedUrl());
+    }
+
 }
