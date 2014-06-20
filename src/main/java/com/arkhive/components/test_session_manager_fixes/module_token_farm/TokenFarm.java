@@ -221,7 +221,7 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
             borrowUploadTokenLock.unlock();
         }
         // attach new one to apiRequestObject
-        apiRequestObject.setActionToken(imageActionToken);
+        apiRequestObject.setActionToken(uploadActionToken);
     }
 
     @Override
