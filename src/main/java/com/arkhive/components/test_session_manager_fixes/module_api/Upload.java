@@ -34,7 +34,7 @@ public class Upload {
         RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadCheckResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
-    //TODO: replace BlockingApiGetRequest with new class BlockingApiGetRequestUploadToken and fetch upload token instead of session token
+
     public UploadInstantResponse instantUpload(
             Map<String, String> requiredParameters,
             Map<String, String> optionalParameters) {
@@ -46,7 +46,7 @@ public class Upload {
         String response = apiRequestObject.getHttpResponseString();
         return new Gson().fromJson(Api.getResponseString(response), UploadInstantResponse.class);
     }
-    //TODO: replace RunnableApiGetRequest with new class RunnableApiGetRequestUploadToken and fetch upload token instead of session token
+
     public Runnable instantUpload(
             ApiRequestRunnableCallback callback,
             Map<String, String> requiredParameters,
@@ -57,7 +57,7 @@ public class Upload {
         RunnableApiGetRequestUploadToken runnableApiGetRequest = Api.createApiGetRequestRunnableUploadToken(UploadInstantResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
-    //TODO: replace RunnableApiGetRequest with new class RunnableApiGetRequestUploadToken and fetch upload token instead of session token
+
     public Runnable resumableUpload(
             ApiRequestRunnableCallback callback,
             Map<String, String> requiredParameters,
@@ -68,7 +68,7 @@ public class Upload {
         RunnableApiPostRequestUploadToken runnableApiGetRequest = Api.createApiPostRequestRunnableUploadToken(UploadResumableResponse.class, callback, apiRequestObject);
         return runnableApiGetRequest;
     }
-    //TODO: replace BlockingApiGetRequest with new class BlockingApiGetRequestUploadToken and fetch upload token instead of session token
+
     public UploadResumableResponse resumableUpload(
             Map<String, String> requiredParameters,
             Map<String, String> optionalParameters) {
