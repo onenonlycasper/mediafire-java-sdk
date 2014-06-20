@@ -63,7 +63,7 @@ public class GetUploadActionTokenRunnable implements Runnable, HttpRequestCallba
                 String actionTokenString = response.getActionToken();
                 if (actionTokenString != null) {
                     actionToken.setTokenString(response.getActionToken());
-                    actionToken.setExpiration(System.currentTimeMillis() + 45000);
+                    actionToken.setExpiration(System.currentTimeMillis() + 86400000);
                     apiRequestObject.setActionToken(actionToken);
                     apiRequestObject.setActionTokenInvalid(false);
                 } else {
@@ -92,7 +92,7 @@ public class GetUploadActionTokenRunnable implements Runnable, HttpRequestCallba
 
     public static Map<String, String> constructOptionalParameters() {
         Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
-        optionalParameters.put(OPTIONAL_PARAMETER_LIFESPAN, "1");
+        optionalParameters.put(OPTIONAL_PARAMETER_LIFESPAN, "1440");
         optionalParameters.put(OPTIONAL_PARAMETER_RESPONSE_FORMAT, "json");
         return optionalParameters;
     }

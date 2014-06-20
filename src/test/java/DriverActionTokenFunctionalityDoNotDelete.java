@@ -45,9 +45,12 @@ public class DriverActionTokenFunctionalityDoNotDelete {
         for (int i = 0; i < 6000; i++) {
             System.out.println("loop: " + i);
             Map<String, String> params = new LinkedHashMap<String, String>();
-            params.put("filename", "IMAG1705.jpg");
-            params.put("hash", "d63c288c572865309fb4da37b4c9874181eb69459643203f4a8937603d25f529");
-            params.put("size", "1210118");
+//            params.put("filename", "test_" + i + ".jpg");
+//            params.put("hash", "d63c288c572865309fb4da37b4c9874181eb69459643203f4a8937603d25f529");
+//            params.put("size", "1210118");
+            params.put("filename", "test_" + i + ".jpg");
+            params.put("hash", "f521fce6fff2aba6b29f7c60b32d00677cea19206057c04910c2e4cc4af12d22");
+            params.put("size", "8917");
             new Thread(mediaFire.apiCall().upload.instantUpload(new GenericCallback(), params, null)).start();
             try {
                 Thread.sleep(100);
