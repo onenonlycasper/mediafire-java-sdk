@@ -40,14 +40,20 @@ public class DriverActionTokenFunctionalityDoNotDelete {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Map<String, String> params = new LinkedHashMap<String, String>();
-        params.put("filename", "IMAG1705.jpg");
-        params.put("hash", "d63c288c572865309fb4da37b4c9874181eb69459643203f4a8937603d25f529");
-        params.put("size", "1210118");
+
         System.out.println(TAG + " MAKING API CALLS");
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 6000; i++) {
             System.out.println("loop: " + i);
+            Map<String, String> params = new LinkedHashMap<String, String>();
+            params.put("filename", "IMAG1705.jpg");
+            params.put("hash", "d63c288c572865309fb4da37b4c9874181eb69459643203f4a8937603d25f529");
+            params.put("size", "1210118");
             new Thread(mediaFire.apiCall().upload.instantUpload(new GenericCallback(), params, null)).start();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
