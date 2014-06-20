@@ -202,9 +202,10 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
     public void borrowUploadActionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + "borrowUploadActionToken");
         // lock and fetch new token if necessary
+        System.out.println(TAG + "---starting lock: " + System.currentTimeMillis());
         borrowUploadTokenLock.lock();
         if (uploadActionToken == null || uploadActionToken.isExpired()) {
-            getNewImageActionToken();
+            getNewUploadActionToken();
         }
         try {
             // wait while we get an image action token, condition is that image
@@ -219,6 +220,7 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
             apiRequestObject.addExceptionDuringRequest(e);
         } finally {
             borrowUploadTokenLock.unlock();
+            System.out.println(TAG + "---unlock lock: " + System.currentTimeMillis());
         }
         // attach new one to apiRequestObject
         apiRequestObject.setActionToken(uploadActionToken);
