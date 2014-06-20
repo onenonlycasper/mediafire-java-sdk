@@ -39,7 +39,8 @@ public final class ActionToken extends Token {
      * @return false if not within 1 hour of expiration, true if at most within 1 hour of expiration.
      */
     public boolean isExpired() {
-        return (System.currentTimeMillis() + 3600000) >= expiration;
+        return (System.currentTimeMillis() + 15000) >= expiration;
+//        return (System.currentTimeMillis() + 3600000) >= expiration;
     }
 
     public enum Type {
