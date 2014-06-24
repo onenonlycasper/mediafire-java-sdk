@@ -8,7 +8,7 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.i
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.ActionTokenDistributor;
 import com.google.gson.Gson;
 
 /**
@@ -19,7 +19,7 @@ public class RunnableApiPostRequestUploadToken<T extends ApiResponse> implements
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ApiRequestRunnableCallback<T> callback;
-    private TokenFarmDistributor tokenFarmDistributor;
+    private ActionTokenDistributor actionTokenDistributor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
     private Class<T> clazz;
@@ -28,14 +28,14 @@ public class RunnableApiPostRequestUploadToken<T extends ApiResponse> implements
                                              ApiRequestRunnableCallback<T> callback,
                                              HttpProcessor httpPreProcessor,
                                              HttpProcessor httpPostProcessor,
-                                             TokenFarmDistributor tokenFarmDistributor,
+                                             ActionTokenDistributor actionTokenDistributor,
                                              HttpPeriProcessor httpPeriProcessor,
                                              ApiRequestObject apiRequestObject) {
         this.clazz = clazz;
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
-        this.tokenFarmDistributor = tokenFarmDistributor;
+        this.actionTokenDistributor = actionTokenDistributor;
         this.apiRequestObject = apiRequestObject;
         this.httpPeriProcessor = httpPeriProcessor;
     }
@@ -49,7 +49,7 @@ public class RunnableApiPostRequestUploadToken<T extends ApiResponse> implements
                 callback.apiRequestProcessStarted();
             }
             // "borrow" an upload token from the TokenFarm
-            tokenFarmDistributor.borrowUploadActionToken(apiRequestObject);
+            actionTokenDistributor.borrowUploadActionToken(apiRequestObject);
             // send request to http handler
             httpPeriProcessor.sendPostRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             // wait until we get a response from http handler (or 10 seconds pass)

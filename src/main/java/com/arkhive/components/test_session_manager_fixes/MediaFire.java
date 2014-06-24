@@ -20,7 +20,7 @@ public class MediaFire {
         httpPeriProcessor = new HttpPeriProcessor(configuration);
         applicationCredentials = new ApplicationCredentials(configuration);
         tokenFarm = new TokenFarm(configuration, applicationCredentials, httpPeriProcessor);
-        api = new Api(tokenFarm, httpPeriProcessor);
+        api = new Api(tokenFarm, tokenFarm, httpPeriProcessor);
     }
 
     public static MediaFire getInstance() {

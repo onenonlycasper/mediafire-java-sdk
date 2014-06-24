@@ -9,8 +9,8 @@ import com.arkhive.components.test_session_manager_fixes.module_http_processor.p
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.ApiRequestHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.UploadTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.UploadTokenHttpPreProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.ActionTokenDistributor;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.SessionTokenDistributor;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,7 +21,8 @@ import com.google.gson.JsonParser;
 public class Api {
     private static final String FAIL_RES = "{\"response\":{\"message\":\"Unknown API error\",\"result\":\"Error\"}}";
     private static HttpPeriProcessor httpPeriProcessor;
-    private static TokenFarmDistributor tokenFarm;
+    private static SessionTokenDistributor sessionTokenDistributor;
+    private static ActionTokenDistributor actionTokenDistributor;
     public File file;
     public Folder folder;
     public User user;
@@ -30,8 +31,9 @@ public class Api {
     public Upload upload;
     public Contact contact;
 
-    public Api(TokenFarm tokenFarm, HttpPeriProcessor httpPeriProcessor) {
-        this.tokenFarm = tokenFarm;
+    public Api(SessionTokenDistributor sessionTokenDistributor, ActionTokenDistributor actionTokenDistributor, HttpPeriProcessor httpPeriProcessor) {
+        this.sessionTokenDistributor = sessionTokenDistributor;
+        this.actionTokenDistributor = actionTokenDistributor;
         this.httpPeriProcessor = httpPeriProcessor;
         file = new File();
         folder = new Folder();
@@ -47,7 +49,7 @@ public class Api {
         return new BlockingApiGetRequest(
                 new ApiRequestHttpPreProcessor(),
                 new ApiRequestHttpPostProcessor(),
-                tokenFarm,
+                sessionTokenDistributor,
                 httpPeriProcessor,
                 apiRequestObject);
     }
@@ -57,10 +59,12 @@ public class Api {
             ApiRequestRunnableCallback<T> callback,
             ApiRequestObject apiRequestObject) {
         return new RunnableApiGetRequest(
-                clazz, callback,
+                clazz,
+                callback,
                 new ApiRequestHttpPreProcessor(),
                 new ApiRequestHttpPostProcessor(),
-                tokenFarm, httpPeriProcessor,
+                sessionTokenDistributor,
+                httpPeriProcessor,
                 apiRequestObject);
     }
 
@@ -70,7 +74,7 @@ public class Api {
         return new BlockingApiGetRequestUploadToken(
                 new UploadTokenHttpPreProcessor(),
                 new UploadTokenHttpPostProcessor(),
-                tokenFarm,
+                actionTokenDistributor,
                 httpPeriProcessor,
                 apiRequestObject);
     }
@@ -84,7 +88,7 @@ public class Api {
                 callback,
                 new UploadTokenHttpPreProcessor(),
                 new UploadTokenHttpPostProcessor(),
-                tokenFarm,
+                actionTokenDistributor,
                 httpPeriProcessor,
                 apiRequestObject);
     }
@@ -94,7 +98,8 @@ public class Api {
         return new BlockingApiPostRequestUploadToken(
                 new UploadTokenHttpPreProcessor(),
                 new UploadTokenHttpPostProcessor(),
-                tokenFarm, httpPeriProcessor,
+                actionTokenDistributor,
+                httpPeriProcessor,
                 apiRequestObject);
     }
 
@@ -107,7 +112,7 @@ public class Api {
                 callback,
                 new UploadTokenHttpPreProcessor(),
                 new UploadTokenHttpPostProcessor(),
-                tokenFarm,
+                actionTokenDistributor,
                 httpPeriProcessor,
                 apiRequestObject);
     }

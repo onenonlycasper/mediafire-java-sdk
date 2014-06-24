@@ -7,7 +7,10 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.A
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_credentials.ApplicationCredentials;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.ActionTokenDistributor;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.GetNewActionTokenCallback;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.GetNewSessionTokenCallback;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.SessionTokenDistributor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables.GetImageActionTokenRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables.GetSessionTokenRunnable;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.runnables.GetUploadActionTokenRunnable;
@@ -15,7 +18,6 @@ import com.arkhive.components.test_session_manager_fixes.module_api.responses.Ge
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.NewSessionTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.NewSessionTokenHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.ActionToken;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 
 import java.util.concurrent.BlockingQueue;
@@ -29,7 +31,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by  on 6/16/2014.
  */
-public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallback<GetActionTokenResponse> {
+public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCallback, ActionTokenDistributor, GetNewActionTokenCallback, ApiRequestRunnableCallback<GetActionTokenResponse> {
     private static final String TAG = TokenFarm.class.getSimpleName();
     private final Lock lockBorrowImageToken = new ReentrantLock();
     private final Lock lockBorrowUploadToken = new ReentrantLock();
@@ -38,7 +40,7 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
     private final ApplicationCredentials applicationCredentials;
     private final HttpPeriProcessor httpPeriProcessor;
     private final PausableThreadPoolExecutor executor;
-    private final BlockingQueue<SessionToken> sessionTokens;
+    private final BlockingQueue<com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken> sessionTokens;
     private ActionToken uploadActionToken;
     private ActionToken imageActionToken;
     private Object imageTokenLock = new Object();
@@ -49,7 +51,7 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
     public TokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
         minimumSessionTokens = configuration.getMinimumSessionTokens();
         maximumSessionTokens = configuration.getMaximumSessionTokens();
-        sessionTokens = new LinkedBlockingQueue<SessionToken>(maximumSessionTokens);
+        sessionTokens = new LinkedBlockingQueue<com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken>(maximumSessionTokens);
         this.applicationCredentials = applicationCredentials;
         this.httpPeriProcessor = httpPeriProcessor;
         executor = new PausableThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), Executors.defaultThreadFactory());
@@ -73,7 +75,9 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
                 new GetImageActionTokenRunnable(
                         new ApiRequestHttpPreProcessor(),
                         new ApiRequestHttpPostProcessor(),
-                        this, httpPeriProcessor);
+                        this,
+                        this,
+                        httpPeriProcessor);
         executor.execute(getImageActionTokenRunnable);
     }
 
@@ -83,7 +87,9 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
                 new GetUploadActionTokenRunnable(
                         new ApiRequestHttpPreProcessor(),
                         new ApiRequestHttpPostProcessor(),
-                        this, httpPeriProcessor);
+                        this,
+                        this,
+                        httpPeriProcessor);
         executor.execute(getUploadActionTokenRunnable);
     }
 
@@ -108,10 +114,13 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
         executor.shutdownNow();
     }
 
+    /*
+        GetSessionTokenCallback interface methods
+     */
     @Override
     public void receiveNewSessionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " receiveNewSessionToken()");
-        SessionToken sessionToken = apiRequestObject.getSessionToken();
+        com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken sessionToken = apiRequestObject.getSessionToken();
         if (!apiRequestObject.isSessionTokenInvalid() && sessionToken != null) {
             try {
                 sessionTokens.add(sessionToken);
@@ -130,10 +139,13 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
         }
     }
 
+    /*
+        TokenFarmDistributor interface methods
+    */
     @Override
     public void borrowSessionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + "borrowSessionToken");
-        SessionToken sessionToken = null;
+        com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken sessionToken = null;
         try {
             sessionToken = sessionTokens.take();
             System.out.println(TAG + " session token borrowed: " + sessionToken.getTokenString());
@@ -148,7 +160,7 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
     @Override
     public void returnSessionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " returnSessionToken");
-        SessionToken sessionToken = apiRequestObject.getSessionToken();
+        com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken sessionToken = apiRequestObject.getSessionToken();
         boolean needToGetNewSessionToken = false;
         if (sessionToken == null) {
             System.out.println(TAG + " request object did not have a session token, " +

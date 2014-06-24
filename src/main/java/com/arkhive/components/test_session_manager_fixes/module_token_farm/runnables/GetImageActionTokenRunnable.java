@@ -7,7 +7,8 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.A
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.GetNewActionTokenCallback;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.SessionTokenDistributor;
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.GetActionTokenResponse;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.ActionToken;
 import com.google.gson.Gson;
@@ -25,16 +26,19 @@ public class GetImageActionTokenRunnable implements Runnable, HttpRequestCallbac
     private static final String OPTIONAL_PARAMETER_RESPONSE_FORMAT = "response_format";
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
-    private TokenFarmDistributor tokenFarmDistributor;
+    private final GetNewActionTokenCallback actionTokenCallback;
+    private SessionTokenDistributor sessionTokenDistributor;
     private HttpPeriProcessor httpPeriProcessor;
 
     public GetImageActionTokenRunnable(HttpProcessor httpPreProcessor,
                                        HttpProcessor httpPostProcessor,
-                                       TokenFarmDistributor tokenFarmDistributor,
+                                       SessionTokenDistributor sessionTokenDistributor,
+                                       GetNewActionTokenCallback actionTokenCallback,
                                        HttpPeriProcessor httpPeriProcessor) {
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
-        this.tokenFarmDistributor = tokenFarmDistributor;
+        this.sessionTokenDistributor = sessionTokenDistributor;
+        this.actionTokenCallback = actionTokenCallback;
         this.httpPeriProcessor = httpPeriProcessor;
     }
 
@@ -45,7 +49,7 @@ public class GetImageActionTokenRunnable implements Runnable, HttpRequestCallbac
             // set up our api request object
             ApiRequestObject apiRequestObject = setupApiRequestObjectForNewImageActionToken();
             // borrow a session token from the TokenFarm
-            tokenFarmDistributor.borrowSessionToken(apiRequestObject);
+            sessionTokenDistributor.borrowSessionToken(apiRequestObject);
             // send request to http handler
             httpPeriProcessor.sendGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             // wait until we get a response from http handler (notify will be called in callback implementation)
@@ -55,7 +59,7 @@ public class GetImageActionTokenRunnable implements Runnable, HttpRequestCallbac
                 e.printStackTrace();
             }
             // try to return the session token to the TokenFarm
-            tokenFarmDistributor.returnSessionToken(apiRequestObject);
+            sessionTokenDistributor.returnSessionToken(apiRequestObject);
             // try to give action token to the TokenFarm
             GetActionTokenResponse response = new Gson().fromJson(Api.getResponseString(apiRequestObject.getHttpResponseString()), GetActionTokenResponse.class);
             if (response != null && !response.hasError()) {
@@ -73,7 +77,7 @@ public class GetImageActionTokenRunnable implements Runnable, HttpRequestCallbac
                 apiRequestObject.setActionTokenInvalid(true);
             }
 
-            tokenFarmDistributor.receiveNewImageActionToken(apiRequestObject);
+            actionTokenCallback.receiveNewImageActionToken(apiRequestObject);
         }
     }
 

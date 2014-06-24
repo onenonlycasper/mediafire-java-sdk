@@ -5,7 +5,7 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.A
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
-import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.TokenFarmDistributor;
+import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.SessionTokenDistributor;
 
 /**
  * Created by Chris Najar on 6/17/2014.
@@ -14,18 +14,18 @@ public class BlockingApiPostRequest implements HttpRequestCallback {
     private static final String TAG = BlockingApiGetRequest.class.getSimpleName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
-    private TokenFarmDistributor tokenFarmDistributor;
+    private SessionTokenDistributor sessionTokenDistributor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
 
     public BlockingApiPostRequest(HttpProcessor httpPreProcessor,
                                  HttpProcessor httpPostProcessor,
-                                 TokenFarmDistributor tokenFarmDistributor,
+                                 SessionTokenDistributor sessionTokenDistributor,
                                  HttpPeriProcessor httpPeriProcessor,
                                  ApiRequestObject apiRequestObject) {
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
-        this.tokenFarmDistributor = tokenFarmDistributor;
+        this.sessionTokenDistributor = sessionTokenDistributor;
         this.apiRequestObject = apiRequestObject;
         this.httpPeriProcessor = httpPeriProcessor;
     }
@@ -34,7 +34,7 @@ public class BlockingApiPostRequest implements HttpRequestCallback {
         System.out.println(TAG + " sendRequest()");
         synchronized (this) {
             // borrow a session token from the TokenFarm
-            tokenFarmDistributor.borrowSessionToken(apiRequestObject);
+            sessionTokenDistributor.borrowSessionToken(apiRequestObject);
 
             // send request to http handler
             httpPeriProcessor.sendPostRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
@@ -45,7 +45,7 @@ public class BlockingApiPostRequest implements HttpRequestCallback {
                 e.printStackTrace();
             }
             // try to return the session token to the TokenFarm
-            tokenFarmDistributor.returnSessionToken(apiRequestObject);
+            sessionTokenDistributor.returnSessionToken(apiRequestObject);
             return apiRequestObject;
         }
     }
