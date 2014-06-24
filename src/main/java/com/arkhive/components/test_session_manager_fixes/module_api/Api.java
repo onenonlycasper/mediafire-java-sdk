@@ -1,14 +1,12 @@
 package com.arkhive.components.test_session_manager_fixes.module_api;
 
 import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadInstantResponse;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadResumableResponse;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.ApiRequestHttpPostProcessor;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.ApiRequestHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.requests.*;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.ApiRequestHttpPostProcessor;
+import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.ApiRequestHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.UploadTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.UploadTokenHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.TokenFarm;
@@ -78,8 +76,8 @@ public class Api {
     }
 
     static <T extends ApiResponse>RunnableApiGetRequestUploadToken createApiGetRequestRunnableUploadToken(
-            Class<UploadInstantResponse> uploadInstantResponseClass,
-            ApiRequestRunnableCallback callback,
+            Class<T> uploadInstantResponseClass,
+            ApiRequestRunnableCallback<T> callback,
             ApiRequestObject apiRequestObject) {
         return new RunnableApiGetRequestUploadToken(
                 uploadInstantResponseClass,
@@ -101,8 +99,8 @@ public class Api {
     }
 
     static <T extends ApiResponse>RunnableApiPostRequestUploadToken createApiPostRequestRunnableUploadToken(
-            Class<UploadResumableResponse> uploadResumableResponseClass,
-            ApiRequestRunnableCallback callback,
+            Class<T> uploadResumableResponseClass,
+            ApiRequestRunnableCallback<T> callback,
             ApiRequestObject apiRequestObject) {
         return new RunnableApiPostRequestUploadToken(
                 uploadResumableResponseClass,
