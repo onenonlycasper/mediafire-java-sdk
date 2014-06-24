@@ -43,8 +43,8 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
     private ActionToken imageActionToken;
     private Object imageTokenLock = new Object();
     private Object uploadTokenLock = new Object();
-    private int minimumSessionTokens = Configuration.DEFAULT_MINIMUM_SESSION_TOKENS;
-    private int maximumSessionTokens = Configuration.DEFAULT_MAXIMUM_SESSION_TOKENS;
+    private int minimumSessionTokens;
+    private int maximumSessionTokens;
 
     public TokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
         minimumSessionTokens = configuration.getMinimumSessionTokens();
@@ -53,18 +53,6 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
         this.applicationCredentials = applicationCredentials;
         this.httpPeriProcessor = httpPeriProcessor;
         executor = new PausableThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), Executors.defaultThreadFactory());
-    }
-
-    public void shutdown() {
-        System.out.println(TAG + " TokenFarm shutting down");
-        sessionTokens.clear();
-        lockBorrowImageToken.unlock();
-        lockBorrowUploadToken.unlock();
-        conditionImageTokenNotExpired.signal();
-        conditionUploadTokenNotExpired.signal();
-        imageActionToken = null;
-        uploadActionToken = null;
-        executor.shutdownNow();
     }
 
     private void getNewSessionToken() {
@@ -108,6 +96,18 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
         getNewUploadActionToken();
     }
 
+    public void shutdown() {
+        System.out.println(TAG + " TokenFarm shutting down");
+        sessionTokens.clear();
+        lockBorrowImageToken.unlock();
+        lockBorrowUploadToken.unlock();
+        conditionImageTokenNotExpired.signal();
+        conditionUploadTokenNotExpired.signal();
+        imageActionToken = null;
+        uploadActionToken = null;
+        executor.shutdownNow();
+    }
+
     @Override
     public void receiveNewSessionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + " receiveNewSessionToken()");
@@ -120,6 +120,11 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
                 System.out.println(TAG + " interrupted, not adding: " + sessionToken.getTokenString());
                 getNewSessionToken();
             }
+        } else if (apiRequestObject.getApiResponse().getError() == 107) {
+            System.out.println(TAG + " api message: " + apiRequestObject.getApiResponse().getMessage());
+            System.out.println(TAG + " api error: " + apiRequestObject.getApiResponse().getError());
+            System.out.println(TAG + " api result: " + apiRequestObject.getApiResponse().getResult());
+            System.out.println(TAG + " api time: " + apiRequestObject.getApiResponse().getTime());
         } else {
             getNewSessionToken();
         }
