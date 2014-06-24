@@ -31,10 +31,10 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallback<GetActionTokenResponse> {
     private static final String TAG = TokenFarm.class.getSimpleName();
-    private final Lock borrowImageTokenLock = new ReentrantLock();
-    private final Lock borrowUploadTokenLock = new ReentrantLock();
-    private final Condition imageTokenNotExpired = borrowImageTokenLock.newCondition();
-    private final Condition uploadTokenNotExpired = borrowUploadTokenLock.newCondition();
+    private final Lock lockBorrowImageToken = new ReentrantLock();
+    private final Lock lockBorrowUploadToken = new ReentrantLock();
+    private final Condition conditionImageTokenNotExpired = lockBorrowImageToken.newCondition();
+    private final Condition conditionUploadTokenNotExpired = lockBorrowUploadToken.newCondition();
     private final ApplicationCredentials applicationCredentials;
     private final HttpPeriProcessor httpPeriProcessor;
     private final PausableThreadPoolExecutor executor;
@@ -58,10 +58,10 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
     public void shutdown() {
         System.out.println(TAG + " TokenFarm shutting down");
         sessionTokens.clear();
-        borrowImageTokenLock.unlock();
-        borrowUploadTokenLock.unlock();
-        imageTokenNotExpired.signal();
-        uploadTokenNotExpired.signal();
+        lockBorrowImageToken.unlock();
+        lockBorrowUploadToken.unlock();
+        conditionImageTokenNotExpired.signal();
+        conditionUploadTokenNotExpired.signal();
         imageActionToken = null;
         uploadActionToken = null;
         executor.shutdownNow();
@@ -175,7 +175,7 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
     public void borrowImageActionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + "borrowImageActionToken");
         // lock and fetch new token if necessary
-        borrowImageTokenLock.lock();
+        lockBorrowImageToken.lock();
         if (imageActionToken == null || imageActionToken.isExpired()) {
             getNewImageActionToken();
         }
@@ -186,12 +186,12 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
             while (imageActionToken == null ||
                     imageActionToken.isExpired() ||
                     imageActionToken.getTokenString() == null) {
-                imageTokenNotExpired.await(45, TimeUnit.SECONDS);
+                conditionImageTokenNotExpired.await(45, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
           apiRequestObject.addExceptionDuringRequest(e);
         } finally {
-            borrowImageTokenLock.unlock();
+            lockBorrowImageToken.unlock();
         }
         // attach new one to apiRequestObject
         apiRequestObject.setActionToken(imageActionToken);
@@ -203,7 +203,7 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
         System.out.println(TAG + "borrowUploadActionToken");
         // lock and fetch new token if necessary
         System.out.println(TAG + "---starting lock: " + System.currentTimeMillis());
-        borrowUploadTokenLock.lock();
+        lockBorrowUploadToken.lock();
         if (uploadActionToken == null || uploadActionToken.isExpired()) {
             getNewUploadActionToken();
         }
@@ -214,12 +214,12 @@ public class TokenFarm implements TokenFarmDistributor, ApiRequestRunnableCallba
             while (uploadActionToken == null ||
                     uploadActionToken.isExpired() ||
                     uploadActionToken.getTokenString() == null) {
-                uploadTokenNotExpired.await(45, TimeUnit.SECONDS);
+                conditionUploadTokenNotExpired.await(45, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
             apiRequestObject.addExceptionDuringRequest(e);
         } finally {
-            borrowUploadTokenLock.unlock();
+            lockBorrowUploadToken.unlock();
             System.out.println(TAG + "---unlock lock: " + System.currentTimeMillis());
         }
         // attach new one to apiRequestObject
