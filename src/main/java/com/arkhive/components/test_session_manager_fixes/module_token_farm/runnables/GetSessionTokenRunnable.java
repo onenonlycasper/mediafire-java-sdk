@@ -28,19 +28,19 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     private static String OPTIONAL_PARAMETER_RESPONSE_FORMAT = "response_format";
     private static String REQUIRED_PARAMETER_APPLICATION_ID = "application_id";
     private static String REQUIRED_PARAMETER_SIGNATURE = "signature";
-    private final GetNewSessionTokenCallback callback;
+    private final GetNewSessionTokenCallback getNewSessionTokenCallback;
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
     private ApplicationCredentials applicationCredentials;
 
-    public GetSessionTokenRunnable(GetNewSessionTokenCallback callback,
+    public GetSessionTokenRunnable(GetNewSessionTokenCallback getNewSessionTokenCallback,
                                    HttpProcessor httpPreProcessor,
                                    HttpProcessor httpPostProcessor,
                                    HttpPeriProcessor httpPeriProcessor,
                                    ApplicationCredentials applicationCredentials) {
-        this.callback = callback;
+        this.getNewSessionTokenCallback = getNewSessionTokenCallback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
         this.httpPeriProcessor = httpPeriProcessor;
@@ -70,8 +70,8 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
             apiRequestObject.setApiResponse(response);
             // extract the SessionToken from the response
             apiRequestObject.setSessionToken(getSessionTokenFromApiRequestObject());
-            // now that we have our token, we need to make a callback to the token factory
-            callback.receiveNewSessionToken(apiRequestObject);
+            // now that we have our token, we need to make a getNewSessionTokenCallback to the token factory
+            getNewSessionTokenCallback.receiveNewSessionToken(apiRequestObject);
         }
     }
 
