@@ -29,7 +29,7 @@ public class DriverActionTokenFunctionalityDoNotDelete {
         MediaFire mediaFire = MediaFire.newInstance(configuration);
 
         Map<String, String> credentials = new HashMap<String, String>();
-        credentials.put("email", "arkhivetest@test.com");
+        credentials.put("email", "javasdktest@example.com");
         credentials.put("password", "74107410");
         mediaFire.getApplicationCredentials().setUserCredentials(credentials);
         mediaFire.getApplicationCredentials().setCredentialsValid(true);
@@ -42,7 +42,7 @@ public class DriverActionTokenFunctionalityDoNotDelete {
         }
 
         System.out.println(TAG + " MAKING API CALLS");
-        for (int i = 0; i < 6000; i++) {
+        for (int i = 0; i < 6; i++) {
             System.out.println("loop: " + i);
             Map<String, String> params = new LinkedHashMap<String, String>();
 //            params.put("filename", "test_" + i + ".jpg");
