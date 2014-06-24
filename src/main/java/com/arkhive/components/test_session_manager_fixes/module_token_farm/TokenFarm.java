@@ -57,11 +57,11 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
         executor = new PausableThreadPoolExecutor(10, 10, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), Executors.defaultThreadFactory());
     }
 
-    private void getNewSessionToken() {
+    public void getNewSessionToken(GetNewSessionTokenCallback getNewSessionTokenCallback) {
         System.out.println(TAG + " getNewSessionToken()");
         GetSessionTokenRunnable getSessionTokenRunnable =
                 new GetSessionTokenRunnable(
-                        this,
+                        getNewSessionTokenCallback,
                         new NewSessionTokenHttpPreProcessor(),
                         new NewSessionTokenHttpPostProcessor(),
                         httpPeriProcessor,
@@ -69,26 +69,29 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
         executor.execute(getSessionTokenRunnable);
     }
 
-    private void getNewImageActionToken() {
+    private void getNewImageActionToken(
+            SessionTokenDistributor sessionTokenDistributor,
+            GetNewActionTokenCallback actionTokenCallback) {
         System.out.println(TAG + " getNewImageActionToken()");
         GetImageActionTokenRunnable getImageActionTokenRunnable =
                 new GetImageActionTokenRunnable(
                         new ApiRequestHttpPreProcessor(),
                         new ApiRequestHttpPostProcessor(),
-                        this,
-                        this,
+                        sessionTokenDistributor,
+                        actionTokenCallback,
                         httpPeriProcessor);
         executor.execute(getImageActionTokenRunnable);
     }
 
-    private void getNewUploadActionToken() {
+    private void getNewUploadActionToken(GetNewActionTokenCallback actionTokenCallback,
+                                         SessionTokenDistributor sessionTokenDistributor) {
         System.out.println(TAG + " getNewUploadActionToken()");
         GetUploadActionTokenRunnable getUploadActionTokenRunnable =
                 new GetUploadActionTokenRunnable(
                         new ApiRequestHttpPreProcessor(),
                         new ApiRequestHttpPostProcessor(),
-                        this,
-                        this,
+                        actionTokenCallback,
+                        sessionTokenDistributor,
                         httpPeriProcessor);
         executor.execute(getUploadActionTokenRunnable);
     }
@@ -96,10 +99,10 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     public void startup() {
         System.out.println(TAG + " startup()");
         for (int i = 0; i < sessionTokens.remainingCapacity(); i++) {
-            getNewSessionToken();
+            getNewSessionToken(this);
         }
-        getNewImageActionToken();
-        getNewUploadActionToken();
+        getNewImageActionToken(this, this);
+        getNewUploadActionToken(this, this);
     }
 
     public void shutdown() {
@@ -127,7 +130,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
                 System.out.println(TAG + " added " + sessionToken.getTokenString());
             } catch (IllegalStateException e) {
                 System.out.println(TAG + " interrupted, not adding: " + sessionToken.getTokenString());
-                getNewSessionToken();
+                getNewSessionToken(this);
             }
         } else if (apiRequestObject.getApiResponse().getError() == 107) {
             System.out.println(TAG + " api message: " + apiRequestObject.getApiResponse().getMessage());
@@ -135,7 +138,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
             System.out.println(TAG + " api result: " + apiRequestObject.getApiResponse().getResult());
             System.out.println(TAG + " api time: " + apiRequestObject.getApiResponse().getTime());
         } else {
-            getNewSessionToken();
+            getNewSessionToken(this);
         }
     }
 
@@ -184,7 +187,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
 
         if (needToGetNewSessionToken) {
             System.out.println(TAG + " fetching a new session token");
-            getNewSessionToken();
+            getNewSessionToken(this);
         }
     }
 
@@ -194,7 +197,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
         // lock and fetch new token if necessary
         lockBorrowImageToken.lock();
         if (imageActionToken == null || imageActionToken.isExpired()) {
-            getNewImageActionToken();
+            getNewImageActionToken(this, this);
         }
         try {
             // wait while we get an image action token, condition is that image
@@ -222,7 +225,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
         System.out.println(TAG + "---starting lock: " + System.currentTimeMillis());
         lockBorrowUploadToken.lock();
         if (uploadActionToken == null || uploadActionToken.isExpired()) {
-            getNewUploadActionToken();
+            getNewUploadActionToken(this, this);
         }
         try {
             // wait while we get an image action token, condition is that image
