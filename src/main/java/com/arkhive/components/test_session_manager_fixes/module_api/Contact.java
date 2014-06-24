@@ -27,26 +27,26 @@ public class Contact {
     }
 
     public Runnable addContact(
-            ApiRequestRunnableCallback callback,
+            ApiRequestRunnableCallback apiRequestRunnableCallback,
             Map<String, String> requiredParameters,
             Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_CONTACT_ADD);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest =
-                Api.createApiGetRequestRunnable(ApiResponse.class, callback, apiRequestObject);
+                Api.createApiGetRequestRunnable(ApiResponse.class, apiRequestRunnableCallback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
     public Runnable deleteContact(
-            ApiRequestRunnableCallback callback,
+            ApiRequestRunnableCallback apiRequestRunnableCallback,
             Map<String, String> requiredParameters,
             Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_CONTACT_DELETE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest =
-                Api.createApiGetRequestRunnable(ApiResponse.class, callback, apiRequestObject);
+                Api.createApiGetRequestRunnable(ApiResponse.class, apiRequestRunnableCallback, apiRequestObject);
         return runnableApiGetRequest;
     }
 
@@ -75,14 +75,14 @@ public class Contact {
     }
 
     public Runnable fetchContacts(
-            ApiRequestRunnableCallback callback, Map<String,
-            String> requiredParameters,
+            ApiRequestRunnableCallback apiRequestRunnableCallback,
+            Map<String, String> requiredParameters,
             Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_CONTACT_FETCH);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest =
-                Api.createApiGetRequestRunnable(ContactResponse.class, callback, apiRequestObject);
+                Api.createApiGetRequestRunnable(ContactResponse.class, apiRequestRunnableCallback, apiRequestObject);
         return runnableApiGetRequest;
     }
 }

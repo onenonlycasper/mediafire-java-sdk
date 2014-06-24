@@ -56,11 +56,11 @@ public class Api {
 
     static <T extends ApiResponse> RunnableApiGetRequest<T> createApiGetRequestRunnable(
             Class<T> clazz,
-            ApiRequestRunnableCallback<T> callback,
+            ApiRequestRunnableCallback<T> apiRequestRunnableCallback,
             ApiRequestObject apiRequestObject) {
         return new RunnableApiGetRequest(
                 clazz,
-                callback,
+                apiRequestRunnableCallback,
                 new ApiRequestHttpPreProcessor(),
                 new ApiRequestHttpPostProcessor(),
                 sessionTokenDistributor,
@@ -81,11 +81,11 @@ public class Api {
 
     static <T extends ApiResponse>RunnableApiGetRequestUploadToken createApiGetRequestRunnableUploadToken(
             Class<T> uploadInstantResponseClass,
-            ApiRequestRunnableCallback<T> callback,
+            ApiRequestRunnableCallback<T> apiRequestRunnableCallback,
             ApiRequestObject apiRequestObject) {
         return new RunnableApiGetRequestUploadToken(
                 uploadInstantResponseClass,
-                callback,
+                apiRequestRunnableCallback,
                 new UploadTokenHttpPreProcessor(),
                 new UploadTokenHttpPostProcessor(),
                 actionTokenDistributor,
@@ -105,11 +105,11 @@ public class Api {
 
     static <T extends ApiResponse>RunnableApiPostRequestUploadToken createApiPostRequestRunnableUploadToken(
             Class<T> uploadResumableResponseClass,
-            ApiRequestRunnableCallback<T> callback,
+            ApiRequestRunnableCallback<T> apiRequestRunnableCallback,
             ApiRequestObject apiRequestObject) {
         return new RunnableApiPostRequestUploadToken(
                 uploadResumableResponseClass,
-                callback,
+                apiRequestRunnableCallback,
                 new UploadTokenHttpPreProcessor(),
                 new UploadTokenHttpPostProcessor(),
                 actionTokenDistributor,
