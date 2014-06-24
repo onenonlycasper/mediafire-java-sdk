@@ -68,7 +68,6 @@ public class Api {
                 apiRequestObject);
     }
 
-
     public static BlockingApiGetRequestUploadToken createBlockingApiGetRequestUploadToken(
             ApiRequestObject apiRequestObject) {
         return new BlockingApiGetRequestUploadToken(
@@ -117,6 +116,33 @@ public class Api {
                 apiRequestObject);
     }
 
+    static String requestImageActionToken() {
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
+        actionTokenDistributor.borrowImageActionToken(apiRequestObject);
+        if (apiRequestObject != null) {
+            if (apiRequestObject.getActionToken() != null) {
+                return apiRequestObject.getActionToken().getTokenString();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    static String requestUploadActionToken() {
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
+        actionTokenDistributor.borrowUploadActionToken(apiRequestObject);
+        if (apiRequestObject != null) {
+            if (apiRequestObject.getActionToken() != null) {
+                return apiRequestObject.getActionToken().getTokenString();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Transform a string into a JsonElement.
