@@ -1,8 +1,8 @@
 package com.arkhive.components.uploadmanager.listeners;
 
-import com.arkhive.components.api.ApiResponse;
-import com.arkhive.components.api.upload.responses.CheckResponse;
-import com.arkhive.components.api.upload.responses.PollResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadCheckResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadPollResponse;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 
 /**
@@ -24,7 +24,7 @@ public interface UploadListenerManager {
      * @param uploadItem - the item being uploaded.
      * @param response   - the response received.
      */
-    public void onCheckCompleted(UploadItem uploadItem, CheckResponse response);
+    public void onCheckCompleted(UploadItem uploadItem, UploadCheckResponse response);
 
     /**
      * publish progress.
@@ -55,7 +55,7 @@ public interface UploadListenerManager {
      * @param uploadItem - the item being uploaded.
      * @param response   - the response received.
      */
-    public void onPollCompleted(UploadItem uploadItem, PollResponse response);
+    public void onPollCompleted(UploadItem uploadItem, UploadPollResponse response);
 
     /**
      * Called when an exception has been caught such as FileNotFoundException for a path.

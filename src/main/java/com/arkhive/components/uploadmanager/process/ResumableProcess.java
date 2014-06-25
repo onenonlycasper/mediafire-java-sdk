@@ -1,14 +1,13 @@
 package com.arkhive.components.uploadmanager.process;
 
-import com.arkhive.components.api.upload.errors.ResumableResultCode;
-import com.arkhive.components.api.upload.responses.ResumableResponse;
-import com.arkhive.components.sessionmanager.SessionManager;
+import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.ResumableResultCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadResumableResponse;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.ChunkData;
 import com.arkhive.components.uploadmanager.uploaditem.FileData;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.arkhive.components.uploadmanager.uploaditem.UploadOptions;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -28,20 +27,19 @@ import java.util.HashMap;
  */
 public class ResumableProcess implements Runnable {
     private static final String TAG = ResumableProcess.class.getSimpleName();
-    private static final String UPLOAD_URI = "/api/upload/resumable.php";
     private final UploadItem uploadItem;
-    private final SessionManager sessionManager;
+    private final MediaFire mediaFire;
     private final UploadListenerManager uploadManager;
     private final Logger logger = LoggerFactory.getLogger(ResumableProcess.class);
 
     /**
      * Constructor for an upload with a listener.
      *
-     * @param sessionManager - the session to use for this upload process
+     * @param mediaFire - the session to use for this upload process
      * @param uploadItem     - the item to be uploaded
      */
-    public ResumableProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
-        this.sessionManager = sessionManager;
+    public ResumableProcess(MediaFire mediaFire, UploadListenerManager uploadManager, UploadItem uploadItem) {
+        this.mediaFire = mediaFire;
         this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
     }
@@ -139,26 +137,8 @@ public class ResumableProcess implements Runnable {
                 // generate the get parameters
                 HashMap<String, String> parameters = generateGetParameters(actionOnDuplicate, versionControl, uploadFolderKey);
 
-                // now send the http post request
-                String jsonResponse;
-                try {
-                    jsonResponse = sessionManager.getHttpInterface().sendPostRequest(sessionManager.getDomain(), UPLOAD_URI, parameters, headers, uploadChunk);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    notifyManagerException(e);
-                    return;
-                }
+                UploadResumableResponse response = mediaFire.apiCall().upload.resumableUpload(parameters, null, headers, uploadChunk);
 
-                // if jsonResponse is empty, then HttpInterface.sendGetRequest() has no internet connectivity so we
-                // call lostInternetConnectivity() and UploadManager will move this item to the backlog queue.
-                if (jsonResponse.isEmpty()) {
-                    notifyManagerLostConnection();
-                    return;
-                }
-
-                Gson gson = new Gson();
-                // generate the ResumableResponse object
-                ResumableResponse response = gson.fromJson(getResponseString(jsonResponse), ResumableResponse.class);
 
                 // set poll upload key if possible
                 if (shouldSetPollUploadKey(response)) {
@@ -168,7 +148,7 @@ public class ResumableProcess implements Runnable {
 
                 // if API response code OR Upload Response Result code have an error then we need to terminate the process
                 if (response.hasError()) {
-                    System.out.println(TAG + " response has an error # " + response.getErrorNumber() + ": " + response.getMessage());
+                    System.out.println(TAG + " response has an error # " + response.getError() + ": " + response.getMessage());
                     notifyManagerCancelled(response);
                     return;
                 }
@@ -240,7 +220,7 @@ public class ResumableProcess implements Runnable {
      */
     private HashMap<String, String> generateGetParameters(String actionOnDuplicate, String versionControl, String uploadFolderKey) {
         System.out.println(TAG + " generateGetParameters()");
-        String actionToken = sessionManager.requestUploadActionToken().getSessionToken();
+        String actionToken = mediaFire.apiCall().requestUploadActionToken();
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("session_token", actionToken);
         parameters.put("action_on_duplicate", actionOnDuplicate);
@@ -297,7 +277,7 @@ public class ResumableProcess implements Runnable {
      *
      * @param response The response from the resumable upload API request.
      */
-    private void notifyManagerCancelled(ResumableResponse response) {
+    private void notifyManagerCancelled(UploadResumableResponse response) {
         System.out.println(TAG + " notifyManagerCancelled()");
         if (uploadManager != null) {
             uploadManager.onCancelled(uploadItem, response);
@@ -310,7 +290,7 @@ public class ResumableProcess implements Runnable {
      * @param response The response from the resumable upload API request.
      * @return Flag indicating if the upload key should be set.
      */
-    private boolean shouldSetPollUploadKey(ResumableResponse response) {
+    private boolean shouldSetPollUploadKey(UploadResumableResponse response) {
         System.out.println(TAG + " shouldSetPollUploadKey()");
         switch (response.getDoUpload().getResultCode()) {
             case NO_ERROR:

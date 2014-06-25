@@ -1,7 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 
-
-import com.arkhive.components.api.upload.errors.ResumableResultCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.ResumableResultCode;
 
 /**
  * This data structure represents response received by the response received from api call /api/upload/resumable.php.

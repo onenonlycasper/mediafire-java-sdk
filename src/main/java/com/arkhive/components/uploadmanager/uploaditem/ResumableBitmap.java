@@ -1,11 +1,11 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.arkhive.components.api.upload.responses.CheckResponse.Bitmap;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadCheckResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This data structure represents the bitmap
@@ -37,7 +37,7 @@ public class ResumableBitmap {
      *
      * @param bitmap
      */
-    public ResumableBitmap(Bitmap bitmap) {
+    public ResumableBitmap(UploadCheckResponse.Bitmap bitmap) {
         this(bitmap.getCount(), bitmap.getWords());
     }
     

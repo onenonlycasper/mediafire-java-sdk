@@ -1,23 +1,20 @@
 package com.arkhive.components.uploadmanager.process;
 
+import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollFileErrorCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollResultCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollStatusCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadPollResponse;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
-import com.google.gson.Gson;
+import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.arkhive.components.api.upload.errors.PollFileErrorCode;
-import com.arkhive.components.api.upload.errors.PollResultCode;
-import com.arkhive.components.api.upload.errors.PollStatusCode;
-import com.arkhive.components.api.upload.responses.PollResponse;
-import com.arkhive.components.sessionmanager.SessionManager;
-import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is the Runnable which executes the call /api/upload/poll_upload.
@@ -32,10 +29,9 @@ import org.slf4j.LoggerFactory;
  */
 public class PollProcess implements Runnable {
     private static final String TAG = PollProcess.class.getSimpleName();
-    private static final String POLL_UPLOAD_URI = "/api/upload/poll_upload.php";
     private static final long TIME_BETWEEN_POLLS = 10000;
     private static final int MAX_POLLS = 12;
-    private final SessionManager sessionManager;
+    private final MediaFire mediaFire;
     private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
     private final Logger logger = LoggerFactory.getLogger(PollProcess.class);
@@ -44,11 +40,11 @@ public class PollProcess implements Runnable {
      * Constructor for an upload with a listener. This constructor uses sleepTime for the loop sleep time with
      * loopAttempts for the loop attempts.
      *
-     * @param sessionManager - the session to use for this upload process
+     * @param mediaFire - the session to use for this upload process
      * @param uploadItem     - the item to be uploaded
      */
-    public PollProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
-        this.sessionManager = sessionManager;
+    public PollProcess(MediaFire mediaFire, UploadListenerManager uploadManager, UploadItem uploadItem) {
+        this.mediaFire = mediaFire;
         this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
     }
@@ -72,35 +68,13 @@ public class PollProcess implements Runnable {
         //generate our request string
         HashMap<String, String> keyValue = generateGetParameters();
 
-        //generate request
-        String request = sessionManager.getDomain() + getQueryString(POLL_UPLOAD_URI, keyValue);
-
         //loop until we have made 60 attempts (2 minutes)
         int pollCount = 0;
-        PollResponse response;
+        UploadPollResponse response;
         do {
             //increment counter
             pollCount++;
-            //send the get request and receive the json response
-            String jsonResponse;
-            try {
-                jsonResponse =
-                        sessionManager.getHttpInterface().sendGetRequest(request);
-            } catch (IOException e) {
-                notifyListenersException(uploadItem, e);
-                return;
-            }
-
-            //if jsonResponse is empty, then HttpInterface.sendGetRequest() has no internet connectivity so we
-            //call lostInternetConnectivity() and UploadManager will move this item to the backlog queue.
-            if (jsonResponse.isEmpty()) {
-                notifyManagerLostConnection();
-                return;
-            }
-
-            Gson gson = new Gson();
-            //create the pollupload response from the String we received from the get request sent by our httpinterface
-            response = gson.fromJson(getResponseString(jsonResponse), PollResponse.class);
+            response = mediaFire.apiCall().upload.pollUpload(keyValue, null);
 
             System.out.println(TAG + " received error code: " + response.getErrorCode());
             //check to see if we need to call pollUploadCompleted or loop again
@@ -167,7 +141,7 @@ public class PollProcess implements Runnable {
      *
      * @param response - poll response.
      */
-    public void notifyManagerCompleted(PollResponse response) {
+    public void notifyManagerCompleted(UploadPollResponse response) {
         System.out.println(TAG + " notifyManagerCompleted()");
         if (uploadManager != null) {
             uploadManager.onPollCompleted(uploadItem, response);
@@ -179,7 +153,7 @@ public class PollProcess implements Runnable {
      *
      * @param response - poll response.
      */
-    private void notifyManagerCancelled(PollResponse response) {
+    private void notifyManagerCancelled(UploadPollResponse response) {
         System.out.println(TAG + " notifyManagerCancelled()");
         if (uploadManager != null) {
             uploadManager.onCancelled(uploadItem, response);

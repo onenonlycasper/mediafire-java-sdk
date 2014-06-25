@@ -71,10 +71,14 @@ public class Upload {
 
     public UploadResumableResponse resumableUpload(
             Map<String, String> requiredParameters,
-            Map<String, String> optionalParameters) {
+            Map<String, String> optionalParameters,
+            Map<String, String> headers,
+            byte[] payload) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_RESUMABLE);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
+        apiRequestObject.setPostHeaders(headers);
+        apiRequestObject.setPayload(payload);
         BlockingApiPostRequestUploadToken apiGetRequestRunnable = Api.createBlockingApiPostRequestUploadToken(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();

@@ -1,9 +1,8 @@
 package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 
-
-import com.arkhive.components.api.upload.errors.PollFileErrorCode;
-import com.arkhive.components.api.upload.errors.PollResultCode;
-import com.arkhive.components.api.upload.errors.PollStatusCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollFileErrorCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollResultCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollStatusCode;
 
 /**
  * This class represents the data structure received (response)
