@@ -26,15 +26,11 @@ public class DriverRemoteRequestActionTokenDoNotDelete {
         credentials.put("password", "74107410");
         mediaFire.getApplicationCredentials().setUserCredentials(credentials);
         mediaFire.getApplicationCredentials().setCredentialsValid(true);
+        System.out.println(TAG + " startup");
         mediaFire.startup();
 
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(TAG + "requested image action token: " + mediaFire.apiCall().requestImageActionToken());
-        System.out.println(TAG + "requested upload action token: " + mediaFire.apiCall().requestUploadActionToken());
+        System.out.println(TAG + " requesting some tokens");
+        System.out.println(TAG + " requested image action token: " + mediaFire.apiCall().requestImageActionToken());
+        System.out.println(TAG + " requested upload action token: " + mediaFire.apiCall().requestUploadActionToken());
     }
 }

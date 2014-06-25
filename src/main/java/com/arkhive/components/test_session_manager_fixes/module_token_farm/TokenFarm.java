@@ -195,6 +195,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     public void borrowImageActionToken(ApiRequestObject apiRequestObject) {
         System.out.println(TAG + "borrowImageActionToken");
         // lock and fetch new token if necessary
+        System.out.println(TAG + "---starting lock: " + System.currentTimeMillis());
         lockBorrowImageToken.lock();
         if (imageActionToken == null || imageActionToken.isExpired()) {
             getNewImageActionToken(this, this);
@@ -206,14 +207,15 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
             while (imageActionToken == null ||
                     imageActionToken.isExpired() ||
                     imageActionToken.getTokenString() == null) {
-                conditionImageTokenNotExpired.await(45, TimeUnit.SECONDS);
+                conditionImageTokenNotExpired.await(1, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
           apiRequestObject.addExceptionDuringRequest(e);
         } finally {
+            // attach new one to apiRequestObject
             lockBorrowImageToken.unlock();
+            System.out.println(TAG + "---unlock lock: " + System.currentTimeMillis());
         }
-        // attach new one to apiRequestObject
         apiRequestObject.setActionToken(imageActionToken);
     }
 
@@ -234,7 +236,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
             while (uploadActionToken == null ||
                     uploadActionToken.isExpired() ||
                     uploadActionToken.getTokenString() == null) {
-                conditionUploadTokenNotExpired.await(45, TimeUnit.SECONDS);
+                conditionUploadTokenNotExpired.await(1, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
             apiRequestObject.addExceptionDuringRequest(e);

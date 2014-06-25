@@ -117,7 +117,8 @@ public class Api {
     }
 
     public String requestImageActionToken() {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(null, null);
+//        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
         actionTokenDistributor.borrowImageActionToken(apiRequestObject);
         if (apiRequestObject != null) {
             if (apiRequestObject.getActionToken() != null) {
