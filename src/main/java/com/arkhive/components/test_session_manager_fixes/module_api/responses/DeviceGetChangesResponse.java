@@ -1,8 +1,6 @@
 package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 
 
-import com.arkhive.components.api.filesystem.FileSystemItem;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,30 +69,6 @@ public class DeviceGetChangesResponse extends ApiResponse {
                 folders = new LinkedList<Folder>();
             }
             return folders;
-        }
-
-        public List<FileSystemItem> getAllItems() {
-            List<FileSystemItem> combined = new LinkedList<FileSystemItem>();
-
-            for (File file : getFiles()) {
-                FileSystemItem.Builder builder = new FileSystemItem.Builder();
-                builder.isFolder(false);
-                builder.name(file.getFileName());
-                builder.key(file.getQuickKey());
-                FileSystemItem item = builder.build();
-                combined.add(item);
-            }
-
-            for (Folder folder : getFolders()) {
-                FileSystemItem.Builder builder = new FileSystemItem.Builder();
-                builder.isFolder(true);
-                builder.key(folder.getFolderKey());
-                builder.revision(folder.getRevision());
-                FileSystemItem item = builder.build();
-                combined.add(item);
-            }
-
-            return combined;
         }
     }
 

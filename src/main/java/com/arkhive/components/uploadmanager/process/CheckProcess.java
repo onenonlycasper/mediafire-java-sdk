@@ -1,25 +1,23 @@
 package com.arkhive.components.uploadmanager.process;
 
-import java.io.IOException;
+import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.ApiResponseCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadCheckResponse;
+import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
+import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.arkhive.components.api.ApiResponseCode;
-import com.arkhive.components.api.upload.responses.CheckResponse;
-import com.arkhive.components.sessionmanager.SessionManager;
-import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
-import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 // CHECKSTYLE:OFF
-import com.google.gson.Gson;
 //CHECKSTYLE:ON
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Runnable for making a call to upload/check.php.
@@ -28,14 +26,13 @@ import org.slf4j.LoggerFactory;
  */
 public class CheckProcess implements Runnable {
     private static final String TAG = CheckProcess.class.getSimpleName();
-    private static final String CHECK_URI = "/api/upload/check.php";
-    private final SessionManager sessionManager;
+    private final MediaFire mediaFire;
     private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
     private final Logger logger = LoggerFactory.getLogger(CheckProcess.class);
 
-    public CheckProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
-        this.sessionManager = sessionManager;
+    public CheckProcess(MediaFire mediaFire, UploadListenerManager uploadManager, UploadItem uploadItem) {
+        this.mediaFire = mediaFire;
         this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
     }
@@ -74,31 +71,8 @@ public class CheckProcess implements Runnable {
         }
 
         // generate map with request parameters
-        Map<String, String> keyValue =
-                generateRequestParameters(filename);
-
-        // generate request
-        String request =
-                sessionManager.getDomain() + sessionManager.getSession().getQueryString(CHECK_URI, keyValue);
-
-        // receive response
-        String jsonResponse;
-        try {
-            jsonResponse = sessionManager.getHttpInterface().sendGetRequest(request);
-        } catch (IOException e) {
-            notifyManagerException(e);
-            return;
-        }
-        //check if we did not get a response (json response string is empty)
-        if (jsonResponse.isEmpty()) {
-            // notify listeners we received an empty json response.
-            notifyManagerLostConnection();
-            return;
-        }
-
-        Gson gson = new Gson();
-        // convert response to CheckResponse data structure
-        CheckResponse response = gson.fromJson(getResponseString(jsonResponse), CheckResponse.class);
+        Map<String, String> keyValue = generateRequestParameters(filename);
+        UploadCheckResponse response = mediaFire.apiCall().upload.checkUpload(keyValue, null);
 
         // if there is an error code, cancel the upload
         if (response.getErrorCode() != ApiResponseCode.NO_ERROR) {
@@ -137,7 +111,7 @@ public class CheckProcess implements Runnable {
      *
      * @param checkResponse - the response from calling check.php.
      */
-    private void notifyListenersCompleted(CheckResponse checkResponse) {
+    private void notifyListenersCompleted(UploadCheckResponse checkResponse) {
         System.out.println(TAG + "  notifyListenersCompleted()");
         //notify manager that check is completed
         if (uploadManager != null) {
@@ -155,7 +129,7 @@ public class CheckProcess implements Runnable {
         }
     }
 
-    private void notifyManagerCancelled(CheckResponse response) {
+    private void notifyManagerCancelled(UploadCheckResponse response) {
         if (uploadManager != null) {
             uploadManager.onCancelled(uploadItem, response);
         }

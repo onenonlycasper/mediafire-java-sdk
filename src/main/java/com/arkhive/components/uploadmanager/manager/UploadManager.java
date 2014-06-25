@@ -1,9 +1,12 @@
 package com.arkhive.components.uploadmanager.manager;
 
-import com.arkhive.components.api.ApiResponse;
-import com.arkhive.components.api.upload.errors.PollFileErrorCode;
-import com.arkhive.components.api.upload.errors.PollResultCode;
-import com.arkhive.components.api.upload.errors.PollStatusCode;
+import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollFileErrorCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollResultCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollStatusCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadCheckResponse;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadPollResponse;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerDatabase;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
@@ -12,9 +15,6 @@ import com.arkhive.components.uploadmanager.process.CheckProcess;
 import com.arkhive.components.uploadmanager.process.InstantProcess;
 import com.arkhive.components.uploadmanager.process.PollProcess;
 import com.arkhive.components.uploadmanager.process.ResumableProcess;
-import com.arkhive.components.api.upload.responses.CheckResponse;
-import com.arkhive.components.api.upload.responses.PollResponse;
-import com.arkhive.components.sessionmanager.SessionManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,18 +34,18 @@ public class UploadManager implements UploadListenerManager {
     private UploadListenerUI uiListener;
     private final PausableThreadPoolExecutor executor;
     private final BlockingQueue<Runnable> workQueue;
-    private final SessionManager sessionManager;
+    private final MediaFire mediaFire;
 
     private final Logger logger = LoggerFactory.getLogger(UploadManager.class);
 
     /**
      * Constructor that takes a SessionManager, HttpInterface, and a maximum thread count.
      *
-     * @param sessionManager     The SessionManager to use for API operations.
+     * @param mediaFire     The SessionManager to use for API operations.
      * @param maximumThreadCount The maximum number of threads to use for uploading.
      */
-    public UploadManager(SessionManager sessionManager, int maximumThreadCount) {
-        this.sessionManager = sessionManager; // set session manager
+    public UploadManager(MediaFire mediaFire, int maximumThreadCount) {
+        this.mediaFire = mediaFire; // set media fire reference
         workQueue = new LinkedBlockingQueue<Runnable>();
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         executor = new PausableThreadPoolExecutor( // establish thread pool executor
@@ -135,7 +135,7 @@ public class UploadManager implements UploadListenerManager {
             System.out.println(TAG + " one or more required parameters are invalid, not adding item to queue");
             return;
         }
-        CheckProcess process = new CheckProcess(sessionManager, this, uploadItem);
+        CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
         executor.execute(process);
     }
 
@@ -212,7 +212,7 @@ public class UploadManager implements UploadListenerManager {
     }
 
     @Override
-    public void onCheckCompleted(UploadItem uploadItem, CheckResponse checkResponse) {
+    public void onCheckCompleted(UploadItem uploadItem, UploadCheckResponse checkResponse) {
         System.out.println(TAG + " onCheckCompleted()");
         //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
@@ -245,7 +245,7 @@ public class UploadManager implements UploadListenerManager {
         notifyListenersCancelled(uploadItem);
     }
 
-    private void hashExists(UploadItem uploadItem, CheckResponse checkResponse) {
+    private void hashExists(UploadItem uploadItem, UploadCheckResponse checkResponse) {
         System.out.println(TAG + " hashExists()");
         if (!checkResponse.getInAccount()) { // hash which exists is not in the account
             hashNotInAccount(uploadItem);
@@ -256,15 +256,15 @@ public class UploadManager implements UploadListenerManager {
 
     private void hashNotInAccount(UploadItem uploadItem) {
         System.out.println(TAG + " hashNotInAccount()");
-        InstantProcess process = new InstantProcess(sessionManager, this, uploadItem);
+        InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
     }
 
-    private void hashInAccount(UploadItem uploadItem, CheckResponse checkResponse) {
+    private void hashInAccount(UploadItem uploadItem, UploadCheckResponse checkResponse) {
         System.out.println(TAG + " hashInAccount()");
         boolean inFolder = checkResponse.getInFolder();
-        InstantProcess process = new InstantProcess(sessionManager, this, uploadItem);
+        InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
         System.out.println(TAG + " --ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
         switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
             case UPLOAD_ALWAYS:
@@ -289,7 +289,7 @@ public class UploadManager implements UploadListenerManager {
         }
     }
 
-    private void hashDoesNotExist(UploadItem uploadItem, CheckResponse checkResponse) {
+    private void hashDoesNotExist(UploadItem uploadItem, UploadCheckResponse checkResponse) {
         System.out.println(TAG + " hashDoesNotExist()");
         if (checkResponse.getResumableUpload().getUnitSize() == 0) {
             System.out.println(TAG + " --unit size received from unit_size was 0. cancelling");
@@ -308,14 +308,14 @@ public class UploadManager implements UploadListenerManager {
             // all units are ready and we have the poll upload key. start polling.
             uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
             uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
-            PollProcess process = new PollProcess(sessionManager, this, uploadItem);
+            PollProcess process = new PollProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         } else {
             System.out.println(TAG + " --all units not ready or do not have poll upload key");
             // either we don't have the poll upload key or all units are not ready
             uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
             uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
-            ResumableProcess process = new ResumableProcess(sessionManager, this, uploadItem);
+            ResumableProcess process = new ResumableProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         }
     }
@@ -330,16 +330,16 @@ public class UploadManager implements UploadListenerManager {
     public void onResumableCompleted(UploadItem uploadItem) {
         System.out.println(TAG + " onResumableCompleted()");
         // if the item status isn't cancelled or paused then call upload/check to make sure all units are ready
-        CheckProcess process = new CheckProcess(sessionManager, this, uploadItem);
+        CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
         executor.execute(process);
     }
 
     @Override
-    public void onPollCompleted(UploadItem uploadItem, PollResponse pollResponse) {
+    public void onPollCompleted(UploadItem uploadItem, UploadPollResponse pollResponse) {
         System.out.println(TAG + " onPollCompleted()");
         // if this method is called then filerror and result codes are fine, but we may not have received status 99 so
         // check status code and then possibly senditem to the backlog queue.
-        PollResponse.DoUpload doUpload = pollResponse.getDoUpload();
+        UploadPollResponse.DoUpload doUpload = pollResponse.getDoUpload();
         PollStatusCode pollStatusCode = doUpload.getStatusCode();
         PollResultCode pollResultCode = doUpload.getResultCode();
         PollFileErrorCode pollFileErrorCode = doUpload.getFileErrorCode();

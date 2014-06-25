@@ -1,18 +1,16 @@
 package com.arkhive.components.uploadmanager.process;
 
-import com.arkhive.components.api.ApiResponseCode;
-import com.arkhive.components.api.upload.responses.InstantResponse;
-import com.arkhive.components.sessionmanager.SessionManager;
+import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.ApiResponseCode;
+import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadInstantResponse;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -28,14 +26,13 @@ import java.util.Map;
  */
 public class InstantProcess implements Runnable {
     private static final String TAG = InstantProcess.class.getSimpleName();
-    private static final String INSTANT_URI = "/api/upload/instant.php";
-    private final SessionManager sessionManager;
+    private final MediaFire mediaFire;
     private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
     private final Logger logger = LoggerFactory.getLogger(InstantProcess.class);
 
-    public InstantProcess(SessionManager sessionManager, UploadListenerManager uploadManager, UploadItem uploadItem) {
-        this.sessionManager = sessionManager;
+    public InstantProcess(MediaFire mediaFire, UploadListenerManager uploadManager, UploadItem uploadItem) {
+        this.mediaFire = mediaFire;
         this.uploadManager = uploadManager;
         this.uploadItem = uploadItem;
     }
@@ -55,6 +52,7 @@ public class InstantProcess implements Runnable {
      * 6. notify listeners of completion.
      */
     private void instant() {
+        logger.info("instant called");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
         // url encode the filename
         String filename;
@@ -69,30 +67,8 @@ public class InstantProcess implements Runnable {
 
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
+        UploadInstantResponse response = mediaFire.apiCall().upload.instantUpload(keyValue, null);
 
-        // generate request
-        String request = sessionManager.getDomain() + sessionManager.getSession().getQueryString(INSTANT_URI, keyValue);
-
-        // receive response
-        String jsonResponse;
-        try {
-            jsonResponse = sessionManager.getHttpInterface().sendGetRequest(request);
-        } catch (IOException e) {
-            e.printStackTrace();
-            notifyManagerException(e);
-            return;
-        }
-
-        //check if we did not get a response (json response string is empty)
-        if (jsonResponse.isEmpty()) {
-            // notify listeners we received an empty json response.
-            notifyManagerLostConnection();
-            return;
-        }
-
-        Gson gson = new Gson();
-        // convert response to CheckResponse data structure
-        InstantResponse response = gson.fromJson(getResponseString(jsonResponse), InstantResponse.class);
 
         if (response.getErrorCode() != ApiResponseCode.NO_ERROR) {
             notifyManagerCancelled(response);
@@ -112,7 +88,7 @@ public class InstantProcess implements Runnable {
      *
      * @param response - response from calling instant.php.
      */
-    private void notifyManagerCancelled(InstantResponse response) {
+    private void notifyManagerCancelled(UploadInstantResponse response) {
         if (uploadManager != null) {
             uploadManager.onCancelled(uploadItem, response);
         }

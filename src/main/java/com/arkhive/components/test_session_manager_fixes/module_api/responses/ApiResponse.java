@@ -1,5 +1,7 @@
 package com.arkhive.components.test_session_manager_fixes.module_api.responses;
 
+import com.arkhive.components.test_session_manager_fixes.module_api.codes.ApiResponseCode;
+
 /**
  * Created by  on 6/15/2014.
  */
@@ -28,6 +30,10 @@ public class ApiResponse {
             intValueOfError = Integer.valueOf(error);
         }
         return intValueOfError;
+    }
+
+    public final ApiResponseCode getErrorCode() {
+        return ApiResponseCode.fromInt(getError());
     }
 
     public final String getResult() {
