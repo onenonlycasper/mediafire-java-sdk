@@ -177,7 +177,7 @@ public class Api {
      * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
      */
     public static String getResponseString(String response) {
-        if (response.length() == 0 || response.isEmpty() || response == null) {
+        if (response == null || response.length() == 0 || response.isEmpty()) {
             response = FAIL_RES;
         }
 
