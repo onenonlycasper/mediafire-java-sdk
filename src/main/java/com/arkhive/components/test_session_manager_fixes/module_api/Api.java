@@ -116,7 +116,7 @@ public class Api {
                 apiRequestObject);
     }
 
-    static String requestImageActionToken() {
+    public String requestImageActionToken() {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
         actionTokenDistributor.borrowImageActionToken(apiRequestObject);
         if (apiRequestObject != null) {
@@ -130,7 +130,7 @@ public class Api {
         }
     }
 
-    static String requestUploadActionToken() {
+    public String requestUploadActionToken() {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
         actionTokenDistributor.borrowUploadActionToken(apiRequestObject);
         if (apiRequestObject != null) {
