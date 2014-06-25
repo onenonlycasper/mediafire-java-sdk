@@ -120,10 +120,10 @@ public class UploadManager implements UploadListenerManager {
      * @param uploadItem The UploadItem to add to the backlog queue.
      */
     public void addUploadRequest(UploadItem uploadItem) {
-        System.out.println(TAG + " addUploadRequest()");
+        logger.info(" addUploadRequest()");
         //don't add the item to the backlog queue if it is null or the path is null
         if (uploadItem == null) {
-            System.out.println(TAG + " one or more required parameters are invalid, not adding item to queue");
+            logger.info(" one or more required parameters are invalid, not adding item to queue");
             return;
         }
 
@@ -132,7 +132,7 @@ public class UploadManager implements UploadListenerManager {
                 || uploadItem.getFileData().getFilePath().isEmpty()
                 || uploadItem.getFileData().getFileHash().isEmpty()
                 || uploadItem.getFileData().getFileSize() == 0) {
-            System.out.println(TAG + " one or more required parameters are invalid, not adding item to queue");
+            logger.info(" one or more required parameters are invalid, not adding item to queue");
             return;
         }
         CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
@@ -143,7 +143,7 @@ public class UploadManager implements UploadListenerManager {
      * Pause moving backlog items to the thread queue.
      */
     public void pause() {
-        System.out.println(TAG + " pause()");
+        logger.info(" pause()");
         if (executor != null) {
             executor.pause();
         }
@@ -153,7 +153,7 @@ public class UploadManager implements UploadListenerManager {
      * Resume moving backlog items to the thread queue.
      */
     public void resume() {
-        System.out.println(TAG + " resume()");
+        logger.info(" resume()");
         if (executor != null) {
             executor.resume();
         }
@@ -165,12 +165,12 @@ public class UploadManager implements UploadListenerManager {
      * @return true if paused (not moving backlog to queue), false otherwise.
      */
     public boolean isPaused() {
-        System.out.println(TAG + " isPaused()");
+        logger.info(" isPaused()");
         return executor.isPaused();
     }
 
     private void notifyListenersStarted(UploadItem uploadItem) {
-        System.out.println(TAG + " notifyListenersStarted()");
+        logger.info(" notifyListenersStarted()");
         if (uiListener != null) {
             uiListener.onStarted(uploadItem);
         }
@@ -180,7 +180,7 @@ public class UploadManager implements UploadListenerManager {
     }
 
     private void notifyListenersCompleted(UploadItem uploadItem) {
-        System.out.println(TAG + " notifyListenersCompleted()");
+        logger.info(" notifyListenersCompleted()");
         if (uiListener != null) {
             uiListener.onCompleted(uploadItem);
         }
@@ -190,7 +190,7 @@ public class UploadManager implements UploadListenerManager {
     }
 
     private void notifyListenersOnProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        System.out.println(TAG + " notifyListenersOnProgressUpdate()");
+        logger.info(" notifyListenersOnProgressUpdate()");
         if (uiListener != null) {
             uiListener.onProgressUpdate(uploadItem, chunkNumber, numChunks);
         }
@@ -207,13 +207,13 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onStartedUploadProcess(UploadItem uploadItem) {
-        System.out.println(TAG + " onStartedUploadProcess()");
+        logger.info(" onStartedUploadProcess()");
         notifyListenersStarted(uploadItem);
     }
 
     @Override
     public void onCheckCompleted(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        System.out.println(TAG + " onCheckCompleted()");
+        logger.info(" onCheckCompleted()");
         //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
         if (uploadItem.getCheckCount() > MAX_CHECK_COUNT) {
@@ -222,10 +222,10 @@ public class UploadManager implements UploadListenerManager {
         }
 
         if (checkResponse.getStorageLimitExceeded()) {
-            System.out.println(TAG + " --storage limit is exceeded");
+            logger.info(" --storage limit is exceeded");
             storageLimitExceeded(uploadItem);
         } else {
-            System.out.println(TAG + " --storage limit not exceeded");
+            logger.info(" --storage limit not exceeded");
             if (checkResponse.getHashExists()) { //hash does exist for the file
                 hashExists(uploadItem, checkResponse);
             } else { // hash does not exist. call resumable.
@@ -236,17 +236,17 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        System.out.println(TAG + " onProgressUpdate()");
+        logger.info(" onProgressUpdate()");
         notifyListenersOnProgressUpdate(uploadItem, chunkNumber, numChunks);
     }
 
     private void storageLimitExceeded(UploadItem uploadItem) {
-        System.out.println(TAG + " storageLimitExceeded()");
+        logger.info(" storageLimitExceeded()");
         notifyListenersCancelled(uploadItem);
     }
 
     private void hashExists(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        System.out.println(TAG + " hashExists()");
+        logger.info(" hashExists()");
         if (!checkResponse.getInAccount()) { // hash which exists is not in the account
             hashNotInAccount(uploadItem);
         } else { // hash exists and is in the account
@@ -255,63 +255,63 @@ public class UploadManager implements UploadListenerManager {
     }
 
     private void hashNotInAccount(UploadItem uploadItem) {
-        System.out.println(TAG + " hashNotInAccount()");
+        logger.info(" hashNotInAccount()");
         InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
     }
 
     private void hashInAccount(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        System.out.println(TAG + " hashInAccount()");
+        logger.info(" hashInAccount()");
         boolean inFolder = checkResponse.getInFolder();
         InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
-        System.out.println(TAG + " --ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
+        logger.info(" --ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
         switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
             case UPLOAD_ALWAYS:
-                System.out.println(TAG + " --ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
+                logger.info(" --ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
                 executor.execute(process);
                 break;
             case UPLOAD_IF_NOT_IN_FOLDER:
-                System.out.println(TAG + " --ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
+                logger.info(" --ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
                 if (!inFolder) {
-                    System.out.println(TAG + " --NOT IN FOLDER SO UPLOADING");
+                    logger.info(" --NOT IN FOLDER SO UPLOADING");
                     executor.execute(process);
                 } else {
-                    System.out.println(TAG + " --IN FOLDER SO NOT UPLOADING");
+                    logger.info(" --IN FOLDER SO NOT UPLOADING");
                     notifyListenersCompleted(uploadItem);
                 }
                 break;
             case DO_NOT_UPLOAD:
             default:
-                System.out.println(TAG + " --ACTION IN ACCOUNT VIA SWITCH STMT case do_not_upload/default");
+                logger.info(" --ACTION IN ACCOUNT VIA SWITCH STMT case do_not_upload/default");
                 notifyListenersCompleted(uploadItem);
                 break;
         }
     }
 
     private void hashDoesNotExist(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        System.out.println(TAG + " hashDoesNotExist()");
+        logger.info(" hashDoesNotExist()");
         if (checkResponse.getResumableUpload().getUnitSize() == 0) {
-            System.out.println(TAG + " --unit size received from unit_size was 0. cancelling");
+            logger.info(" --unit size received from unit_size was 0. cancelling");
             notifyListenersCancelled(uploadItem);
             return;
         }
 
         if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
-            System.out.println(TAG + " --number of units received from number_of_units was 0. cancelling");
+            logger.info(" --number of units received from number_of_units was 0. cancelling");
             notifyListenersCancelled(uploadItem);
             return;
         }
 
         if (checkResponse.getResumableUpload().getAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
-            System.out.println(TAG + " --all units ready and have a poll upload key");
+            logger.info(" --all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
             uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
             uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
             PollProcess process = new PollProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         } else {
-            System.out.println(TAG + " --all units not ready or do not have poll upload key");
+            logger.info(" --all units not ready or do not have poll upload key");
             // either we don't have the poll upload key or all units are not ready
             uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
             uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
@@ -322,13 +322,13 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onInstantCompleted(UploadItem uploadItem) {
-        System.out.println(TAG + " onInstantCompleted()");
+        logger.info(" onInstantCompleted()");
         notifyListenersCompleted(uploadItem);
     }
 
     @Override
     public void onResumableCompleted(UploadItem uploadItem) {
-        System.out.println(TAG + " onResumableCompleted()");
+        logger.info(" onResumableCompleted()");
         // if the item status isn't cancelled or paused then call upload/check to make sure all units are ready
         CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
         executor.execute(process);
@@ -336,7 +336,7 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onPollCompleted(UploadItem uploadItem, UploadPollResponse pollResponse) {
-        System.out.println(TAG + " onPollCompleted()");
+        logger.info(" onPollCompleted()");
         // if this method is called then filerror and result codes are fine, but we may not have received status 99 so
         // check status code and then possibly senditem to the backlog queue.
         UploadPollResponse.DoUpload doUpload = pollResponse.getDoUpload();
@@ -347,7 +347,7 @@ public class UploadManager implements UploadListenerManager {
         if (pollStatusCode != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY
                 && pollResultCode == PollResultCode.SUCCESS
                 && pollFileErrorCode == PollFileErrorCode.NO_ERROR) {
-            System.out.println(TAG + " status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
+            logger.info(" status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
             addUploadRequest(uploadItem);
         } else {
             notifyListenersCompleted(uploadItem);
@@ -356,14 +356,14 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onProcessException(UploadItem uploadItem, Exception exception) {
-        System.out.println(TAG + " onProcessException()");
-        System.out.println(TAG + "received exception: " + exception);
+        logger.info(" onProcessException()");
+        logger.info("received exception: " + exception);
         notifyListenersCancelled(uploadItem);
     }
 
     @Override
     public void onLostConnection(UploadItem uploadItem) {
-        System.out.println(TAG + " onLostConnection()");
+        logger.info(" onLostConnection()");
         notifyListenersCancelled(uploadItem);
         //pause upload manager
         pause();
@@ -372,7 +372,7 @@ public class UploadManager implements UploadListenerManager {
 
     @Override
     public void onCancelled(UploadItem uploadItem, ApiResponse apiResponse) {
-        System.out.println(TAG + " onCancelled()");
+        logger.info(" onCancelled()");
         notifyListenersCancelled(uploadItem);
         // if there is an api error then add this item to the backlog queue and decrease current thread count
         if (apiResponse.hasError()) {

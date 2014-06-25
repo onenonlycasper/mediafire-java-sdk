@@ -7,16 +7,20 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by  on 6/15/2014.
  */
 public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
     private static final String TAG = NewSessionTokenHttpPostProcessor.class.getSimpleName();
+    private final Logger logger = LoggerFactory.getLogger(NewSessionTokenHttpPostProcessor.class);
+
     public NewSessionTokenHttpPostProcessor() {}
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " processApiRequestObject()");
+        logger.info(" processApiRequestObject()");
         String jsonResponse = apiRequestObject.getHttpResponseString();
         JsonElement jsonElement = getResponseElement(jsonResponse);
         if (jsonElement == null) {
@@ -41,8 +45,8 @@ public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
      * @param response A response string from a web API call.
      * @return The JsonElement created from the response string.
      */
-    public static JsonElement getResponseElement(String response) {
-        System.out.println(TAG + " getResponseElement()");
+    public JsonElement getResponseElement(String response) {
+        logger.info(" getResponseElement()");
         if (response == null) {
             return null;
         }

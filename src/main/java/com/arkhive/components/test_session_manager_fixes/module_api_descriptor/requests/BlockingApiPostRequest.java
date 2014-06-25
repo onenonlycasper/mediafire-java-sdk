@@ -6,6 +6,8 @@ import com.arkhive.components.test_session_manager_fixes.module_http_processor.H
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.SessionTokenDistributor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Chris Najar on 6/17/2014.
@@ -17,6 +19,7 @@ public class BlockingApiPostRequest implements HttpRequestCallback {
     private SessionTokenDistributor sessionTokenDistributor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
+    private final Logger logger = LoggerFactory.getLogger(BlockingApiPostRequest.class);
 
     public BlockingApiPostRequest(HttpProcessor httpPreProcessor,
                                  HttpProcessor httpPostProcessor,
@@ -31,7 +34,7 @@ public class BlockingApiPostRequest implements HttpRequestCallback {
     }
 
     public ApiRequestObject sendRequest() {
-        System.out.println(TAG + " sendRequest()");
+        logger.info(" sendRequest()");
         synchronized (this) {
             // borrow a session token from the TokenFarm
             sessionTokenDistributor.borrowSessionToken(apiRequestObject);
@@ -52,12 +55,12 @@ public class BlockingApiPostRequest implements HttpRequestCallback {
 
     @Override
     public void httpRequestStarted(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " httpRequestStarted()");
+        logger.info(" httpRequestStarted()");
     }
 
     @Override
     public void httpRequestFinished(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " httpRequestFinished()");
+        logger.info(" httpRequestFinished()");
         synchronized (this) {
             notify();
         }

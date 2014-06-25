@@ -8,10 +8,14 @@ import com.arkhive.components.test_session_manager_fixes.module_credentials.Appl
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
-import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.NewSessionTokenHttpPostProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.GetNewSessionTokenCallback;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,6 +38,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
     private ApplicationCredentials applicationCredentials;
+    private final Logger logger = LoggerFactory.getLogger(GetSessionTokenRunnable.class);
 
     public GetSessionTokenRunnable(GetNewSessionTokenCallback getNewSessionTokenCallback,
                                    HttpProcessor httpPreProcessor,
@@ -49,7 +54,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
 
     @Override
     public void run() {
-        System.out.println(TAG + " sendRequest()");
+        logger.info(" sendRequest()");
         synchronized (this) {
             // create request object
             apiRequestObject = createApiRequestObjectForNewSessionToken();
@@ -65,7 +70,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
             String httpResponseString = apiRequestObject.getHttpResponseString();
             // get the actual response in the form of GetSessionTokenResponse
             GetSessionTokenResponse response =
-                    new Gson().fromJson(NewSessionTokenHttpPostProcessor.getResponseElement(httpResponseString), GetSessionTokenResponse.class);
+                    new Gson().fromJson(getResponseElement(httpResponseString), GetSessionTokenResponse.class);
             // attach the response to the object
             apiRequestObject.setApiResponse(response);
             // extract the SessionToken from the response
@@ -170,14 +175,41 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
         return signature;
     }
 
+    /**
+     * All response strings returned from the web api are wrapped in "response" json element.
+     * This method strips the "response" element, and converts the remaining element into a JsonElement via GSON.
+     *
+     * @param response A response string from a web API call.
+     * @return The JsonElement created from the response string.
+     */
+    public JsonElement getResponseElement(String response) {
+        logger.info(" getResponseElement()");
+        if (response == null) {
+            return null;
+        }
+        if (response.isEmpty()) {
+            return null;
+        }
+        JsonElement returnJson = new JsonObject();
+        JsonParser parser = new JsonParser();
+        JsonElement rootElement = parser.parse(response);
+        if (rootElement.isJsonObject()) {
+            JsonElement jsonResult = rootElement.getAsJsonObject().get("response");
+            if (jsonResult.isJsonObject()) {
+                returnJson = jsonResult.getAsJsonObject();
+            }
+        }
+        return returnJson;
+    }
+
     @Override
     public void httpRequestStarted(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " httpRequestStarted()");
+        logger.info(" httpRequestStarted()");
     }
 
     @Override
     public void httpRequestFinished(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " httpRequestFinished()");
+        logger.info(" httpRequestFinished()");
         synchronized (this) {
             notify();
         }

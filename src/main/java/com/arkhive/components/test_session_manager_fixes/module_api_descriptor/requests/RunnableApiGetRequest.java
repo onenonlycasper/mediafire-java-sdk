@@ -10,6 +10,8 @@ import com.arkhive.components.test_session_manager_fixes.module_http_processor.i
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.interfaces.SessionTokenDistributor;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RunnableApiGetRequest<T extends ApiResponse> implements Runnable, HttpRequestCallback {
     private static final String TAG = RunnableApiGetRequest.class.getSimpleName();
@@ -20,6 +22,7 @@ public class RunnableApiGetRequest<T extends ApiResponse> implements Runnable, H
     private SessionTokenDistributor sessionTokenDistributor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
+    private final Logger logger = LoggerFactory.getLogger(RunnableApiGetRequest.class);
 
     public RunnableApiGetRequest(Class<T> clazz,
                                      ApiRequestRunnableCallback<T> callback,
@@ -39,7 +42,7 @@ public class RunnableApiGetRequest<T extends ApiResponse> implements Runnable, H
 
     @Override
     public void run() {
-        System.out.println(TAG + " sendRequest()");
+        logger.info(" sendRequest()");
         synchronized (this) {
             // notify our callback that the request is being processed now
             if (callback != null) {
@@ -67,12 +70,12 @@ public class RunnableApiGetRequest<T extends ApiResponse> implements Runnable, H
 
     @Override
     public void httpRequestStarted(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " httpRequestStarted()");
+        logger.info(" httpRequestStarted()");
     }
 
     @Override
     public void httpRequestFinished(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " httpRequestFinished()");
+        logger.info(" httpRequestFinished()");
         synchronized (this) {
             notify();
         }

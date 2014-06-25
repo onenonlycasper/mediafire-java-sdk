@@ -2,6 +2,8 @@ package com.arkhive.components.test_session_manager_fixes.module_http_processor.
 
 import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,6 +14,8 @@ import java.util.Map;
  */
 public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
     private static final String TAG = NewSessionTokenHttpPreProcessor.class.getSimpleName();
+    private final Logger logger = LoggerFactory.getLogger(NewSessionTokenHttpPreProcessor.class);
+
     public NewSessionTokenHttpPreProcessor() {}
 
     /**
@@ -20,7 +24,7 @@ public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
      * @param apiRequestObject - the descriptor object holding necessary values to make the http request.
      */
     public final void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " processApiRequestObject()");
+        logger.info(" processApiRequestObject()");
         // generate a url object using values from a descriptor object
         URL constructedUrl = createUrl(apiRequestObject);
         // sets the constructed url to the descriptor object
@@ -34,7 +38,7 @@ public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
      * @return a constructed URL object.
      */
     private URL createUrl(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " createUrl(ApiPostRequestObject)");
+        logger.info(" createUrl(ApiPostRequestObject)");
         // get references to the apiPostRequestObject that we will use.
         String domain = apiRequestObject.getDomain();
         String uri = apiRequestObject.getUri();
@@ -80,7 +84,7 @@ public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
      * @return a formatted string with the key/value paris for a url.
      */
     private String constructParametersForUrl(Map<String, String> parameters) {
-        System.out.println(TAG + " constructParametersForUrl(HashMap<String, String>)");
+        logger.info(" constructParametersForUrl(HashMap<String, String>)");
         StringBuilder stringBuilder = new StringBuilder();
         if (parameters != null && parameters.size() > 0) {
             for (String key : parameters.keySet()) {
@@ -100,7 +104,7 @@ public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
      * @return a url string with the first instance of & replaced with ?
      */
     private String cleanupUrlString(String urlString) {
-        System.out.println(TAG + " cleanupUrlString()");
+        logger.info(" cleanupUrlString()");
         String cleanedUrlString;
         if (urlString.contains("&") && !urlString.contains("?")) {
             cleanedUrlString = urlString.replaceFirst("&", "?");

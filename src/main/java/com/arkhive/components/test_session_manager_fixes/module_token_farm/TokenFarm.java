@@ -19,6 +19,8 @@ import com.arkhive.components.test_session_manager_fixes.module_http_processor.p
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.pre_and_post_processors.NewSessionTokenHttpPreProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.ActionToken;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -47,6 +49,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     private Object uploadTokenLock = new Object();
     private int minimumSessionTokens;
     private int maximumSessionTokens;
+    private final Logger logger = LoggerFactory.getLogger(TokenFarm.class);
 
     public TokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
         minimumSessionTokens = configuration.getMinimumSessionTokens();
@@ -58,7 +61,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     }
 
     public void getNewSessionToken(GetNewSessionTokenCallback getNewSessionTokenCallback) {
-        System.out.println(TAG + " getNewSessionToken()");
+        logger.info(" getNewSessionToken()");
         GetSessionTokenRunnable getSessionTokenRunnable =
                 new GetSessionTokenRunnable(
                         getNewSessionTokenCallback,
@@ -72,7 +75,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     private void getNewImageActionToken(
             SessionTokenDistributor sessionTokenDistributor,
             GetNewActionTokenCallback actionTokenCallback) {
-        System.out.println(TAG + " getNewImageActionToken()");
+        logger.info(" getNewImageActionToken()");
         GetImageActionTokenRunnable getImageActionTokenRunnable =
                 new GetImageActionTokenRunnable(
                         new ApiRequestHttpPreProcessor(),
@@ -85,7 +88,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
 
     private void getNewUploadActionToken(GetNewActionTokenCallback actionTokenCallback,
                                          SessionTokenDistributor sessionTokenDistributor) {
-        System.out.println(TAG + " getNewUploadActionToken()");
+        logger.info(" getNewUploadActionToken()");
         GetUploadActionTokenRunnable getUploadActionTokenRunnable =
                 new GetUploadActionTokenRunnable(
                         new ApiRequestHttpPreProcessor(),
@@ -97,7 +100,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     }
 
     public void startup() {
-        System.out.println(TAG + " startup()");
+        logger.info(" startup()");
         for (int i = 0; i < sessionTokens.remainingCapacity(); i++) {
             getNewSessionToken(this);
         }
@@ -106,7 +109,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     }
 
     public void shutdown() {
-        System.out.println(TAG + " TokenFarm shutting down");
+        logger.info(" TokenFarm shutting down");
         sessionTokens.clear();
         lockBorrowImageToken.unlock();
         lockBorrowUploadToken.unlock();
@@ -122,21 +125,21 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
      */
     @Override
     public void receiveNewSessionToken(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " receiveNewSessionToken()");
+        logger.info(" receiveNewSessionToken()");
         com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken sessionToken = apiRequestObject.getSessionToken();
         if (!apiRequestObject.isSessionTokenInvalid() && sessionToken != null) {
             try {
                 sessionTokens.add(sessionToken);
-                System.out.println(TAG + " added " + sessionToken.getTokenString());
+                logger.info(" added " + sessionToken.getTokenString());
             } catch (IllegalStateException e) {
-                System.out.println(TAG + " interrupted, not adding: " + sessionToken.getTokenString());
+                logger.info(" interrupted, not adding: " + sessionToken.getTokenString());
                 getNewSessionToken(this);
             }
         } else if (apiRequestObject.getApiResponse().getError() == 107) {
-            System.out.println(TAG + " api message: " + apiRequestObject.getApiResponse().getMessage());
-            System.out.println(TAG + " api error: " + apiRequestObject.getApiResponse().getError());
-            System.out.println(TAG + " api result: " + apiRequestObject.getApiResponse().getResult());
-            System.out.println(TAG + " api time: " + apiRequestObject.getApiResponse().getTime());
+            logger.info(" api message: " + apiRequestObject.getApiResponse().getMessage());
+            logger.info(" api error: " + apiRequestObject.getApiResponse().getError());
+            logger.info(" api result: " + apiRequestObject.getApiResponse().getResult());
+            logger.info(" api time: " + apiRequestObject.getApiResponse().getTime());
         } else {
             getNewSessionToken(this);
         }
@@ -147,55 +150,55 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     */
     @Override
     public void borrowSessionToken(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + "borrowSessionToken");
+        logger.info("borrowSessionToken");
         com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken sessionToken = null;
         try {
             sessionToken = sessionTokens.take();
-            System.out.println(TAG + " session token borrowed: " + sessionToken.getTokenString());
+            logger.info(" session token borrowed: " + sessionToken.getTokenString());
         } catch (InterruptedException e) {
             e.printStackTrace();
             apiRequestObject.addExceptionDuringRequest(e);
-            System.out.println(TAG + " no session token borrowed, interrupted.");
+            logger.info(" no session token borrowed, interrupted.");
         }
         apiRequestObject.setSessionToken(sessionToken);
     }
 
     @Override
     public void returnSessionToken(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " returnSessionToken");
+        logger.info(" returnSessionToken");
         com.arkhive.components.test_session_manager_fixes.module_token_farm.tokens.SessionToken sessionToken = apiRequestObject.getSessionToken();
         boolean needToGetNewSessionToken = false;
         if (sessionToken == null) {
-            System.out.println(TAG + " request object did not have a session token, " +
+            logger.info(" request object did not have a session token, " +
                     "but it should have. need new session token");
             needToGetNewSessionToken = true;
         }
 
         if (sessionToken == null || apiRequestObject.isSessionTokenInvalid()) {
-            System.out.println(TAG + " not returning session token. it is invalid or signature " +
+            logger.info(" not returning session token. it is invalid or signature " +
                     "calculation went bad. need new session token");
             needToGetNewSessionToken = true;
         } else {
-            System.out.println(TAG + " returning session token: " + sessionToken.getTokenString());
+            logger.info(" returning session token: " + sessionToken.getTokenString());
             try {
                 sessionTokens.put(sessionToken);
             } catch (InterruptedException e) {
-                System.out.println(TAG + " could not return session token, interrupted. need new session token");
+                logger.info(" could not return session token, interrupted. need new session token");
                 needToGetNewSessionToken = true;
             }
         }
 
         if (needToGetNewSessionToken) {
-            System.out.println(TAG + " fetching a new session token");
+            logger.info(" fetching a new session token");
             getNewSessionToken(this);
         }
     }
 
     @Override
     public void borrowImageActionToken(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + "borrowImageActionToken");
+        logger.info("borrowImageActionToken");
         // lock and fetch new token if necessary
-        System.out.println(TAG + "---starting lock: " + System.currentTimeMillis());
+        logger.info("---starting lock: " + System.currentTimeMillis());
         lockBorrowImageToken.lock();
         if (imageActionToken == null || imageActionToken.isExpired()) {
             getNewImageActionToken(this, this);
@@ -214,7 +217,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
         } finally {
             // attach new one to apiRequestObject
             lockBorrowImageToken.unlock();
-            System.out.println(TAG + "---unlock lock: " + System.currentTimeMillis());
+            logger.info("---unlock lock: " + System.currentTimeMillis());
         }
         apiRequestObject.setActionToken(imageActionToken);
     }
@@ -222,9 +225,9 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
 
     @Override
     public void borrowUploadActionToken(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + "borrowUploadActionToken");
+        logger.info("borrowUploadActionToken");
         // lock and fetch new token if necessary
-        System.out.println(TAG + "---starting lock: " + System.currentTimeMillis());
+        logger.info("---starting lock: " + System.currentTimeMillis());
         lockBorrowUploadToken.lock();
         if (uploadActionToken == null || uploadActionToken.isExpired()) {
             getNewUploadActionToken(this, this);
@@ -242,7 +245,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
             apiRequestObject.addExceptionDuringRequest(e);
         } finally {
             lockBorrowUploadToken.unlock();
-            System.out.println(TAG + "---unlock lock: " + System.currentTimeMillis());
+            logger.info("---unlock lock: " + System.currentTimeMillis());
         }
         // attach new one to apiRequestObject
         apiRequestObject.setActionToken(uploadActionToken);
@@ -250,12 +253,12 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
 
     @Override
     public void receiveNewImageActionToken(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " receiveNewImageActionToken()");
+        logger.info(" receiveNewImageActionToken()");
         synchronized (imageTokenLock) {
             if (imageActionToken != null &&
                     !imageActionToken.isExpired() &&
                     imageActionToken.getTokenString() != null) {
-                System.out.println(TAG + " received action token: " + imageActionToken.getTokenString() +
+                logger.info(" received action token: " + imageActionToken.getTokenString() +
                         ", type: " + imageActionToken.getType().toString() +
                         ", expired: " + imageActionToken.isExpired());
                 return;
@@ -263,16 +266,16 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
             ActionToken actionToken = apiRequestObject.getActionToken();
 
             if (actionToken == null) {
-                System.out.println(TAG + " action token received is null");
+                logger.info(" action token received is null");
             } else if (actionToken.getTokenString() == null) {
-                System.out.println(TAG + " action token received is null");
+                logger.info(" action token received is null");
             } else if (apiRequestObject.isActionTokenInvalid()) {
-                System.out.println(TAG + " action token received is invalid");
+                logger.info(" action token received is invalid");
             } else if (actionToken.getType() != ActionToken.Type.IMAGE) {
-                System.out.println(TAG + " action token received is not image type");
+                logger.info(" action token received is not image type");
             } else {
                 imageActionToken = actionToken;
-                System.out.println(TAG + " received action token: " + imageActionToken.getTokenString() +
+                logger.info(" received action token: " + imageActionToken.getTokenString() +
                         ", type: " + imageActionToken.getType().toString() +
                         ", expired: " + imageActionToken.isExpired());
             }
@@ -281,28 +284,28 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
 
     @Override
     public void receiveNewUploadActionToken(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " receiveNewUploadActionToken()");
+        logger.info(" receiveNewUploadActionToken()");
         synchronized (uploadTokenLock) {
             if (uploadActionToken != null &&
                     !uploadActionToken.isExpired() &&
                     uploadActionToken.getTokenString() != null) {
-                System.out.println(TAG + " received action token: " + uploadActionToken.getTokenString() +
+                logger.info(" received action token: " + uploadActionToken.getTokenString() +
                         ", type: " + uploadActionToken.getType().toString() +
                         ", expired: " + uploadActionToken.isExpired());
                 return;
             }
             ActionToken actionToken = apiRequestObject.getActionToken();
             if (actionToken == null) {
-                System.out.println(TAG + " action token received is null");
+                logger.info(" action token received is null");
             } else if (actionToken.getTokenString() == null) {
-                System.out.println(TAG + " action token received is null");
+                logger.info(" action token received is null");
             } else if (apiRequestObject.isActionTokenInvalid()) {
-                System.out.println(TAG + " action token received is invalid");
+                logger.info(" action token received is invalid");
             } else if (actionToken.getType() != ActionToken.Type.UPLOAD) {
-                System.out.println(TAG + " action token received is not upload type");
+                logger.info(" action token received is not upload type");
             } else {
                 uploadActionToken = actionToken;
-                System.out.println(TAG + " received action token: " + uploadActionToken.getTokenString() +
+                logger.info(" received action token: " + uploadActionToken.getTokenString() +
                         ", type: " + uploadActionToken.getType().toString() +
                         ", expired: " + uploadActionToken.isExpired());
             }
@@ -314,6 +317,6 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
 
     @Override
     public void apiRequestProcessFinished(GetActionTokenResponse gsonResponse) {
-        System.out.println(TAG + " apiRequestProcessFinished()");
+        logger.info(" apiRequestProcessFinished()");
     }
 }
