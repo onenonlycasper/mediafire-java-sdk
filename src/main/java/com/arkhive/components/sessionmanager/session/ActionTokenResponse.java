@@ -1,6 +1,7 @@
 package com.arkhive.components.sessionmanager.session;
 
-/** Stores a response from a request for an action token.
+/**
+ * Stores a response from a request for an action token.
  */
 public class ActionTokenResponse {
 
@@ -11,10 +12,22 @@ public class ActionTokenResponse {
     private String current_api_version;
     //CHECKSTYLE:ON
 
-    public ActionTokenResponse() {}
+    public ActionTokenResponse() {
+    }
 
-    public String getAction() { return action; }
-    public String getSessionToken() { return action_token; }
-    public String getResult() { return result; }
-    public String getCurrentAPIVersion() { return current_api_version; }
+    public String getAction() {
+        return action;
+    }
+
+    public String getSessionToken() {
+        return action_token;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public String getCurrentAPIVersion() {
+        return current_api_version;
+    }
 }

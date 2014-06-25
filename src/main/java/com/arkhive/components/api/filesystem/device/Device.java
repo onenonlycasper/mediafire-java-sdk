@@ -15,8 +15,8 @@ import com.arkhive.components.sessionmanager.SessionManager;
 
 /**
  * class for making api calls to Device apis.
- * @author Chris Najar
  *
+ * @author
  */
 public class Device {
     private static final String GET_CHANGES_URI = "/api/1.0/device/get_changes.php";

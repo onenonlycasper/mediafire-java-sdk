@@ -21,8 +21,10 @@ import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**Runnable for making a call to upload/check.php.
- * @author Chris Najar
+/**
+ * Runnable for making a call to upload/check.php.
+ *
+ * @author
  */
 public class CheckProcess implements Runnable {
     private static final String TAG = CheckProcess.class.getSimpleName();
@@ -40,22 +42,22 @@ public class CheckProcess implements Runnable {
 
     @Override
     public void run() {
-        logger.info(" run()");
+        System.out.println(TAG + "  sendRequest()");
         uploadItem.getFileData().setFileSize();
         uploadItem.getFileData().setFileHash();
         check();
     }
 
     /**
-     *  1. url encode filename.
-     *  2. generate request parameters.
-     *  3. create GET request.
-     *  4. receive API response.
-     *  5. convert response to CheckResponse using Gson.
-     *  6. notify listeners of completion.
+     * 1. url encode filename.
+     * 2. generate request parameters.
+     * 3. create GET request.
+     * 4. receive API response.
+     * 5. convert response to CheckResponse using Gson.
+     * 6. notify listeners of completion.
      */
     private void check() {
-        logger.info(" check()");
+        System.out.println(TAG + "  check()");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
         //notify listeners that check started
         notifyManagerUploadStarted();
@@ -65,7 +67,7 @@ public class CheckProcess implements Runnable {
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.warn(TAG + " Exception: " + e);
+            System.out.println(TAG + " Exception: " + e);
             e.printStackTrace();
             notifyManagerException(e);
             return;
@@ -110,6 +112,7 @@ public class CheckProcess implements Runnable {
 
     /**
      * generates the request parameter after we receive a UTF encoded filename.
+     *
      * @param filename - the name of hte file.
      * @return - a map of request paramaters.
      */
@@ -131,10 +134,11 @@ public class CheckProcess implements Runnable {
 
     /**
      * notifies listeners that this process has completed.
+     *
      * @param checkResponse - the response from calling check.php.
      */
     private void notifyListenersCompleted(CheckResponse checkResponse) {
-        logger.info(" notifyListenersCompleted()");
+        System.out.println(TAG + "  notifyListenersCompleted()");
         //notify manager that check is completed
         if (uploadManager != null) {
             uploadManager.onCheckCompleted(uploadItem, checkResponse);
@@ -159,6 +163,7 @@ public class CheckProcess implements Runnable {
 
     /**
      * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
+     *
      * @param e - exception that occurred.
      */
     private void notifyManagerException(Exception e) {
@@ -180,6 +185,7 @@ public class CheckProcess implements Runnable {
 
     /**
      * converts a String received from JSON format into a response String.
+     *
      * @param response - the response received in JSON format
      * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
      */

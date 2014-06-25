@@ -15,12 +15,12 @@ import java.util.Map;
 public class ApiRequest implements HttpRequestHandler, SessionRequestHandler {
     private static final String TAG = ApiRequest.class.getSimpleName();
     private static final int RETRY_MAX = 10;
-    private final String              domain;
-    private final String              uri;
+    private final String domain;
+    private final String uri;
     private final Map<String, String> parameters;
-    private final HttpInterface       httpInterface;
-    private final ApiRequestHandler   requestHandler;
-    private final SessionManager      sessionManager;
+    private final HttpInterface httpInterface;
+    private final ApiRequestHandler requestHandler;
+    private final SessionManager sessionManager;
 
     private int retryCount = 0;
 

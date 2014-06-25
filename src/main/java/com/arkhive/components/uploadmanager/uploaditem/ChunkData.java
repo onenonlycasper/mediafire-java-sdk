@@ -9,13 +9,12 @@ import org.slf4j.LoggerFactory;
  * and number of units. These values should
  * only be received after getting a response
  * from calling pre upload.
- * @author Chris Najar
  *
+ * @author
  */
 public class ChunkData {
     private int unitSize;
     private int numberOfUnits;
-    private final Logger logger = LoggerFactory.getLogger(ChunkData.class);
 
     /**
      * Sole constructor for this data structure.
@@ -28,47 +27,45 @@ public class ChunkData {
     /*============================
      * public getters
      *============================*/
+
     /**
      * Get the unit size for each chunk.
+     *
      * @return
      */
     public int getUnitSize() {
-        logger.info("getUnitSize()");
-        logger.info("RETURNING UNIT SIZE: " + unitSize);
         return unitSize;
     }
 
     /**
      * Get the number of chunks.
+     *
      * @return
      */
     public int getNumberOfUnits() {
-        logger.info("getNumberOfUnits()");
-        logger.info("RETURNING NUMBER OF UNITS: " + numberOfUnits);
         return numberOfUnits;
     }
     
     /*============================
      * public setters
      *============================*/
+
     /**
      * sets the unit size to the passed value.
+     *
      * @param unitSize
      */
     public void setUnitSize(int unitSize) {
-        logger.info("setUnitSize()");
         this.unitSize = unitSize;
-        logger.info("UNIT SIZE SET TO: " + this.unitSize);
     }
 
     /**
      * sets the number of units to the passed value.
+     *
      * @param numberOfUnits
      */
     public void setNumberOfUnits(int numberOfUnits) {
-        logger.info("setNumberOfUnits()");
         this.numberOfUnits = numberOfUnits;
-        logger.info("NUMBER OF UNITS SET TO: " + this.numberOfUnits);
     }
 
 }

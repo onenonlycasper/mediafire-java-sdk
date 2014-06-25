@@ -4,12 +4,15 @@
       <w>appid</w>
       <w>cardccv</w>
       <w>checkstyle</w>
+      <w>ekey</w>
       <w>filedrop</w>
       <w>folderkey</w>
       <w>foldername</w>
       <w>gmail</w>
       <w>misformatted</w>
+      <w>najar</w>
       <w>pausable</w>
+      <w>pkey</w>
       <w>quickkey</w>
       <w>subdomain</w>
     </words>

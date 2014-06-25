@@ -1,7 +1,9 @@
 package com.arkhive.components.api;
 
-/** class to be extended by all api response classes. This class contains the common response fields.
- * @author Chris Najar
+/**
+ * class to be extended by all api response classes. This class contains the common response fields.
+ *
+ * @author
  */
 public class ApiResponse {
     private String action;
@@ -14,28 +16,28 @@ public class ApiResponse {
 
     public String getAction() {
         if (action == null) {
-            action  = "";
+            action = "";
         }
         return action;
     }
 
     public String getResult() {
         if (result == null) {
-            result  = "";
+            result = "";
         }
         return result;
     }
 
     public String getMessage() {
         if (message == null) {
-            message  = "";
+            message = "";
         }
         return message;
     }
 
     public String getCurrentApiVersion() {
         if (current_api_version == null) {
-            current_api_version  = "";
+            current_api_version = "";
         }
         return current_api_version;
     }

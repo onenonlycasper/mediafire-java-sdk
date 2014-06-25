@@ -2,9 +2,10 @@ package com.arkhive.components.api.contacts.fetch;
 
 import com.arkhive.components.api.contacts.ContactResponse;
 
-/**Fetch response.
- * @author Chris Najar
+/**
+ * Fetch response.
  *
+ * @author
  */
 public class FetchRawResponse extends ContactResponse {
     //CHECKSTYLE:OFF
@@ -14,7 +15,9 @@ public class FetchRawResponse extends ContactResponse {
     private String data;
 
     public int getNodeCount() {
-        if (node_count == null) { node_count = "0"; }
+        if (node_count == null) {
+            node_count = "0";
+        }
         return Integer.parseInt(node_count);
     }
 
@@ -34,6 +37,7 @@ public class FetchRawResponse extends ContactResponse {
 
     /**
      * creates a raw trie from this response.
+     *
      * @return
      */
     public RawTrie getRawTrie() {

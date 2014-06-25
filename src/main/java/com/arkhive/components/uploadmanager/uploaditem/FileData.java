@@ -8,59 +8,63 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
  * file information for an upload item.
- * @author Chris Najar
  *
+ * @author
  */
 public class FileData {
     private static final String TAG = FileData.class.getSimpleName();
-    private String filePath;
+    private final String filePath;
     private long fileSize;
     private String fileHash;
     private final Logger logger = LoggerFactory.getLogger(FileData.class);
 
     public FileData(String filePath) {
-        logger.info("FileData object created");
+        System.out.println(TAG + " FileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
         this.filePath = filePath;
+        setFileSize();
+        setFileHash();
     }
 
     /**
      * Gets the filename.
+     *
      * @return
      */
     public String getFilePath() {
-        logger.info("getFilePath()");
+        System.out.println(TAG + " getFilePath()");
         return filePath;
     }
 
     /**
      * gets the file size.
+     *
      * @return
      */
     public long getFileSize() {
-        logger.info("getFilePath()");
+        System.out.println(TAG + " getFilePath()");
         return fileSize;
     }
 
     /**
      * gets the file hash.
+     *
      * @return
      */
     public String getFileHash() {
-        logger.info("getFilePath()");
+        System.out.println(TAG + " getFilePath()");
         return fileHash;
     }
 
     public void setFileSize() {
-        logger.info("setFileSize()");
+        System.out.println(TAG + " setFileSize()");
         File file = new File(getFilePath());
 //        FileInputStream fileInputStream;
 //        FileChannel channel;
@@ -73,11 +77,11 @@ public class FileData {
 //            channel.close();
 //            fileInputStream.close();
 //        } catch (FileNotFoundException e) {
-//            logger.error(TAG + "Exception: " + e);
+//            System.out.println(TAG + "Exception: " + e);
 //            fileSize = 0;
 //            filePath = "";
 //        } catch (IOException e) {
-//            logger.error(TAG + "Exception: " + e);
+//            System.out.println(TAG + "Exception: " + e);
 //            fileSize = 0;
 //        } finally {
 //            channel = null;
@@ -85,11 +89,11 @@ public class FileData {
 //        }
         fileSize = file.length();
 
-        logger.info("FILE SIZE IS SET TO: " + fileSize);
+        System.out.println(TAG + " FILE SIZE IS SET TO: " + fileSize);
     }
 
     public void setFileHash() {
-        logger.info("setFileHash()");
+        System.out.println(TAG + " setFileHash()");
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;
@@ -97,7 +101,7 @@ public class FileData {
         try {
             fileInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            logger.error(TAG + "Exception: " + e);
+            System.out.println(TAG + "Exception: " + e);
             fileHash = "";
             return;
         }
@@ -127,46 +131,16 @@ public class FileData {
             fileUri.close();
             in.close();
         } catch (NoSuchAlgorithmException e) {
-            logger.error(TAG + "Exception: " + e);
+            System.out.println(TAG + "Exception: " + e);
             fileHash = "";
         } catch (IOException e) {
-            logger.error(TAG + "Exception: " + e);
+            System.out.println(TAG + "Exception: " + e);
             fileHash = "";
         } finally {
             fileInputStream = null;
             fileUri = null;
             in = null;
         }
-
-        logger.info("FILE HASH IS SET TO: " + fileHash);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-
-        if (this.getClass() != object.getClass()) {
-            return false;
-        }
-
-        if (!(object instanceof FileData)) {
-            return false;
-        }
-
-        if (!filePath.equals(((FileData) object).filePath)) {
-            return false;
-        }
-
-        if (fileSize != ((FileData) object).fileSize) {
-            return false;
-        }
-
-        if (!fileHash.equals(((FileData) object).fileHash)) {
-            return false;
-        }
-
-        return true;
+        System.out.println(TAG + " FILE HASH IS SET TO: " + fileHash);
     }
 }

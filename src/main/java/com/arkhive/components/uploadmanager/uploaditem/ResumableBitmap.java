@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
  * This data structure represents the bitmap
  * which is received from the pre upload response
  * which is made by calling api/upload/pre_upload.php.
- * @author Chris Najar
  *
+ * @author
  */
 public class ResumableBitmap {
     private final int count;
@@ -22,6 +22,7 @@ public class ResumableBitmap {
 
     /**
      * Constructor given an int count and Collection of words.
+     *
      * @param count
      * @param words
      */
@@ -33,6 +34,7 @@ public class ResumableBitmap {
 
     /**
      * Constructor given a Bitmap which is received from PreUploadResponse.
+     *
      * @param bitmap
      */
     public ResumableBitmap(Bitmap bitmap) {
@@ -42,11 +44,11 @@ public class ResumableBitmap {
     /*============================
      * private methods
      *============================*/
+
     /**
      * decodes the Bitmap received (given parameters count, [words]).
      */
     private void decodeBitmap() {
-        logger.info("decodeBitmap()");
         List<Boolean> uploadUnits = new ArrayList<Boolean>();
 
         //loop count times
@@ -71,13 +73,14 @@ public class ResumableBitmap {
     /*============================
      * public methods
      *============================*/
+
     /**
      * Used to find out if a chunk has been uploaded or not.
+     *
      * @param chunkId - the id of the chunk to be checked.
      * @return - true if uploaded, false if not.
      */
     public boolean isUploaded(int chunkId) {
-        logger.info("isUploaded()");
         if (uploadUnits.size() == 0) {
             return false;
         }
@@ -86,20 +89,18 @@ public class ResumableBitmap {
 
     /**
      * Gets the collection of Upload Units.
+     *
      * @return - the collection of Upload Units.
      */
     public List<Boolean> getUploadUnits() {
-        logger.info("getUploadUnits()");
         return uploadUnits;
     }
 
     public int getCount() {
-        logger.info("getCount()");
         return count;
     }
 
     public List<Integer> getWords() {
-        logger.info("getWords()");
         return words;
     }
 }

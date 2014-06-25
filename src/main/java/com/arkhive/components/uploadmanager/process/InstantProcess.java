@@ -24,13 +24,13 @@ import java.util.Map;
 /**
  * Runnable for making a call to upload/instant.php.
  *
- * @author Chris Najar
+ * @author
  */
 public class InstantProcess implements Runnable {
-    private static final String TAG         = InstantProcess.class.getSimpleName();
+    private static final String TAG = InstantProcess.class.getSimpleName();
     private static final String INSTANT_URI = "/api/upload/instant.php";
     private final SessionManager sessionManager;
-    private final UploadItem     uploadItem;
+    private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
     private final Logger logger = LoggerFactory.getLogger(InstantProcess.class);
 
@@ -42,7 +42,7 @@ public class InstantProcess implements Runnable {
 
     @Override
     public void run() {
-        logger.info("run()");
+        System.out.println(TAG + " sendRequest()");
         instant();
     }
 
@@ -61,7 +61,7 @@ public class InstantProcess implements Runnable {
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.warn(TAG + " Exception: " + e);
+            System.out.println(TAG + " Exception: " + e);
             e.printStackTrace();
             notifyManagerException(e);
             return;
@@ -122,7 +122,6 @@ public class InstantProcess implements Runnable {
      * generates the request parameter after we receive a UTF encoded filename.
      *
      * @param filename - the filename used to construct request paramater.
-     *
      * @return - a map containing the request paramaters.
      */
     private Map<String, String> generateRequestParameters(String filename) {
@@ -131,7 +130,7 @@ public class InstantProcess implements Runnable {
         keyValue.put("filename", filename);
         keyValue.put("hash", uploadItem.getFileData().getFileHash());
         keyValue.put("size", Long.toString(uploadItem.getFileData().getFileSize()));
-        keyValue.put("mtime", uploadItem.getModificationTime());
+        keyValue.put("mtime", uploadItem.getUploadOptions().getModificationTime());
         keyValue.put("response_format", "json");
         if (!uploadItem.getUploadOptions().getUploadPath().isEmpty()) {
             keyValue.put("path", uploadItem.getUploadOptions().getUploadPath());
@@ -145,7 +144,6 @@ public class InstantProcess implements Runnable {
 
     /**
      * notifies listeners that this process has completed successfully.
-     *
      */
     private void notifyManagerCompleted() {
         //notify manager that the upload is completed
@@ -181,7 +179,6 @@ public class InstantProcess implements Runnable {
      * converts a String received from JSON format into a response String.
      *
      * @param response - the response received in JSON format
-     *
      * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
      */
     private String getResponseString(String response) {

@@ -2,7 +2,6 @@ package com.arkhive.components.uploadmanager.uploaditem;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -13,15 +12,13 @@ import org.slf4j.LoggerFactory;
  * The only mandatory parameter that needs to be passed to
  * the constructor is a path, but the implementer of this
  * data structure can also pass specific upload options.
- * @author Chris Najar
  *
+ * @author
  */
 public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
     private int count;
     private String fileName;
-    private String quickKey;
-    private String modificationTime;
     private UploadOptions options;
     private final FileData fileData;
     private ChunkData chunkData;
@@ -32,15 +29,17 @@ public class UploadItem {
     /**
      * Constructor which takes a path and upload attempts.
      * Use this method when you want to customize the upload options for this UploadItem.
-     * @param path - file path on the device
+     *
+     * @param path          - file path on the device
      * @param uploadOptions - upload options to use for the upload item.
-     * Should use the single or dual argument constructor for the most part.
+     *                      Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, UploadOptions uploadOptions) {
-        logger.info("UploadItem created");
+        System.out.println(TAG + " UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
+
         if (uploadOptions == null) {
             options = new UploadOptions();
         } else {
@@ -55,8 +54,6 @@ public class UploadItem {
 
         //set Object fields so they won't be null
         fileData = new FileData(path);
-        quickKey = "";
-        modificationTime = "";
         pollUploadKey = "";
         chunkData = new ChunkData();
         bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
@@ -66,6 +63,7 @@ public class UploadItem {
     /**
      * Constructor which takes a path and an image id
      * Use this method when you want to use default upload options for this UploadItem.
+     *
      * @param path - path to data
      */
     public UploadItem(String path) {
@@ -73,53 +71,52 @@ public class UploadItem {
     }
 
     public int getCheckCount() {
-        logger.info("getCheckCount()");
+        System.out.println(TAG + " getCheckCount()");
         count++;
         return count;
     }
 
-    /**
-     * Called to get the quick key.
-     * @return the quick key.
-     */
-    public String getQuickKey() {
-        logger.info("getQuickKey()");
-        return quickKey;
-    }
 
     /**
      * Called to get the Short file name.
+     *
      * @return the filename.
      */
     public String getFileName() {
-        logger.info("getFileName()");
+        System.out.println(TAG + " getFileName()");
+        if (!options.getCustomFileName().isEmpty()) {
+            fileName = options.getCustomFileName();
+        }
         return fileName;
     }
 
     /**
      * CAlled to get the UploadItemFileData.
+     *
      * @return the file data struct.
      */
     public FileData getFileData() {
-        logger.info("getFileData()");
+        System.out.println(TAG + " getFileData()");
         return fileData;
     }
 
     /**
      * Called to get the poll upload key.
+     *
      * @return - the poll upload key.
      */
     public String getPollUploadKey() {
-        logger.info("getPollUploadKey()");
+        System.out.println(TAG + " getPollUploadKey()");
         return pollUploadKey;
     }
 
     /**
      * Called to get the UploadItemFileUploadOptions.
+     *
      * @return - the upload options struct.
      */
     public UploadOptions getUploadOptions() {
-        logger.info("getUploadOptions()");
+        System.out.println(TAG + " getUploadOptions()");
         if (options == null) {
             options = new UploadOptions();
         }
@@ -128,10 +125,11 @@ public class UploadItem {
 
     /**
      * Called to get the UploadItemChunkData.
+     *
      * @return - the chunkdata struct.
      */
     public ChunkData getChunkData() {
-        logger.info("getChunkData()");
+        System.out.println(TAG + " getChunkData()");
         if (chunkData == null) {
             chunkData = new ChunkData();
         }
@@ -140,80 +138,45 @@ public class UploadItem {
 
     /**
      * Called to get the ResumableUploadBitmap.
+     *
      * @return - the resumablebitmap struct.
      */
     public ResumableBitmap getBitmap() {
-        logger.info("getBitmap()");
+        System.out.println(TAG + " getBitmap()");
         if (bitmap == null) {
-            logger.error(TAG + "   resumable bitmap reference lost");
+            System.out.println(TAG + "   resumable bitmap reference lost");
             bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
         }
         return bitmap;
     }
 
     /**
-     * Called to get the Modification Time.
-     * @return - the modification time.
-     */
-    public String getModificationTime() {
-        logger.info("getModificationTime()");
-        return modificationTime;
-    }
-
-    /**
-     * Sets the quick key.
-     * @param quickKey - the quickkey to set.
-     */
-    public void setQuickKey(String quickKey) {
-        logger.info("setQuickKey()");
-        this.quickKey = quickKey;
-    }
-
-    /**
      * Sets the ResumableUploadBitmap.
+     *
      * @param bitmap - the resumablebitmap to set.
      */
     public void setBitmap(ResumableBitmap bitmap) {
-        logger.info("setBitmap()");
+        System.out.println(TAG + " setBitmap()");
         this.bitmap = bitmap;
     }
 
     /**
      * Sets the poll upload key.
+     *
      * @param pollUploadKey - the polluploadkey to set.
      */
     public void setPollUploadKey(String pollUploadKey) {
-        logger.info("setPollUploadKey()");
+        System.out.println(TAG + " setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
     }
 
     /**
-     * Sets the modification time. A valid format must be entered.
-     * @param modificationTime - the modification time to set.
-     */
-    public void setModificationTime(String modificationTime) {
-        logger.info("setModificationTime()");
-        String timeString;
-        if (modificationTime == null || modificationTime.isEmpty()) {
-            timeString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US).format(new Date());
-        } else {
-            timeString = modificationTime;
-        }
-
-        try {
-            this.modificationTime = URLEncoder.encode(timeString, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("UTF-8 encoding not available");
-        }
-    }
-
-    /**
      * sets the short file name given the path.
-     * @param path
+     *
+     * @param path path of the file.
      */
     private void setFileName(String path) {
-        logger.info("setFileName()");
+        System.out.println(TAG + " setFileName()");
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {
@@ -222,37 +185,4 @@ public class UploadItem {
             throw new IllegalStateException("UTF-8 not supported");
         }
     }
-
-    /**
-     * Determines whether an Upload Item has the same hash as another Upload Item.
-     * @param item
-     * @return true if hashes match, false otherwise.
-     */
-    public boolean equalTo(UploadItem item) {
-        logger.info("equalTo()");
-        return fileData.getFileHash().equals(item.fileData.getFileHash());
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        logger.info("equals()");
-        if (object == null) {
-            return false;
-        }
-
-        if (this.getClass() != object.getClass()) {
-            return false;
-        }
-
-        if (!(object instanceof UploadItem)) {
-            return false;
-        }
-
-        if (!fileData.equals(((UploadItem) object).getFileData())) {
-            return false;
-        }
-
-        return true;
-    }
-
 }

@@ -3,8 +3,8 @@ package com.arkhive.components.api.upload.errors;
 /**
  * This enum represents the values that the poll upload
  * response data structure can return under status code.
- * @author Chris Najar
  *
+ * @author
  */
 public enum PollStatusCode {
     UNKNOWN_OR_NO_STATUS_AVAILABLE_FOR_THIS_KEY(0),
@@ -17,17 +17,20 @@ public enum PollStatusCode {
     UPLOAD_IS_IN_PROGRESS(17),
     WAITING_FOR_ASSEMBLY(18),
     ASSEMBLING_FILE(19),
-    NO_MORE_REQUESTS_FOR_THIS_KEY(99),
-    ;
+    NO_MORE_REQUESTS_FOR_THIS_KEY(99),;
 
     private final int value;
 
-    private PollStatusCode(int value) { this.value = value; }
+    private PollStatusCode(int value) {
+        this.value = value;
+    }
 
-    public int getValue() { return this.value; }
+    public int getValue() {
+        return this.value;
+    }
 
     public static PollStatusCode fromInt(int value) {
-        for (final PollStatusCode e: values()) {
+        for (final PollStatusCode e : values()) {
             if (e.getValue() == value) {
                 return e;
             }
@@ -38,19 +41,43 @@ public enum PollStatusCode {
     @Override
     public String toString() {
         String returnMessage;
-        switch(this.value) {
-            case 0:         returnMessage = "Unknown or no status available for this key"; break;
-            case 2:         returnMessage = "Key is ready for use"; break;
-            case 3:         returnMessage = "Upload is in progress"; break;
-            case 4:         returnMessage = "Upload is completed"; break;
-            case 5:         returnMessage = "Waiting for verification"; break;
-            case 6:         returnMessage = "Verifying File"; break;
-            case 11:        returnMessage = "Finished verification"; break;
-            case 17:        returnMessage = "Upload is in progress"; break;
-            case 18:        returnMessage = "Waiting for assembly"; break;
-            case 19:        returnMessage = "Assembling File"; break;
-            case 99:        returnMessage = "No more requests for this key"; break;
-            default:        returnMessage = "No error code associated with: " + this.value; break;
+        switch (this.value) {
+            case 0:
+                returnMessage = "Unknown or no status available for this key";
+                break;
+            case 2:
+                returnMessage = "Key is ready for use";
+                break;
+            case 3:
+                returnMessage = "Upload is in progress";
+                break;
+            case 4:
+                returnMessage = "Upload is completed";
+                break;
+            case 5:
+                returnMessage = "Waiting for verification";
+                break;
+            case 6:
+                returnMessage = "Verifying File";
+                break;
+            case 11:
+                returnMessage = "Finished verification";
+                break;
+            case 17:
+                returnMessage = "Upload is in progress";
+                break;
+            case 18:
+                returnMessage = "Waiting for assembly";
+                break;
+            case 19:
+                returnMessage = "Assembling File";
+                break;
+            case 99:
+                returnMessage = "No more requests for this key";
+                break;
+            default:
+                returnMessage = "No error code associated with: " + this.value;
+                break;
         }
         return returnMessage;
     }

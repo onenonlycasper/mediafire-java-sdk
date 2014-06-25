@@ -3,9 +3,7 @@ package com.arkhive.components.api.filesystem.folder;
 import com.arkhive.components.api.ApiResponse;
 
 /**
- *
- * @author Chris Najar
- *
+ * @author
  */
 public class FolderCreateResponse extends ApiResponse {
     //CHECKSTYLE:OFF
@@ -14,7 +12,9 @@ public class FolderCreateResponse extends ApiResponse {
     private String device_revision;
     //CHECKSTYLE:ON
 
-    /** Returns the json object "folder_key".
+    /**
+     * Returns the json object "folder_key".
+     *
      * @return
      */
     public String getFolderKey() {
@@ -24,7 +24,9 @@ public class FolderCreateResponse extends ApiResponse {
         return this.folder_key;
     }
 
-    /** Returns the JSON object "upload_key".
+    /**
+     * Returns the JSON object "upload_key".
+     *
      * @return
      */
     public String getUploadKey() {
@@ -34,7 +36,9 @@ public class FolderCreateResponse extends ApiResponse {
         return this.upload_key;
     }
 
-    /** Returns the JSON object "device_revision".
+    /**
+     * Returns the JSON object "device_revision".
+     *
      * @return
      */
     public int getDeviceRevision() {

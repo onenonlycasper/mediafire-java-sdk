@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 
-
 // CHECKSTYLE:OFF
 import com.google.gson.Gson;
 // CHECKSTYLE:ON
@@ -20,10 +19,11 @@ import com.google.gson.JsonParser;
 import sun.misc.BASE64Decoder;
 
 //{"root":{"a":{"@":{"b":{".":{"c":{"end":[0]}}}}}}} a@b.c
+
 /**
  * raw auto complete trie.
- * @author Chris Najar
  *
+ * @author
  */
 public class RawTrie {
     private final String data;
@@ -44,6 +44,7 @@ public class RawTrie {
 
     /**
      * builds the trie recursively.
+     *
      * @param node
      * @param responseString
      */
@@ -85,6 +86,7 @@ public class RawTrie {
 
     /**
      * creates a data pointer collection.
+     *
      * @param str
      */
     private void createDataPointer(String str) {
@@ -98,9 +100,10 @@ public class RawTrie {
 
     /**
      * lookup a value within a node starting at some index.
-     * @param term - the string to lookup.
-     * @param index - should always pass 0 unless you have a good reason not to.
-     * @param node - the starting node (i.e. root node of this trie via getRoot()).
+     *
+     * @param term    - the string to lookup.
+     * @param index   - should always pass 0 unless you have a good reason not to.
+     * @param node    - the starting node (i.e. root node of this trie via getRoot()).
      * @param results - if you have a collection of nodes to add to, pass it, if not, pass null or create an empty list.
      * @return
      */
@@ -127,6 +130,7 @@ public class RawTrie {
 
     /**
      * converts an end point to a value. In other words, end points are in format "[##.#]" will convert to "##"
+     *
      * @param nodeValue
      * @return
      * @throws Exception
@@ -147,6 +151,7 @@ public class RawTrie {
 
     /**
      * retrieves all the leaves of this node.
+     *
      * @param node
      * @param list
      * @return
@@ -181,30 +186,43 @@ public class RawTrie {
 
     /**
      * retrieves the root node for this trie.
+     *
      * @return
      */
-    public Node getRoot() { return this.root; }
+    public Node getRoot() {
+        return this.root;
+    }
 
     /**
      * retrieves the raw data string for this trie.
+     *
      * @return
      */
-    public String getData() { return this.data; }
+    public String getData() {
+        return this.data;
+    }
 
     /**
      * retrieves the raw directory string for this trie.
+     *
      * @return
      */
-    public String getDirectory() { return this.directory; }
+    public String getDirectory() {
+        return this.directory;
+    }
 
     /**
      * retrieves the data pointer (decoded data object) for this trie.
+     *
      * @return
      */
-    public List<String> getDataPointer() { return this.dataPointer; }
+    public List<String> getDataPointer() {
+        return this.dataPointer;
+    }
 
     /**
      * passing a search term will search the trie for potential matches. Potential matches are returned as a colleciton.
+     *
      * @param searchTerm - collection of Contact objects which match the search term.
      * @return
      */

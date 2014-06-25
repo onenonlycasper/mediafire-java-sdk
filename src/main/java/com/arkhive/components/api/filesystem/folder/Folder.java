@@ -20,9 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 /**
- *
- * @author Chris Najar
- *
+ * @author
  */
 public class Folder {
     private static final String COPY_URI = "/api/folder/copy.php";
@@ -42,11 +40,12 @@ public class Folder {
 
     /**
      * Makes a call to folder/copy.php.
-     * <p>
+     * <p/>
      * This method will try to copy one folder to another with a key of "destinationkey".
-     * @param folder The FileSystemItem to copy.
+     *
+     * @param folder      The FileSystemItem to copy.
      * @param destination The FileSystemItem destination.
-     * @param sm - session manager.
+     * @param sm          - session manager.
      * @return a FolderCopyREsponse object.
      */
     public static FolderCopyResponse copy(FileSystemItem folder, FileSystemItem destination, SessionManager sm) {
@@ -66,10 +65,11 @@ public class Folder {
 
     /**
      * Overloaded method which calls copy(SessionManager, String, String).
-     * <p>
+     * <p/>
      * This method will try to copy one folder to the root.
+     *
      * @param folder The FileSystemItem to copy.
-     * @param sm - session manager.
+     * @param sm     - session manager.
      * @return a FolderCopyResponse object.
      */
     public static FolderCopyResponse copy(FileSystemItem folder, SessionManager sm) {
@@ -79,13 +79,15 @@ public class Folder {
   /*=================================================================================================================
    * FOLDER MOVE API
    ==================================================================================================================*/
+
     /**
      * Makes a call to folder/move.php.
-     * <p>
+     * <p/>
      * Calling this method will attempt to move a folder to a folder with a key of 'destinationKey'.
-     * @param folder The FileSystemItem to move.
+     *
+     * @param folder      The FileSystemItem to move.
      * @param destination The FileSystemItem destination.
-     * @param sm - session manager.
+     * @param sm          - session manager.
      * @return a FolderMoveResponse object.
      */
     public static FolderMoveResponse move(FileSystemItem folder, FileSystemItem destination, SessionManager sm) {
@@ -106,10 +108,11 @@ public class Folder {
 
     /**
      * Overloaded method which calls move(SessionManager, String, String).
-     * <p>
+     * <p/>
      * This method will move the folder to the root directory.
+     *
      * @param folder The FileSystemItem to move.
-     * @param sm - session manager.
+     * @param sm     - session manager.
      * @return a FolderMoveResponse object.
      */
     public static FolderMoveResponse move(FileSystemItem folder, SessionManager sm) {
@@ -119,14 +122,16 @@ public class Folder {
   /*=================================================================================================================
    * FOLDER CREATE API
    ==================================================================================================================*/
+
     /**
      * Makes a call to folder/create.php.
-     * <p>
+     * <p/>
      * Calling this will create a folder in the folder with key of 'parentKey'.
-     * @param folder The FileSystemItem to create.
-     * @param name - name of the folder to be created.
+     *
+     * @param folder         The FileSystemItem to create.
+     * @param name           - name of the folder to be created.
      * @param allowDuplicate - true if create folder with changed name if folder exists, false if not.
-     * @param sm - sesssion manager.
+     * @param sm             - sesssion manager.
      * @return a FolderCreateResponse object.
      */
     public static FolderCreateResponse create(FileSystemItem folder, String name, boolean allowDuplicate,
@@ -148,10 +153,11 @@ public class Folder {
 
     /**
      * Overloaded method for calling the create(SessionManager, String, String, boolean) method.
-     * <p>
+     * <p/>
      * Calling this will create a folder in the root directory and will alter the requested name if there is a duplicate.
+     *
      * @param name - name of the new folder.
-     * @param sm - session manager.
+     * @param sm   - session manager.
      * @return a FolderCreateResponse.
      */
     public static FolderCreateResponse create(String name, SessionManager sm) {
@@ -160,6 +166,7 @@ public class Folder {
 
     /**
      * Converts a boolean to a 'yes' or 'no' String.
+     *
      * @param b - boolean to convert.
      * @return "yes" if b is true, "no" if b is false.
      */
@@ -174,11 +181,13 @@ public class Folder {
   /*=================================================================================================================
    * FOLDER DELETE/PURGE API
    ==================================================================================================================*/
+
     /**
      * Makes a call to folder/delete.php.
+     *
      * @param folder The FileSystemItem to delete.
-     * @param purge - true if calling 'purge', false if calling 'delete'. true will permanently delete the folder.
-     * @param sm - session manager.
+     * @param purge  - true if calling 'purge', false if calling 'delete'. true will permanently delete the folder.
+     * @param sm     - session manager.
      * @return a FolderDeleteResponse object.
      */
     public static FolderDeleteResponse delete(FileSystemItem folder, boolean purge, SessionManager sm) {
@@ -220,11 +229,13 @@ public class Folder {
   /*=================================================================================================================
    * FOLDER UPDATE API
    ==================================================================================================================*/
+
     /**
      * Makes a call to folder/update.php.
-     * @param folder - filesystem item which contains a key that will be updated.
+     *
+     * @param folder             - filesystem item which contains a key that will be updated.
      * @param optionalParameters - optional parameters (can pass null if there are none).
-     * @param sm - session manager.
+     * @param sm                 - session manager.
      * @return a FolderUpdateResponse object.
      */
     public static FolderUpdateResponse update(FileSystemItem folder, Map<String, String> optionalParameters, SessionManager sm) {
@@ -260,6 +271,7 @@ public class Folder {
         JsonElement jsonResponse = sendRequest(parameters, UPDATE_URI, sm);
         return new Gson().fromJson(jsonResponse, FolderUpdateResponse.class);
     }
+
     /*=================================================================================================================
      * FOLDER GET CONTENTS API
      ==================================================================================================================*/
@@ -336,15 +348,17 @@ public class Folder {
         return allItems;
     }
 
-    /** Content Type for folder/get_content.php parameter.
-     * @author Chris Najar
+    /**
+     * Content Type for folder/get_content.php parameter.
+     *
+     * @author
      */
     public enum ContentType {
         FILES, FOLDERS;
 
         public static String toString(ContentType type) {
             String ret;
-            switch(type) {
+            switch (type) {
                 case FILES:
                     ret = "files";
                     break;
@@ -361,10 +375,12 @@ public class Folder {
   /*=================================================================================================================
    * FOLDER GET INFO API
    ==================================================================================================================*/
+
     /**
      * Makes a call to folder/get_info.php.
+     *
      * @param item - FileSystemItem
-     * @param sm - session manager.
+     * @param sm   - session manager.
      * @return a FolderGetInfoResponse object.
      */
     public static FolderGetInfoResponse getInfo(FileSystemItem item, SessionManager sm) {
@@ -375,13 +391,13 @@ public class Folder {
         return new Gson().fromJson(jsonResponse, FolderGetInfoResponse.class);
     }
 
-    /** Submit a request to the API.
+    /**
+     * Submit a request to the API.
      *
-     * @param  parameters  A Map<String, String> of parameters to pass to the API.
-     * @param  apiCall  The API call to make.
-     * @param  sm  The SessionManager to use for the API operation.
-     *
-     * @return  A JsonElement containing the response from the API call.
+     * @param parameters A Map<String, String> of parameters to pass to the API.
+     * @param apiCall    The API call to make.
+     * @param sm         The SessionManager to use for the API operation.
+     * @return A JsonElement containing the response from the API call.
      */
     private static JsonElement sendRequest(Map<String, String> parameters, String apiCall, SessionManager sm) {
         try {
