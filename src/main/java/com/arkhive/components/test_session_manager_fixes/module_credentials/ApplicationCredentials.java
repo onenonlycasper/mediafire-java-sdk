@@ -65,7 +65,6 @@ public final class ApplicationCredentials {
             credentialsMap.put(MEDIAFIRE_PARAMETER_EMAIL, credentials.get(MEDIAFIRE_PARAMETER_EMAIL));
             credentialsMap.put(MEDIAFIRE_PARAMETER_PASSWORD, credentials.get(MEDIAFIRE_PARAMETER_PASSWORD));
             setCredentials(credentialsMap);
-            setCredentials(credentials);
             userCredentialsType = UserCredentialsType.MEDIAFIRE;
             return true;
         }
