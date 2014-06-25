@@ -4,6 +4,8 @@ import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.A
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.*;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.test_session_manager_fixes.module_http_processor.interfaces.HttpRequestCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -22,6 +24,7 @@ public class HttpPostRequestRunnable implements Runnable {
     private HttpPeriProcessor httpPeriProcessor;
     private HttpProcessor httpPreProcessor;
     private HttpProcessor httpPostProcessor;
+    private final Logger logger = LoggerFactory.getLogger(HttpPostRequestRunnable.class);
 
     public HttpPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         this.callback = callback;
@@ -33,7 +36,7 @@ public class HttpPostRequestRunnable implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(TAG + " sendRequest()");
+        logger.info(" sendRequest()");
         if (callback != null) {
             callback.httpRequestStarted(apiRequestObject);
         }

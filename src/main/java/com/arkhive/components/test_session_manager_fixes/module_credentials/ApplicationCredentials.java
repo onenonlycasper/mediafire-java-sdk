@@ -1,6 +1,8 @@
 package com.arkhive.components.test_session_manager_fixes.module_credentials;
 
 import com.arkhive.components.test_session_manager_fixes.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -16,6 +18,8 @@ public final class ApplicationCredentials {
     private static String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
     private static String TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET = "tw_oauth_token_secret";
     private static String FACEBOOK_PARAMETER_FB_ACCESS_TOKEN = "fb_access_token";
+
+    private final Logger logger = LoggerFactory.getLogger(ApplicationCredentials.class);
 
     private Map<String, String> userCredentials = new HashMap<String, String>();
     private UserCredentialsType userCredentialsType;
@@ -44,7 +48,7 @@ public final class ApplicationCredentials {
      * @return - true if credentials are stored, false if not.
      */
     public boolean setUserCredentials(Map<String, String> credentials) {
-        System.out.println(TAG + " addUserCredentials()");
+        logger.info(" addUserCredentials()");
         if (isFacebookCredentials(credentials)) {
             setCredentials(credentials);
             userCredentialsType = UserCredentialsType.FACEBOOK;
@@ -73,7 +77,7 @@ public final class ApplicationCredentials {
     }
 
     private void setCredentials(Map<String, String> credentials) {
-        System.out.println(TAG + " setCredentials()");
+        logger.info(" setCredentials()");
         userCredentials = credentials;
     }
 
@@ -82,13 +86,13 @@ public final class ApplicationCredentials {
     }
 
     public void clearCredentials() {
-        System.out.println(TAG + " clearCredentials()");
+        logger.info(" clearCredentials()");
         userCredentials.clear();
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
     public boolean isCredentialsValid() {
-        System.out.println(TAG + " isCredentialsValid()");
+        logger.info(" isCredentialsValid()");
         return credentialsValid;
     }
 
@@ -97,12 +101,12 @@ public final class ApplicationCredentials {
     }
 
     public String getAppId() {
-        System.out.println(TAG + " getAppId()");
+        logger.info(" getAppId()");
         return appId;
     }
 
     public String getApiKey() {
-        System.out.println(TAG + " getApiKey()");
+        logger.info(" getApiKey()");
         return apiKey;
     }
 

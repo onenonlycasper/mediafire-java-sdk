@@ -8,16 +8,20 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by  on 6/15/2014.
  */
 public final class ApiRequestHttpPostProcessor implements HttpProcessor {
     private static final String TAG = ApiRequestHttpPostProcessor.class.getSimpleName();
+    private final Logger logger = LoggerFactory.getLogger(ApiRequestHttpPostProcessor.class);
+
     public ApiRequestHttpPostProcessor() {}
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " processApiRequestObject()");
+        logger.info(" processApiRequestObject()");
         if (apiRequestObject.getSessionToken() != null) {
             printData(apiRequestObject);
         }
@@ -38,18 +42,18 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
         }
 
         if (apiResponse.needNewKey()) {
-            System.out.println(TAG + " need new key");
+            logger.info(" need new key");
             SessionToken sessionToken = apiRequestObject.getSessionToken();
             updateSecretKey(sessionToken);
         }
     }
 
     public void updateSecretKey(SessionToken sessionToken) {
-        System.out.println(TAG + " updateSecretKey()");
+        logger.info(" updateSecretKey()");
         String secretKey = sessionToken.getSecretKey();
         long newKey = Long.valueOf(secretKey) * 16807;
         newKey = newKey % 2147483647;
-        System.out.println(TAG + " updated secret key from: " + secretKey + " to " + newKey);
+        logger.info(" updated secret key from: " + secretKey + " to " + newKey);
         secretKey = String.valueOf(newKey);
         sessionToken.setSecretKey(secretKey);
 
@@ -62,8 +66,8 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
      * @param response A response string from a web API call.
      * @return The JsonElement created from the response string.
      */
-    public static JsonElement getResponseElement(String response) {
-        System.out.println(TAG + " getResponseElement()");
+    public JsonElement getResponseElement(String response) {
+        logger.info(" getResponseElement()");
         if (response == null) {
             return null;
         }
@@ -83,23 +87,23 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
     }
 
     public void printData(ApiRequestObject apiRequestObject) {
-        System.out.println(TAG + " response code: " + apiRequestObject.getHttpResponseCode());
-        System.out.println(TAG + " response string: " + apiRequestObject.getHttpResponseString());
-        System.out.println(TAG + " domain used: " + apiRequestObject.getDomain());
-        System.out.println(TAG + " uri used: " + apiRequestObject.getUri());
+        logger.info(" response code: " + apiRequestObject.getHttpResponseCode());
+        logger.info(" response string: " + apiRequestObject.getHttpResponseString());
+        logger.info(" domain used: " + apiRequestObject.getDomain());
+        logger.info(" uri used: " + apiRequestObject.getUri());
         for (String key : apiRequestObject.getRequiredParameters().keySet()) {
-            System.out.println(TAG + " required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
+            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
         }
         for (String key : apiRequestObject.getOptionalParameters().keySet()) {
-            System.out.println(TAG + " required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
+            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
         }
 
-        System.out.println(TAG + " token used: " + apiRequestObject.getSessionToken().getTokenString());
+        logger.info(" token used: " + apiRequestObject.getSessionToken().getTokenString());
         if (SessionToken.class.isInstance(apiRequestObject.getSessionToken())) {
             SessionToken sessionToken = (SessionToken) apiRequestObject.getSessionToken();
-            System.out.println(TAG + " session token secret key used: " + sessionToken.getSecretKey());
-            System.out.println(TAG + " session token time used: " + sessionToken.getTime());
+            logger.info(" session token secret key used: " + sessionToken.getSecretKey());
+            logger.info(" session token time used: " + sessionToken.getTime());
         }
-        System.out.println(TAG + " original url: " + apiRequestObject.getConstructedUrl());
+        logger.info(" original url: " + apiRequestObject.getConstructedUrl());
     }
 }
