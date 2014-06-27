@@ -25,7 +25,7 @@ public class FileGetInfoResponse extends ApiResponse {
         return file_infos;
     }
 
-    public class FileInfos extends FileInfo {
+    public class FileInfos {
         private String quickkey;
         private String filename;
         private String created;
