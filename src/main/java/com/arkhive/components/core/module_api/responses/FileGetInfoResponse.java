@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class FileGetInfoResponse extends ApiResponse {
     private FileInfo file_info;
-    private List<FileInfo> file_infos;
+    private List<FileInfos> file_infos;
 
     public FileInfo getFileInfo() {
         if (file_info == null) {
@@ -17,9 +17,9 @@ public class FileGetInfoResponse extends ApiResponse {
         return this.file_info;
     }
 
-    public List<FileInfo> getFileInfos() {
+    public List<FileInfos> getFileInfos() {
         if (file_infos == null) {
-            file_infos = new LinkedList<FileInfo>();
+            file_infos = new LinkedList<FileInfos>();
         }
 
         return file_infos;
