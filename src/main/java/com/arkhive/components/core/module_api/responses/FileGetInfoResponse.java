@@ -41,6 +41,7 @@ public class FileGetInfoResponse extends ApiResponse {
         private String flag;
         private String parent_folderkey;
         private String revision;
+        private String shared_by_user;
         private String view;
         private String edit;
         private List<Links> links;
@@ -152,6 +153,14 @@ public class FileGetInfoResponse extends ApiResponse {
             return Integer.valueOf(this.revision);
         }
 
+        public boolean isSharedByUser() {
+            if (this.shared_by_user == null) {
+                this.shared_by_user = "yes";
+            }
+
+            return !"no".equalsIgnoreCase(this.shared_by_user);
+        }
+
         public String getView() {
             return view;
         }
@@ -166,13 +175,18 @@ public class FileGetInfoResponse extends ApiResponse {
 
         private class Links {
             private String view;
+            private String edit;
             private String normal_download;
 
-            private String getViewLink() {
+            public String getViewLink() {
                 return view;
             }
 
-            private String getNormalDownloadLink() {
+            public String getEditLink() {
+                return edit;
+            }
+
+            public String getNormalDownloadLink() {
                 return normal_download;
             }
         }
