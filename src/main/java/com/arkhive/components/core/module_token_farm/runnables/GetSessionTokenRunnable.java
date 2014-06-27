@@ -122,7 +122,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
         return requiredParameters;
     }
 
-    private static Map<String, String> constructOptionalParameters() {
+    public static Map<String, String> constructOptionalParameters() {
         Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
         optionalParameters.put(OPTIONAL_PARAMETER_TOKEN_VERSION, "2");
         optionalParameters.put(OPTIONAL_PARAMETER_RESPONSE_FORMAT, "json");
@@ -180,7 +180,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
      * @param response A response string from a web API call.
      * @return The JsonElement created from the response string.
      */
-    JsonElement getResponseElement(String response) {
+    public JsonElement getResponseElement(String response) {
         logger.info(" getResponseElement()");
         if (response == null) {
             return null;
