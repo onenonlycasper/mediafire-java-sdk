@@ -139,8 +139,8 @@ public class DeviceGetChangesResponse extends ApiResponse {
         }
 
         public String getParentFolderKey() {
-            if (parent_folderkey == null) {
-                this.parent_folderkey = "";
+            if (parent_folderkey == null || parent_folderkey.isEmpty()) {
+                this.parent_folderkey = "myfiles";
             }
             return parent_folderkey;
         }
@@ -159,8 +159,8 @@ public class DeviceGetChangesResponse extends ApiResponse {
 
 
         public String getFolderKey() {
-            if (folderkey == null) {
-                this.folderkey = "";
+            if (folderkey == null || folderkey.isEmpty()) {
+                this.folderkey = "myfiles";
             }
             return folderkey;
         }
@@ -173,8 +173,8 @@ public class DeviceGetChangesResponse extends ApiResponse {
         }
 
         public String getParentFolderKey() {
-            if (parent_folderkey == null) {
-                this.parent_folderkey = "";
+            if (parent_folderkey == null || parent_folderkey.isEmpty()) {
+                parent_folderkey = "myfiles";
             }
             return parent_folderkey;
         }

@@ -53,6 +53,5 @@ public final class HttpPeriProcessor {
         logger.info(" HttpPeriProcessor shutting down");
         executor.pause();
         workQueue.clear();
-        executor.shutdownNow();
     }
 }

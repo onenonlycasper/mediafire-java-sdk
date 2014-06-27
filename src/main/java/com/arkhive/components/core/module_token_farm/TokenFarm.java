@@ -111,13 +111,8 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     public void shutdown() {
         logger.info(" TokenFarm shutting down");
         sessionTokens.clear();
-        lockBorrowImageToken.unlock();
-        lockBorrowUploadToken.unlock();
-        conditionImageTokenNotExpired.signal();
-        conditionUploadTokenNotExpired.signal();
         imageActionToken = null;
         uploadActionToken = null;
-        executor.shutdownNow();
     }
 
     /*

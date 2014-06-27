@@ -195,10 +195,10 @@ public class FileGetInfoResponse extends ApiResponse {
         }
 
         public String getParentFolderKey() {
-            if (this.parent_folderkey == null) {
-                this.parent_folderkey = "";
+            if (parent_folderkey == null || parent_folderkey.isEmpty()) {
+                parent_folderkey = "myfiles";
             }
-            return this.parent_folderkey;
+            return parent_folderkey;
         }
 
         public int getRevision() {
