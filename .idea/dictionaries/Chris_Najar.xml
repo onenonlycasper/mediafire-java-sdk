@@ -1,20 +1,26 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Chris Najar">
     <words>
+      <w>&amp;key</w>
       <w>appid</w>
       <w>cardccv</w>
       <w>checkstyle</w>
+      <w>dropbox</w>
       <w>ekey</w>
       <w>filedrop</w>
+      <w>fileerror</w>
       <w>folderkey</w>
       <w>foldername</w>
       <w>gmail</w>
       <w>misformatted</w>
+      <w>mtime</w>
       <w>najar</w>
       <w>pausable</w>
       <w>pkey</w>
       <w>quickkey</w>
+      <w>struct</w>
       <w>subdomain</w>
+      <w>unkown</w>
     </words>
   </dictionary>
 </component>

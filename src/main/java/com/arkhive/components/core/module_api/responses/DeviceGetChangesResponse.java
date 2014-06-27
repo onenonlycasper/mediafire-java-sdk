@@ -50,8 +50,6 @@ public class DeviceGetChangesResponse extends ApiResponse {
 
     /**
      * class representing a collection of files and folders which have been changed.
-     *
-     * @author
      */
     public class ChangedItems {
         private List<File> files;
@@ -74,8 +72,6 @@ public class DeviceGetChangesResponse extends ApiResponse {
 
     /**
      * class representing a file that has been changed.
-     *
-     * @author
      */
     public class File {
         private String quickkey;
@@ -148,8 +144,6 @@ public class DeviceGetChangesResponse extends ApiResponse {
 
     /**
      * class representing a folder that has been changed.
-     *
-     * @author
      */
     public class Folder {
         private String folderkey;

@@ -1,16 +1,11 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Data structure used within UploadItem.
  * This data structure stores the unit size
  * and number of units. These values should
  * only be received after getting a response
  * from calling pre upload.
- *
- * @author
  */
 public class ChunkData {
     private int unitSize;

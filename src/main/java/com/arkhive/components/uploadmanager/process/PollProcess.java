@@ -85,7 +85,7 @@ public class PollProcess implements Runnable {
                     //  conditions to check:
                     //      first   -   result code no error? yes, keep calm and poll on. no, cancel upload because error.
                     //      second  -   fileerror code no error? yes, carry on old chap!. no, cancel upload because error.
-                    //      third   -   status code 99 (no more requests)? yes, weee! done!. no, continue.
+                    //      third   -   status code 99 (no more requests)? yes, done. no, continue.
                     if (response.getDoUpload().getResultCode() != PollResultCode.SUCCESS) {
                         System.out.println(TAG + " result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
                         notifyManagerCancelled(response);

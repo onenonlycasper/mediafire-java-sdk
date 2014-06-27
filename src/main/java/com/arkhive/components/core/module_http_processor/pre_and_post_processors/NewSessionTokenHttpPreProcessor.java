@@ -86,7 +86,7 @@ public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
     private String constructParametersForUrl(Map<String, String> parameters) {
         logger.info(" constructParametersForUrl(HashMap<String, String>)");
         StringBuilder stringBuilder = new StringBuilder();
-        if (parameters != null && parameters.size() > 0) {
+        if (parameters != null && !parameters.isEmpty()) {
             for (String key : parameters.keySet()) {
                 stringBuilder.append("&").append(key).append("=").append(parameters.get(key));
             }

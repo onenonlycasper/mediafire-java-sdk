@@ -1,11 +1,11 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 /**
  * This data structure represents an item to be uploaded.
@@ -91,7 +91,7 @@ public class UploadItem {
     }
 
     /**
-     * CAlled to get the UploadItemFileData.
+     * Called to get the UploadItemFileData.
      *
      * @return the file data struct.
      */

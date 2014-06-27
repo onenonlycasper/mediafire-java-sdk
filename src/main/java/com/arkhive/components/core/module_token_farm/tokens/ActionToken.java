@@ -27,7 +27,7 @@ public final class ActionToken extends Token {
     /**
      * Sets the expiration of the token. The time should use System.currentTimeMillis() to get the current time
      * and then add 24 hours since all action tokens are set to 24 hour expiration time.
-     * @param expiration
+     * @param expiration the expiration time.
      */
     public void setExpiration(long expiration) {
         this.expiration = expiration;
@@ -47,7 +47,7 @@ public final class ActionToken extends Token {
         UPLOAD("upload"),
         IMAGE("image");
 
-        private String value;
+        private final String value;
         private Type(String value) {
             this.value = value;
         }

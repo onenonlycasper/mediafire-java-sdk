@@ -21,8 +21,6 @@ import java.util.Map;
 
 /**
  * Runnable for making a call to upload/check.php.
- *
- * @author
  */
 public class CheckProcess implements Runnable {
     private static final String TAG = CheckProcess.class.getSimpleName();
@@ -88,7 +86,7 @@ public class CheckProcess implements Runnable {
      * generates the request parameter after we receive a UTF encoded filename.
      *
      * @param filename - the name of hte file.
-     * @return - a map of request paramaters.
+     * @return - a map of request parameters.
      */
     private Map<String, String> generateRequestParameters(String filename) {
         // generate map with request parameters

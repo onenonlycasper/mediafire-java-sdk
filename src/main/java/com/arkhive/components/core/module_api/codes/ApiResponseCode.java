@@ -2,8 +2,6 @@ package com.arkhive.components.core.module_api.codes;
 
 /**
  * enum for all response codes for any API response root/result. (List received from Cliff)
- *
- * @author
  */
 public enum ApiResponseCode {
     NO_ERROR(0),
@@ -169,7 +167,7 @@ public enum ApiResponseCode {
     }
 
     public int getValue() {
-        return this.value;
+        return value;
     }
 
     public static ApiResponseCode fromInt(int value) {
@@ -184,7 +182,7 @@ public enum ApiResponseCode {
     @Override
     public String toString() {
         String returnMessage;
-        switch (this.value) {
+        switch (value) {
             case 0:
                 returnMessage = "Success";
                 break;

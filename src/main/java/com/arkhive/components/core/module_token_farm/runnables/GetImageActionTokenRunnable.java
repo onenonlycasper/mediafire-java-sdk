@@ -29,8 +29,8 @@ public class GetImageActionTokenRunnable implements Runnable, HttpRequestCallbac
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private final GetNewActionTokenCallback actionTokenCallback;
-    private SessionTokenDistributor sessionTokenDistributor;
-    private HttpPeriProcessor httpPeriProcessor;
+    private final SessionTokenDistributor sessionTokenDistributor;
+    private final HttpPeriProcessor httpPeriProcessor;
     private final Logger logger = LoggerFactory.getLogger(GetImageActionTokenRunnable.class);
 
     public GetImageActionTokenRunnable(HttpProcessor httpPreProcessor,
@@ -97,7 +97,7 @@ public class GetImageActionTokenRunnable implements Runnable, HttpRequestCallbac
         return requiredParameters;
     }
 
-    public static Map<String, String> constructOptionalParameters() {
+    private static Map<String, String> constructOptionalParameters() {
         Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
         optionalParameters.put(OPTIONAL_PARAMETER_LIFESPAN, "1440");
         optionalParameters.put(OPTIONAL_PARAMETER_RESPONSE_FORMAT, "json");

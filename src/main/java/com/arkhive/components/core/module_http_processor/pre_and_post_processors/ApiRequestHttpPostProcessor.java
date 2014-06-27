@@ -100,7 +100,7 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
 
         logger.info(" token used: " + apiRequestObject.getSessionToken().getTokenString());
         if (SessionToken.class.isInstance(apiRequestObject.getSessionToken())) {
-            SessionToken sessionToken = (SessionToken) apiRequestObject.getSessionToken();
+            SessionToken sessionToken = apiRequestObject.getSessionToken();
             logger.info(" session token secret key used: " + sessionToken.getSecretKey());
             logger.info(" session token time used: " + sessionToken.getTime());
         }

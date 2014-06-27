@@ -144,9 +144,7 @@ public class UploadManager implements UploadListenerManager {
      */
     public void pause() {
         logger.info(" pause()");
-        if (executor != null) {
-            executor.pause();
-        }
+        executor.pause();
     }
 
     /**
@@ -154,9 +152,7 @@ public class UploadManager implements UploadListenerManager {
      */
     public void resume() {
         logger.info(" resume()");
-        if (executor != null) {
-            executor.resume();
-        }
+        executor.resume();
     }
 
     /**

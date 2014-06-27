@@ -12,22 +12,21 @@ import java.util.Map;
  * Created by  on 6/15/2014.
  */
 public final class ApplicationCredentials {
-    private static final String TAG = ApplicationCredentials.class.getSimpleName();
-    private static String MEDIAFIRE_PARAMETER_EMAIL = "email";
-    private static String MEDIAFIRE_PARAMETER_PASSWORD = "password";
-    private static String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
-    private static String TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET = "tw_oauth_token_secret";
-    private static String FACEBOOK_PARAMETER_FB_ACCESS_TOKEN = "fb_access_token";
+    private static final String MEDIAFIRE_PARAMETER_EMAIL = "email";
+    private static final String MEDIAFIRE_PARAMETER_PASSWORD = "password";
+    private static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
+    private static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET = "tw_oauth_token_secret";
+    private static final String FACEBOOK_PARAMETER_FB_ACCESS_TOKEN = "fb_access_token";
 
     private final Logger logger = LoggerFactory.getLogger(ApplicationCredentials.class);
 
     private Map<String, String> userCredentials = new HashMap<String, String>();
     private UserCredentialsType userCredentialsType;
 
-    private String appId;
-    private String apiKey;
+    private final String appId;
+    private final String apiKey;
 
-    public ApplicationCredentials(String appId, String apiKey) {
+    private ApplicationCredentials(String appId, String apiKey) {
         this.appId = appId;
         this.apiKey = apiKey;
         userCredentialsType = UserCredentialsType.UNSET;
@@ -56,7 +55,7 @@ public final class ApplicationCredentials {
             LinkedHashMap<String, String> credentialsMap = new LinkedHashMap<String, String>(2);
             credentialsMap.put(TWITTER_PARAMETER_TW_OAUTH_TOKEN, userCredentials.get(TWITTER_PARAMETER_TW_OAUTH_TOKEN));
             credentialsMap.put(TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET, userCredentials.get(TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET));
-            this.userCredentials = userCredentials;
+            this.userCredentials = credentialsMap;
             userCredentialsType = UserCredentialsType.TWITTER;
             return true;
         }
@@ -65,7 +64,7 @@ public final class ApplicationCredentials {
             LinkedHashMap<String, String> credentialsMap = new LinkedHashMap<String, String>(2);
             credentialsMap.put(MEDIAFIRE_PARAMETER_EMAIL, userCredentials.get(MEDIAFIRE_PARAMETER_EMAIL));
             credentialsMap.put(MEDIAFIRE_PARAMETER_PASSWORD, userCredentials.get(MEDIAFIRE_PARAMETER_PASSWORD));
-            this.userCredentials = userCredentials;
+            this.userCredentials = credentialsMap;
             userCredentialsType = UserCredentialsType.MEDIAFIRE;
             return true;
         }

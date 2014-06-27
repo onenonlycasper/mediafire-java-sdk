@@ -76,11 +76,7 @@ public class UploadTokenHttpPreProcessor implements HttpProcessor {
         // prior to generating the signature we need to clean up the url (replace first & with ?)
         generatedUri = cleanupUrlString(generatedUri);
 
-        StringBuilder fullUrlBuilder = new StringBuilder();
-        fullUrlBuilder.append(domain);
-        fullUrlBuilder.append(generatedUri);
-
-        String completedUrl = fullUrlBuilder.toString();
+        String completedUrl = domain + generatedUri;
 
         try {
             return new URL(completedUrl);
@@ -99,7 +95,7 @@ public class UploadTokenHttpPreProcessor implements HttpProcessor {
     private String constructParametersForUrl(Map<String, String> parameters) {
         logger.info(" constructParametersForUrl(HashMap<String, String>)");
         StringBuilder stringBuilder = new StringBuilder();
-        if (parameters != null && parameters.size() > 0) {
+        if (parameters != null && !parameters.isEmpty()) {
             for (String key : parameters.keySet()) {
                 stringBuilder.append("&").append(key).append("=").append(parameters.get(key));
             }

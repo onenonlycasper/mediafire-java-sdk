@@ -3,8 +3,6 @@ package com.arkhive.components.core.module_api.codes;
 /**
  * These are the file error codes as an enum which can be thrown
  * as per the dev wiki.
- *
- * @author
  */
 public enum PollFileErrorCode {
     NO_ERROR(0),
@@ -34,7 +32,7 @@ public enum PollFileErrorCode {
     }
 
     public int getValue() {
-        return this.value;
+        return value;
     }
 
     public static PollFileErrorCode fromInt(int value) {

@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author
  */
 public class FileGetLinksResponse extends ApiResponse {
 
@@ -37,8 +36,6 @@ public class FileGetLinksResponse extends ApiResponse {
 
     /**
      * class representing a link.
-     *
-     * @author
      */
     public class Link {
         private String quickkey;
