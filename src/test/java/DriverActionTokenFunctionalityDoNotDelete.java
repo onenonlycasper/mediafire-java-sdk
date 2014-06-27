@@ -1,7 +1,7 @@
-import com.arkhive.components.test_session_manager_fixes.Configuration;
-import com.arkhive.components.test_session_manager_fixes.MediaFire;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
-import com.arkhive.components.test_session_manager_fixes.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
+import com.arkhive.components.core.Configuration;
+import com.arkhive.components.core.MediaFire;
+import com.arkhive.components.core.module_api.responses.ApiResponse;
+import com.arkhive.components.core.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

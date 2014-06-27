@@ -1,5 +1,5 @@
-import com.arkhive.components.test_session_manager_fixes.Configuration;
-import com.arkhive.components.test_session_manager_fixes.MediaFire;
+import com.arkhive.components.core.Configuration;
+import com.arkhive.components.core.MediaFire;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,10 +1,10 @@
 package com.arkhive.components.uploadmanager.process;
 
-import com.arkhive.components.test_session_manager_fixes.MediaFire;
-import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollFileErrorCode;
-import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollResultCode;
-import com.arkhive.components.test_session_manager_fixes.module_api.codes.PollStatusCode;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadPollResponse;
+import com.arkhive.components.core.MediaFire;
+import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
+import com.arkhive.components.core.module_api.codes.PollResultCode;
+import com.arkhive.components.core.module_api.codes.PollStatusCode;
+import com.arkhive.components.core.module_api.responses.UploadPollResponse;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.google.gson.JsonElement;
