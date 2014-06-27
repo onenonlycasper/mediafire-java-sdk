@@ -1,8 +1,8 @@
 package com.arkhive.components.uploadmanager.listeners;
 
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.ApiResponse;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadCheckResponse;
-import com.arkhive.components.test_session_manager_fixes.module_api.responses.UploadPollResponse;
+import com.arkhive.components.core.module_api.responses.ApiResponse;
+import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
+import com.arkhive.components.core.module_api.responses.UploadPollResponse;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 
 /**
