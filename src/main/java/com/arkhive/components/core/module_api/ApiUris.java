@@ -4,7 +4,7 @@ package com.arkhive.components.core.module_api;
  * Created by on 6/17/2014.
  */
 public class ApiUris {
-    public static final String URI_CONTACT_ADD = "/api/1.0/contact/add.php";
+    public static final String URI_CONTACT_ADD = "/api/contact/add.php";
     public static final String URI_CONTACT_DELETE = "/api/contact/delete.php";
     public static final String URI_CONTACT_FETCH = "/api/contact/fetch.php";
     public static final String URI_FILE_COPY = "/api/file/copy.php";
@@ -37,7 +37,7 @@ public class ApiUris {
     public static final String URI_UPLOAD_INSTANT = "/api/upload/instant.php";
     public static final String URI_UPLOAD_POLL_UPLOAD = "/api/upload/poll_upload.php";
     public static final String URI_UPLOAD_RESUMABLE = "/api/upload/resumable.php";
-    public static final String URI_DEVICE_GET_CHANGES = "/api/device/get_changes.php";
+    public static final String URI_DEVICE_GET_CHANGES = "/api/1.0/device/get_changes.php";
     public static final String URI_DEVICE_GET_STATUS = "/api/device/get_status.php";
 
     public static final String LIVE_HTTP = "http://www.mediafire.com";
