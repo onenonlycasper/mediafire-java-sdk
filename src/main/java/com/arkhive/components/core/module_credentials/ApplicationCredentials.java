@@ -123,5 +123,21 @@ public final class ApplicationCredentials {
         public String getValue() {
             return value;
         }
+
+        public UserCredentialsType fromString(String value) {
+            if (value.equals(FACEBOOK.getValue())) {
+                return FACEBOOK;
+            }
+
+            if (value.equals(TWITTER.getValue())) {
+                return TWITTER;
+            }
+
+            if (value.equals(MEDIAFIRE.getValue())) {
+                return MEDIAFIRE;
+            }
+
+            return UNSET;
+        }
     }
 }
