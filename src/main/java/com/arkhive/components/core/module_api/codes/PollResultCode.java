@@ -3,8 +3,6 @@ package com.arkhive.components.core.module_api.codes;
 /**
  * This enumeration covers the result codes in the response
  * received when calling /api/upload/poll_upload.php.
- *
- * @author
  */
 public enum PollResultCode {
     SUCCESS(0),
@@ -18,7 +16,7 @@ public enum PollResultCode {
     }
 
     public int getValue() {
-        return this.value;
+        return value;
     }
 
     public static PollResultCode fromInt(int value) {

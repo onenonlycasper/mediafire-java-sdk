@@ -4,8 +4,6 @@ package com.arkhive.components.core.module_api.codes;
  * This enum represents the values that can be
  * returned by the api/upload/upload.php response
  * data structure's field result.
- *
- * @author
  */
 public enum ResumableResultCode {
     NO_ERROR(0),
@@ -15,8 +13,8 @@ public enum ResumableResultCode {
     DROPBOX_KEY_INVALID_3(-11),
     INVALID_DROPBOX_CONFIG_1(-21),
     INVALID_DROPBOX_CONFIG_2(-22),
-    UKNOWN_UPLOAD_ERROR_1(-31),
-    UKNOWN_UPLOAD_ERROR_2(-40),
+    UNKOWN_UPLOAD_ERROR_1(-31),
+    UNKOWN_UPLOAD_ERROR_2(-40),
     MISSING_FILE_DATA(-32),
     UPLOAD_EXCEEDS_UPLOAD_MAX_FILESIZE(-41),
     UPLOAD_EXCEEDS_MAX_FILE_SIZE_SPECIFIED_IN_HTML_FORM(-42),
@@ -64,7 +62,7 @@ public enum ResumableResultCode {
     }
 
     public int getValue() {
-        return this.value;
+        return value;
     }
 
     public static ResumableResultCode fromInt(int value) {

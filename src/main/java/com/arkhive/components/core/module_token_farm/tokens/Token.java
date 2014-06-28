@@ -11,7 +11,7 @@ public abstract class Token implements TokenInterface {
     private volatile String token;
     private final Logger logger = LoggerFactory.getLogger(Token.class);
 
-    protected Token() {}
+    Token() {}
 
     @Override
     public synchronized String getTokenString() {

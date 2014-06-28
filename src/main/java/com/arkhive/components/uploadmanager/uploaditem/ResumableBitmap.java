@@ -81,7 +81,7 @@ public class ResumableBitmap {
      * @return - true if uploaded, false if not.
      */
     public boolean isUploaded(int chunkId) {
-        if (uploadUnits.size() == 0) {
+        if (uploadUnits.isEmpty()) {
             return false;
         }
         return uploadUnits.get(uploadUnits.size() - 1 - chunkId);

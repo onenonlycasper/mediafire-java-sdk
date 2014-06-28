@@ -97,8 +97,8 @@ public class InstantProcess implements Runnable {
     /**
      * generates the request parameter after we receive a UTF encoded filename.
      *
-     * @param filename - the filename used to construct request paramater.
-     * @return - a map containing the request paramaters.
+     * @param filename - the filename used to construct request parameter.
+     * @return - a map containing the request parameter.
      */
     private Map<String, String> generateRequestParameters(String filename) {
         // generate map with request parameters

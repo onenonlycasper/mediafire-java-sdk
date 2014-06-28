@@ -3,8 +3,6 @@ package com.arkhive.components.core.module_api.codes;
 /**
  * This enum represents the values that the poll upload
  * response data structure can return under status code.
- *
- * @author
  */
 public enum PollStatusCode {
     UNKNOWN_OR_NO_STATUS_AVAILABLE_FOR_THIS_KEY(0),
@@ -26,7 +24,7 @@ public enum PollStatusCode {
     }
 
     public int getValue() {
-        return this.value;
+        return value;
     }
 
     public static PollStatusCode fromInt(int value) {

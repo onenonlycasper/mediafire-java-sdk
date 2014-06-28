@@ -58,7 +58,7 @@ public class Api {
             Class<T> clazz,
             ApiRequestRunnableCallback<T> apiRequestRunnableCallback,
             ApiRequestObject apiRequestObject) {
-        return new RunnableApiGetRequest(
+        return new RunnableApiGetRequest<T>(
                 clazz,
                 apiRequestRunnableCallback,
                 new ApiRequestHttpPreProcessor(),
@@ -82,7 +82,7 @@ public class Api {
             Class<T> uploadInstantResponseClass,
             ApiRequestRunnableCallback<T> apiRequestRunnableCallback,
             ApiRequestObject apiRequestObject) {
-        return new RunnableApiGetRequestUploadToken(
+        return new RunnableApiGetRequestUploadToken<T>(
                 uploadInstantResponseClass,
                 apiRequestRunnableCallback,
                 new UploadTokenHttpPreProcessor(),
@@ -106,7 +106,7 @@ public class Api {
             Class<T> uploadResumableResponseClass,
             ApiRequestRunnableCallback<T> apiRequestRunnableCallback,
             ApiRequestObject apiRequestObject) {
-        return new RunnableApiPostRequestUploadToken(
+        return new RunnableApiPostRequestUploadToken<T>(
                 uploadResumableResponseClass,
                 apiRequestRunnableCallback,
                 new UploadTokenHttpPreProcessor(),
@@ -120,12 +120,8 @@ public class Api {
         ApiRequestObject apiRequestObject = new ApiRequestObject(null, null);
 //        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
         actionTokenDistributor.borrowImageActionToken(apiRequestObject);
-        if (apiRequestObject != null) {
-            if (apiRequestObject.getActionToken() != null) {
-                return apiRequestObject.getActionToken().getTokenString();
-            } else {
-                return null;
-            }
+        if (apiRequestObject.getActionToken() != null) {
+            return apiRequestObject.getActionToken().getTokenString();
         } else {
             return null;
         }
@@ -134,12 +130,8 @@ public class Api {
     public String requestUploadActionToken() {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_GET_ACTION_TOKEN);
         actionTokenDistributor.borrowUploadActionToken(apiRequestObject);
-        if (apiRequestObject != null) {
-            if (apiRequestObject.getActionToken() != null) {
-                return apiRequestObject.getActionToken().getTokenString();
-            } else {
-                return null;
-            }
+        if (apiRequestObject.getActionToken() != null) {
+            return apiRequestObject.getActionToken().getTokenString();
         } else {
             return null;
         }

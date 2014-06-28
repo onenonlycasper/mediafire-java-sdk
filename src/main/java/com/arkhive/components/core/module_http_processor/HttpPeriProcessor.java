@@ -19,8 +19,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public final class HttpPeriProcessor {
     private static final String TAG = HttpPeriProcessor.class.getSimpleName();
     private final Configuration configuration;
-    private BlockingQueue<Runnable> workQueue;
-    private PausableThreadPoolExecutor executor;
+    private final BlockingQueue<Runnable> workQueue;
+    private final PausableThreadPoolExecutor executor;
     private final Logger logger = LoggerFactory.getLogger(HttpPeriProcessor.class);
 
     public HttpPeriProcessor(Configuration configuration) {
@@ -45,7 +45,7 @@ public final class HttpPeriProcessor {
 
     public void sendPostRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
         logger.info(" sendPostRequest()");
-        HttpPostRequestRunnable httpPostRequestRunnable = new HttpPostRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
+        HttpPostRequestRunnable httpPostRequestRunnable = new HttpPostRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject);
         executor.execute(httpPostRequestRunnable);
     }
 
@@ -53,6 +53,5 @@ public final class HttpPeriProcessor {
         logger.info(" HttpPeriProcessor shutting down");
         executor.pause();
         workQueue.clear();
-        executor.shutdownNow();
     }
 }

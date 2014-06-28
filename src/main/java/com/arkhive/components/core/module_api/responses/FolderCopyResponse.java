@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author
  */
 public class FolderCopyResponse extends ApiResponse {
     private String asynchronous;

@@ -50,8 +50,6 @@ public class DeviceGetChangesResponse extends ApiResponse {
 
     /**
      * class representing a collection of files and folders which have been changed.
-     *
-     * @author
      */
     public class ChangedItems {
         private List<File> files;
@@ -74,8 +72,6 @@ public class DeviceGetChangesResponse extends ApiResponse {
 
     /**
      * class representing a file that has been changed.
-     *
-     * @author
      */
     public class File {
         private String quickkey;
@@ -139,8 +135,8 @@ public class DeviceGetChangesResponse extends ApiResponse {
         }
 
         public String getParentFolderKey() {
-            if (parent_folderkey == null) {
-                this.parent_folderkey = "";
+            if (parent_folderkey == null || parent_folderkey.isEmpty()) {
+                this.parent_folderkey = "myfiles";
             }
             return parent_folderkey;
         }
@@ -148,8 +144,6 @@ public class DeviceGetChangesResponse extends ApiResponse {
 
     /**
      * class representing a folder that has been changed.
-     *
-     * @author
      */
     public class Folder {
         private String folderkey;
@@ -159,8 +153,8 @@ public class DeviceGetChangesResponse extends ApiResponse {
 
 
         public String getFolderKey() {
-            if (folderkey == null) {
-                this.folderkey = "";
+            if (folderkey == null || folderkey.isEmpty()) {
+                this.folderkey = "myfiles";
             }
             return folderkey;
         }
@@ -173,8 +167,8 @@ public class DeviceGetChangesResponse extends ApiResponse {
         }
 
         public String getParentFolderKey() {
-            if (parent_folderkey == null) {
-                this.parent_folderkey = "";
+            if (parent_folderkey == null || parent_folderkey.isEmpty()) {
+                parent_folderkey = "myfiles";
             }
             return parent_folderkey;
         }

@@ -19,11 +19,11 @@ import java.net.URL;
  */
 public class HttpGetRequestRunnable implements Runnable {
     private static final String TAG = HttpGetRequestRunnable.class.getSimpleName();
-    private HttpRequestCallback callback;
-    private ApiRequestObject apiRequestObject;
-    private HttpPeriProcessor httpPeriProcessor;
-    private HttpProcessor httpPreProcessor;
-    private HttpProcessor httpPostProcessor;
+    private final HttpRequestCallback callback;
+    private final ApiRequestObject apiRequestObject;
+    private final HttpPeriProcessor httpPeriProcessor;
+    private final HttpProcessor httpPreProcessor;
+    private final HttpProcessor httpPostProcessor;
     private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
 
     public HttpGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {

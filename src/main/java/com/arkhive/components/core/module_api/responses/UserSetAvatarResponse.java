@@ -6,11 +6,8 @@ package com.arkhive.components.core.module_api.responses;
  * Stores response from user/set_avatar.
  */
 public class UserSetAvatarResponse extends ApiResponse {
-
-    // CHECKSTYLE:OFF
     private String quick_key;
     private String upload_key;
-    // CHECKSTYLE:ON
 
     public String getQuickKey() {
         if (quick_key == null) {

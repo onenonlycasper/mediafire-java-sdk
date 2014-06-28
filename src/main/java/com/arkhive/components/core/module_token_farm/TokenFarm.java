@@ -45,15 +45,13 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     private final BlockingQueue<com.arkhive.components.core.module_token_farm.tokens.SessionToken> sessionTokens;
     private ActionToken uploadActionToken;
     private ActionToken imageActionToken;
-    private Object imageTokenLock = new Object();
-    private Object uploadTokenLock = new Object();
-    private int minimumSessionTokens;
-    private int maximumSessionTokens;
+    private final Object imageTokenLock = new Object();
+    private final Object uploadTokenLock = new Object();
     private final Logger logger = LoggerFactory.getLogger(TokenFarm.class);
 
     public TokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials, HttpPeriProcessor httpPeriProcessor) {
-        minimumSessionTokens = configuration.getMinimumSessionTokens();
-        maximumSessionTokens = configuration.getMaximumSessionTokens();
+        int minimumSessionTokens = configuration.getMinimumSessionTokens();
+        int maximumSessionTokens = configuration.getMaximumSessionTokens();
         sessionTokens = new LinkedBlockingQueue<com.arkhive.components.core.module_token_farm.tokens.SessionToken>(maximumSessionTokens);
         this.applicationCredentials = applicationCredentials;
         this.httpPeriProcessor = httpPeriProcessor;
@@ -111,13 +109,8 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     public void shutdown() {
         logger.info(" TokenFarm shutting down");
         sessionTokens.clear();
-        lockBorrowImageToken.unlock();
-        lockBorrowUploadToken.unlock();
-        conditionImageTokenNotExpired.signal();
-        conditionUploadTokenNotExpired.signal();
         imageActionToken = null;
         uploadActionToken = null;
-        executor.shutdownNow();
     }
 
     /*

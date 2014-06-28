@@ -27,17 +27,17 @@ import java.util.Map;
  */
 public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     private static final String TAG = GetSessionTokenRunnable.class.getSimpleName();
-    private static String OPTIONAL_PARAMETER_TOKEN_VERSION = "token_version";
-    private static String OPTIONAL_PARAMETER_EKEY = "ekey";
-    private static String OPTIONAL_PARAMETER_RESPONSE_FORMAT = "response_format";
-    private static String REQUIRED_PARAMETER_APPLICATION_ID = "application_id";
-    private static String REQUIRED_PARAMETER_SIGNATURE = "signature";
+    private static final String OPTIONAL_PARAMETER_TOKEN_VERSION = "token_version";
+    private static final String OPTIONAL_PARAMETER_EKEY = "ekey";
+    private static final String OPTIONAL_PARAMETER_RESPONSE_FORMAT = "response_format";
+    private static final String REQUIRED_PARAMETER_APPLICATION_ID = "application_id";
+    private static final String REQUIRED_PARAMETER_SIGNATURE = "signature";
     private final GetNewSessionTokenCallback getNewSessionTokenCallback;
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ApiRequestObject apiRequestObject;
-    private HttpPeriProcessor httpPeriProcessor;
-    private ApplicationCredentials applicationCredentials;
+    private final HttpPeriProcessor httpPeriProcessor;
+    private final ApplicationCredentials applicationCredentials;
     private final Logger logger = LoggerFactory.getLogger(GetSessionTokenRunnable.class);
 
     public GetSessionTokenRunnable(GetNewSessionTokenCallback getNewSessionTokenCallback,
@@ -143,15 +143,13 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
 
         String preHashString = stringBuilder.toString();
 
-        String signature = calculateSignatureForString(preHashString);
-
-        return signature;
+        return calculateSignatureForString(preHashString);
     }
 
     /**
      * calculates a SHA-1 hash for a given hash string.
-     * @param hashTarget
-     * @return
+     * @param hashTarget - target string to hash.
+     * @return hashed string.
      */
     private String calculateSignatureForString(String hashTarget) {
         String signature;
@@ -163,9 +161,9 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
             byte byteData[] = md.digest();
 
             //convert the byte to hex format method 1
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < byteData.length; i++) {
-                sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+            StringBuilder sb = new StringBuilder();
+            for (byte aByteData : byteData) {
+                sb.append(Integer.toString((aByteData & 0xff) + 0x100, 16).substring(1));
             }
             signature = sb.toString();
         } catch (NoSuchAlgorithmException e) {

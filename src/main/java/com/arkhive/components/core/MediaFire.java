@@ -67,9 +67,7 @@ public class MediaFire {
      * application credentials as validated then call ApplicationCredentials.setCredentialsValid(true)
      */
     public void startup() {
-        if (applicationCredentials.isCredentialsValid()) {
-            tokenFarm.startup();
-        }
+        tokenFarm.startup();
     }
 
     /**
@@ -77,9 +75,9 @@ public class MediaFire {
      * need to be created via MediaFire.newInstance(...)
      */
     public void shutdown() {
+        applicationCredentials.clearCredentials();
         httpPeriProcessor.shutdown();
         tokenFarm.shutdown();
-        applicationCredentials.clearCredentials();
         instance = null;
     }
 }

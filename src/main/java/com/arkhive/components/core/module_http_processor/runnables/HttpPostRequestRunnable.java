@@ -1,7 +1,6 @@
 package com.arkhive.components.core.module_http_processor.runnables;
 
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.core.module_http_processor.*;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 import org.slf4j.Logger;
@@ -19,19 +18,17 @@ import java.util.Map;
  */
 public class HttpPostRequestRunnable implements Runnable {
     private static final String TAG = HttpPostRequestRunnable.class.getSimpleName();
-    private HttpRequestCallback callback;
-    private ApiRequestObject apiRequestObject;
-    private HttpPeriProcessor httpPeriProcessor;
-    private HttpProcessor httpPreProcessor;
-    private HttpProcessor httpPostProcessor;
+    private final HttpRequestCallback callback;
+    private final ApiRequestObject apiRequestObject;
+    private final HttpProcessor httpPreProcessor;
+    private final HttpProcessor httpPostProcessor;
     private final Logger logger = LoggerFactory.getLogger(HttpPostRequestRunnable.class);
 
-    public HttpPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
+    public HttpPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
         this.apiRequestObject = apiRequestObject;
-        this.httpPeriProcessor = httpPeriProcessor;
     }
 
     @Override

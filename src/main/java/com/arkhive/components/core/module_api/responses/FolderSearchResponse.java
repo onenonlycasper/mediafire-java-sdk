@@ -17,15 +17,15 @@ public class FolderSearchResponse extends ApiResponse {
     private List<Result> results;
 
     public int getResultsCount() {
-        if (this.results_count == null) {
-            this.results_count = "0";
+        if (results_count == null) {
+            results_count = "0";
         }
         return Integer.valueOf(results_count);
     }
 
     public List<Result> getResults() {
-        if (this.results == null) {
-            this.results = new LinkedList<Result>();
+        if (results == null) {
+            results = new LinkedList<Result>();
         }
         return results;
     }
@@ -63,157 +63,157 @@ public class FolderSearchResponse extends ApiResponse {
 
 
         public String getFolderKey() {
-            if (this.folderkey == null) {
-                this.folderkey = "";
+            if (folderkey == null) {
+                folderkey = "";
             }
-            return this.folderkey;
+            return folderkey;
         }
 
         public String getFolderName() {
-            if (this.name == null) {
-                this.name = "";
+            if (name == null) {
+                name = "";
             }
-            return this.name;
+            return name;
         }
 
         public String getByteCount() {
-            if (this.byte_count == null) {
-                this.byte_count = "";
+            if (byte_count == null) {
+                byte_count = "";
             }
-            return this.byte_count;
+            return byte_count;
         }
 
         public int getTotalFolders() {
-            if (this.total_folders == null) {
-                this.total_folders = "0";
+            if (total_folders == null) {
+                total_folders = "0";
             }
-            return Integer.valueOf(this.total_folders);
+            return Integer.valueOf(total_folders);
         }
 
         public int getTotalFiles() {
-            if (this.total_files == null) {
-                this.total_files = "0";
+            if (total_files == null) {
+                total_files = "0";
             }
-            return Integer.valueOf(this.total_files);
+            return Integer.valueOf(total_files);
         }
 
         public long getTotalSize() {
-            if (this.total_size == null) {
-                this.total_size = "0";
+            if (total_size == null) {
+                total_size = "0";
             }
-            return Long.valueOf(this.total_size);
+            return Long.valueOf(total_size);
         }
 
         public String getDeleteDate() {
-            if (this.delete_date == null) {
-                this.delete_date = "";
+            if (delete_date == null) {
+                delete_date = "";
             }
-            return this.delete_date;
+            return delete_date;
         }
 
         public String getType() {
-            if (this.type == null) {
-                this.type = "";
+            if (type == null) {
+                type = "";
             }
-            return this.type;
+            return type;
         }
 
         public String getQuickKey() {
-            if (this.quickkey == null) {
-                this.quickkey = "";
+            if (quickkey == null) {
+                quickkey = "";
             }
-            return this.quickkey;
+            return quickkey;
         }
 
         public String getFileName() {
-            if (this.filename == null) {
-                this.filename = "";
+            if (filename == null) {
+                filename = "";
             }
-            return this.filename;
+            return filename;
         }
 
         public String getParentFolderKey() {
-            if (this.parent_folderkey == null) {
-                this.parent_folderkey = "";
+            if (parent_folderkey == null || parent_folderkey.isEmpty()) {
+                parent_folderkey = "myfiles";
             }
-            return this.parent_folderkey;
+            return parent_folderkey;
         }
 
         public String getParentName() {
-            if (this.parent_name == null) {
-                this.parent_name = "";
+            if (parent_name == null) {
+                parent_name = "";
             }
-            return this.parent_name;
+            return parent_name;
         }
 
         public String getPass() {
-            if (this.pass == null) {
-                this.pass = "";
+            if (pass == null) {
+                pass = "";
             }
-            return this.pass;
+            return pass;
         }
 
         public String getCreated() {
-            if (this.created == null) {
-                this.created = "";
+            if (created == null) {
+                created = "";
             }
-            return this.created;
+            return created;
         }
 
         public long getSize() {
-            if (this.size == null) {
-                this.size = "0";
+            if (size == null) {
+                size = "0";
             }
-            return Long.valueOf(this.size);
+            return Long.valueOf(size);
         }
 
         public String getMimeType() {
-            if (this.mimetype == null) {
-                this.mimetype = "";
+            if (mimetype == null) {
+                mimetype = "";
             }
-            return this.mimetype;
+            return mimetype;
         }
 
         public String getFileType() {
-            if (this.filetype == null) {
-                this.filetype = "";
+            if (filetype == null) {
+                filetype = "";
             }
-            return this.filetype;
+            return filetype;
         }
 
         public boolean isPublic() {
-            if (this.privacy == null) {
-                this.privacy = "private";
+            if (privacy == null) {
+                privacy = "private";
             }
-            return "public".equalsIgnoreCase(this.privacy);
+            return "public".equalsIgnoreCase(privacy);
         }
 
         public String getPasswordProtected() {
-            if (this.password_protected == null) {
-                this.password_protected = "";
+            if (password_protected == null) {
+                password_protected = "";
             }
-            return this.password_protected;
+            return password_protected;
         }
 
         public int getFlag() {
-            if (this.flag == null) {
-                this.flag = "0";
+            if (flag == null) {
+                flag = "0";
             }
-            return Integer.valueOf(this.flag);
+            return Integer.valueOf(flag);
         }
 
         public int getRelevancy() {
-            if (this.relevancy == null) {
-                this.relevancy = "0";
+            if (relevancy == null) {
+                relevancy = "0";
             }
-            return Integer.valueOf(this.relevancy);
+            return Integer.valueOf(relevancy);
         }
 
         public String getHash() {
-            if (this.hash == null) {
-                this.hash = "";
+            if (hash == null) {
+                hash = "";
             }
-            return this.hash;
+            return hash;
         }
     }
 }

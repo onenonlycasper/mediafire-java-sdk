@@ -117,12 +117,8 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
         // get time from session token
         String time = sessionToken.getTime();
         // construct pre hash signature
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(secretKey);
-        stringBuilder.append(time);
-        stringBuilder.append(generatedUri);
         // return constructed pre hash signature
-        return stringBuilder.toString();
+        return String.valueOf(secretKey) + time + generatedUri;
     }
 
     /**
@@ -134,7 +130,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
     private String constructParametersForUrl(Map<String, String> parameters) {
         logger.info(" constructParametersForUrl(HashMap<String, String>)");
         StringBuilder stringBuilder = new StringBuilder();
-        if (parameters != null && parameters.size() > 0) {
+        if (parameters != null && !parameters.isEmpty()) {
             for (String key : parameters.keySet()) {
                 stringBuilder.append("&").append(key).append("=").append(parameters.get(key));
             }
@@ -199,9 +195,9 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
             byte byteData[] = md.digest();
 
             //convert the byte to hex format method 1
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < byteData.length; i++) {
-                sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+            StringBuilder sb = new StringBuilder();
+            for (byte aByteData : byteData) {
+                sb.append(Integer.toString((aByteData & 0xff) + 0x100, 16).substring(1));
             }
             signature = sb.toString();
         } catch (NoSuchAlgorithmException e) {

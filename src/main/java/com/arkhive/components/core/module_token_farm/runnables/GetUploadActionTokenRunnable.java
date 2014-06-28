@@ -29,8 +29,8 @@ public class GetUploadActionTokenRunnable implements Runnable, HttpRequestCallba
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private final SessionTokenDistributor sessionTokenDistributor;
-    private GetNewActionTokenCallback actionTokenCallback;
-    private HttpPeriProcessor httpPeriProcessor;
+    private final GetNewActionTokenCallback actionTokenCallback;
+    private final HttpPeriProcessor httpPeriProcessor;
     private final Logger logger = LoggerFactory.getLogger(GetUploadActionTokenRunnable.class);
 
     public GetUploadActionTokenRunnable(HttpProcessor httpPreProcessor,
@@ -97,7 +97,7 @@ public class GetUploadActionTokenRunnable implements Runnable, HttpRequestCallba
         return requiredParameters;
     }
 
-    public static Map<String, String> constructOptionalParameters() {
+    private static Map<String, String> constructOptionalParameters() {
         Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
         optionalParameters.put(OPTIONAL_PARAMETER_LIFESPAN, "1440");
         optionalParameters.put(OPTIONAL_PARAMETER_RESPONSE_FORMAT, "json");
