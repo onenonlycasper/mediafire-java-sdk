@@ -1,31 +1,31 @@
 package com.arkhive.components.core.module_http_processor.runnables;
 
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.core.module_http_processor.*;
+import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by  on 6/16/2014.
+ * Created by Chris Najar on 6/30/2014.
  */
-public class HttpGetRequestRunnable implements Runnable {
+public class HttpsGetRequestRunnable implements Runnable {
     private final HttpRequestCallback callback;
     private final ApiRequestObject apiRequestObject;
     private final HttpPeriProcessor httpPeriProcessor;
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
-    private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
+    private final Logger logger = LoggerFactory.getLogger(HttpsGetRequestRunnable.class);
 
-    public HttpGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
+    public HttpsGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
@@ -47,7 +47,7 @@ public class HttpGetRequestRunnable implements Runnable {
             httpPreProcessor.processApiRequestObject(apiRequestObject);
         }
 
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         InputStream inputStream = null;
 
         try {
@@ -63,7 +63,7 @@ public class HttpGetRequestRunnable implements Runnable {
                 return;
             }
 
-            connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpsURLConnection) url.openConnection();
 
             //set connect and read timeout
             connection.setConnectTimeout(connectionTimeout);

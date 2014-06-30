@@ -26,7 +26,6 @@ import java.util.Map;
  * Created by  on 6/16/2014.
  */
 public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
-    private static final String TAG = GetSessionTokenRunnable.class.getSimpleName();
     private static final String OPTIONAL_PARAMETER_TOKEN_VERSION = "token_version";
     private static final String OPTIONAL_PARAMETER_EKEY = "ekey";
     private static final String OPTIONAL_PARAMETER_RESPONSE_FORMAT = "response_format";
@@ -66,6 +65,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
                 e.printStackTrace();
                 apiRequestObject.addExceptionDuringRequest(e);
             }
+            printData(apiRequestObject);
             // get the response string
             String httpResponseString = apiRequestObject.getHttpResponseString();
             // get the actual response in the form of GetSessionTokenResponse
@@ -78,6 +78,27 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
             // now that we have our token, we need to make a getNewSessionTokenCallback to the token factory
             getNewSessionTokenCallback.receiveNewSessionToken(apiRequestObject);
         }
+    }
+
+    private void printData(ApiRequestObject apiRequestObject) {
+        logger.info("printData()");
+        logger.info(" response code: " + apiRequestObject.getHttpResponseCode());
+        logger.info(" response string: " + apiRequestObject.getHttpResponseString());
+        logger.info(" domain used: " + apiRequestObject.getDomain());
+        logger.info(" uri used: " + apiRequestObject.getUri());
+        for (String key : apiRequestObject.getRequiredParameters().keySet()) {
+            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
+        }
+        for (String key : apiRequestObject.getOptionalParameters().keySet()) {
+            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
+        }
+
+        if (apiRequestObject.getSessionToken() != null) {
+            SessionToken sessionToken = apiRequestObject.getSessionToken();
+            logger.info(" session token secret key used: " + sessionToken.getSecretKey());
+            logger.info(" session token time used: " + sessionToken.getTime());
+        }
+        logger.info(" original url: " + apiRequestObject.getConstructedUrl());
     }
 
     private SessionToken getSessionTokenFromApiRequestObject() {

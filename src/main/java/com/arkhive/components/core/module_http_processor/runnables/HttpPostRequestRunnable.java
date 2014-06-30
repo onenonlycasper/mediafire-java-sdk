@@ -17,7 +17,6 @@ import java.util.Map;
  * Created by  on 6/16/2014.
  */
 public class HttpPostRequestRunnable implements Runnable {
-    private static final String TAG = HttpPostRequestRunnable.class.getSimpleName();
     private final HttpRequestCallback callback;
     private final ApiRequestObject apiRequestObject;
     private final HttpProcessor httpPreProcessor;

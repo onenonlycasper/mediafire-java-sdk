@@ -1,36 +1,33 @@
 package com.arkhive.components.core.module_http_processor.runnables;
 
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.core.module_http_processor.*;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
+import java.net.ProtocolException;
+import java.net.SocketException;
 import java.net.URL;
+import java.util.Map;
 
 /**
- * Created by  on 6/16/2014.
+ * Created by Chris Najar on 6/30/2014.
  */
-public class HttpGetRequestRunnable implements Runnable {
+public class HttpsPostRequestRunnable implements Runnable {
     private final HttpRequestCallback callback;
     private final ApiRequestObject apiRequestObject;
-    private final HttpPeriProcessor httpPeriProcessor;
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
-    private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
+    private final Logger logger = LoggerFactory.getLogger(HttpsPostRequestRunnable.class);
 
-    public HttpGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
+    public HttpsPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
         this.apiRequestObject = apiRequestObject;
-        this.httpPeriProcessor = httpPeriProcessor;
     }
 
     @Override
@@ -40,50 +37,65 @@ public class HttpGetRequestRunnable implements Runnable {
             callback.httpRequestStarted(apiRequestObject);
         }
 
-        int connectionTimeout = httpPeriProcessor.getConnectionTimeout();
-        int readTimeout = httpPeriProcessor.getReadTimeout();
-
         if (httpPreProcessor != null) {
             httpPreProcessor.processApiRequestObject(apiRequestObject);
         }
 
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         InputStream inputStream = null;
+        OutputStream outputStream = null;
 
         try {
             URL url = apiRequestObject.getConstructedUrl();
-            //create url from request
-            //open connection
 
             if (url == null) {
-                apiRequestObject.addExceptionDuringRequest(new Exception("HttpGetRequestRunnable produced a null URL"));
+                apiRequestObject.addExceptionDuringRequest(new Exception("HttpPostRequestRunnable produced a null URL"));
                 if (callback != null) {
                     callback.httpRequestFinished(apiRequestObject);
                 }
                 return;
             }
 
-            connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpsURLConnection) url.openConnection();
 
-            //set connect and read timeout
-            connection.setConnectTimeout(connectionTimeout);
-            connection.setReadTimeout(readTimeout);
+            //sets to POST
+            connection.setDoOutput(true);
 
-            //make sure this connection is a GET
-            connection.setUseCaches(false);
+            byte[] payload = apiRequestObject.getPayload();
+            if (payload != null) {
+                connection.setFixedLengthStreamingMode(payload.length);
+                connection.setRequestProperty("Content-Type", "application/octet-stream");
 
-            //get response code first so we know what type of stream to open
+                Map<String, String> headers = apiRequestObject.getPostHeaders();
+                if (headers != null) {
+                    //set headers
+                    for (Map.Entry<String, String> entry : headers.entrySet()) {
+                        connection.addRequestProperty(entry.getKey(), entry.getValue());
+                    }
+                }
+
+                outputStream = connection.getOutputStream();
+                outputStream.write(payload, 0, payload.length);
+            }
+
+
             int httpResponseCode = connection.getResponseCode();
             apiRequestObject.setHttpResponseCode(httpResponseCode);
 
-            //now open the correct stream type based on error or not
+            String responseString;
             if (httpResponseCode / 100 != 2) {
                 inputStream = connection.getErrorStream();
             } else {
                 inputStream = connection.getInputStream();
             }
-            String httpResponseString = readStream(apiRequestObject, inputStream);
-            apiRequestObject.setHttpResponseString(httpResponseString);
+
+            responseString = readStream(apiRequestObject, inputStream);
+            apiRequestObject.setHttpResponseString(responseString);
+
+        } catch (ProtocolException e) {
+            apiRequestObject.addExceptionDuringRequest(e);
+        } catch (SocketException e) {
+            apiRequestObject.addExceptionDuringRequest(e);
         } catch (IOException e) {
             apiRequestObject.addExceptionDuringRequest(e);
         } finally {
@@ -94,6 +106,14 @@ public class HttpGetRequestRunnable implements Runnable {
             if (inputStream != null) {
                 try {
                     inputStream.close();
+                } catch (IOException e) {
+                    apiRequestObject.addExceptionDuringRequest(e);
+                }
+            }
+
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
                 } catch (IOException e) {
                     apiRequestObject.addExceptionDuringRequest(e);
                 }
