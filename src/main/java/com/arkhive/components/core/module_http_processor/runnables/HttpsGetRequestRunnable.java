@@ -8,11 +8,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.*;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 /**
  * Created by Chris Najar on 6/30/2014.
@@ -61,24 +68,55 @@ public class HttpsGetRequestRunnable implements Runnable {
                     callback.httpRequestFinished(apiRequestObject);
                 }
                 return;
+            } else {
+                logger.info("url ok");
             }
 
-//            // create trust manager that trusts certificates of authority from keystore
-//            String trustManagerFactoryAlgorithm
-//            // Create SSL Context using TrustManager
-//            SSLContext context = SSLContext.getInstance("TLS");
-//            context.init(null, tmf.getTrustManagers(), null);
+            logger.info("creating certificate factory");
+            // Load Certificate of Authority from file
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            logger.info("finished creating certificate factory");
+            // read certificate
+            logger.info("creating input stream to certificate");
+            InputStream caInput = new BufferedInputStream(new FileInputStream("mf-c.crt"));
+            logger.info("finished creating input stream to certificate");
+            logger.info("creating certificate");
+            Certificate ca = cf.generateCertificate(caInput);
+            logger.info("finished creating certificate");
+            logger.info("ca=" + ((X509Certificate) ca).getSubjectDN());
+            logger.info("closing input stream to certificate");
+            caInput.close();
 
+            // create keystore containing trusted CAs
+            logger.info("creating keystore");
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+            logger.info("finished creating keystore");
+            // create trust manager that trusts certificates of authority from keystore
+            logger.info("creating trust manager");
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            tmf.init(keyStore);
+            logger.info("finished creating trust manager");
+            // Create SSL Context using TrustManager
+            logger.info("creating ssl context");
+            SSLContext context = SSLContext.getInstance("TLS");
+            context.init(null, tmf.getTrustManagers(), null);
+            logger.info("finished creating ssl context");
+            // open connection
+            logger.info("opening connection to url");
             connection = (HttpsURLConnection) url.openConnection();
-
-//            connection.setSSLSocketFactory(context.getSocketFactory());
-
+            // set the ssl socket factory
+            logger.info("setting sslsocketfactory to connection");
+            connection.setSSLSocketFactory(context.getSocketFactory());
             //set connect and read timeout
             connection.setConnectTimeout(connectionTimeout);
             connection.setReadTimeout(readTimeout);
-
             //make sure this connection is a GET
             connection.setUseCaches(false);
+            connection.setAllowUserInteraction(false);
 
             //get response code first so we know what type of stream to open
             int httpResponseCode = connection.getResponseCode();
@@ -86,14 +124,32 @@ public class HttpsGetRequestRunnable implements Runnable {
 
             //now open the correct stream type based on error or not
             if (httpResponseCode / 100 != 2) {
+                logger.info("opening error stream");
                 inputStream = connection.getErrorStream();
             } else {
+                logger.info("opening input stream");
                 inputStream = connection.getInputStream();
             }
             String httpResponseString = readStream(apiRequestObject, inputStream);
             apiRequestObject.setHttpResponseString(httpResponseString);
+        } catch (NoSuchAlgorithmException e) {
+            apiRequestObject.addExceptionDuringRequest(e);
+            logger.info("exception: " + e);
+        } catch (KeyManagementException e) {
+            apiRequestObject.addExceptionDuringRequest(e);
+            logger.info("exception: " + e);
+        } catch (CertificateException e) {
+            apiRequestObject.addExceptionDuringRequest(e);
+            logger.info("exception: " + e);
+        } catch (KeyStoreException e) {
+            apiRequestObject.addExceptionDuringRequest(e);
+            logger.info("exception: " + e);
+        } catch (FileNotFoundException e) {
+            apiRequestObject.addExceptionDuringRequest(e);
+            logger.info("exception: " + e);
         } catch (IOException e) {
             apiRequestObject.addExceptionDuringRequest(e);
+            logger.info("exception: " + e);
         } finally {
             if (connection != null) {
                 connection.disconnect();

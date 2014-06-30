@@ -36,6 +36,8 @@ public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
         } else {
             apiRequestObject.setSessionTokenInvalid(false);
         }
+
+        printData(apiRequestObject);
     }
 
     /**
@@ -63,5 +65,25 @@ public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
             }
         }
         return returnJson;
+    }
+
+    public void printData(ApiRequestObject apiRequestObject) {
+        logger.info(" response code: " + apiRequestObject.getHttpResponseCode());
+        logger.info(" response string: " + apiRequestObject.getHttpResponseString());
+        logger.info(" domain used: " + apiRequestObject.getDomain());
+        logger.info(" uri used: " + apiRequestObject.getUri());
+        for (String key : apiRequestObject.getRequiredParameters().keySet()) {
+            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
+        }
+        for (String key : apiRequestObject.getOptionalParameters().keySet()) {
+            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
+        }
+        for (Exception e : apiRequestObject.getExceptionsDuringRequest()) {
+            logger.info("exception caught during http: " + e);
+            e.printStackTrace();
+        }
+
+        logger.info(" token used: " + apiRequestObject.getActionToken().getTokenString());
+        logger.info(" original url: " + apiRequestObject.getConstructedUrl());
     }
 }
