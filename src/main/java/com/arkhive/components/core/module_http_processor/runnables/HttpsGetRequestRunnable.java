@@ -63,7 +63,15 @@ public class HttpsGetRequestRunnable implements Runnable {
                 return;
             }
 
+//            // create trust manager that trusts certificates of authority from keystore
+//            String trustManagerFactoryAlgorithm
+//            // Create SSL Context using TrustManager
+//            SSLContext context = SSLContext.getInstance("TLS");
+//            context.init(null, tmf.getTrustManagers(), null);
+
             connection = (HttpsURLConnection) url.openConnection();
+
+//            connection.setSSLSocketFactory(context.getSocketFactory());
 
             //set connect and read timeout
             connection.setConnectTimeout(connectionTimeout);
