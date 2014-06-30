@@ -58,7 +58,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
             // create request object
             apiRequestObject = createApiRequestObjectForNewSessionToken();
             // send request to http handler
-            httpPeriProcessor.sendGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
+            httpPeriProcessor.sendHttpsGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             try {
                 wait(Configuration.DEFAULT_HTTP_CONNECTION_TIMEOUT);
             } catch (InterruptedException e) {
