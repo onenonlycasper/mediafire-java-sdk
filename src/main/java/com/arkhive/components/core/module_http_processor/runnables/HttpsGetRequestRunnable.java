@@ -7,18 +7,13 @@ import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestC
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.*;
 import java.io.*;
 import java.net.URL;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 /**
@@ -72,51 +67,45 @@ public class HttpsGetRequestRunnable implements Runnable {
                 logger.info("url ok");
             }
 
-            logger.info("creating certificate factory");
-            // Load Certificate of Authority from file
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            logger.info("finished creating certificate factory");
-            // read certificate
-            logger.info("creating input stream to certificate");
-            InputStream caInput = new BufferedInputStream(new FileInputStream("mf-c.crt"));
-            logger.info("finished creating input stream to certificate");
-            logger.info("creating certificate");
-            Certificate ca = cf.generateCertificate(caInput);
-            logger.info("finished creating certificate");
-            logger.info("ca=" + ((X509Certificate) ca).getSubjectDN());
-            logger.info("closing input stream to certificate");
-            caInput.close();
+            // trust manager that does not validate certificate chains
+            TrustManager[] trustAllCerts = new TrustManager[] {
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { }
 
-            // create keystore containing trusted CAs
-            logger.info("creating keystore");
-            String keyStoreType = KeyStore.getDefaultType();
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
-            logger.info("finished creating keystore");
-            // create trust manager that trusts certificates of authority from keystore
-            logger.info("creating trust manager");
-            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            tmf.init(keyStore);
-            logger.info("finished creating trust manager");
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { }
+
+                        @Override
+                        public X509Certificate[] getAcceptedIssuers() { return null; }
+                    }
+            };
+
             // Create SSL Context using TrustManager
-            logger.info("creating ssl context");
-            SSLContext context = SSLContext.getInstance("TLS");
-            context.init(null, tmf.getTrustManagers(), null);
-            logger.info("finished creating ssl context");
-            // open connection
-            logger.info("opening connection to url");
-            connection = (HttpsURLConnection) url.openConnection();
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
             // set the ssl socket factory
-            logger.info("setting sslsocketfactory to connection");
-            connection.setSSLSocketFactory(context.getSocketFactory());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+            // create all-trusting host name verifier
+            HostnameVerifier allHostsValid = new HostnameVerifier() {
+                @Override
+                public boolean verify(String s, SSLSession sslSession) {
+                    return true;
+                }
+            };
+            connection.setDefaultHostnameVerifier(allHostsValid);
+
+            // open connection
+            connection = (HttpsURLConnection) url.openConnection();
             //set connect and read timeout
             connection.setConnectTimeout(connectionTimeout);
             connection.setReadTimeout(readTimeout);
             //make sure this connection is a GET
             connection.setUseCaches(false);
             connection.setAllowUserInteraction(false);
+
+            connection.connect();
+
 
             //get response code first so we know what type of stream to open
             int httpResponseCode = connection.getResponseCode();
@@ -136,12 +125,6 @@ public class HttpsGetRequestRunnable implements Runnable {
             apiRequestObject.addExceptionDuringRequest(e);
             logger.info("exception: " + e);
         } catch (KeyManagementException e) {
-            apiRequestObject.addExceptionDuringRequest(e);
-            logger.info("exception: " + e);
-        } catch (CertificateException e) {
-            apiRequestObject.addExceptionDuringRequest(e);
-            logger.info("exception: " + e);
-        } catch (KeyStoreException e) {
             apiRequestObject.addExceptionDuringRequest(e);
             logger.info("exception: " + e);
         } catch (FileNotFoundException e) {
