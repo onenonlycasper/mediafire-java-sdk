@@ -6,6 +6,7 @@ import com.arkhive.components.core.module_http_processor.interfaces.HttpProcesso
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.core.module_http_processor.runnables.HttpGetRequestRunnable;
 import com.arkhive.components.core.module_http_processor.runnables.HttpPostRequestRunnable;
+import com.arkhive.components.core.module_http_processor.runnables.HttpsGetRequestRunnable;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public final class HttpPeriProcessor {
     }
 
     public void sendHttpsGetRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
-        HttpGetRequestRunnable httpsGetRequestRunnable = new HttpGetRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
+        HttpsGetRequestRunnable httpsGetRequestRunnable = new HttpsGetRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
         executor.execute(httpsGetRequestRunnable);
     }
 
