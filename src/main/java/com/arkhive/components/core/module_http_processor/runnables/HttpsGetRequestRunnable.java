@@ -1,33 +1,40 @@
 package com.arkhive.components.core.module_http_processor.runnables;
 
+
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
+import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.SocketException;
+import javax.net.ssl.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Map;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 
 /**
- * Created by  on 6/16/2014.
+ * Created by on 6/16/2014.
  */
-public class HttpPostRequestRunnable implements Runnable {
+public class HttpsGetRequestRunnable implements Runnable {
     private final HttpRequestCallback callback;
     private final ApiRequestObject apiRequestObject;
+    private final HttpPeriProcessor httpPeriProcessor;
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
-    private final Logger logger = LoggerFactory.getLogger(HttpPostRequestRunnable.class);
+    private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
 
-    public HttpPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
+    public HttpsGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         this.callback = callback;
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
         this.apiRequestObject = apiRequestObject;
+        this.httpPeriProcessor = httpPeriProcessor;
     }
 
     @Override
@@ -37,66 +44,79 @@ public class HttpPostRequestRunnable implements Runnable {
             callback.httpRequestStarted(apiRequestObject);
         }
 
+        int connectionTimeout = httpPeriProcessor.getConnectionTimeout();
+        int readTimeout = httpPeriProcessor.getReadTimeout();
+
         if (httpPreProcessor != null) {
             httpPreProcessor.processApiRequestObject(apiRequestObject);
         }
 
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         InputStream inputStream = null;
-        OutputStream outputStream = null;
 
         try {
             URL url = apiRequestObject.getConstructedUrl();
+            //create url from request
+            //open connection
 
             if (url == null) {
-                apiRequestObject.addExceptionDuringRequest(new Exception("HttpPostRequestRunnable produced a null URL"));
+                apiRequestObject.addExceptionDuringRequest(new Exception("HttpGetRequestRunnable produced a null URL"));
                 if (callback != null) {
                     callback.httpRequestFinished(apiRequestObject);
                 }
                 return;
             }
 
-            connection = (HttpURLConnection) url.openConnection();
-
-            //sets to POST
-            connection.setDoOutput(true);
-
-            byte[] payload = apiRequestObject.getPayload();
-            if (payload != null) {
-                connection.setFixedLengthStreamingMode(payload.length);
-                connection.setRequestProperty("Content-Type", "application/octet-stream");
-
-                Map<String, String> headers = apiRequestObject.getPostHeaders();
-                if (headers != null) {
-                    //set headers
-                    for (Map.Entry<String, String> entry : headers.entrySet()) {
-                        connection.addRequestProperty(entry.getKey(), entry.getValue());
+            TrustManager[] trustAllCerts = new TrustManager[] {
+                    new X509TrustManager() {
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() { return null; }
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) { }
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) { }
                     }
+            };
+
+            // Install trust manager
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+            // Create host name verifier
+            HostnameVerifier allHostsValid = new HostnameVerifier() {
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
                 }
+            };
 
-                outputStream = connection.getOutputStream();
-                outputStream.write(payload, 0, payload.length);
-            }
+            // Install the all-trusting host verifier
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
 
+            connection = (HttpsURLConnection) url.openConnection();
+
+            //set connect and read timeout
+            connection.setConnectTimeout(connectionTimeout);
+            connection.setReadTimeout(readTimeout);
+
+            //make sure this connection is a GET
+            connection.setUseCaches(false);
+
+            //get response code first so we know what type of stream to open
             int httpResponseCode = connection.getResponseCode();
             apiRequestObject.setHttpResponseCode(httpResponseCode);
 
-            String responseString;
+            //now open the correct stream type based on error or not
             if (httpResponseCode / 100 != 2) {
                 inputStream = connection.getErrorStream();
             } else {
                 inputStream = connection.getInputStream();
             }
-
-            responseString = readStream(apiRequestObject, inputStream);
-            apiRequestObject.setHttpResponseString(responseString);
-
-        } catch (ProtocolException e) {
-            apiRequestObject.addExceptionDuringRequest(e);
-        } catch (SocketException e) {
-            apiRequestObject.addExceptionDuringRequest(e);
+            String httpResponseString = readStream(apiRequestObject, inputStream);
+            apiRequestObject.setHttpResponseString(httpResponseString);
         } catch (IOException e) {
             apiRequestObject.addExceptionDuringRequest(e);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -105,14 +125,6 @@ public class HttpPostRequestRunnable implements Runnable {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException e) {
-                    apiRequestObject.addExceptionDuringRequest(e);
-                }
-            }
-
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
                 } catch (IOException e) {
                     apiRequestObject.addExceptionDuringRequest(e);
                 }
@@ -166,3 +178,4 @@ public class HttpPostRequestRunnable implements Runnable {
         return stream;
     }
 }
+

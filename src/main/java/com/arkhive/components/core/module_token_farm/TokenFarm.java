@@ -120,7 +120,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     public void receiveNewSessionToken(ApiRequestObject apiRequestObject) {
         logger.info(" receiveNewSessionToken()");
         com.arkhive.components.core.module_token_farm.tokens.SessionToken sessionToken = apiRequestObject.getSessionToken();
-        if (!apiRequestObject.isSessionTokenInvalid() && sessionToken != null) {
+        if (apiRequestObject != null && !apiRequestObject.isSessionTokenInvalid() && sessionToken != null) {
             try {
                 sessionTokens.add(sessionToken);
                 logger.info(" added " + sessionToken.getTokenString());
@@ -128,12 +128,13 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
                 logger.info(" interrupted, not adding: " + sessionToken.getTokenString());
                 getNewSessionToken(this);
             }
-        } else if (apiRequestObject.getApiResponse().getError() == 107) {
+        } else if (apiRequestObject.getApiResponse() != null && apiRequestObject.getApiResponse().getError() == 107) {
             logger.info(" api message: " + apiRequestObject.getApiResponse().getMessage());
             logger.info(" api error: " + apiRequestObject.getApiResponse().getError());
             logger.info(" api result: " + apiRequestObject.getApiResponse().getResult());
             logger.info(" api time: " + apiRequestObject.getApiResponse().getTime());
         } else {
+            logger.info(" api request null: " + (apiRequestObject.getApiResponse() == null));
             getNewSessionToken(this);
         }
     }

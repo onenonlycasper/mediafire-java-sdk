@@ -71,7 +71,7 @@ public class UploadItem {
     }
 
     public int getCheckCount() {
-        System.out.println(TAG + " getCheckCount()");
+        logger.info("getCheckCount(" + count + ")");
         count++;
         return count;
     }

@@ -124,20 +124,18 @@ public final class ApplicationCredentials {
             return value;
         }
 
-        public UserCredentialsType fromString(String value) {
-            if (value.equals(FACEBOOK.getValue())) {
-                return FACEBOOK;
+        public static UserCredentialsType fromString(String value) {
+            if (value == null) {
+                return null;
             }
 
-            if (value.equals(TWITTER.getValue())) {
-                return TWITTER;
+            for (UserCredentialsType type : UserCredentialsType.values()) {
+                if (value.equalsIgnoreCase(type.value)) {
+                    return type;
+                }
             }
 
-            if (value.equals(MEDIAFIRE.getValue())) {
-                return MEDIAFIRE;
-            }
-
-            return UNSET;
+            return null;
         }
     }
 }

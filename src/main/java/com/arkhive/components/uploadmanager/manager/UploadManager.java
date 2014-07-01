@@ -28,8 +28,7 @@ import java.util.concurrent.*;
  * @author
  */
 public class UploadManager implements UploadListenerManager {
-    private static final String TAG = UploadManager.class.getSimpleName();
-    private static final int MAX_CHECK_COUNT = 20;
+    private static final int MAX_CHECK_COUNT = 7;
     private UploadListenerDatabase dbListener;
     private UploadListenerUI uiListener;
     private final PausableThreadPoolExecutor executor;
@@ -135,8 +134,10 @@ public class UploadManager implements UploadListenerManager {
             logger.info(" one or more required parameters are invalid, not adding item to queue");
             return;
         }
-        CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
-        executor.execute(process);
+        if (uploadItem.getCheckCount() < MAX_CHECK_COUNT) {
+            CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
+            executor.execute(process);
+        }
     }
 
     /**

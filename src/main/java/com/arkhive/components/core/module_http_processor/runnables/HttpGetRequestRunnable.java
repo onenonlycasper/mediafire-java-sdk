@@ -18,7 +18,6 @@ import java.net.URL;
  * Created by  on 6/16/2014.
  */
 public class HttpGetRequestRunnable implements Runnable {
-    private static final String TAG = HttpGetRequestRunnable.class.getSimpleName();
     private final HttpRequestCallback callback;
     private final ApiRequestObject apiRequestObject;
     private final HttpPeriProcessor httpPeriProcessor;
