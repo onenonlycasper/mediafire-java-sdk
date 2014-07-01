@@ -33,10 +33,10 @@ public class ApiUris {
     public static final String URI_USER_UNLINK_TWITTER = "/api/user/unlink_twitter.php";
     public static final String URI_USER_GET_AVATAR = "/api/user/get_avatar.php";
     public static final String URI_USER_SET_AVATAR = "/api/user/set_avatar.php";
-    public static final String URI_UPLOAD_CHECK = "/api/upload/check.php";
-    public static final String URI_UPLOAD_INSTANT = "/api/upload/instant.php";
-    public static final String URI_UPLOAD_POLL_UPLOAD = "/api/upload/poll_upload.php";
-    public static final String URI_UPLOAD_RESUMABLE = "/api/upload/resumable.php";
+    public static final String URI_UPLOAD_CHECK = "/api/1.0/upload/check.php";
+    public static final String URI_UPLOAD_INSTANT = "/api/1.0/upload/instant.php";
+    public static final String URI_UPLOAD_POLL_UPLOAD = "/api/1.0/upload/poll_upload.php";
+    public static final String URI_UPLOAD_RESUMABLE = "/api/1.0/upload/resumable.php";
     public static final String URI_DEVICE_GET_CHANGES = "/api/1.0/device/get_changes.php";
     public static final String URI_DEVICE_GET_STATUS = "/api/device/get_status.php";
 

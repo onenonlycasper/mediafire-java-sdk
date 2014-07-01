@@ -18,7 +18,6 @@ import java.util.Map;
  * Created by  on 6/15/2014.
  */
 public final class ApiRequestHttpPreProcessor implements HttpProcessor {
-    private static final String TAG = ApiRequestHttpPreProcessor.class.getSimpleName();
     private final Logger logger = LoggerFactory.getLogger(ApiRequestHttpPreProcessor.class);
 
     public ApiRequestHttpPreProcessor() {}
@@ -96,7 +95,6 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
 
         String completedUrl = fullUrlBuilder.toString();
 
-
         completedUrl = cleanupUrlString(completedUrl);
 
         try {
@@ -108,16 +106,22 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
     }
 
     private String createPreHashStringForApiCallSignature(ApiRequestObject apiRequestObject, String generatedUri) {
+        logger.info("createPreHashStringForApiCallSignature()");
         // formula is session token secret key + time + uri (concatenated)
         // get session token from api request object
         SessionToken sessionToken = apiRequestObject.getSessionToken();
+        logger.info("session token: " + sessionToken.getTokenString());
         // get secret key from session token
         String secretKeyString = sessionToken.getSecretKey();
+        logger.info("stored secret key: " + secretKeyString);
         int secretKey = Integer.valueOf(secretKeyString) % 256;
+        logger.info("stored secret key % 256: " + secretKey);
         // get time from session token
         String time = sessionToken.getTime();
+        logger.info("stored time: " + time);
         // construct pre hash signature
         // return constructed pre hash signature
+        logger.info("pre hash signature: " + (String.valueOf(secretKey) + time + generatedUri));
         return String.valueOf(secretKey) + time + generatedUri;
     }
 
@@ -186,6 +190,8 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
      * in that case the original string will be returned.
      */
     private String createHash(String hashTarget) {
+        logger.info("createHash()");
+        logger.info("hashing: " + hashTarget);
         String signature;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -204,6 +210,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
             e.printStackTrace();
             signature = hashTarget;
         }
+        logger.info("hashed to: " + signature);
         return signature;
     }
 }

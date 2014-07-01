@@ -78,7 +78,6 @@ public class HttpPostRequestRunnable implements Runnable {
                 outputStream.write(payload, 0, payload.length);
             }
 
-
             int httpResponseCode = connection.getResponseCode();
             apiRequestObject.setHttpResponseCode(httpResponseCode);
 
