@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Created by  on 6/16/2014.
  */
-public class HttpPostRequestRunnable extends HttpRequestRunnable implements Runnable {
+public final class HttpPostRequestRunnable extends HttpRequestRunnable implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(HttpPostRequestRunnable.class);
 
     public HttpPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {

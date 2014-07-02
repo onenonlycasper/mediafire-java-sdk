@@ -35,7 +35,7 @@ public abstract class HttpRequestRunnable implements Runnable {
     protected abstract void doRequest();
 
     @Override
-    public void run() {
+    public final void run() {
         if (callback != null) {
             callback.httpRequestStarted(apiRequestObject);
         }

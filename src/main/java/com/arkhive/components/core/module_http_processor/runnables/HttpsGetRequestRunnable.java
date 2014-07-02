@@ -19,7 +19,7 @@ import java.security.cert.X509Certificate;
 /**
  * Created by on 6/16/2014.
  */
-public class HttpsGetRequestRunnable extends HttpRequestRunnable implements Runnable {
+public final class HttpsGetRequestRunnable extends HttpRequestRunnable {
     private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
 
     public HttpsGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
@@ -109,6 +109,5 @@ public class HttpsGetRequestRunnable extends HttpRequestRunnable implements Runn
             }
         }
     }
-
 }
 

@@ -15,7 +15,7 @@ import java.net.URL;
 /**
  * Created by  on 6/16/2014.
  */
-public class HttpGetRequestRunnable extends HttpRequestRunnable implements Runnable {
+public final class HttpGetRequestRunnable extends HttpRequestRunnable {
     private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
 
     public HttpGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
