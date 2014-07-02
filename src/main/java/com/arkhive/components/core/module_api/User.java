@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 6/18/2014.
+ * Created by  on 6/18/2014.
  */
 public class User {
     public UserGetInfoResponse getInfo(

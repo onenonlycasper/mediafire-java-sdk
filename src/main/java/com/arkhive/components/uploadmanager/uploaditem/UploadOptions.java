@@ -267,7 +267,7 @@ public class UploadOptions {
      * enum for the upload option "action_on_duplicate"
      * in the GET request to be sent via upload/pre_upload.php.
      *
-     * @author Chris Najar
+     * @author
      */
      public enum ActionOnDuplicate {
         KEEP, SKIP, REPLACE
@@ -284,7 +284,7 @@ public class UploadOptions {
      * enum for the upload option "version_control"
      * in the POST request to be sent via upload/upload.php.
      *
-     * @author Chris Najar
+     * @author
      */
     public enum VersionControl {
         CREATE_PATCHES, KEEP_REVISION, NONE

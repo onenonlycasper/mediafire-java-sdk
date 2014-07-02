@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Created by Chris Najar on 7/2/2014.
+ * Created by on 7/2/2014.
  */
 public abstract class HttpRequestRunnable implements Runnable {
     private static final String TAG = HttpRequestRunnable.class.getSimpleName();

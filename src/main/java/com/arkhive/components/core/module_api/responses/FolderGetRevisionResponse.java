@@ -1,7 +1,7 @@
 package com.arkhive.components.core.module_api.responses;
 
 /**
- * Created by Chris Najar on 6/18/2014.
+ * Created by  on 6/18/2014.
  */
 public class FolderGetRevisionResponse extends ApiResponse {
     private String revision;

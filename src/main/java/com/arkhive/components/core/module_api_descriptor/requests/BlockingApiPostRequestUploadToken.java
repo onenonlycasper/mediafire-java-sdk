@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Chris Najar on 6/19/2014.
+ * Created by  on 6/19/2014.
  */
 public class BlockingApiPostRequestUploadToken implements HttpRequestCallback {
     private static final String TAG = BlockingApiGetRequest.class.getSimpleName();

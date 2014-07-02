@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Chris Najar on 6/19/2014.
+ * Created by  on 6/19/2014.
  */
 public class UploadTokenHttpPostProcessor implements HttpProcessor {
     private static final String TAG = ApiRequestHttpPostProcessor.class.getSimpleName();
