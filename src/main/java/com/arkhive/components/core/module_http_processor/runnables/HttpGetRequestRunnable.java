@@ -1,52 +1,30 @@
 package com.arkhive.components.core.module_http_processor.runnables;
 
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.core.module_http_processor.*;
+import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
  * Created by  on 6/16/2014.
  */
-public class HttpGetRequestRunnable implements Runnable {
-    private final HttpRequestCallback callback;
-    private final ApiRequestObject apiRequestObject;
-    private final HttpPeriProcessor httpPeriProcessor;
-    private final HttpProcessor httpPreProcessor;
-    private final HttpProcessor httpPostProcessor;
+public final class HttpGetRequestRunnable extends HttpRequestRunnable {
     private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
 
     public HttpGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
-        this.callback = callback;
-        this.httpPreProcessor = httpPreProcessor;
-        this.httpPostProcessor = httpPostProcessor;
-        this.apiRequestObject = apiRequestObject;
-        this.httpPeriProcessor = httpPeriProcessor;
+        super(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, httpPeriProcessor);
     }
 
     @Override
-    public void run() {
-        logger.info(" sendRequest()");
-        if (callback != null) {
-            callback.httpRequestStarted(apiRequestObject);
-        }
-
-        int connectionTimeout = httpPeriProcessor.getConnectionTimeout();
-        int readTimeout = httpPeriProcessor.getReadTimeout();
-
-        if (httpPreProcessor != null) {
-            httpPreProcessor.processApiRequestObject(apiRequestObject);
-        }
-
+    protected void doRequest() {
+        logger.info("doRequest");
         HttpURLConnection connection = null;
         InputStream inputStream = null;
 
@@ -99,51 +77,5 @@ public class HttpGetRequestRunnable implements Runnable {
                 }
             }
         }
-
-        if (httpPostProcessor != null) {
-            httpPostProcessor.processApiRequestObject(apiRequestObject);
-        }
-        if (callback != null) {
-            callback.httpRequestFinished(apiRequestObject);
-        }
-    }
-
-    private String readStream(ApiRequestObject apiRequestObject, InputStream in) {
-        if (in == null) {
-            return null;
-        }
-        BufferedReader bufferedReader = null;
-        InputStreamReader inputStreamReader = null;
-        String stream = "";
-
-        try {
-            inputStreamReader = new InputStreamReader(in);
-            bufferedReader = new BufferedReader(inputStreamReader);
-            String line;
-
-            while ((line = bufferedReader.readLine()) != null) {
-                stream += line;
-            }
-        } catch (IOException e) {
-            apiRequestObject.addExceptionDuringRequest(e);
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException e) {
-                    apiRequestObject.addExceptionDuringRequest(e);
-                }
-            }
-
-            if (inputStreamReader != null) {
-                try {
-                    inputStreamReader.close();
-                } catch (IOException e) {
-                    apiRequestObject.addExceptionDuringRequest(e);
-                }
-            }
-        }
-
-        return stream;
     }
 }

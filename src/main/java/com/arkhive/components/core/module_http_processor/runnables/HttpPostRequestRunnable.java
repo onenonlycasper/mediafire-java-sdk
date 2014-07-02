@@ -1,12 +1,15 @@
 package com.arkhive.components.core.module_http_processor.runnables;
 
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
+import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.SocketException;
@@ -16,31 +19,16 @@ import java.util.Map;
 /**
  * Created by  on 6/16/2014.
  */
-public class HttpPostRequestRunnable implements Runnable {
-    private final HttpRequestCallback callback;
-    private final ApiRequestObject apiRequestObject;
-    private final HttpProcessor httpPreProcessor;
-    private final HttpProcessor httpPostProcessor;
+public final class HttpPostRequestRunnable extends HttpRequestRunnable implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(HttpPostRequestRunnable.class);
 
-    public HttpPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
-        this.callback = callback;
-        this.httpPreProcessor = httpPreProcessor;
-        this.httpPostProcessor = httpPostProcessor;
-        this.apiRequestObject = apiRequestObject;
+    public HttpPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
+        super(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, httpPeriProcessor);
     }
 
     @Override
-    public void run() {
-        logger.info(" sendRequest()");
-        if (callback != null) {
-            callback.httpRequestStarted(apiRequestObject);
-        }
-
-        if (httpPreProcessor != null) {
-            httpPreProcessor.processApiRequestObject(apiRequestObject);
-        }
-
+    protected void doRequest() {
+        logger.info("doRequest");
         HttpURLConnection connection = null;
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -57,7 +45,9 @@ public class HttpPostRequestRunnable implements Runnable {
             }
 
             connection = (HttpURLConnection) url.openConnection();
-
+            //set connect and read timeout
+            connection.setConnectTimeout(connectionTimeout);
+            connection.setReadTimeout(readTimeout);
             //sets to POST
             connection.setDoOutput(true);
 
@@ -118,51 +108,5 @@ public class HttpPostRequestRunnable implements Runnable {
                 }
             }
         }
-
-        if (httpPostProcessor != null) {
-            httpPostProcessor.processApiRequestObject(apiRequestObject);
-        }
-        if (callback != null) {
-            callback.httpRequestFinished(apiRequestObject);
-        }
-    }
-
-    private String readStream(ApiRequestObject apiRequestObject, InputStream in) {
-        if (in == null) {
-            return null;
-        }
-        BufferedReader bufferedReader = null;
-        InputStreamReader inputStreamReader = null;
-        String stream = "";
-
-        try {
-            inputStreamReader = new InputStreamReader(in);
-            bufferedReader = new BufferedReader(inputStreamReader);
-            String line;
-
-            while ((line = bufferedReader.readLine()) != null) {
-                stream += line;
-            }
-        } catch (IOException e) {
-            apiRequestObject.addExceptionDuringRequest(e);
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException e) {
-                    apiRequestObject.addExceptionDuringRequest(e);
-                }
-            }
-
-            if (inputStreamReader != null) {
-                try {
-                    inputStreamReader.close();
-                } catch (IOException e) {
-                    apiRequestObject.addExceptionDuringRequest(e);
-                }
-            }
-        }
-
-        return stream;
     }
 }

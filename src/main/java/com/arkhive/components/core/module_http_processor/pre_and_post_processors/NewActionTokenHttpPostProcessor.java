@@ -1,5 +1,6 @@
 package com.arkhive.components.core.module_http_processor.pre_and_post_processors;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.module_api.responses.ApiResponse;
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
@@ -35,6 +36,7 @@ public class NewActionTokenHttpPostProcessor implements HttpProcessor {
         // if the signature is invalid then set the flag (so TokenFarm knows)
         if (apiResponse.getError() == 105 || apiResponse.getError() == 127) {
             apiRequestObject.setActionTokenInvalid(true);
+            Configuration.getErrorTracker().trackApiError(TAG, apiRequestObject);
         } else {
             apiRequestObject.setActionTokenInvalid(false);
         }
@@ -55,6 +57,7 @@ public class NewActionTokenHttpPostProcessor implements HttpProcessor {
         if (response.isEmpty()) {
             return null;
         }
+
         JsonElement returnJson = new JsonObject();
         JsonParser parser = new JsonParser();
         JsonElement rootElement = parser.parse(response);
