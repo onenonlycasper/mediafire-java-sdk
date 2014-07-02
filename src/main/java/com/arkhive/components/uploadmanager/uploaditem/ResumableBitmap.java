@@ -1,6 +1,5 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
-import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,15 +31,6 @@ public class ResumableBitmap {
         decodeBitmap();
     }
 
-    /**
-     * Constructor given a Bitmap which is received from PreUploadResponse.
-     *
-     * @param bitmap
-     */
-    public ResumableBitmap(UploadCheckResponse.Bitmap bitmap) {
-        this(bitmap.getCount(), bitmap.getWords());
-    }
-    
     /*============================
      * private methods
      *============================*/

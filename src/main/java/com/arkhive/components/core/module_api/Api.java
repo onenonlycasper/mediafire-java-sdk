@@ -92,7 +92,7 @@ public class Api {
                 apiRequestObject);
     }
 
-    public static BlockingApiPostRequestUploadToken createBlockingApiPostRequestUploadToken(
+    static BlockingApiPostRequestUploadToken createBlockingApiPostRequestUploadToken(
             ApiRequestObject apiRequestObject) {
         return new BlockingApiPostRequestUploadToken(
                 new UploadTokenHttpPreProcessor(),

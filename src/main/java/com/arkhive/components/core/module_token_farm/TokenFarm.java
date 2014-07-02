@@ -128,7 +128,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
                 logger.info(" interrupted, not adding: " + sessionToken.getTokenString());
                 getNewSessionToken(this);
             }
-        } else if (apiRequestObject.getApiResponse() != null && apiRequestObject.getApiResponse().getError() == 107) {
+        } else if (apiRequestObject != null && apiRequestObject.getApiResponse() != null && apiRequestObject.getApiResponse().getError() == 107) {
             logger.info(" api message: " + apiRequestObject.getApiResponse().getMessage());
             logger.info(" api error: " + apiRequestObject.getApiResponse().getError());
             logger.info(" api result: " + apiRequestObject.getApiResponse().getResult());

@@ -34,7 +34,7 @@ public class UploadCheckResponse extends ApiResponse {
         private String unit_size;
         private Bitmap bitmap;
 
-        public boolean getAllUnitsReady() {
+        public boolean areAllUnitsReady() {
             return "yes".equals(all_units_ready);
         }
 
@@ -122,23 +122,23 @@ public class UploadCheckResponse extends ApiResponse {
         return resumable_upload;
     }
 
-    public boolean getHashExists() {
+    public boolean doesHashExists() {
         return "yes".equals(hash_exists);
     }
 
-    public boolean getInAccount() {
+    public boolean isInAccount() {
         return "yes".equals(in_account);
     }
 
-    public boolean getInFolder() {
+    public boolean isInFolder() {
         return "yes".equals(in_folder);
     }
 
-    public boolean getFileExists() {
+    public boolean doesFileExist() {
         return "yes".equals(file_exists);
     }
 
-    public boolean getDifferentHash() {
+    public boolean isDifferentHash() {
         return "yes".equals(different_hash);
     }
 

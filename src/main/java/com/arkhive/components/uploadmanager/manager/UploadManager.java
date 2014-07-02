@@ -135,6 +135,7 @@ public class UploadManager implements UploadListenerManager {
             return;
         }
         if (uploadItem.getCheckCount() < MAX_CHECK_COUNT) {
+            uploadItem.calledCheck();
             CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         }
@@ -221,9 +222,15 @@ public class UploadManager implements UploadListenerManager {
         if (checkResponse.getStorageLimitExceeded()) {
             logger.info(" --storage limit is exceeded");
             storageLimitExceeded(uploadItem);
+        } else if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
+            // all units are ready and we have the poll upload key. start polling.
+            uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
+            uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
+            PollProcess process = new PollProcess(mediaFire, this, uploadItem);
+            executor.execute(process);
         } else {
             logger.info(" --storage limit not exceeded");
-            if (checkResponse.getHashExists()) { //hash does exist for the file
+            if (checkResponse.doesHashExists()) { //hash does exist for the file
                 hashExists(uploadItem, checkResponse);
             } else { // hash does not exist. call resumable.
                 hashDoesNotExist(uploadItem, checkResponse);
@@ -244,7 +251,7 @@ public class UploadManager implements UploadListenerManager {
 
     private void hashExists(UploadItem uploadItem, UploadCheckResponse checkResponse) {
         logger.info(" hashExists()");
-        if (!checkResponse.getInAccount()) { // hash which exists is not in the account
+        if (!checkResponse.isInAccount()) { // hash which exists is not in the account
             hashNotInAccount(uploadItem);
         } else { // hash exists and is in the account
             hashInAccount(uploadItem, checkResponse);
@@ -260,7 +267,7 @@ public class UploadManager implements UploadListenerManager {
 
     private void hashInAccount(UploadItem uploadItem, UploadCheckResponse checkResponse) {
         logger.info(" hashInAccount()");
-        boolean inFolder = checkResponse.getInFolder();
+        boolean inFolder = checkResponse.isInFolder();
         InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
         logger.info(" --ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
         switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
@@ -300,7 +307,7 @@ public class UploadManager implements UploadListenerManager {
             return;
         }
 
-        if (checkResponse.getResumableUpload().getAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
+        if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             logger.info(" --all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
             uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
