@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
-    private int count;
+    private int checkCount;
     private String fileName;
     private UploadOptions options;
     private final FileData fileData;
@@ -25,6 +25,7 @@ public class UploadItem {
     private ResumableBitmap bitmap;
     private String pollUploadKey;
     private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
+    private int checkCalledCount;
 
     /**
      * Constructor which takes a path and upload attempts.
@@ -57,7 +58,8 @@ public class UploadItem {
         pollUploadKey = "";
         chunkData = new ChunkData();
         bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
-        count = 0;
+        checkCount = 0;
+        checkCalledCount = 0;
     }
 
     /**
@@ -71,11 +73,18 @@ public class UploadItem {
     }
 
     public int getCheckCount() {
-        logger.info("getCheckCount(" + count + ")");
-        count++;
-        return count;
+        logger.info("getCheckCount(" + checkCount + ")");
+        checkCount++;
+        return checkCount;
     }
 
+    public int getCheckCalledCount() {
+        return checkCalledCount;
+    }
+
+    public void calledCheck() {
+        checkCalledCount++;
+    }
 
     /**
      * Called to get the Short file name.
