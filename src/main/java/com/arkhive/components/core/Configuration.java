@@ -1,5 +1,7 @@
 package com.arkhive.components.core;
 
+import com.arkhive.components.core.module_errors.ErrorTracker;
+
 /**
  * Created by on 6/17/2014.
  */
@@ -17,6 +19,7 @@ public final class Configuration {
     private int httpPoolSize = DEFAULT_HTTP_POOL_SIZE;
     private String appId;
     private String apiKey;
+    private static ErrorTracker errorTracker;
 
     public Configuration() {}
 
@@ -129,5 +132,13 @@ public final class Configuration {
         }
         this.httpPoolSize = httpPoolSize;
         return true;
+    }
+
+    public void setErrorTracker(ErrorTracker errorTracker) {
+        this.errorTracker = errorTracker;
+    }
+
+    public static ErrorTracker getErrorTracker() {
+        return errorTracker;
     }
 }
