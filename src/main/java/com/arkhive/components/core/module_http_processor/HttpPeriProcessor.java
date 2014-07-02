@@ -44,6 +44,7 @@ public final class HttpPeriProcessor {
     }
 
     public void sendHttpsGetRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
+        logger.info(" sendHttpsGetRequest");
         HttpsGetRequestRunnable httpsGetRequestRunnable = new HttpsGetRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
         executor.execute(httpsGetRequestRunnable);
     }
@@ -55,6 +56,7 @@ public final class HttpPeriProcessor {
     }
 
     public void sendHttpsPostRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
+        logger.info(" sendHttpsPostRequest");
         HttpPostRequestRunnable httpsPostRequestRunnable = new HttpPostRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
         executor.execute(httpsPostRequestRunnable);
     }
