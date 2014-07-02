@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Created by Chris Najar on 7/2/2014.
+ * Created by on 7/2/2014.
  */
 public abstract class HttpRequestRunnable implements Runnable {
     private static final String TAG = HttpRequestRunnable.class.getSimpleName();
@@ -36,23 +36,39 @@ public abstract class HttpRequestRunnable implements Runnable {
 
     @Override
     public final void run() {
+        notifyHttpRequestStarted();
+        setTimeouts();
+        doPreProcess();
+        doRequest();
+        sendApiErrorIfExists();
+        doPostProcess();
+        notifyHttpRequestFinished();
+    }
+
+    private void notifyHttpRequestStarted() {
         if (callback != null) {
             callback.httpRequestStarted(apiRequestObject);
         }
+    }
 
-        connectionTimeout = httpPeriProcessor.getConnectionTimeout();
-        readTimeout = httpPeriProcessor.getReadTimeout();
-
-        doRequest();
-
+    private void doPreProcess() {
         if (httpPreProcessor != null) {
             httpPreProcessor.processApiRequestObject(apiRequestObject);
         }
+    }
 
-        sendApiErrorIfExists();
+    private void setTimeouts() {
+        connectionTimeout = httpPeriProcessor.getConnectionTimeout();
+        readTimeout = httpPeriProcessor.getReadTimeout();
+    }
+
+    private void doPostProcess() {
         if (httpPostProcessor != null) {
             httpPostProcessor.processApiRequestObject(apiRequestObject);
         }
+    }
+
+    private void notifyHttpRequestFinished() {
         if (callback != null) {
             callback.httpRequestFinished(apiRequestObject);
         }

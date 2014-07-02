@@ -7,7 +7,7 @@ import com.arkhive.components.core.module_token_farm.TokenFarm;
 import com.arkhive.components.core.module_token_farm.interfaces.GetNewSessionTokenCallback;
 
 /**
- * Created by Chris Najar on 6/17/2014.
+ * Created by  on 6/17/2014.
  */
 public class MediaFire {
     private HttpPeriProcessor httpPeriProcessor;
