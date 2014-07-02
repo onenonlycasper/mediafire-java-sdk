@@ -88,7 +88,7 @@ public abstract class HttpRequestRunnable implements Runnable {
         }
 
         StringBuilder builder = new StringBuilder();
-        if (apiRequestObject.getExceptionsDuringRequest() != null) {
+        if (apiRequestObject.getExceptionsDuringRequest() != null && !apiRequestObject.getExceptionsDuringRequest().isEmpty()) {
             for (Exception exception : apiRequestObject.getExceptionsDuringRequest()) {
                 builder.append(exception.toString()).append(": ");
                 for (StackTraceElement element : exception.getStackTrace()) {
