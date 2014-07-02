@@ -1,12 +1,15 @@
 package com.arkhive.components.core.module_token_farm;
 
 import com.arkhive.components.core.Configuration;
-import com.arkhive.components.core.module_http_processor.pre_and_post_processors.ApiRequestHttpPostProcessor;
-import com.arkhive.components.core.module_http_processor.pre_and_post_processors.ApiRequestHttpPreProcessor;
+import com.arkhive.components.core.module_api.responses.GetActionTokenResponse;
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.core.module_credentials.ApplicationCredentials;
 import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
+import com.arkhive.components.core.module_http_processor.pre_and_post_processors.ApiRequestHttpPostProcessor;
+import com.arkhive.components.core.module_http_processor.pre_and_post_processors.ApiRequestHttpPreProcessor;
+import com.arkhive.components.core.module_http_processor.pre_and_post_processors.NewSessionTokenHttpPostProcessor;
+import com.arkhive.components.core.module_http_processor.pre_and_post_processors.NewSessionTokenHttpPreProcessor;
 import com.arkhive.components.core.module_token_farm.interfaces.ActionTokenDistributor;
 import com.arkhive.components.core.module_token_farm.interfaces.GetNewActionTokenCallback;
 import com.arkhive.components.core.module_token_farm.interfaces.GetNewSessionTokenCallback;
@@ -14,10 +17,8 @@ import com.arkhive.components.core.module_token_farm.interfaces.SessionTokenDist
 import com.arkhive.components.core.module_token_farm.runnables.GetImageActionTokenRunnable;
 import com.arkhive.components.core.module_token_farm.runnables.GetSessionTokenRunnable;
 import com.arkhive.components.core.module_token_farm.runnables.GetUploadActionTokenRunnable;
-import com.arkhive.components.core.module_api.responses.GetActionTokenResponse;
-import com.arkhive.components.core.module_http_processor.pre_and_post_processors.NewSessionTokenHttpPostProcessor;
-import com.arkhive.components.core.module_http_processor.pre_and_post_processors.NewSessionTokenHttpPreProcessor;
 import com.arkhive.components.core.module_token_farm.tokens.ActionToken;
+import com.arkhive.components.core.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +120,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     @Override
     public void receiveNewSessionToken(ApiRequestObject apiRequestObject) {
         logger.info(" receiveNewSessionToken()");
-        com.arkhive.components.core.module_token_farm.tokens.SessionToken sessionToken = apiRequestObject.getSessionToken();
+        SessionToken sessionToken = apiRequestObject.getSessionToken();
         if (apiRequestObject != null && !apiRequestObject.isSessionTokenInvalid() && sessionToken != null) {
             try {
                 sessionTokens.add(sessionToken);
