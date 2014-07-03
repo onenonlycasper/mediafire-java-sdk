@@ -44,7 +44,7 @@ public class Api {
         contact = new Contact();
     }
 
-    static BlockingApiGetRequest createBlockingApiGetRequest(
+    public static BlockingApiGetRequest createBlockingApiGetRequest(
             ApiRequestObject apiRequestObject) {
         return new BlockingApiGetRequest(
                 new ApiRequestHttpPreProcessor(),
@@ -54,7 +54,17 @@ public class Api {
                 apiRequestObject);
     }
 
-    static <T extends ApiResponse> RunnableApiGetRequest<T> createApiGetRequestRunnable(
+    public static BlockingApiHttpsGetRequest createBlockingApiHttpsGetRequest(
+            ApiRequestObject apiRequestObject) {
+        return new BlockingApiHttpsGetRequest(
+                new ApiRequestHttpPreProcessor(),
+                new ApiRequestHttpPostProcessor(),
+                sessionTokenDistributor,
+                httpPeriProcessor,
+                apiRequestObject);
+    }
+
+    public static <T extends ApiResponse> RunnableApiGetRequest<T> createApiGetRequestRunnable(
             Class<T> clazz,
             ApiRequestRunnableCallback<T> apiRequestRunnableCallback,
             ApiRequestObject apiRequestObject) {
@@ -78,7 +88,7 @@ public class Api {
                 apiRequestObject);
     }
 
-    static <T extends ApiResponse>RunnableApiGetRequestUploadToken createApiGetRequestRunnableUploadToken(
+    public static <T extends ApiResponse>RunnableApiGetRequestUploadToken createApiGetRequestRunnableUploadToken(
             Class<T> uploadInstantResponseClass,
             ApiRequestRunnableCallback<T> apiRequestRunnableCallback,
             ApiRequestObject apiRequestObject) {
@@ -92,7 +102,7 @@ public class Api {
                 apiRequestObject);
     }
 
-    static BlockingApiPostRequestUploadToken createBlockingApiPostRequestUploadToken(
+    public static BlockingApiPostRequestUploadToken createBlockingApiPostRequestUploadToken(
             ApiRequestObject apiRequestObject) {
         return new BlockingApiPostRequestUploadToken(
                 new UploadTokenHttpPreProcessor(),
@@ -102,7 +112,7 @@ public class Api {
                 apiRequestObject);
     }
 
-    static <T extends ApiResponse>RunnableApiPostRequestUploadToken createApiPostRequestRunnableUploadToken(
+    public static <T extends ApiResponse>RunnableApiPostRequestUploadToken createApiPostRequestRunnableUploadToken(
             Class<T> uploadResumableResponseClass,
             ApiRequestRunnableCallback<T> apiRequestRunnableCallback,
             ApiRequestObject apiRequestObject) {

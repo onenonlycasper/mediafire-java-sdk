@@ -38,16 +38,16 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
     /**
      * creates a url given the values stored in an api request object
      *
-     * @param apiPostRequestObject - an api request object which has domain/uri/parameters/etc. values stored.
+     * @param apiRequestObject - an api request object which has domain/uri/parameters/etc. values stored.
      * @return a constructed URL object.
      */
-    private URL createUrl(ApiRequestObject apiPostRequestObject) {
+    private URL createUrl(ApiRequestObject apiRequestObject) {
         logger.info(" createUrl(ApiPostRequestObject)");
-        String domain = apiPostRequestObject.getDomain();
-        String uri = apiPostRequestObject.getUri();
-        Map<String, String> requiredParameters = apiPostRequestObject.getRequiredParameters();
-        Map<String, String> optionalParameters = apiPostRequestObject.getOptionalParameters();
-        Token token = apiPostRequestObject.getSessionToken();
+        String domain = apiRequestObject.getDomain();
+        String uri = apiRequestObject.getUri();
+        Map<String, String> requiredParameters = apiRequestObject.getRequiredParameters();
+        Map<String, String> optionalParameters = apiRequestObject.getOptionalParameters();
+        SessionToken token = apiRequestObject.getSessionToken();
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -81,7 +81,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
         // if there is a token attached to the api request object then we need to calculate the signature correctly
         // using information from the attached session token and the uri (which contains uri, token, parameters, etc.
         String signature;
-        signature = createPreHashStringForApiCallSignature(apiPostRequestObject, generatedUri);
+        signature = createPreHashStringForApiCallSignature(apiRequestObject, generatedUri);
         signature = createHash(signature);
 
         StringBuilder fullUrlBuilder = new StringBuilder();
@@ -100,7 +100,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
         try {
             return new URL(completedUrl);
         } catch (MalformedURLException e) {
-            apiPostRequestObject.addExceptionDuringRequest(e);
+            apiRequestObject.addExceptionDuringRequest(e);
             return null;
         }
     }

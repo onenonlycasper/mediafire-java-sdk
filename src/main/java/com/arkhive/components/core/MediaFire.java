@@ -70,6 +70,9 @@ public class MediaFire {
         tokenFarm.startup();
     }
 
+    public HttpPeriProcessor getHttpProcessor() {
+        return httpPeriProcessor;
+    }
     /**
      * Shuts down the modules used by MediaFire and clears application credentials. A new instance of MediaFire will
      * need to be created via MediaFire.newInstance(...)
