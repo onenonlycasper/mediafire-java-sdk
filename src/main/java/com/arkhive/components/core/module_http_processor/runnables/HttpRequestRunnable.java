@@ -5,6 +5,8 @@ import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,6 +25,7 @@ public abstract class HttpRequestRunnable implements Runnable {
     protected final HttpPeriProcessor httpPeriProcessor;
     protected int connectionTimeout;
     protected int readTimeout;
+    private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
 
     public HttpRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         this.apiRequestObject = apiRequestObject;
@@ -36,6 +39,7 @@ public abstract class HttpRequestRunnable implements Runnable {
 
     @Override
     public final void run() {
+        logger.info("run()");
         notifyHttpRequestStarted();
         setTimeouts();
         doPreProcess();
@@ -46,35 +50,41 @@ public abstract class HttpRequestRunnable implements Runnable {
     }
 
     private void notifyHttpRequestStarted() {
+        logger.info("notifyHttpRequestStarted()");
         if (callback != null) {
             callback.httpRequestStarted(apiRequestObject);
         }
     }
 
     private void doPreProcess() {
+        logger.info("doPreProcess()");
         if (httpPreProcessor != null) {
             httpPreProcessor.processApiRequestObject(apiRequestObject);
         }
     }
 
     private void setTimeouts() {
+        logger.info("setTimeouts()");
         connectionTimeout = httpPeriProcessor.getConnectionTimeout();
         readTimeout = httpPeriProcessor.getReadTimeout();
     }
 
     private void doPostProcess() {
+        logger.info("doPostProcess()");
         if (httpPostProcessor != null) {
             httpPostProcessor.processApiRequestObject(apiRequestObject);
         }
     }
 
     private void notifyHttpRequestFinished() {
+        logger.info("notifyHttpRequestFinished()");
         if (callback != null) {
             callback.httpRequestFinished(apiRequestObject);
         }
     }
 
     protected void sendApiErrorIfExists() {
+        logger.info("sendApiErrorIfExists()");
         if (Configuration.getErrorTracker() == null) {
             return;
         }
@@ -102,6 +112,7 @@ public abstract class HttpRequestRunnable implements Runnable {
     }
 
     protected String readStream(ApiRequestObject apiRequestObject, InputStream in) {
+        logger.info("readStream()");
         if (in == null) {
             return null;
         }
