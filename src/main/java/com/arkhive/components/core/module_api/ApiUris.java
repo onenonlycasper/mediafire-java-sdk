@@ -12,7 +12,7 @@ public class ApiUris {
     public static final String URI_FILE_PURGE = "/api/1.0/file/purge.php";
     public static final String URI_FILE_MOVE = "/api/1.0/file/move.php";
     public static final String URI_FILE_UPDATE = "/api/1.0/file/update.php";
-    public static final String URI_FILE_GET_INFO = "/api/1.0/file/get_info.php";
+    public static final String URI_FILE_GET_INFO = "/api/file/get_info.php";
     public static final String URI_FILE_GET_LINKS = "/api/1.0/file/get_links.php";
     public static final String URI_FOLDER_COPY = "/api/1.0/folder/copy.php";
     public static final String URI_FOLDER_CREATE = "/api/1.0/folder/create.php";

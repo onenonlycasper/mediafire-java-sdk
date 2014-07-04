@@ -102,6 +102,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     }
 
     private SessionToken getSessionTokenFromApiRequestObject() {
+        logger.info("getSessionTokenFromApiRequestObject()");
         // create a session token object
         SessionToken sessionToken = null;
         // get the response from the api request object
@@ -129,16 +130,18 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     }
 
     private ApiRequestObject createApiRequestObjectForNewSessionToken() {
+        logger.info("createApiRequestObjectForNewSessionToken()");
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTPS, ApiUris.URI_USER_GET_SESSION_TOKEN);
         Map<String, String> optionalParameters = constructOptionalParameters();
         Map<String, String> requiredParameters = constructRequiredParameters(applicationCredentials);
-        apiRequestObject.setRequiredParameters(optionalParameters);
-        apiRequestObject.setOptionalParameters(requiredParameters);
+        apiRequestObject.setRequiredParameters(requiredParameters);
+        apiRequestObject.setOptionalParameters(optionalParameters);
 
         return apiRequestObject;
     }
 
     private Map<String, String> constructRequiredParameters(ApplicationCredentials applicationCredentials) {
+        logger.info("constructRequiredParameters()");
         Map<String, String> requiredParameters = new LinkedHashMap<String, String>();
         requiredParameters.putAll(applicationCredentials.getCredentials());
         requiredParameters.put(REQUIRED_PARAMETER_APPLICATION_ID, applicationCredentials.getAppId());
@@ -146,7 +149,8 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
         return requiredParameters;
     }
 
-    public static Map<String, String> constructOptionalParameters() {
+    private Map<String, String> constructOptionalParameters() {
+        logger.info("constructOptionalParameters()");
         Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
         optionalParameters.put(OPTIONAL_PARAMETER_TOKEN_VERSION, "2");
         optionalParameters.put(OPTIONAL_PARAMETER_RESPONSE_FORMAT, "json");
@@ -154,6 +158,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     }
 
     private String calculateSignature(ApplicationCredentials applicationCredentials) {
+        logger.info("calculateSignature()");
         Map<String, String> credentialsMap = applicationCredentials.getCredentials();
         String appId = applicationCredentials.getAppId();
         String apiKey = applicationCredentials.getApiKey();
@@ -176,6 +181,8 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
      * @return hashed string.
      */
     private String calculateSignatureForString(String hashTarget) {
+        logger.info("calculateSignatureForString()");
+        logger.info("pre hashed string: " + hashTarget);
         String signature;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -194,6 +201,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
             e.printStackTrace();
             signature = hashTarget;
         }
+        logger.info("hashed string: " + signature);
         return signature;
     }
 
@@ -204,7 +212,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
      * @param response A response string from a web API call.
      * @return The JsonElement created from the response string.
      */
-    public JsonElement getResponseElement(String response) {
+    private JsonElement getResponseElement(String response) {
         logger.info(" getResponseElement()");
         if (response == null) {
             return null;

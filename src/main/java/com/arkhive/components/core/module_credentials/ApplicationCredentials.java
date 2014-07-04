@@ -12,11 +12,11 @@ import java.util.Map;
  * Created by  on 6/15/2014.
  */
 public final class ApplicationCredentials {
-    private static final String MEDIAFIRE_PARAMETER_EMAIL = "email";
-    private static final String MEDIAFIRE_PARAMETER_PASSWORD = "password";
-    private static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
-    private static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET = "tw_oauth_token_secret";
-    private static final String FACEBOOK_PARAMETER_FB_ACCESS_TOKEN = "fb_access_token";
+    public static final String MEDIAFIRE_PARAMETER_EMAIL = "email";
+    public static final String MEDIAFIRE_PARAMETER_PASSWORD = "password";
+    public static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
+    public static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET = "tw_oauth_token_secret";
+    public static final String FACEBOOK_PARAMETER_FB_ACCESS_TOKEN = "fb_access_token";
 
     private final Logger logger = LoggerFactory.getLogger(ApplicationCredentials.class);
 
