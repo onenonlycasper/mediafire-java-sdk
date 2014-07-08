@@ -22,7 +22,7 @@ public class FileData {
     private final Logger logger = LoggerFactory.getLogger(FileData.class);
 
     public FileData(String filePath) {
-        System.out.println(TAG + " FileData object created");
+        logger.info("FileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
@@ -37,7 +37,7 @@ public class FileData {
      * @return
      */
     public String getFilePath() {
-        System.out.println(TAG + " getFilePath()");
+        logger.info("getFilePath()");
         return filePath;
     }
 
@@ -47,7 +47,7 @@ public class FileData {
      * @return
      */
     public long getFileSize() {
-        System.out.println(TAG + " getFilePath()");
+        logger.info("getFilePath()");
         return fileSize;
     }
 
@@ -57,41 +57,20 @@ public class FileData {
      * @return
      */
     public String getFileHash() {
-        System.out.println(TAG + " getFilePath()");
+        logger.info("getFilePath()");
         return fileHash;
     }
 
     public void setFileSize() {
-        System.out.println(TAG + " setFileSize()");
+        logger.info(" setFileSize()");
         File file = new File(getFilePath());
-//        FileInputStream fileInputStream;
-//        FileChannel channel;
-//        try {
-//            fileInputStream = new FileInputStream(file);
-//            channel = fileInputStream.getChannel();
-//            fileSize = channel.size();
-//
-//            fileInputStream.close();
-//            channel.close();
-//            fileInputStream.close();
-//        } catch (FileNotFoundException e) {
-//            System.out.println(TAG + "Exception: " + e);
-//            fileSize = 0;
-//            filePath = "";
-//        } catch (IOException e) {
-//            System.out.println(TAG + "Exception: " + e);
-//            fileSize = 0;
-//        } finally {
-//            channel = null;
-//            fileInputStream = null;
-//        }
         fileSize = file.length();
 
-        System.out.println(TAG + " FILE SIZE IS SET TO: " + fileSize);
+        logger.info("file size set to " + fileSize);
     }
 
     public void setFileHash() {
-        System.out.println(TAG + " setFileHash()");
+        logger.info(" setFileHash()");
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;
@@ -99,7 +78,7 @@ public class FileData {
         try {
             fileInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            System.out.println(TAG + "Exception: " + e);
+            logger.info("Exception: " + e);
             fileHash = "";
             return;
         }
@@ -129,16 +108,16 @@ public class FileData {
             fileUri.close();
             in.close();
         } catch (NoSuchAlgorithmException e) {
-            System.out.println(TAG + "Exception: " + e);
+            logger.info("Exception: " + e);
             fileHash = "";
         } catch (IOException e) {
-            System.out.println(TAG + "Exception: " + e);
+            logger.info("Exception: " + e);
             fileHash = "";
         } finally {
             fileInputStream = null;
             fileUri = null;
             in = null;
         }
-        System.out.println(TAG + " FILE HASH IS SET TO: " + fileHash);
+        logger.info(" FILE HASH IS SET TO: " + fileHash);
     }
 }
