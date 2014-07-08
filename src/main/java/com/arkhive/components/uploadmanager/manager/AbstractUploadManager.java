@@ -44,13 +44,13 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
 
     @Override
     public void onStartedUploadProcess(UploadItem uploadItem) {
-        logger.info(" onStartedUploadProcess()");
+        logger.info("onStartedUploadProcess()");
         notifyUploadListenerStarted(uploadItem);
     }
 
     @Override
     public void onCheckCompleted(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        logger.info(" onCheckCompleted()");
+        logger.info("onCheckCompleted()");
         //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
         if (uploadItem.getUploadAttemptCount() > MAX_UPLOAD_ATTEMPTS || uploadItem.isCancelled()) {
@@ -59,7 +59,7 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
         }
 
         if (checkResponse.getStorageLimitExceeded()) {
-            logger.info(" --storage limit is exceeded");
+            logger.info("storage limit is exceeded");
             storageLimitExceeded(uploadItem);
         } else if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             // all units are ready and we have the poll upload key. start polling.
@@ -68,7 +68,6 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
             PollProcess process = new PollProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         } else {
-            logger.info(" --storage limit not exceeded");
             if (checkResponse.doesHashExists()) { //hash does exist for the file
                 hashExists(uploadItem, checkResponse);
             } else { // hash does not exist. call resumable.
@@ -79,17 +78,17 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
 
     @Override
     public void onProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        logger.info(" onProgressUpdate()");
+        logger.info("onProgressUpdate()");
         notifyUploadListenerOnProgressUpdate(uploadItem, chunkNumber, numChunks);
     }
 
     private void storageLimitExceeded(UploadItem uploadItem) {
-        logger.info(" storageLimitExceeded()");
+        logger.info("storageLimitExceeded()");
         notifyUploadListenerCancelled(uploadItem);
     }
 
     private void hashExists(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        logger.info(" hashExists()");
+        logger.info("hashExists()");
         if (!checkResponse.isInAccount()) { // hash which exists is not in the account
             hashNotInAccount(uploadItem);
         } else { // hash exists and is in the account
@@ -98,63 +97,63 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
     }
 
     private void hashNotInAccount(UploadItem uploadItem) {
-        logger.info(" hashNotInAccount()");
+        logger.info("hashNotInAccount()");
         InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
     }
 
     private void hashInAccount(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        logger.info(" hashInAccount()");
+        logger.info("hashInAccount()");
         boolean inFolder = checkResponse.isInFolder();
         InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
-        logger.info(" --ACTIONONINACCOUNT: " + uploadItem.getUploadOptions().getActionOnInAccount());
+        logger.info("ActionOnInAccount: "+ uploadItem.getUploadOptions().getActionOnInAccount().toString());
         switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
             case UPLOAD_ALWAYS:
-                logger.info(" --ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
+                logger.info("uploading...");
                 executor.execute(process);
                 break;
             case UPLOAD_IF_NOT_IN_FOLDER:
-                logger.info(" --ACTION IN ACCOUNT VIA SWITCH STMT case UPLOAD_ALWAYS");
+                logger.info("uploading if not in folder.");
                 if (!inFolder) {
-                    logger.info(" --NOT IN FOLDER SO UPLOADING");
+                    logger.info("uploading...");
                     executor.execute(process);
                 } else {
-                    logger.info(" --IN FOLDER SO NOT UPLOADING");
+                    logger.info("already in folder, not uploading...");
                     notifyUploadListenerCompleted(uploadItem);
                 }
                 break;
             case DO_NOT_UPLOAD:
             default:
-                logger.info(" --ACTION IN ACCOUNT VIA SWITCH STMT case do_not_upload/default");
+                logger.info("not uploading...");
                 notifyUploadListenerCompleted(uploadItem);
                 break;
         }
     }
 
     private void hashDoesNotExist(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        logger.info(" hashDoesNotExist()");
+        logger.info("hashDoesNotExist()");
         if (checkResponse.getResumableUpload().getUnitSize() == 0) {
-            logger.info(" --unit size received from unit_size was 0. cancelling");
+            logger.info("unit size received from unit_size was 0. cancelling");
             notifyUploadListenerCancelled(uploadItem);
             return;
         }
 
         if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
-            logger.info(" --number of units received from number_of_units was 0. cancelling");
+            logger.info("number of units received from number_of_units was 0. cancelling");
             notifyUploadListenerCancelled(uploadItem);
             return;
         }
 
         if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
-            logger.info(" --all units ready and have a poll upload key");
+            logger.info("all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
             uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
             uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
             PollProcess process = new PollProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         } else {
-            logger.info(" --all units not ready or do not have poll upload key");
+            logger.info("all units not ready or do not have poll upload key");
             // either we don't have the poll upload key or all units are not ready
             uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
             uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
@@ -165,13 +164,13 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
 
     @Override
     public void onInstantCompleted(UploadItem uploadItem, UploadInstantResponse response) {
-        logger.info(" onInstantCompleted()");
+        logger.info("onInstantCompleted()");
         notifyUploadListenerCompleted(uploadItem);
     }
 
     @Override
     public void onResumableCompleted(UploadItem uploadItem, UploadResumableResponse response) {
-        logger.info(" onResumableCompleted()");
+        logger.info("onResumableCompleted()");
         if (response != null &&
                 response.getResumableUpload().areAllUnitsReady() &&
                 !response.getDoUpload().getPollUploadKey().isEmpty()) {
@@ -185,7 +184,7 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
 
     @Override
     public void onPollCompleted(UploadItem uploadItem, UploadPollResponse pollResponse) {
-        logger.info(" onPollCompleted()");
+        logger.info("onPollCompleted()");
         // if this method is called then filerror and result codes are fine, but we may not have received status 99 so
         // check status code and then possibly senditem to the backlog queue.
         UploadPollResponse.DoUpload doUpload = pollResponse.getDoUpload();
@@ -196,7 +195,7 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
         if (pollStatusCode != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY
                 && pollResultCode == PollResultCode.SUCCESS
                 && pollFileErrorCode == PollFileErrorCode.NO_ERROR) {
-            logger.info(" status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
+            logger.info("status code: "+ pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
             addUploadRequest(uploadItem);
         } else {
             notifyUploadListenerCompleted(uploadItem);
@@ -205,14 +204,14 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
 
     @Override
     public void onProcessException(UploadItem uploadItem, Exception exception) {
-        logger.info(" onProcessException()");
-        logger.info("received exception: " + exception);
+        logger.info("onProcessException()");
+        logger.info("received exception: "+ exception);
         notifyUploadListenerCancelled(uploadItem);
     }
 
     @Override
     public void onLostConnection(UploadItem uploadItem) {
-        logger.info(" onLostConnection()");
+        logger.info("onLostConnection()");
         notifyUploadListenerCancelled(uploadItem);
         //pause upload manager
         pause();
@@ -221,7 +220,7 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
 
     @Override
     public void onCancelled(UploadItem uploadItem, ApiResponse apiResponse) {
-        logger.info(" onCancelled()");
+        logger.info("onCancelled()");
         notifyUploadListenerCancelled(uploadItem);
         // if there is an api error then re-add upload request.
         if (apiResponse != null && apiResponse.hasError()) {
@@ -233,17 +232,17 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
      * Pausable interface
      */
     public void pause() {
-        logger.info(" pause()");
+        logger.info("pause()");
         executor.pause();
     }
 
     public void resume() {
-        logger.info(" resume()");
+        logger.info("resume()");
         executor.resume();
     }
 
     public boolean isPaused() {
-        logger.info(" isPaused()");
+        logger.info("isPaused()");
         return executor.isPaused();
     }
 }
