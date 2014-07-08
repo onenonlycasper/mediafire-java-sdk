@@ -190,10 +190,9 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
         PollResultCode pollResultCode = doUpload.getResultCode();
         PollFileErrorCode pollFileErrorCode = doUpload.getFileErrorCode();
 
-        if (pollStatusCode != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY
-                && pollResultCode == PollResultCode.SUCCESS
-                && pollFileErrorCode == PollFileErrorCode.NO_ERROR) {
+        if (pollStatusCode != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResultCode.SUCCESS && pollFileErrorCode == PollFileErrorCode.NO_ERROR) {
             logger.info("status code: "+ pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
+            notifyUploadListenerCancelled(uploadItem);
             addUploadRequest(uploadItem);
         } else {
             notifyUploadListenerCompleted(uploadItem);
