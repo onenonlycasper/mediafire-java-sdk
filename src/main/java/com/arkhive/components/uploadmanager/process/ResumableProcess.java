@@ -3,7 +3,7 @@ package com.arkhive.components.uploadmanager.process;
 import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.ResumableResultCode;
 import com.arkhive.components.core.module_api.responses.UploadResumableResponse;
-import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
+import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.ChunkData;
 import com.arkhive.components.uploadmanager.uploaditem.FileData;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;

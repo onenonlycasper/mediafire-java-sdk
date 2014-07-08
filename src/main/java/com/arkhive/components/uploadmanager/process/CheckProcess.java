@@ -3,7 +3,7 @@ package com.arkhive.components.uploadmanager.process;
 import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.ApiResponseCode;
 import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
-import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
+import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

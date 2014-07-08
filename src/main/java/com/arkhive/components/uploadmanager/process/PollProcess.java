@@ -5,7 +5,7 @@ import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
 import com.arkhive.components.core.module_api.codes.PollResultCode;
 import com.arkhive.components.core.module_api.codes.PollStatusCode;
 import com.arkhive.components.core.module_api.responses.UploadPollResponse;
-import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
+import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

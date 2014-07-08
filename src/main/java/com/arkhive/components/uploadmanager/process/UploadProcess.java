@@ -5,7 +5,7 @@ import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
 import com.arkhive.components.core.module_api.responses.UploadInstantResponse;
 import com.arkhive.components.core.module_api.responses.UploadPollResponse;
 import com.arkhive.components.core.module_api.responses.UploadResumableResponse;
-import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
+import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
