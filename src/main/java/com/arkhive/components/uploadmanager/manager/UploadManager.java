@@ -4,9 +4,7 @@ import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
 import com.arkhive.components.core.module_api.codes.PollResultCode;
 import com.arkhive.components.core.module_api.codes.PollStatusCode;
-import com.arkhive.components.core.module_api.responses.ApiResponse;
-import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
-import com.arkhive.components.core.module_api.responses.UploadPollResponse;
+import com.arkhive.components.core.module_api.responses.*;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerDatabase;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
@@ -134,8 +132,8 @@ public class UploadManager implements UploadListenerManager {
             logger.info(" one or more required parameters are invalid, not adding item to queue");
             return;
         }
-        if (uploadItem.getCheckCount() < MAX_CHECK_COUNT) {
-            uploadItem.calledCheck();
+
+        if (uploadItem.getUploadAttemptCount() < MAX_CHECK_COUNT) {
             CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         }
@@ -214,7 +212,7 @@ public class UploadManager implements UploadListenerManager {
         logger.info(" onCheckCompleted()");
         //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
-        if (uploadItem.getCheckCount() > MAX_CHECK_COUNT) {
+        if (uploadItem.getUploadAttemptCount() > MAX_CHECK_COUNT) {
             notifyListenersCancelled(uploadItem);
             return;
         }
@@ -325,17 +323,23 @@ public class UploadManager implements UploadListenerManager {
     }
 
     @Override
-    public void onInstantCompleted(UploadItem uploadItem) {
+    public void onInstantCompleted(UploadItem uploadItem, UploadInstantResponse response) {
         logger.info(" onInstantCompleted()");
         notifyListenersCompleted(uploadItem);
     }
 
     @Override
-    public void onResumableCompleted(UploadItem uploadItem) {
+    public void onResumableCompleted(UploadItem uploadItem, UploadResumableResponse response) {
         logger.info(" onResumableCompleted()");
-        // if the item status isn't cancelled or paused then call upload/check to make sure all units are ready
-        CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
-        executor.execute(process);
+        if (response != null &&
+                response.getResumableUpload().areAllUnitsReady() &&
+                !response.getDoUpload().getPollUploadKey().isEmpty()) {
+            PollProcess process = new PollProcess(mediaFire, this, uploadItem);
+            executor.execute(process);
+        } else {
+            CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
+            executor.execute(process);
+        }
     }
 
     @Override
@@ -378,7 +382,7 @@ public class UploadManager implements UploadListenerManager {
     public void onCancelled(UploadItem uploadItem, ApiResponse apiResponse) {
         logger.info(" onCancelled()");
         notifyListenersCancelled(uploadItem);
-        // if there is an api error then add this item to the backlog queue and decrease current thread count
+        // if there is an api error then re-add upload request.
         if (apiResponse.hasError()) {
             addUploadRequest(uploadItem);
         }
