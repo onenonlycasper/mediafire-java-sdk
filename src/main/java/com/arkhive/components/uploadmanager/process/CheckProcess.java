@@ -13,38 +13,20 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CheckProcess implements Runnable {
-    private final MediaFire mediaFire;
-    private final UploadItem uploadItem;
-    private final UploadListenerManager uploadManager;
+public class CheckProcess extends UploadProcess {
     private final Logger logger = LoggerFactory.getLogger(CheckProcess.class);
 
-    public CheckProcess(MediaFire mediaFire, UploadListenerManager uploadManager, UploadItem uploadItem) {
-        this.mediaFire = mediaFire;
-        this.uploadManager = uploadManager;
-        this.uploadItem = uploadItem;
+    public CheckProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
+        super(mediaFire, uploadItem, uploadListenerManager);
     }
 
     @Override
-    public void run() {
-        logger.info("  sendRequest()");
+    protected void doUploadProcess() {
+        logger.info(" doUploadProcess()");
         uploadItem.getFileData().setFileSize();
         uploadItem.getFileData().setFileHash();
-        doUploadCheck();
-    }
-
-    /**
-     * 1. url encode filename.
-     * 2. generate request parameters.
-     * 3. create GET request.
-     * 4. receive API response.
-     * 5. convert response to CheckResponse using Gson.
-     * 6. notify listeners of completion.
-     */
-    private void doUploadCheck() {
-        logger.info("  doUploadCheck()");
         //notify listeners that check started
-        notifyManagerUploadStarted();
+        notifyListenerUploadStarted();
 
         // url encode the filename
         String filename;
@@ -53,7 +35,7 @@ public class CheckProcess implements Runnable {
         } catch (UnsupportedEncodingException e) {
             logger.info(" Exception: " + e);
             e.printStackTrace();
-            notifyManagerException(e);
+            notifyListenerException(e);
             return;
         }
 
@@ -62,18 +44,18 @@ public class CheckProcess implements Runnable {
         UploadCheckResponse response = mediaFire.apiCall().upload.checkUpload(keyValue, null);
 
         if (response == null) {
-            notifyManagerLostConnection();
+            notifyListenerLostConnection();
             return;
         }
 
         // if there is an error code, cancel the upload
         if (response.getErrorCode() != ApiResponseCode.NO_ERROR) {
-            notifyManagerCancelled(response);
+            notifyListenerCancelled(response);
             return;
         }
 
         // notify listeners that check has completed
-        notifyListenersCompleted(response);
+        notifyListenerCompleted(response);
     }
 
     /**
@@ -96,56 +78,5 @@ public class CheckProcess implements Runnable {
             keyValue.put("folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
         }
         return keyValue;
-    }
-
-    /**
-     * notifies listeners that this process has completed.
-     *
-     * @param checkResponse - the response from calling check.php.
-     */
-    private void notifyListenersCompleted(UploadCheckResponse checkResponse) {
-        logger.info("  notifyListenersCompleted()");
-        //notify manager that check is completed
-        if (uploadManager != null) {
-            uploadManager.onCheckCompleted(uploadItem, checkResponse);
-        }
-    }
-
-    /**
-     * lets listeners know that this process has started.
-     */
-    private void notifyManagerUploadStarted() {
-        // notify Ui listeners that task has started.
-        if (uploadManager != null) {
-            uploadManager.onStartedUploadProcess(uploadItem);
-        }
-    }
-
-    private void notifyManagerCancelled(UploadCheckResponse response) {
-        if (uploadManager != null) {
-            uploadManager.onCancelled(uploadItem, response);
-        }
-    }
-
-    /**
-     * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
-     *
-     * @param e - exception that occurred.
-     */
-    private void notifyManagerException(Exception e) {
-        //notify listeners that there has been an exception
-        if (uploadManager != null) {
-            uploadManager.onProcessException(uploadItem, e);
-        }
-    }
-
-    /**
-     * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
-     */
-    private void notifyManagerLostConnection() {
-        //notify listeners that connection was lost
-        if (uploadManager != null) {
-            uploadManager.onLostConnection(uploadItem);
-        }
     }
 }

@@ -22,10 +22,7 @@ import java.util.HashMap;
  *
  * @author
  */
-public class ResumableProcess implements Runnable {
-    private final UploadItem uploadItem;
-    private final MediaFire mediaFire;
-    private final UploadListenerManager uploadManager;
+public class ResumableProcess extends UploadProcess {
     private final Logger logger = LoggerFactory.getLogger(ResumableProcess.class);
 
     /**
@@ -34,26 +31,13 @@ public class ResumableProcess implements Runnable {
      * @param mediaFire - the session to use for this upload process
      * @param uploadItem     - the item to be uploaded
      */
-    public ResumableProcess(MediaFire mediaFire, UploadListenerManager uploadManager, UploadItem uploadItem) {
-        this.mediaFire = mediaFire;
-        this.uploadManager = uploadManager;
-        this.uploadItem = uploadItem;
+    public ResumableProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
+        super(mediaFire, uploadItem, uploadListenerManager);
     }
 
     @Override
-    public void run() {
-        logger.info(" sendRequest()");
-        resumable();
-    }
-
-    /**
-     * begin the upload process via the following steps:
-     * 1. set the LinkedList of Chunk within the item we want to upload
-     * 2. create chunks for all units of the item we want to upload
-     * 3. send upload POST request for each chunk
-     */
-    private void resumable() {
-        logger.info(" resumable()");
+    protected void doUploadProcess() {
+        logger.info(" doUploadProcess()");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
 
         // get chunk. these will be used for chunks.
@@ -82,7 +66,7 @@ public class ResumableProcess implements Runnable {
             encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             logger.info(" Exception while encoding file name: " + e);
-            notifyManagerException(e);
+            notifyListenerException(e);
             return;
         }
 
@@ -92,7 +76,7 @@ public class ResumableProcess implements Runnable {
 
         for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {
             if (uploadItem.isCancelled()) {
-                notifyManagerCancelled(null);
+                notifyListenerCancelled(response);
                 return;
             }
             logger.info("    enter chunk upload loop()");
@@ -122,13 +106,13 @@ public class ResumableProcess implements Runnable {
                     fis.close();
                     bis.close();
                 } catch (FileNotFoundException e) {
-                    notifyManagerException(e);
+                    notifyListenerException(e);
                     return;
                 } catch (NoSuchAlgorithmException e) {
-                    notifyManagerException(e);
+                    notifyListenerException(e);
                     return;
                 } catch (IOException e) {
-                    notifyManagerException(e);
+                    notifyListenerException(e);
                     return;
                 }
 
@@ -149,7 +133,7 @@ public class ResumableProcess implements Runnable {
                 // if API response code OR Upload Response Result code have an error then we need to terminate the process
                 if (response.hasError()) {
                     logger.info(" response has an error # " + response.getError() + ": " + response.getMessage());
-                    notifyManagerCancelled(response);
+                    notifyListenerCancelled(response);
                     return;
                 }
 
@@ -158,74 +142,18 @@ public class ResumableProcess implements Runnable {
                     if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
                         // let the listeners know we are done with this process (because there was an error in this case)
                         logger.info(" cancelling because result code: " + response.getDoUpload().getResultCode().toString());
-                        notifyManagerCancelled(response);
+                        notifyListenerCancelled(response);
                         return;
                     }
                 }
             }
 
             // update listeners on progress each loop
-            notifyManagerOnProgressUpdate(chunkNumber, numChunks);
+            notifyListenerOnProgressUpdate(chunkNumber, numChunks);
         } // end loop
 
         // let the listeners know that upload has attempted to upload all chunks.
-        notifyManagerCompleted(response);
-    }
-
-    /**
-     * gives the listeners a progress update of the number of chunks completed.
-     */
-    private void notifyManagerOnProgressUpdate(int chunkNumber, int numChunks) {
-        logger.info(" notifyManagerOnProgressUpdate()");
-        if (uploadManager != null) {
-            uploadManager.onProgressUpdate(uploadItem, chunkNumber, numChunks);
-        }
-    }
-
-    /**
-     * notifies the upload manager attached to the upload item that this process has finished.
-     */
-    private void notifyManagerCompleted(UploadResumableResponse response) {
-        logger.info(" notifyManagerCompleted()");
-        if (uploadManager != null) {
-            uploadManager.onResumableCompleted(uploadItem, response);
-        }
-    }
-
-    /**
-     * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
-     */
-    private void notifyManagerLostConnection() {
-        logger.info(" notifyManagerLostConnection()");
-        // notify listeners that connection was lost
-        if (uploadManager != null) {
-            uploadManager.onLostConnection(uploadItem);
-        }
-    }
-
-    /**
-     * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
-     *
-     * @param e The exception thrown by the upload process.
-     */
-    private void notifyManagerException(Exception e) {
-        logger.info(" notifyManagerException()");
-        // notify listeners that there has been an exception
-        if (uploadManager != null) {
-            uploadManager.onProcessException(uploadItem, e);
-        }
-    }
-
-    /**
-     * notifies the upload manager that the process has been cancelled and then notifies other listeners.
-     *
-     * @param response The response from the resumable upload API request.
-     */
-    private void notifyManagerCancelled(UploadResumableResponse response) {
-        logger.info(" notifyManagerCancelled()");
-        if (uploadManager != null) {
-            uploadManager.onCancelled(uploadItem, response);
-        }
+        notifyListenerCompleted(response);
     }
 
     /**
@@ -315,7 +243,6 @@ public class ResumableProcess implements Runnable {
             }
         }
 
-        logger.info(" RETURNING CHUNK SIZE OF: " + chunkSize);
         return chunkSize;
     }
 
@@ -374,7 +301,6 @@ public class ResumableProcess implements Runnable {
             sb.append(tempString);
         }
         String hash = sb.toString();
-        logger.info(" HASH FOR THIS CHUNK IS: " + hash);
         return hash;
     }
 }

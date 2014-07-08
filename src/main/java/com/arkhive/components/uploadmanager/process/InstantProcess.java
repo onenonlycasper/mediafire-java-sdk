@@ -21,34 +21,16 @@ import java.util.Map;
  *
  * @author
  */
-public class InstantProcess implements Runnable {
-    private final MediaFire mediaFire;
-    private final UploadItem uploadItem;
-    private final UploadListenerManager uploadManager;
+public class InstantProcess extends UploadProcess {
     private final Logger logger = LoggerFactory.getLogger(InstantProcess.class);
 
-    public InstantProcess(MediaFire mediaFire, UploadListenerManager uploadManager, UploadItem uploadItem) {
-        this.mediaFire = mediaFire;
-        this.uploadManager = uploadManager;
-        this.uploadItem = uploadItem;
+    public InstantProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
+        super(mediaFire, uploadItem, uploadListenerManager);
     }
 
     @Override
-    public void run() {
-        logger.info(" sendRequest()");
-        instant();
-    }
-
-    /**
-     * 1. url encode filename.
-     * 2. generate request parameters.
-     * 3. create GET request.
-     * 4. receive API response.
-     * 5. convert response to CheckResponse using Gson.
-     * 6. notify listeners of completion.
-     */
-    private void instant() {
-        logger.info("instant called");
+    protected void doUploadProcess() {
+        logger.info(" doUploadProcess()");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
         // url encode the filename
         String filename;
@@ -56,8 +38,7 @@ public class InstantProcess implements Runnable {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             logger.info(" Exception: " + e);
-            e.printStackTrace();
-            notifyManagerException(e);
+            notifyListenerException(e);
             return;
         }
 
@@ -66,31 +47,20 @@ public class InstantProcess implements Runnable {
         UploadInstantResponse response = mediaFire.apiCall().upload.instantUpload(keyValue, null);
 
         if (response == null) {
-            notifyManagerLostConnection();
+            notifyListenerLostConnection();
             return;
         }
 
         if (response.getErrorCode() != ApiResponseCode.NO_ERROR) {
-            notifyManagerCancelled(response);
+            notifyListenerCancelled(response);
             return;
         }
 
         if (!response.getQuickkey().isEmpty()) {
             // notify listeners that check has completed
-            notifyManagerCompleted(response);
+            notifyListenerCompleted(response);
         } else {
-            notifyManagerCancelled(response);
-        }
-    }
-
-    /**
-     * cancels this upload because of an api error.
-     *
-     * @param response - response from calling instant.php.
-     */
-    private void notifyManagerCancelled(UploadInstantResponse response) {
-        if (uploadManager != null) {
-            uploadManager.onCancelled(uploadItem, response);
+            notifyListenerCancelled(response);
         }
     }
 
@@ -115,38 +85,5 @@ public class InstantProcess implements Runnable {
 
         keyValue.put("action_on_duplicate", uploadItem.getUploadOptions().getActionOnDuplicate());
         return keyValue;
-    }
-
-    /**
-     * notifies listeners that this process has completed successfully.
-     */
-    private void notifyManagerCompleted(UploadInstantResponse response) {
-        //notify manager that the upload is completed
-        if (uploadManager != null) {
-            uploadManager.onInstantCompleted(uploadItem, response);
-        }
-    }
-
-
-    /**
-     * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
-     *
-     * @param e - the exception that occurred
-     */
-    private void notifyManagerException(Exception e) {
-        //notify listeners that there has been an exception
-        if (uploadManager != null) {
-            uploadManager.onProcessException(uploadItem, e);
-        }
-    }
-
-    /**
-     * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
-     */
-    private void notifyManagerLostConnection() {
-        //notify listeners that connection was lost
-        if (uploadManager != null) {
-            uploadManager.onLostConnection(uploadItem);
-        }
     }
 }
