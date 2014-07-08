@@ -5,9 +5,6 @@ import com.arkhive.components.core.module_api.codes.ApiResponseCode;
 import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,14 +13,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-// CHECKSTYLE:OFF
-//CHECKSTYLE:ON
-
-/**
- * Runnable for making a call to upload/check.php.
- */
 public class CheckProcess implements Runnable {
-    private static final String TAG = CheckProcess.class.getSimpleName();
     private final MediaFire mediaFire;
     private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
@@ -40,7 +30,7 @@ public class CheckProcess implements Runnable {
         logger.info("  sendRequest()");
         uploadItem.getFileData().setFileSize();
         uploadItem.getFileData().setFileHash();
-        check();
+        doUploadCheck();
     }
 
     /**
@@ -51,9 +41,8 @@ public class CheckProcess implements Runnable {
      * 5. convert response to CheckResponse using Gson.
      * 6. notify listeners of completion.
      */
-    private void check() {
-        logger.info("  check()");
-        Thread.currentThread().setPriority(3); //uploads are set to low priority
+    private void doUploadCheck() {
+        logger.info("  doUploadCheck()");
         //notify listeners that check started
         notifyManagerUploadStarted();
 
@@ -71,6 +60,11 @@ public class CheckProcess implements Runnable {
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
         UploadCheckResponse response = mediaFire.apiCall().upload.checkUpload(keyValue, null);
+
+        if (response == null) {
+            notifyManagerLostConnection();
+            return;
+        }
 
         // if there is an error code, cancel the upload
         if (response.getErrorCode() != ApiResponseCode.NO_ERROR) {
@@ -152,23 +146,6 @@ public class CheckProcess implements Runnable {
         //notify listeners that connection was lost
         if (uploadManager != null) {
             uploadManager.onLostConnection(uploadItem);
-        }
-    }
-
-    /**
-     * converts a String received from JSON format into a response String.
-     *
-     * @param response - the response received in JSON format
-     * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
-     */
-    private String getResponseString(String response) {
-        JsonParser parser = new JsonParser();
-        JsonElement element = parser.parse(response);
-        if (element.isJsonObject()) {
-            JsonObject jsonResponse = element.getAsJsonObject().get("response").getAsJsonObject();
-            return jsonResponse.toString();
-        } else {
-            return "";
         }
     }
 }

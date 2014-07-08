@@ -5,9 +5,6 @@ import com.arkhive.components.core.module_api.codes.ApiResponseCode;
 import com.arkhive.components.core.module_api.responses.UploadInstantResponse;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +22,6 @@ import java.util.Map;
  * @author
  */
 public class InstantProcess implements Runnable {
-    private static final String TAG = InstantProcess.class.getSimpleName();
     private final MediaFire mediaFire;
     private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
@@ -69,6 +65,10 @@ public class InstantProcess implements Runnable {
         Map<String, String> keyValue = generateRequestParameters(filename);
         UploadInstantResponse response = mediaFire.apiCall().upload.instantUpload(keyValue, null);
 
+        if (response == null) {
+            notifyManagerLostConnection();
+            return;
+        }
 
         if (response.getErrorCode() != ApiResponseCode.NO_ERROR) {
             notifyManagerCancelled(response);
@@ -147,23 +147,6 @@ public class InstantProcess implements Runnable {
         //notify listeners that connection was lost
         if (uploadManager != null) {
             uploadManager.onLostConnection(uploadItem);
-        }
-    }
-
-    /**
-     * converts a String received from JSON format into a response String.
-     *
-     * @param response - the response received in JSON format
-     * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
-     */
-    private String getResponseString(String response) {
-        JsonParser parser = new JsonParser();
-        JsonElement element = parser.parse(response);
-        if (element.isJsonObject()) {
-            JsonObject jsonResponse = element.getAsJsonObject().get("response").getAsJsonObject();
-            return jsonResponse.toString();
-        } else {
-            return "";
         }
     }
 }

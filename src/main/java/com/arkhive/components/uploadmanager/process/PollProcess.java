@@ -7,14 +7,10 @@ import com.arkhive.components.core.module_api.codes.PollStatusCode;
 import com.arkhive.components.core.module_api.responses.UploadPollResponse;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is the Runnable which executes the call /api/upload/poll_upload.
@@ -28,9 +24,8 @@ import java.util.Map;
  * @author
  */
 public class PollProcess implements Runnable {
-    private static final String TAG = PollProcess.class.getSimpleName();
-    private static final long TIME_BETWEEN_POLLS = 10000;
-    private static final int MAX_POLLS = 12;
+    private static final long TIME_BETWEEN_POLLS = 2000;
+    private static final int MAX_POLLS = 60;
     private final MediaFire mediaFire;
     private final UploadItem uploadItem;
     private final UploadListenerManager uploadManager;
@@ -68,13 +63,17 @@ public class PollProcess implements Runnable {
         //generate our request string
         HashMap<String, String> keyValue = generateGetParameters();
 
-        //loop until we have made 60 attempts (2 minutes)
         int pollCount = 0;
-        UploadPollResponse response;
         do {
-            //increment counter
+            // increment counter
             pollCount++;
-            response = mediaFire.apiCall().upload.pollUpload(keyValue, null);
+            // get api response.
+            UploadPollResponse response = mediaFire.apiCall().upload.pollUpload(keyValue, null);
+
+            if (response == null) {
+                notifyManagerLostConnection();
+                return;
+            }
 
             logger.info(" received error code: " + response.getErrorCode());
             //check to see if we need to call pollUploadCompleted or loop again
@@ -113,34 +112,34 @@ public class PollProcess implements Runnable {
                     return;
             }
 
-            //wait 2 seconds before next api call
+            //wait before next api call
             try {
                 Thread.sleep(TIME_BETWEEN_POLLS);
             } catch (InterruptedException e) {
                 logger.info(" Exception: " + e);
-                notifyManagerCompleted(response);
-                Thread.currentThread().interrupt();
+                notifyManagerException(uploadItem, e);
+                return;
             }
 
-        } while (pollCount < MAX_POLLS);
+            if (uploadItem.isCancelled()) {
+                pollCount = MAX_POLLS;
+            }
 
-        // we exceeded our attempts. inform listener that the upload is cancelled. in this case it is because
-        // we ran out of attempts.
-        notifyManagerCompleted(response);
+            if (pollCount >= MAX_POLLS) {
+                // we exceeded our attempts. inform listener that the upload is cancelled. in this case it is because
+                // we ran out of attempts.
+                notifyManagerCompleted(response);
+            }
+        } while (pollCount < MAX_POLLS);
     }
 
-    public void notifyListenersException(UploadItem uploadItem, Exception exception) {
-        logger.info(" notifyListenersException()");
+    public void notifyManagerException(UploadItem uploadItem, Exception exception) {
+        logger.info(" notifyManagerException()");
         if (uploadManager != null) {
             uploadManager.onProcessException(uploadItem, exception);
         }
     }
 
-    /**
-     * notifies the listeners that this upload has successfully completed.
-     *
-     * @param response - poll response.
-     */
     public void notifyManagerCompleted(UploadPollResponse response) {
         logger.info(" notifyManagerCompleted()");
         if (uploadManager != null) {
@@ -148,11 +147,6 @@ public class PollProcess implements Runnable {
         }
     }
 
-    /**
-     * notifies the upload manager that the process has been cancelled and then notifies other listeners.
-     *
-     * @param response - poll response.
-     */
     private void notifyManagerCancelled(UploadPollResponse response) {
         logger.info(" notifyManagerCancelled()");
         if (uploadManager != null) {
@@ -160,22 +154,6 @@ public class PollProcess implements Runnable {
         }
     }
 
-    /**
-     * generates a HashMap of the GET parameters.
-     *
-     * @return - map of request parameters.
-     */
-    private HashMap<String, String> generateGetParameters() {
-        logger.info(" generateGetParameters()");
-        HashMap<String, String> keyValue = new HashMap<String, String>();
-        keyValue.put("key", uploadItem.getPollUploadKey());
-        keyValue.put("response_format", "json");
-        return keyValue;
-    }
-
-    /**
-     * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
-     */
     private void notifyManagerLostConnection() {
         logger.info(" notifyManagerLostConnection()");
         // notify listeners that connection was lost
@@ -184,34 +162,12 @@ public class PollProcess implements Runnable {
         }
     }
 
-    private String getQueryString(String uri, Map<String, String> keyValue) {
-        StringBuilder str = new StringBuilder();
-        String builtQuery;
-        str.append("?");
-
-        for (Map.Entry<String, String> e : keyValue.entrySet()) {
-            str.append(e.getKey()).append("=").append(e.getValue()).append("&");
-        }
-
-        builtQuery = str.toString();
-        builtQuery = uri + builtQuery.substring(0, builtQuery.length() - 1);
-        return builtQuery;
+    private HashMap<String, String> generateGetParameters() {
+        logger.info(" generateGetParameters()");
+        HashMap<String, String> keyValue = new HashMap<String, String>();
+        keyValue.put("key", uploadItem.getPollUploadKey());
+        keyValue.put("response_format", "json");
+        return keyValue;
     }
 
-    /**
-     * converts a String received from JSON format into a response String.
-     *
-     * @param response - the response received in JSON format
-     * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
-     */
-    private String getResponseString(String response) {
-        JsonParser parser = new JsonParser();
-        JsonElement element = parser.parse(response);
-        if (element.isJsonObject()) {
-            JsonObject jsonResponse = element.getAsJsonObject().get("response").getAsJsonObject();
-            return jsonResponse.toString();
-        } else {
-            return "";
-        }
-    }
 }

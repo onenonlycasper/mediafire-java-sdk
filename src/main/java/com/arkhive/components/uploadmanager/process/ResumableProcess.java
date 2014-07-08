@@ -8,9 +8,6 @@ import com.arkhive.components.uploadmanager.uploaditem.ChunkData;
 import com.arkhive.components.uploadmanager.uploaditem.FileData;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import com.arkhive.components.uploadmanager.uploaditem.UploadOptions;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +23,6 @@ import java.util.HashMap;
  * @author
  */
 public class ResumableProcess implements Runnable {
-    private static final String TAG = ResumableProcess.class.getSimpleName();
     private final UploadItem uploadItem;
     private final MediaFire mediaFire;
     private final UploadListenerManager uploadManager;
@@ -95,6 +91,10 @@ public class ResumableProcess implements Runnable {
         UploadResumableResponse response = null;
 
         for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {
+            if (uploadItem.isCancelled()) {
+                notifyManagerCancelled(null);
+                return;
+            }
             logger.info("    enter chunk upload loop()");
             // if the bitmap says this chunk number is uploaded then we can just skip it, if not, we upload it.
             if (uploadItem.getBitmap().isUploaded(chunkNumber)) {
@@ -122,13 +122,13 @@ public class ResumableProcess implements Runnable {
                     fis.close();
                     bis.close();
                 } catch (FileNotFoundException e) {
-                    this.exceptionHandler(e);
+                    notifyManagerException(e);
                     return;
                 } catch (NoSuchAlgorithmException e) {
-                    this.exceptionHandler(e);
+                    notifyManagerException(e);
                     return;
                 } catch (IOException e) {
-                    this.exceptionHandler(e);
+                    notifyManagerException(e);
                     return;
                 }
 
@@ -165,27 +165,18 @@ public class ResumableProcess implements Runnable {
             }
 
             // update listeners on progress each loop
-            notifyListenersProgressUpdate(chunkNumber, numChunks);
+            notifyManagerOnProgressUpdate(chunkNumber, numChunks);
         } // end loop
 
         // let the listeners know that upload has attempted to upload all chunks.
         notifyManagerCompleted(response);
     }
 
-    private void exceptionHandler(Exception e) {
-        logger.info("exceptionHandler: " + e);
-        e.printStackTrace();
-        // if we catch FileNotFoundException, NoSuchAlgorithmException,
-        // or UnsupportedEncoding Exception, notify manager and listeners
-        // that exception was caught and process has been cancelled
-        notifyManagerException(e);
-    }
-
     /**
      * gives the listeners a progress update of the number of chunks completed.
      */
-    private void notifyListenersProgressUpdate(int chunkNumber, int numChunks) {
-        logger.info(" notifyListenersProgressUpdate()");
+    private void notifyManagerOnProgressUpdate(int chunkNumber, int numChunks) {
+        logger.info(" notifyManagerOnProgressUpdate()");
         if (uploadManager != null) {
             uploadManager.onProgressUpdate(uploadItem, chunkNumber, numChunks);
         }
@@ -209,6 +200,31 @@ public class ResumableProcess implements Runnable {
         // notify listeners that connection was lost
         if (uploadManager != null) {
             uploadManager.onLostConnection(uploadItem);
+        }
+    }
+
+    /**
+     * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
+     *
+     * @param e The exception thrown by the upload process.
+     */
+    private void notifyManagerException(Exception e) {
+        logger.info(" notifyManagerException()");
+        // notify listeners that there has been an exception
+        if (uploadManager != null) {
+            uploadManager.onProcessException(uploadItem, e);
+        }
+    }
+
+    /**
+     * notifies the upload manager that the process has been cancelled and then notifies other listeners.
+     *
+     * @param response The response from the resumable upload API request.
+     */
+    private void notifyManagerCancelled(UploadResumableResponse response) {
+        logger.info(" notifyManagerCancelled()");
+        if (uploadManager != null) {
+            uploadManager.onCancelled(uploadItem, response);
         }
     }
 
@@ -256,31 +272,6 @@ public class ResumableProcess implements Runnable {
         headers.put("x-unit-hash", chunkHash);
         headers.put("x-unit-size", Integer.toString(chunkSize));
         return headers;
-    }
-
-    /**
-     * lets listeners know that this process has been cancelled for this upload item. manager is informed of exception.
-     *
-     * @param e The exception thrown by the upload process.
-     */
-    private void notifyManagerException(Exception e) {
-        logger.info(" notifyManagerException()");
-        // notify listeners that there has been an exception
-        if (uploadManager != null) {
-            uploadManager.onProcessException(uploadItem, e);
-        }
-    }
-
-    /**
-     * notifies the upload manager that the process has been cancelled and then notifies other listeners.
-     *
-     * @param response The response from the resumable upload API request.
-     */
-    private void notifyManagerCancelled(UploadResumableResponse response) {
-        logger.info(" notifyManagerCancelled()");
-        if (uploadManager != null) {
-            uploadManager.onCancelled(uploadItem, response);
-        }
     }
 
     /**
@@ -385,23 +376,5 @@ public class ResumableProcess implements Runnable {
         String hash = sb.toString();
         logger.info(" HASH FOR THIS CHUNK IS: " + hash);
         return hash;
-    }
-
-    /**
-     * converts a String received from JSON format into a response String.
-     *
-     * @param response The response received in JSON format.
-     * @return The response received which can then be parsed into a specific format as per Gson.fromJson().
-     */
-    private String getResponseString(String response) {
-        logger.info(" getResponseString()");
-        JsonParser parser = new JsonParser();
-        JsonElement element = parser.parse(response);
-        if (element.isJsonObject()) {
-            JsonObject jsonResponse = element.getAsJsonObject().get("response").getAsJsonObject();
-            return jsonResponse.toString();
-        } else {
-            return "";
-        }
     }
 }
