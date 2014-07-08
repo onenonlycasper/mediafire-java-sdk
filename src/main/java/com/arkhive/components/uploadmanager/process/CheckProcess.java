@@ -37,7 +37,7 @@ public class CheckProcess implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(TAG + "  sendRequest()");
+        logger.info("  sendRequest()");
         uploadItem.getFileData().setFileSize();
         uploadItem.getFileData().setFileHash();
         check();
@@ -52,7 +52,7 @@ public class CheckProcess implements Runnable {
      * 6. notify listeners of completion.
      */
     private void check() {
-        System.out.println(TAG + "  check()");
+        logger.info("  check()");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
         //notify listeners that check started
         notifyManagerUploadStarted();
@@ -62,7 +62,7 @@ public class CheckProcess implements Runnable {
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            System.out.println(TAG + " Exception: " + e);
+            logger.info(" Exception: " + e);
             e.printStackTrace();
             notifyManagerException(e);
             return;
@@ -110,7 +110,7 @@ public class CheckProcess implements Runnable {
      * @param checkResponse - the response from calling check.php.
      */
     private void notifyListenersCompleted(UploadCheckResponse checkResponse) {
-        System.out.println(TAG + "  notifyListenersCompleted()");
+        logger.info("  notifyListenersCompleted()");
         //notify manager that check is completed
         if (uploadManager != null) {
             uploadManager.onCheckCompleted(uploadItem, checkResponse);
