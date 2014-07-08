@@ -4,10 +4,7 @@ import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.ResumableResultCode;
 import com.arkhive.components.core.module_api.responses.UploadResumableResponse;
 import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
-import com.arkhive.components.uploadmanager.uploaditem.ChunkData;
-import com.arkhive.components.uploadmanager.uploaditem.FileData;
-import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import com.arkhive.components.uploadmanager.uploaditem.UploadOptions;
+import com.arkhive.components.uploadmanager.uploaditem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,26 +37,10 @@ public class ResumableProcess extends UploadProcess {
         logger.info(" doUploadProcess()");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
 
-        // get chunk. these will be used for chunks.
-        ChunkData chunkData = uploadItem.getChunkData();
-        int numChunks = chunkData.getNumberOfUnits();
-        int unitSize = chunkData.getUnitSize();
-        logger.info(" number of chunks: " + numChunks);
-        logger.info(" size of units: " + unitSize);
-
         //get file size. this will be used for chunks.
         FileData fileData = uploadItem.getFileData();
         long fileSize = fileData.getFileSize();
         logger.info(" size of file: " + fileSize);
-
-        // get upload options. these will be passed as request parameters
-        UploadOptions uploadOptions = uploadItem.getUploadOptions();
-        String actionOnDuplicate = uploadOptions.getActionOnDuplicate();
-        String versionControl = uploadOptions.getVersionControl();
-        String uploadFolderKey = uploadOptions.getUploadFolderKey();
-        logger.info(" action on duplicate: " + actionOnDuplicate);
-        logger.info(" version control: " + versionControl);
-        logger.info(" upload folder key: " + uploadFolderKey);
 
         String encodedShortFileName;
         try {
@@ -70,6 +51,13 @@ public class ResumableProcess extends UploadProcess {
             return;
         }
 
+        // get chunk. these will be used for chunks.
+        ChunkData chunkData = uploadItem.getChunkData();
+        int numChunks = chunkData.getNumberOfUnits();
+        int unitSize = chunkData.getUnitSize();
+        logger.info(" number of chunks: " + numChunks);
+        logger.info(" size of units: " + unitSize);
+
         // loop through our chunks and create http post with header data and send after we are done looping,
         // let the listener know we are completed
         UploadResumableResponse response = null;
@@ -79,7 +67,7 @@ public class ResumableProcess extends UploadProcess {
                 notifyListenerCancelled(response);
                 return;
             }
-            logger.info("    enter chunk upload loop()");
+
             // if the bitmap says this chunk number is uploaded then we can just skip it, if not, we upload it.
             if (uploadItem.getBitmap().isUploaded(chunkNumber)) {
                 logger.info(" chunk #" + chunkNumber + " already uploaded");
@@ -88,39 +76,20 @@ public class ResumableProcess extends UploadProcess {
                 // get the chunk size for this chunk
                 int chunkSize = getChunkSize(chunkNumber, numChunks, fileSize, unitSize);
 
-                // generate the chunk
-                FileInputStream fis;
-                BufferedInputStream bis;
-                String chunkHash;
-                byte[] uploadChunk;
-                try {
-                    fis = new FileInputStream(uploadItem.getFileData().getFilePath());
-                    bis = new BufferedInputStream(fis);
-                    uploadChunk = createUploadChunk(unitSize, chunkNumber, bis);
-                    chunkHash = getSHA256(uploadChunk);
-
-                    logger.info(" chunk #" + chunkNumber + " hash: " + chunkHash);
-                    logger.info(" chunk #" + chunkNumber + " size: " + chunkSize);
-                    logger.info(" chunk #" + chunkNumber + " name: " + encodedShortFileName);
-
-                    fis.close();
-                    bis.close();
-                } catch (FileNotFoundException e) {
-                    notifyListenerException(e);
-                    return;
-                } catch (NoSuchAlgorithmException e) {
-                    notifyListenerException(e);
-                    return;
-                } catch (IOException e) {
-                    notifyListenerException(e);
+                ResumableChunkInfo resumableChunkInfo = createResumableChunkInfo(unitSize, chunkNumber);
+                if (resumableChunkInfo == null || resumableChunkInfo.hasException()) {
+                    notifyListenerException(resumableChunkInfo.getException());
                     return;
                 }
+
+                String chunkHash = resumableChunkInfo.getChunkHash();
+                byte[] uploadChunk = resumableChunkInfo.getUploadChunk();
 
                 // generate the post headers
                 HashMap<String, String> headers = generatePostHeaders(encodedShortFileName, fileSize, chunkNumber, chunkHash, chunkSize);
 
                 // generate the get parameters
-                HashMap<String, String> parameters = generateGetParameters(actionOnDuplicate, versionControl, uploadFolderKey);
+                HashMap<String, String> parameters = generateGetParameters();
 
                 response = mediaFire.apiCall().upload.resumableUpload(parameters, null, headers, uploadChunk);
 
@@ -130,30 +99,70 @@ public class ResumableProcess extends UploadProcess {
                     uploadItem.setPollUploadKey(response.getDoUpload().getPollUploadKey());
                 }
 
-                // if API response code OR Upload Response Result code have an error then we need to terminate the process
-                if (response.hasError()) {
-                    logger.info(" response has an error # " + response.getError() + ": " + response.getMessage());
+                if (shouldCancelUpload(response)) {
                     notifyListenerCancelled(response);
                     return;
-                }
-
-                if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR) {
-                    // let the listeners know we are done with this process (because there was an error in this case)
-                    if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
-                        // let the listeners know we are done with this process (because there was an error in this case)
-                        logger.info(" cancelling because result code: " + response.getDoUpload().getResultCode().toString());
-                        notifyListenerCancelled(response);
-                        return;
-                    }
                 }
             }
 
             // update listeners on progress each loop
             notifyListenerOnProgressUpdate(chunkNumber, numChunks);
+
+            // update the response bitmap
+            UploadResumableResponse.ResumableUpload.Bitmap bitmap = response.getResumableUpload().getBitmap();
+            uploadItem.setBitmap(new ResumableBitmap(bitmap.getCount(), bitmap.getWords()));
         } // end loop
 
         // let the listeners know that upload has attempted to upload all chunks.
         notifyListenerCompleted(response);
+    }
+
+    public boolean shouldCancelUpload(UploadResumableResponse response) {
+        logger.info("shouldCancelUpload()");
+        // if API response code OR Upload Response Result code have an error then we need to terminate the process
+        if (response.hasError()) {
+            logger.info(" response has an error # " + response.getError() + ": " + response.getMessage());
+            notifyListenerCancelled(response);
+            return true;
+        }
+
+        if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR) {
+            // let the listeners know we are done with this process (because there was an error in this case)
+            if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
+                // let the listeners know we are done with this process (because there was an error in this case)
+                logger.info(" cancelling because result code: " + response.getDoUpload().getResultCode().toString());
+                notifyListenerCancelled(response);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public ResumableChunkInfo createResumableChunkInfo(int unitSize, int chunkNumber) {
+        logger.info("createResumableChunkInfo");
+        ResumableChunkInfo resumableChunkInfo;
+        // generate the chunk
+        FileInputStream fis;
+        BufferedInputStream bis;
+        String chunkHash;
+        byte[] uploadChunk;
+        try {
+            fis = new FileInputStream(uploadItem.getFileData().getFilePath());
+            bis = new BufferedInputStream(fis);
+            uploadChunk = createUploadChunk(unitSize, chunkNumber, bis);
+            chunkHash = getSHA256(uploadChunk);
+            resumableChunkInfo = new ResumableChunkInfo(chunkHash, uploadChunk);
+            fis.close();
+            bis.close();
+        } catch (FileNotFoundException e) {
+            return new ResumableChunkInfo(e);
+        } catch (NoSuchAlgorithmException e) {
+            return new ResumableChunkInfo(e);
+        } catch (IOException e) {
+            return new ResumableChunkInfo(e);
+        }
+        return resumableChunkInfo;
     }
 
     /**
@@ -161,18 +170,28 @@ public class ResumableProcess extends UploadProcess {
      *
      * @return The parameters to use for the upload API request.
      */
-    private HashMap<String, String> generateGetParameters(String actionOnDuplicate, String versionControl, String uploadFolderKey) {
+    private HashMap<String, String> generateGetParameters() {
         logger.info(" generateGetParameters()");
+        // get upload options. these will be passed as request parameters
+        UploadOptions uploadOptions = uploadItem.getUploadOptions();
+        String actionOnDuplicate = uploadOptions.getActionOnDuplicate();
+        String versionControl = uploadOptions.getVersionControl();
+        String uploadFolderKey = uploadOptions.getUploadFolderKey();
+        String uploadPath = uploadOptions.getUploadPath();
+        logger.info(" action on duplicate: " + actionOnDuplicate);
+        logger.info(" version control: " + versionControl);
+        logger.info(" upload folder key: " + uploadFolderKey);
+
         String actionToken = mediaFire.apiCall().requestUploadActionToken();
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("session_token", actionToken);
         parameters.put("action_on_duplicate", actionOnDuplicate);
         parameters.put("response_format", "json");
         parameters.put("version_control", versionControl);
-        if (!uploadItem.getUploadOptions().getUploadPath().isEmpty()) {
-            parameters.put("path", uploadItem.getUploadOptions().getUploadPath());
+        if (!uploadPath.isEmpty()) {
+            parameters.put("path", uploadPath);
         } else {
-            parameters.put("folder_key", uploadItem.getUploadOptions().getUploadFolderKey());
+            parameters.put("folder_key", uploadFolderKey);
         }
 
         return parameters;
