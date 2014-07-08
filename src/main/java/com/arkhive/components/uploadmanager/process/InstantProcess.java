@@ -39,7 +39,7 @@ public class InstantProcess implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(TAG + " sendRequest()");
+        logger.info(" sendRequest()");
         instant();
     }
 
@@ -59,7 +59,7 @@ public class InstantProcess implements Runnable {
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            System.out.println(TAG + " Exception: " + e);
+            logger.info(" Exception: " + e);
             e.printStackTrace();
             notifyManagerException(e);
             return;
