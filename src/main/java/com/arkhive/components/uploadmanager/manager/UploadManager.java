@@ -6,9 +6,8 @@ import com.arkhive.components.core.module_api.codes.PollResultCode;
 import com.arkhive.components.core.module_api.codes.PollStatusCode;
 import com.arkhive.components.core.module_api.responses.*;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
-import com.arkhive.components.uploadmanager.listeners.UploadListenerDatabase;
+import com.arkhive.components.uploadmanager.listeners.UploadListener;
 import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
-import com.arkhive.components.uploadmanager.listeners.UploadListenerUI;
 import com.arkhive.components.uploadmanager.process.CheckProcess;
 import com.arkhive.components.uploadmanager.process.InstantProcess;
 import com.arkhive.components.uploadmanager.process.PollProcess;
@@ -27,8 +26,7 @@ import java.util.concurrent.*;
  */
 public class UploadManager implements UploadListenerManager {
     private static final int MAX_CHECK_COUNT = 7;
-    private UploadListenerDatabase dbListener;
-    private UploadListenerUI uiListener;
+    private UploadListener uiListener;
     private final PausableThreadPoolExecutor executor;
     private final BlockingQueue<Runnable> workQueue;
     private final MediaFire mediaFire;
@@ -54,59 +52,28 @@ public class UploadManager implements UploadListenerManager {
                 threadFactory);
     }
 
-    /**
-     * returns the listener that is set as the database listener.
-     *
-     * @return the UploadListenerDatabase callback.
-     */
-    public UploadListenerDatabase getDatabaseListener() {
-        return dbListener;
-    }
-
-    /**
-     * returns the listener that is set as the UI listener.
-     *
-     * @return the UploadListenerUI callback.
-     */
-    public UploadListenerUI getUiListener() {
+    public UploadListener getUploadListener() {
+        logger.info("getUploadListener()");
         return uiListener;
     }
 
-    /**
-     * sets the content provider listener.
-     *
-     * @param dbListener database listener to use.
-     */
-    public void setDatabaseListener(UploadListenerDatabase dbListener) {
-        this.dbListener = dbListener;
-    }
-
-    /**
-     * adds a UI listener.
-     *
-     * @param uiListener - ui listener to use.
-     */
-    public void setUiListener(UploadListenerUI uiListener) {
+    public void setUploadListener(UploadListener uiListener) {
+        logger.info("setUploadListener");
         this.uiListener = uiListener;
     }
 
-    /**
-     * returns all items in the executor thread pool.
-     *
-     * @return an int representing both active and waiting threads.
-     */
     public int getAllItems() {
+        logger.info("getAllItems()");
         return workQueue.size() + executor.getActiveCount();
     }
 
     public BlockingQueue<Runnable> getAllWaitingRunnables() {
+        logger.info("getAllWaitingRunnables()");
         return workQueue;
     }
 
-    /**
-     * removes all items from the executor thread pool and attempts to cancel all threads currently running.
-     */
     public void clearUploadQueue() {
+        logger.info("clearUploadQueue()");
         executor.purge();
     }
 
@@ -139,63 +106,44 @@ public class UploadManager implements UploadListenerManager {
         }
     }
 
-    /**
-     * Pause moving backlog items to the thread queue.
-     */
     public void pause() {
         logger.info(" pause()");
         executor.pause();
     }
 
-    /**
-     * Resume moving backlog items to the thread queue.
-     */
     public void resume() {
         logger.info(" resume()");
         executor.resume();
     }
 
-    /**
-     * Returns whether or not UploadManager is paused or not.
-     *
-     * @return true if paused (not moving backlog to queue), false otherwise.
-     */
     public boolean isPaused() {
         logger.info(" isPaused()");
         return executor.isPaused();
     }
 
-    private void notifyListenersStarted(UploadItem uploadItem) {
-        logger.info(" notifyListenersStarted()");
+    private void notifyUploadListenerStarted(UploadItem uploadItem) {
+        logger.info(" notifyUploadListenerStarted()");
         if (uiListener != null) {
             uiListener.onStarted(uploadItem);
         }
-        if (dbListener != null) {
-            dbListener.onStarted(uploadItem);
-        }
     }
 
-    private void notifyListenersCompleted(UploadItem uploadItem) {
-        logger.info(" notifyListenersCompleted()");
+    private void notifyUploadListenerCompleted(UploadItem uploadItem) {
+        logger.info(" notifyUploadListenerCompleted()");
         if (uiListener != null) {
             uiListener.onCompleted(uploadItem);
         }
-        if (dbListener != null) {
-            dbListener.onCompleted(uploadItem);
-        }
     }
 
-    private void notifyListenersOnProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        logger.info(" notifyListenersOnProgressUpdate()");
+    private void notifyUploadListenerOnProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
+        logger.info(" notifyUploadListenerOnProgressUpdate()");
         if (uiListener != null) {
             uiListener.onProgressUpdate(uploadItem, chunkNumber, numChunks);
         }
     }
 
-    private void notifyListenersCancelled(UploadItem uploadItem) {
-        if (dbListener != null) {
-            dbListener.onCancelled(uploadItem);
-        }
+    private void notifyUploadListenerCancelled(UploadItem uploadItem) {
+        logger.info("notifyUploadListenerCancelled()");
         if (uiListener != null) {
             uiListener.onCancelled(uploadItem);
         }
@@ -204,7 +152,7 @@ public class UploadManager implements UploadListenerManager {
     @Override
     public void onStartedUploadProcess(UploadItem uploadItem) {
         logger.info(" onStartedUploadProcess()");
-        notifyListenersStarted(uploadItem);
+        notifyUploadListenerStarted(uploadItem);
     }
 
     @Override
@@ -212,8 +160,8 @@ public class UploadManager implements UploadListenerManager {
         logger.info(" onCheckCompleted()");
         //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
-        if (uploadItem.getUploadAttemptCount() > MAX_CHECK_COUNT) {
-            notifyListenersCancelled(uploadItem);
+        if (uploadItem.getUploadAttemptCount() > MAX_CHECK_COUNT || uploadItem.isCancelled()) {
+            notifyUploadListenerCancelled(uploadItem);
             return;
         }
 
@@ -239,12 +187,12 @@ public class UploadManager implements UploadListenerManager {
     @Override
     public void onProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
         logger.info(" onProgressUpdate()");
-        notifyListenersOnProgressUpdate(uploadItem, chunkNumber, numChunks);
+        notifyUploadListenerOnProgressUpdate(uploadItem, chunkNumber, numChunks);
     }
 
     private void storageLimitExceeded(UploadItem uploadItem) {
         logger.info(" storageLimitExceeded()");
-        notifyListenersCancelled(uploadItem);
+        notifyUploadListenerCancelled(uploadItem);
     }
 
     private void hashExists(UploadItem uploadItem, UploadCheckResponse checkResponse) {
@@ -280,13 +228,13 @@ public class UploadManager implements UploadListenerManager {
                     executor.execute(process);
                 } else {
                     logger.info(" --IN FOLDER SO NOT UPLOADING");
-                    notifyListenersCompleted(uploadItem);
+                    notifyUploadListenerCompleted(uploadItem);
                 }
                 break;
             case DO_NOT_UPLOAD:
             default:
                 logger.info(" --ACTION IN ACCOUNT VIA SWITCH STMT case do_not_upload/default");
-                notifyListenersCompleted(uploadItem);
+                notifyUploadListenerCompleted(uploadItem);
                 break;
         }
     }
@@ -295,13 +243,13 @@ public class UploadManager implements UploadListenerManager {
         logger.info(" hashDoesNotExist()");
         if (checkResponse.getResumableUpload().getUnitSize() == 0) {
             logger.info(" --unit size received from unit_size was 0. cancelling");
-            notifyListenersCancelled(uploadItem);
+            notifyUploadListenerCancelled(uploadItem);
             return;
         }
 
         if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
             logger.info(" --number of units received from number_of_units was 0. cancelling");
-            notifyListenersCancelled(uploadItem);
+            notifyUploadListenerCancelled(uploadItem);
             return;
         }
 
@@ -325,7 +273,7 @@ public class UploadManager implements UploadListenerManager {
     @Override
     public void onInstantCompleted(UploadItem uploadItem, UploadInstantResponse response) {
         logger.info(" onInstantCompleted()");
-        notifyListenersCompleted(uploadItem);
+        notifyUploadListenerCompleted(uploadItem);
     }
 
     @Override
@@ -358,7 +306,7 @@ public class UploadManager implements UploadListenerManager {
             logger.info(" status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
             addUploadRequest(uploadItem);
         } else {
-            notifyListenersCompleted(uploadItem);
+            notifyUploadListenerCompleted(uploadItem);
         }
     }
 
@@ -366,13 +314,13 @@ public class UploadManager implements UploadListenerManager {
     public void onProcessException(UploadItem uploadItem, Exception exception) {
         logger.info(" onProcessException()");
         logger.info("received exception: " + exception);
-        notifyListenersCancelled(uploadItem);
+        notifyUploadListenerCancelled(uploadItem);
     }
 
     @Override
     public void onLostConnection(UploadItem uploadItem) {
         logger.info(" onLostConnection()");
-        notifyListenersCancelled(uploadItem);
+        notifyUploadListenerCancelled(uploadItem);
         //pause upload manager
         pause();
         addUploadRequest(uploadItem);
@@ -381,9 +329,9 @@ public class UploadManager implements UploadListenerManager {
     @Override
     public void onCancelled(UploadItem uploadItem, ApiResponse apiResponse) {
         logger.info(" onCancelled()");
-        notifyListenersCancelled(uploadItem);
+        notifyUploadListenerCancelled(uploadItem);
         // if there is an api error then re-add upload request.
-        if (apiResponse.hasError()) {
+        if (apiResponse != null && apiResponse.hasError()) {
             addUploadRequest(uploadItem);
         }
     }
