@@ -47,11 +47,6 @@ public class UploadManager implements UploadListenerManager {
         executor = new PausableThreadPoolExecutor(maximumThreadCount, workQueue);
     }
 
-    public UploadListener getUploadListener() {
-        logger.info("getUploadListener()");
-        return uiListener;
-    }
-
     public void setUploadListener(UploadListener uiListener) {
         logger.info("setUploadListener");
         this.uiListener = uiListener;
@@ -69,7 +64,14 @@ public class UploadManager implements UploadListenerManager {
 
     public void clearUploadQueue() {
         logger.info("clearUploadQueue()");
+        boolean isPaused = isPaused();
+        if (!isPaused) {
+            pause();
+        }
         executor.purge();
+        if (!isPaused) {
+            resume();
+        }
     }
 
     /**
