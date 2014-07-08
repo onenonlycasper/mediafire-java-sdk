@@ -92,6 +92,7 @@ public class ResumableProcess implements Runnable {
 
         // loop through our chunks and create http post with header data and send after we are done looping,
         // let the listener know we are completed
+        UploadResumableResponse response = null;
 
         for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {
             logger.info("    enter chunk upload loop()");
@@ -137,8 +138,7 @@ public class ResumableProcess implements Runnable {
                 // generate the get parameters
                 HashMap<String, String> parameters = generateGetParameters(actionOnDuplicate, versionControl, uploadFolderKey);
 
-                UploadResumableResponse response = mediaFire.apiCall().upload.resumableUpload(parameters, null, headers, uploadChunk);
-
+                response = mediaFire.apiCall().upload.resumableUpload(parameters, null, headers, uploadChunk);
 
                 // set poll upload key if possible
                 if (shouldSetPollUploadKey(response)) {
@@ -162,7 +162,6 @@ public class ResumableProcess implements Runnable {
                         return;
                     }
                 }
-
             }
 
             // update listeners on progress each loop
@@ -170,7 +169,7 @@ public class ResumableProcess implements Runnable {
         } // end loop
 
         // let the listeners know that upload has attempted to upload all chunks.
-        notifyManagerCompleted();
+        notifyManagerCompleted(response);
     }
 
     private void exceptionHandler(Exception e) {
@@ -195,10 +194,10 @@ public class ResumableProcess implements Runnable {
     /**
      * notifies the upload manager attached to the upload item that this process has finished.
      */
-    private void notifyManagerCompleted() {
+    private void notifyManagerCompleted(UploadResumableResponse response) {
         logger.info(" notifyManagerCompleted()");
         if (uploadManager != null) {
-            uploadManager.onResumableCompleted(uploadItem);
+            uploadManager.onResumableCompleted(uploadItem, response);
         }
     }
 

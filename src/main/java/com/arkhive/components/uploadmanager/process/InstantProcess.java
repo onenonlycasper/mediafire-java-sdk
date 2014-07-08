@@ -77,7 +77,7 @@ public class InstantProcess implements Runnable {
 
         if (!response.getQuickkey().isEmpty()) {
             // notify listeners that check has completed
-            notifyManagerCompleted();
+            notifyManagerCompleted(response);
         } else {
             notifyManagerCancelled(response);
         }
@@ -120,10 +120,10 @@ public class InstantProcess implements Runnable {
     /**
      * notifies listeners that this process has completed successfully.
      */
-    private void notifyManagerCompleted() {
+    private void notifyManagerCompleted(UploadInstantResponse response) {
         //notify manager that the upload is completed
         if (uploadManager != null) {
-            uploadManager.onInstantCompleted(uploadItem);
+            uploadManager.onInstantCompleted(uploadItem, response);
         }
     }
 

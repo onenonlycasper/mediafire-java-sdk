@@ -1,8 +1,6 @@
 package com.arkhive.components.uploadmanager.listeners;
 
-import com.arkhive.components.core.module_api.responses.ApiResponse;
-import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
-import com.arkhive.components.core.module_api.responses.UploadPollResponse;
+import com.arkhive.components.core.module_api.responses.*;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 
 /**
@@ -40,14 +38,14 @@ public interface UploadListenerManager {
      *
      * @param uploadItem - the item being uploaded.
      */
-    public void onInstantCompleted(UploadItem uploadItem);
+    public void onInstantCompleted(UploadItem uploadItem, UploadInstantResponse response);
 
     /**
      * Called when the UploadProcess has completed it's cycle.
      *
      * @param uploadItem - the item being uploaded.
      */
-    public void onResumableCompleted(UploadItem uploadItem);
+    public void onResumableCompleted(UploadItem uploadItem, UploadResumableResponse response);
 
     /**
      * Called when the PollUploadProcess has completed it's cycle.
