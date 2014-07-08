@@ -17,7 +17,8 @@ import java.util.ArrayList;
  */
 public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
-    private int checkCount;
+    private int uploadAttemptCount;
+    private boolean cancelled;
     private String fileName;
     private UploadOptions options;
     private final FileData fileData;
@@ -25,7 +26,6 @@ public class UploadItem {
     private ResumableBitmap bitmap;
     private String pollUploadKey;
     private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
-    private int checkCalledCount;
 
     /**
      * Constructor which takes a path and upload attempts.
@@ -58,8 +58,7 @@ public class UploadItem {
         pollUploadKey = "";
         chunkData = new ChunkData();
         bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
-        checkCount = 0;
-        checkCalledCount = 0;
+        uploadAttemptCount = 0;
     }
 
     /**
@@ -72,18 +71,18 @@ public class UploadItem {
         this(path, null);
     }
 
-    public int getCheckCount() {
-        logger.info("getCheckCount(" + checkCount + ")");
-        checkCount++;
-        return checkCount;
+    public boolean isCancelled() {
+        return cancelled;
     }
 
-    public int getCheckCalledCount() {
-        return checkCalledCount;
+    public void cancelUpload() {
+        cancelled = true;
     }
 
-    public void calledCheck() {
-        checkCalledCount++;
+    public int getUploadAttemptCount() {
+        logger.info("getUploadAttemptCount(" + uploadAttemptCount + ")");
+        uploadAttemptCount++;
+        return uploadAttemptCount;
     }
 
     /**
