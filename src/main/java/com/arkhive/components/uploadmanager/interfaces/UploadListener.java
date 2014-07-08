@@ -1,4 +1,4 @@
-package com.arkhive.components.uploadmanager.listeners;
+package com.arkhive.components.uploadmanager.interfaces;
 
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 
