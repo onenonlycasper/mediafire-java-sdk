@@ -58,13 +58,13 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
             return;
         }
 
+        uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
+        uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
         if (checkResponse.getStorageLimitExceeded()) {
             logger.info("storage limit is exceeded");
             storageLimitExceeded(uploadItem);
         } else if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             // all units are ready and we have the poll upload key. start polling.
-            uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
-            uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
             PollProcess process = new PollProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         } else {
@@ -145,18 +145,16 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
             return;
         }
 
+        uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
+        uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
         if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             logger.info("all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
-            uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
-            uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
             PollProcess process = new PollProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         } else {
             logger.info("all units not ready or do not have poll upload key");
             // either we don't have the poll upload key or all units are not ready
-            uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
-            uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
             ResumableProcess process = new ResumableProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         }
