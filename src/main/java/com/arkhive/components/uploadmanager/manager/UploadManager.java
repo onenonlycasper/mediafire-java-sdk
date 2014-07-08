@@ -16,7 +16,8 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * UploadManager moves UploadItems from a Collection into Threads.
@@ -43,14 +44,7 @@ public class UploadManager implements UploadListenerManager {
         this.mediaFire = mediaFire; // set media fire reference
         MAX_UPLOAD_ATTEMPTS = maximumUploadAttempts;
         workQueue = new LinkedBlockingQueue<Runnable>();
-        ThreadFactory threadFactory = Executors.defaultThreadFactory();
-        executor = new PausableThreadPoolExecutor( // establish thread pool executor
-                maximumThreadCount,
-                maximumThreadCount,
-                5000,
-                TimeUnit.MILLISECONDS,
-                workQueue,
-                threadFactory);
+        executor = new PausableThreadPoolExecutor(maximumThreadCount, workQueue);
     }
 
     public UploadListener getUploadListener() {
