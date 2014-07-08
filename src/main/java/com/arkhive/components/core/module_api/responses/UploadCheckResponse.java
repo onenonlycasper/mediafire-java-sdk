@@ -1,15 +1,8 @@
 package com.arkhive.components.core.module_api.responses;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This class represents the data structure received (response) by a call to /api/upload/check.php.
- *
- * @author
- */
 public class UploadCheckResponse extends ApiResponse {
     private String hash_exists;
     private String in_account;
@@ -23,11 +16,6 @@ public class UploadCheckResponse extends ApiResponse {
     private String storage_limit_exceeded;
     ResumableUpload resumable_upload;
 
-    /**
-     * This class represents part of the data structure for the pre-upload response.
-     *
-     * @author
-     */
     public class ResumableUpload {
         private String all_units_ready;
         private String number_of_units;
@@ -60,11 +48,6 @@ public class UploadCheckResponse extends ApiResponse {
         }
     }
 
-    /**
-     * This class represents part of the data structure received from upload/check.php response.
-     *
-     * @author
-     */
     public class Bitmap {
         private String count;
         private String[] words;

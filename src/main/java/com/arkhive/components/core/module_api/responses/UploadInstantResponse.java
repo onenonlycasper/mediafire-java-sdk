@@ -1,26 +1,12 @@
 package com.arkhive.components.core.module_api.responses;
 
-
-
-/**
- * This class represents the response received as a data structure when making the api call api/upload/pre_upload.php.
- *
- * @author
- */
 public class UploadInstantResponse extends ApiResponse {
     private String quickkey;
     private String filename;
-
     private String device_revision;
-
     private Revision newrevision;
     private Revision newfolderrevision;
 
-    /**
-     * This class represents part of the data structure for the upload/instant.php response.
-     *
-     * @author
-     */
     public class Revision {
         private String revision;
         private String epoch;

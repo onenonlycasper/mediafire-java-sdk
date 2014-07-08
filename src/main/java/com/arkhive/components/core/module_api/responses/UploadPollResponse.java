@@ -4,20 +4,9 @@ import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
 import com.arkhive.components.core.module_api.codes.PollResultCode;
 import com.arkhive.components.core.module_api.codes.PollStatusCode;
 
-/**
- * This class represents the data structure received (response)
- * by a call to /api/upload/poll_upload.php.
- *
- * @author
- */
 public class UploadPollResponse extends ApiResponse {
     private DoUpload doupload;
 
-    /**
-     * This represents the doupload portion of the poll upload response data structure.
-     *
-     * @author
-     */
     public class DoUpload {
         private String result;
         private String status;

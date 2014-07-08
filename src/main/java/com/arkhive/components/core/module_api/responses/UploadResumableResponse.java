@@ -5,13 +5,7 @@ import com.arkhive.components.core.module_api.codes.ResumableResultCode;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This data structure represents response received by the response received from api call /api/upload/resumable.php.
- *
- * @author
- */
 public class UploadResumableResponse extends ApiResponse {
-    private String server;
     private DoUpload doupload;
     private ResumableUpload resumable_upload;
 
@@ -96,13 +90,6 @@ public class UploadResumableResponse extends ApiResponse {
                 }
             }
         }
-    }
-
-    public String getServer() {
-        if (server == null) {
-            return "";
-        }
-        return server;
     }
 
     public DoUpload getDoUpload() {
