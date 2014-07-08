@@ -6,8 +6,8 @@ import com.arkhive.components.core.module_api.codes.PollResultCode;
 import com.arkhive.components.core.module_api.codes.PollStatusCode;
 import com.arkhive.components.core.module_api.responses.*;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
-import com.arkhive.components.uploadmanager.listeners.UploadListener;
-import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
+import com.arkhive.components.uploadmanager.interfaces.UploadListener;
+import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.process.CheckProcess;
 import com.arkhive.components.uploadmanager.process.InstantProcess;
 import com.arkhive.components.uploadmanager.process.PollProcess;
@@ -25,7 +25,7 @@ import java.util.concurrent.*;
  * @author
  */
 public class UploadManager implements UploadListenerManager {
-    private static final int MAX_CHECK_COUNT = 7;
+    private final int MAX_UPLOAD_ATTEMPTS;
     private UploadListener uiListener;
     private final PausableThreadPoolExecutor executor;
     private final BlockingQueue<Runnable> workQueue;
@@ -39,8 +39,9 @@ public class UploadManager implements UploadListenerManager {
      * @param mediaFire     The SessionManager to use for API operations.
      * @param maximumThreadCount The maximum number of threads to use for uploading.
      */
-    public UploadManager(MediaFire mediaFire, int maximumThreadCount) {
+    public UploadManager(MediaFire mediaFire, int maximumThreadCount, int maximumUploadAttempts) {
         this.mediaFire = mediaFire; // set media fire reference
+        MAX_UPLOAD_ATTEMPTS = maximumUploadAttempts;
         workQueue = new LinkedBlockingQueue<Runnable>();
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         executor = new PausableThreadPoolExecutor( // establish thread pool executor
@@ -100,7 +101,7 @@ public class UploadManager implements UploadListenerManager {
             return;
         }
 
-        if (uploadItem.getUploadAttemptCount() < MAX_CHECK_COUNT) {
+        if (uploadItem.getUploadAttemptCount() < MAX_UPLOAD_ATTEMPTS) {
             CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         }
@@ -160,7 +161,7 @@ public class UploadManager implements UploadListenerManager {
         logger.info(" onCheckCompleted()");
         //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
-        if (uploadItem.getUploadAttemptCount() > MAX_CHECK_COUNT || uploadItem.isCancelled()) {
+        if (uploadItem.getUploadAttemptCount() > MAX_UPLOAD_ATTEMPTS || uploadItem.isCancelled()) {
             notifyUploadListenerCancelled(uploadItem);
             return;
         }
