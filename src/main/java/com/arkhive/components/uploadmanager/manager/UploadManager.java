@@ -15,7 +15,7 @@ import java.util.concurrent.BlockingQueue;
  *
  * @author
  */
-public class UploadManager extends AbstractUploadManager {
+public class UploadManager extends UploadManagerWorker {
     private final Logger logger = LoggerFactory.getLogger(UploadManager.class);
     private UploadListener uiListener;
     /**

@@ -21,14 +21,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by Chris Najar on 7/8/2014.
  */
-public abstract class AbstractUploadManager implements UploadListenerManager, Pausable {
-    private final Logger logger = LoggerFactory.getLogger(AbstractUploadManager.class);
+public abstract class UploadManagerWorker implements UploadListenerManager, Pausable {
+    private final Logger logger = LoggerFactory.getLogger(UploadManagerWorker.class);
     protected final int MAX_UPLOAD_ATTEMPTS;
     protected final MediaFire mediaFire;
     protected final PausableThreadPoolExecutor executor;
     protected final LinkedBlockingQueue<Runnable> workQueue;
 
-    public AbstractUploadManager(MediaFire mediaFire, int maxUploadAttempts, int maxThreadQueue) {
+    public UploadManagerWorker(MediaFire mediaFire, int maxUploadAttempts, int maxThreadQueue) {
         this.mediaFire = mediaFire;
         this.workQueue = new LinkedBlockingQueue<Runnable>();
         executor = new PausableThreadPoolExecutor(maxThreadQueue, workQueue);
@@ -58,8 +58,6 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
             return;
         }
 
-        uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
-        uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
         if (checkResponse.getStorageLimitExceeded()) {
             logger.info("storage limit is exceeded");
             storageLimitExceeded(uploadItem);
@@ -145,8 +143,6 @@ public abstract class AbstractUploadManager implements UploadListenerManager, Pa
             return;
         }
 
-        uploadItem.getChunkData().setNumberOfUnits(checkResponse.getResumableUpload().getNumberOfUnits());
-        uploadItem.getChunkData().setUnitSize(checkResponse.getResumableUpload().getUnitSize());
         if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             logger.info("all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
