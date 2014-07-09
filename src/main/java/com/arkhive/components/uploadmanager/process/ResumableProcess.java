@@ -41,7 +41,6 @@ public class ResumableProcess extends UploadProcess {
         //get file size. this will be used for chunks.
         FileData fileData = uploadItem.getFileData();
         long fileSize = fileData.getFileSize();
-        logger.info(" size of file: " + fileSize);
 
         String encodedShortFileName;
         try {
@@ -56,8 +55,6 @@ public class ResumableProcess extends UploadProcess {
         ChunkData chunkData = uploadItem.getChunkData();
         int numChunks = chunkData.getNumberOfUnits();
         int unitSize = chunkData.getUnitSize();
-        logger.info(" number of chunks: " + numChunks);
-        logger.info(" size of units: " + unitSize);
 
         // loop through our chunks and create http post with header data and send after we are done looping,
         // let the listener know we are completed
@@ -70,10 +67,7 @@ public class ResumableProcess extends UploadProcess {
             }
 
             // if the bitmap says this chunk number is uploaded then we can just skip it, if not, we upload it.
-            if (uploadItem.getBitmap().isUploaded(chunkNumber)) {
-                logger.info(" chunk #" + chunkNumber + " already uploaded");
-            } else {
-                logger.info(" chunk #" + chunkNumber + " not uploaded yet");
+            if (!uploadItem.getBitmap().isUploaded(chunkNumber)) {
                 // get the chunk size for this chunk
                 int chunkSize = getChunkSize(chunkNumber, numChunks, fileSize, unitSize);
 
@@ -86,17 +80,19 @@ public class ResumableProcess extends UploadProcess {
                 String chunkHash = resumableChunkInfo.getChunkHash();
                 byte[] uploadChunk = resumableChunkInfo.getUploadChunk();
 
+                printDebugCurrentChunk(chunkNumber, numChunks, chunkSize, unitSize, fileSize, chunkHash, uploadChunk);
+
                 // generate the post headers
                 HashMap<String, String> headers = generatePostHeaders(encodedShortFileName, fileSize, chunkNumber, chunkHash, chunkSize);
-
                 // generate the get parameters
                 HashMap<String, String> parameters = generateGetParameters();
+
+                printDebugRequestData(headers, parameters);
 
                 response = mediaFire.apiCall().upload.resumableUpload(parameters, null, headers, uploadChunk);
 
                 // set poll upload key if possible
                 if (shouldSetPollUploadKey(response)) {
-                    logger.info(" have a poll upload key: " + response.getDoUpload().getPollUploadKey());
                     uploadItem.setPollUploadKey(response.getDoUpload().getPollUploadKey());
                 }
 
@@ -118,6 +114,25 @@ public class ResumableProcess extends UploadProcess {
 
         // let the listeners know that upload has attempted to upload all chunks.
         notifyListenerCompleted(response);
+    }
+
+    private void printDebugRequestData(HashMap<String, String> headers, HashMap<String, String> parameters) {
+        logger.info("headers: " + headers.toString());
+        logger.info("parameters: " + parameters.toString());
+    }
+
+    private void printDebugCurrentChunk(int chunkNumber, int numChunks, int chunkSize, int unitSize, long fileSize, String chunkHash, byte[] uploadChunk) {
+        logger.info("current chunk: " + chunkNumber);
+        logger.info("total chunks: " + numChunks);
+        logger.info("current chunk size: " + chunkSize);
+        logger.info("normal chunk size: " + unitSize);
+        logger.info("total file size: " + fileSize);
+        logger.info("current chunk hash: " + chunkHash);
+        StringBuilder sb = new StringBuilder();
+        for (byte b : uploadChunk) {
+            sb.append(b);
+        }
+        logger.info("current upload chunk bytes: " + sb.toString());
     }
 
     private void updateProgressForListener(int totalChunks) {
