@@ -13,6 +13,7 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Runnable for making api call to upload/resumable.php. *
@@ -105,16 +106,30 @@ public class ResumableProcess extends UploadProcess {
                 }
             }
 
-            // update listeners on progress each loop
-            notifyListenerOnProgressUpdate(chunkNumber, numChunks);
+            updateProgressForListener(numChunks);
 
             // update the response bitmap
-            UploadResumableResponse.ResumableUpload.Bitmap bitmap = response.getResumableUpload().getBitmap();
-            uploadItem.setBitmap(new ResumableBitmap(bitmap.getCount(), bitmap.getWords()));
+            int count = response.getResumableUpload().getBitmap().getCount();
+            List<Integer> words = response.getResumableUpload().getBitmap().getWords();
+            ResumableBitmap bitmap = new ResumableBitmap(count, words);
+            uploadItem.setBitmap(bitmap);
+            logger.info("(" + uploadItem.getFileData().getFilePath() + ") upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, (" + uploadItem.getBitmap().getWords().toString() + ") words.");
         } // end loop
 
         // let the listeners know that upload has attempted to upload all chunks.
         notifyListenerCompleted(response);
+    }
+
+    private void updateProgressForListener(int totalChunks) {
+        logger.info("updateProgressForListener()");
+        // give number of chunks/numChunks for onProgressUpdate
+        int numUploaded = 0;
+        for (int i = 0; i < totalChunks; i++) {
+            if (uploadItem.getBitmap().isUploaded(i)) {
+                numUploaded++;
+            }
+        }
+        notifyListenerOnProgressUpdate(numUploaded, totalChunks);
     }
 
     public boolean shouldCancelUpload(UploadResumableResponse response) {
