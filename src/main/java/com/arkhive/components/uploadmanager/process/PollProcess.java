@@ -5,16 +5,12 @@ import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
 import com.arkhive.components.core.module_api.codes.PollResultCode;
 import com.arkhive.components.core.module_api.codes.PollStatusCode;
 import com.arkhive.components.core.module_api.responses.UploadPollResponse;
-import com.arkhive.components.uploadmanager.listeners.UploadListenerManager;
+import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is the Runnable which executes the call /api/upload/poll_upload.
@@ -27,14 +23,10 @@ import java.util.Map;
  *
  * @author
  */
-public class PollProcess implements Runnable {
-    private static final String TAG = PollProcess.class.getSimpleName();
-    private static final long TIME_BETWEEN_POLLS = 10000;
-    private static final int MAX_POLLS = 12;
-    private final MediaFire mediaFire;
-    private final UploadItem uploadItem;
-    private final UploadListenerManager uploadManager;
+public class PollProcess extends UploadProcess {
     private final Logger logger = LoggerFactory.getLogger(PollProcess.class);
+    private static final long TIME_BETWEEN_POLLS = 2000;
+    private static final int MAX_POLLS = 60;
 
     /**
      * Constructor for an upload with a listener. This constructor uses sleepTime for the loop sleep time with
@@ -43,40 +35,29 @@ public class PollProcess implements Runnable {
      * @param mediaFire - the session to use for this upload process
      * @param uploadItem     - the item to be uploaded
      */
-    public PollProcess(MediaFire mediaFire, UploadListenerManager uploadManager, UploadItem uploadItem) {
-        this.mediaFire = mediaFire;
-        this.uploadManager = uploadManager;
-        this.uploadItem = uploadItem;
+    public PollProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
+        super(mediaFire, uploadItem, uploadListenerManager);
     }
 
     @Override
-    public void run() {
-        System.out.println(TAG + " sendRequest()");
-        poll();
-    }
-
-    /**
-     * start the poll upload process with a maximum of 2 minutes of polling with the following process:
-     * 1. create GET request
-     * 2. send GET request
-     * 3. get response
-     * 4. check response data
-     * 5. step 1 again until 2 minutes is up, there is an error, or status code 99 (no more requests for this key)
-     */
-    private void poll() {
-        Thread.currentThread().setPriority(3); //uploads are set to low priority
+    protected void doUploadProcess() {
+        logger.info(" doUploadProcess()");
         //generate our request string
         HashMap<String, String> keyValue = generateGetParameters();
 
-        //loop until we have made 60 attempts (2 minutes)
         int pollCount = 0;
-        UploadPollResponse response;
         do {
-            //increment counter
+            // increment counter
             pollCount++;
-            response = mediaFire.apiCall().upload.pollUpload(keyValue, null);
+            // get api response.
+            UploadPollResponse response = mediaFire.apiCall().upload.pollUpload(keyValue, null);
 
-            System.out.println(TAG + " received error code: " + response.getErrorCode());
+            if (response == null) {
+                notifyListenerLostConnection();
+                return;
+            }
+
+            logger.info(" received error code: " + response.getErrorCode());
             //check to see if we need to call pollUploadCompleted or loop again
             switch (response.getErrorCode()) {
                 case NO_ERROR:
@@ -87,131 +68,59 @@ public class PollProcess implements Runnable {
                     //      second  -   fileerror code no error? yes, carry on old chap!. no, cancel upload because error.
                     //      third   -   status code 99 (no more requests)? yes, done. no, continue.
                     if (response.getDoUpload().getResultCode() != PollResultCode.SUCCESS) {
-                        System.out.println(TAG + " result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
-                        notifyManagerCancelled(response);
+                        logger.info(" result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
+                        notifyListenerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getFileErrorCode() != PollFileErrorCode.NO_ERROR) {
-                        System.out.println(TAG + " result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
-                        System.out.println(TAG + " file path: " + uploadItem.getFileData().getFilePath());
-                        System.out.println(TAG + " file hash: " + uploadItem.getFileData().getFileHash());
-                        System.out.println(TAG + " file size: " + uploadItem.getFileData().getFileSize());
-                        notifyManagerCancelled(response);
+                        logger.info(" result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
+                        logger.info(" file path: " + uploadItem.getFileData().getFilePath());
+                        logger.info(" file hash: " + uploadItem.getFileData().getFileHash());
+                        logger.info(" file size: " + uploadItem.getFileData().getFileSize());
+                        notifyListenerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getStatusCode() == PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY) {
-                        System.out.println(TAG + " status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
-                        notifyManagerCompleted(response);
+                        logger.info(" status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
+                        notifyListenerCompleted(response);
                         return;
                     }
                     break;
                 default:
                     // stop polling and inform listeners we cancel because API result wasn't "Success"
-                    notifyManagerCancelled(response);
+                    notifyListenerCancelled(response);
                     return;
             }
 
-            //wait 2 seconds before next api call
+            //wait before next api call
             try {
                 Thread.sleep(TIME_BETWEEN_POLLS);
             } catch (InterruptedException e) {
-                System.out.println(TAG + " Exception: " + e);
-                notifyManagerCompleted(response);
-                Thread.currentThread().interrupt();
+                logger.info(" Exception: " + e);
+                notifyListenerException(e);
+                return;
             }
 
+            if (uploadItem.isCancelled()) {
+                pollCount = MAX_POLLS;
+            }
+
+            if (pollCount >= MAX_POLLS) {
+                // we exceeded our attempts. inform listener that the upload is cancelled. in this case it is because
+                // we ran out of attempts.
+                notifyListenerCompleted(response);
+            }
         } while (pollCount < MAX_POLLS);
-
-        // we exceeded our attempts. inform listener that the upload is cancelled. in this case it is because
-        // we ran out of attempts.
-        notifyManagerCompleted(response);
     }
 
-    public void notifyListenersException(UploadItem uploadItem, Exception exception) {
-        System.out.println(TAG + " notifyListenersException()");
-        if (uploadManager != null) {
-            uploadManager.onProcessException(uploadItem, exception);
-        }
-    }
-
-    /**
-     * notifies the listeners that this upload has successfully completed.
-     *
-     * @param response - poll response.
-     */
-    public void notifyManagerCompleted(UploadPollResponse response) {
-        System.out.println(TAG + " notifyManagerCompleted()");
-        if (uploadManager != null) {
-            uploadManager.onPollCompleted(uploadItem, response);
-        }
-    }
-
-    /**
-     * notifies the upload manager that the process has been cancelled and then notifies other listeners.
-     *
-     * @param response - poll response.
-     */
-    private void notifyManagerCancelled(UploadPollResponse response) {
-        System.out.println(TAG + " notifyManagerCancelled()");
-        if (uploadManager != null) {
-            uploadManager.onCancelled(uploadItem, response);
-        }
-    }
-
-    /**
-     * generates a HashMap of the GET parameters.
-     *
-     * @return - map of request parameters.
-     */
     private HashMap<String, String> generateGetParameters() {
-        System.out.println(TAG + " generateGetParameters()");
+        logger.info(" generateGetParameters()");
         HashMap<String, String> keyValue = new HashMap<String, String>();
         keyValue.put("key", uploadItem.getPollUploadKey());
         keyValue.put("response_format", "json");
         return keyValue;
     }
 
-    /**
-     * lets listeners know that this process has been cancelled for this item. manager is informed of lost connection.
-     */
-    private void notifyManagerLostConnection() {
-        System.out.println(TAG + " notifyManagerLostConnection()");
-        // notify listeners that connection was lost
-        if (uploadManager != null) {
-            uploadManager.onLostConnection(uploadItem);
-        }
-    }
-
-    private String getQueryString(String uri, Map<String, String> keyValue) {
-        StringBuilder str = new StringBuilder();
-        String builtQuery;
-        str.append("?");
-
-        for (Map.Entry<String, String> e : keyValue.entrySet()) {
-            str.append(e.getKey()).append("=").append(e.getValue()).append("&");
-        }
-
-        builtQuery = str.toString();
-        builtQuery = uri + builtQuery.substring(0, builtQuery.length() - 1);
-        return builtQuery;
-    }
-
-    /**
-     * converts a String received from JSON format into a response String.
-     *
-     * @param response - the response received in JSON format
-     * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
-     */
-    private String getResponseString(String response) {
-        JsonParser parser = new JsonParser();
-        JsonElement element = parser.parse(response);
-        if (element.isJsonObject()) {
-            JsonObject jsonResponse = element.getAsJsonObject().get("response").getAsJsonObject();
-            return jsonResponse.toString();
-        } else {
-            return "";
-        }
-    }
 }

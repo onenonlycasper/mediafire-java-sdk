@@ -17,7 +17,8 @@ import java.util.ArrayList;
  */
 public class UploadItem {
     private static final String TAG = UploadItem.class.getSimpleName();
-    private int checkCount;
+    private int uploadAttemptCount;
+    private boolean cancelled;
     private String fileName;
     private UploadOptions options;
     private final FileData fileData;
@@ -25,7 +26,6 @@ public class UploadItem {
     private ResumableBitmap bitmap;
     private String pollUploadKey;
     private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
-    private int checkCalledCount;
 
     /**
      * Constructor which takes a path and upload attempts.
@@ -36,7 +36,7 @@ public class UploadItem {
      *                      Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, UploadOptions uploadOptions) {
-        System.out.println(TAG + " UploadItem created");
+        logger.info(" UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
@@ -58,8 +58,7 @@ public class UploadItem {
         pollUploadKey = "";
         chunkData = new ChunkData();
         bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
-        checkCount = 0;
-        checkCalledCount = 0;
+        uploadAttemptCount = 0;
     }
 
     /**
@@ -72,18 +71,18 @@ public class UploadItem {
         this(path, null);
     }
 
-    public int getCheckCount() {
-        logger.info("getCheckCount(" + checkCount + ")");
-        checkCount++;
-        return checkCount;
+    public boolean isCancelled() {
+        return cancelled;
     }
 
-    public int getCheckCalledCount() {
-        return checkCalledCount;
+    public void cancelUpload() {
+        cancelled = true;
     }
 
-    public void calledCheck() {
-        checkCalledCount++;
+    public int getUploadAttemptCount() {
+        logger.info("getUploadAttemptCount(" + uploadAttemptCount + ")");
+        uploadAttemptCount++;
+        return uploadAttemptCount;
     }
 
     /**
@@ -92,7 +91,7 @@ public class UploadItem {
      * @return the filename.
      */
     public String getFileName() {
-        System.out.println(TAG + " getFileName()");
+        logger.info(" getFileName()");
         if (!options.getCustomFileName().isEmpty()) {
             fileName = options.getCustomFileName();
         }
@@ -105,7 +104,7 @@ public class UploadItem {
      * @return the file data struct.
      */
     public FileData getFileData() {
-        System.out.println(TAG + " getFileData()");
+        logger.info(" getFileData()");
         return fileData;
     }
 
@@ -115,7 +114,7 @@ public class UploadItem {
      * @return - the poll upload key.
      */
     public String getPollUploadKey() {
-        System.out.println(TAG + " getPollUploadKey()");
+        logger.info(" getPollUploadKey()");
         return pollUploadKey;
     }
 
@@ -125,7 +124,7 @@ public class UploadItem {
      * @return - the upload options struct.
      */
     public UploadOptions getUploadOptions() {
-        System.out.println(TAG + " getUploadOptions()");
+        logger.info(" getUploadOptions()");
         if (options == null) {
             options = new UploadOptions();
         }
@@ -138,7 +137,7 @@ public class UploadItem {
      * @return - the chunkdata struct.
      */
     public ChunkData getChunkData() {
-        System.out.println(TAG + " getChunkData()");
+        logger.info(" getChunkData()");
         if (chunkData == null) {
             chunkData = new ChunkData();
         }
@@ -151,9 +150,9 @@ public class UploadItem {
      * @return - the resumablebitmap struct.
      */
     public ResumableBitmap getBitmap() {
-        System.out.println(TAG + " getBitmap()");
+        logger.info(" getBitmap()");
         if (bitmap == null) {
-            System.out.println(TAG + "   resumable bitmap reference lost");
+            logger.info("   resumable bitmap reference lost");
             bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
         }
         return bitmap;
@@ -165,7 +164,7 @@ public class UploadItem {
      * @param bitmap - the resumablebitmap to set.
      */
     public void setBitmap(ResumableBitmap bitmap) {
-        System.out.println(TAG + " setBitmap()");
+        logger.info(" setBitmap()");
         this.bitmap = bitmap;
     }
 
@@ -175,7 +174,7 @@ public class UploadItem {
      * @param pollUploadKey - the polluploadkey to set.
      */
     public void setPollUploadKey(String pollUploadKey) {
-        System.out.println(TAG + " setPollUploadKey()");
+        logger.info(" setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
     }
 
@@ -185,7 +184,7 @@ public class UploadItem {
      * @param path path of the file.
      */
     private void setFileName(String path) {
-        System.out.println(TAG + " setFileName()");
+        logger.info(" setFileName()");
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {
@@ -193,5 +192,28 @@ public class UploadItem {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException("UTF-8 not supported");
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+
+        if (this.getClass() != object.getClass()) {
+            return false;
+        }
+
+        if (!fileData.getFilePath().equals(((UploadItem) object).fileData.getFilePath())) {
+            return false;
+        }
+
+        if (fileData.getFileHash() != null && ((UploadItem) object).fileData.getFileHash() != null) {
+            if (!fileData.getFileHash().equals(((UploadItem) object).fileData.getFileHash())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

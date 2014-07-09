@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class ResumableBitmap {
     private final int count;
-    private List<Integer> words = null;
-    private List<Boolean> uploadUnits = null;
+    private List<Integer> words;
+    private List<Boolean> uploadUnits;
     private final Logger logger = LoggerFactory.getLogger(ResumableBitmap.class);
 
     /**
@@ -26,18 +26,11 @@ public class ResumableBitmap {
      * @param words
      */
     public ResumableBitmap(int count, List<Integer> words) {
-        this.count = 0;
-        this.words = new ArrayList<Integer>();
+        this.count = count;
+        this.words = words;
         decodeBitmap();
     }
 
-    /*============================
-     * private methods
-     *============================*/
-
-    /**
-     * decodes the Bitmap received (given parameters count, [words]).
-     */
     private void decodeBitmap() {
         List<Boolean> uploadUnits = new ArrayList<Boolean>();
 
@@ -59,38 +52,27 @@ public class ResumableBitmap {
 
         this.uploadUnits = uploadUnits;
     }
-    
-    /*============================
-     * public methods
-     *============================*/
 
-    /**
-     * Used to find out if a chunk has been uploaded or not.
-     *
-     * @param chunkId - the id of the chunk to be checked.
-     * @return - true if uploaded, false if not.
-     */
     public boolean isUploaded(int chunkId) {
+        logger.info("getUploadUnits()");
         if (uploadUnits.isEmpty()) {
             return false;
         }
         return uploadUnits.get(uploadUnits.size() - 1 - chunkId);
     }
 
-    /**
-     * Gets the collection of Upload Units.
-     *
-     * @return - the collection of Upload Units.
-     */
     public List<Boolean> getUploadUnits() {
+        logger.info("getUploadUnits()");
         return uploadUnits;
     }
 
     public int getCount() {
+        logger.info("getCount()");
         return count;
     }
 
     public List<Integer> getWords() {
+        logger.info("getWords()");
         return words;
     }
 }

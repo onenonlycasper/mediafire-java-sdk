@@ -1,4 +1,4 @@
-package com.arkhive.components.uploadmanager.listeners;
+package com.arkhive.components.uploadmanager.interfaces;
 
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 
@@ -7,7 +7,7 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
  *
  * @author
  */
-public interface UploadListenerUI {
+public interface UploadListener {
 
     /**
      * Called when the upload process has been cancelled.
