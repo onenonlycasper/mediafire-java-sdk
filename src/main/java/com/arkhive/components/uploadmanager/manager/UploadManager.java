@@ -18,6 +18,7 @@ import java.util.concurrent.BlockingQueue;
 public class UploadManager extends UploadManagerWorker {
     private final Logger logger = LoggerFactory.getLogger(UploadManager.class);
     private UploadListener uiListener;
+
     /**
      * Constructor that takes a SessionManager, HttpInterface, and a maximum thread count.
      *
