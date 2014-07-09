@@ -5,6 +5,7 @@ import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
 import com.arkhive.components.core.module_api.codes.PollResultCode;
 import com.arkhive.components.core.module_api.codes.PollStatusCode;
 import com.arkhive.components.core.module_api.responses.*;
+import com.arkhive.components.core.module_errors.ErrorTracker;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 import com.arkhive.components.uploadmanager.interfaces.Pausable;
 import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
@@ -27,6 +28,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     protected final MediaFire mediaFire;
     protected final PausableThreadPoolExecutor executor;
     protected final LinkedBlockingQueue<Runnable> workQueue;
+    protected ErrorTracker errorTracker;
 
     public UploadManagerWorker(MediaFire mediaFire, int maxUploadAttempts, int maxThreadQueue) {
         this.mediaFire = mediaFire;
@@ -36,11 +38,14 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     }
 
     public abstract void addUploadRequest(UploadItem uploadItem);
-
     protected abstract void notifyUploadListenerStarted(UploadItem uploadItem);
     protected abstract void notifyUploadListenerCompleted(UploadItem uploadItem);
     protected abstract void notifyUploadListenerOnProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks);
     protected abstract void notifyUploadListenerCancelled(UploadItem uploadItem);
+
+    public void setErrorTracker(ErrorTracker errorTracker) {
+        this.errorTracker = errorTracker;
+    }
 
     @Override
     public void onStartedUploadProcess(UploadItem uploadItem) {
@@ -199,6 +204,9 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     public void onProcessException(UploadItem uploadItem, Exception exception) {
         logger.info("onProcessException()");
         logger.info("received exception: "+ exception);
+        if (errorTracker != null) {
+            errorTracker.trackError(UploadManagerWorker.class.getSimpleName(), exception);
+        }
         notifyUploadListenerCancelled(uploadItem);
     }
 
