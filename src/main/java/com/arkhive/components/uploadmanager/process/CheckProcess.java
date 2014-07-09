@@ -4,6 +4,7 @@ import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.ApiResponseCode;
 import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
 import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
+import com.arkhive.components.uploadmanager.uploaditem.ResumableBitmap;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CheckProcess extends UploadProcess {
@@ -53,6 +55,14 @@ public class CheckProcess extends UploadProcess {
             notifyListenerCancelled(response);
             return;
         }
+
+        uploadItem.getChunkData().setNumberOfUnits(response.getResumableUpload().getNumberOfUnits());
+        uploadItem.getChunkData().setUnitSize(response.getResumableUpload().getUnitSize());
+        int count = response.getResumableUpload().getBitmap().getCount();
+        List<Integer> words = response.getResumableUpload().getBitmap().getWords();
+        ResumableBitmap bitmap = new ResumableBitmap(count, words);
+        uploadItem.setBitmap(bitmap);
+        logger.info(uploadItem.getFileData().getFilePath() + " upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, " + uploadItem.getBitmap().getWords().toString() + " words.");
 
         // notify listeners that check has completed
         notifyListenerCompleted(response);
