@@ -41,7 +41,6 @@ public class ResumableProcess extends UploadProcess {
         //get file size. this will be used for chunks.
         FileData fileData = uploadItem.getFileData();
         long fileSize = fileData.getFileSize();
-        logger.info(" size of file: " + fileSize);
 
         String encodedShortFileName;
         try {
@@ -56,13 +55,10 @@ public class ResumableProcess extends UploadProcess {
         ChunkData chunkData = uploadItem.getChunkData();
         int numChunks = chunkData.getNumberOfUnits();
         int unitSize = chunkData.getUnitSize();
-        logger.info(" number of chunks: " + numChunks);
-        logger.info(" size of units: " + unitSize);
 
         // loop through our chunks and create http post with header data and send after we are done looping,
         // let the listener know we are completed
         UploadResumableResponse response = null;
-
         for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {
             if (uploadItem.isCancelled()) {
                 notifyListenerCancelled(response);
@@ -70,10 +66,7 @@ public class ResumableProcess extends UploadProcess {
             }
 
             // if the bitmap says this chunk number is uploaded then we can just skip it, if not, we upload it.
-            if (uploadItem.getBitmap().isUploaded(chunkNumber)) {
-                logger.info(" chunk #" + chunkNumber + " already uploaded");
-            } else {
-                logger.info(" chunk #" + chunkNumber + " not uploaded yet");
+            if (!uploadItem.getBitmap().isUploaded(chunkNumber)) {
                 // get the chunk size for this chunk
                 int chunkSize = getChunkSize(chunkNumber, numChunks, fileSize, unitSize);
 
@@ -86,17 +79,19 @@ public class ResumableProcess extends UploadProcess {
                 String chunkHash = resumableChunkInfo.getChunkHash();
                 byte[] uploadChunk = resumableChunkInfo.getUploadChunk();
 
+                printDebugCurrentChunk(chunkNumber, numChunks, chunkSize, unitSize, fileSize, chunkHash, uploadChunk);
+
                 // generate the post headers
                 HashMap<String, String> headers = generatePostHeaders(encodedShortFileName, fileSize, chunkNumber, chunkHash, chunkSize);
-
                 // generate the get parameters
                 HashMap<String, String> parameters = generateGetParameters();
+
+                printDebugRequestData(headers, parameters);
 
                 response = mediaFire.apiCall().upload.resumableUpload(parameters, null, headers, uploadChunk);
 
                 // set poll upload key if possible
                 if (shouldSetPollUploadKey(response)) {
-                    logger.info(" have a poll upload key: " + response.getDoUpload().getPollUploadKey());
                     uploadItem.setPollUploadKey(response.getDoUpload().getPollUploadKey());
                 }
 
@@ -104,20 +99,46 @@ public class ResumableProcess extends UploadProcess {
                     notifyListenerCancelled(response);
                     return;
                 }
-            }
 
+                // update the response bitmap
+                int count = response.getResumableUpload().getBitmap().getCount();
+                List<Integer> words = response.getResumableUpload().getBitmap().getWords();
+                ResumableBitmap bitmap = new ResumableBitmap(count, words);
+                uploadItem.setBitmap(bitmap);
+                logger.info("(" + uploadItem.getFileData().getFilePath() + ") upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, (" + uploadItem.getBitmap().getWords().toString() + ") words.");
+
+                clearReferences(chunkSize, chunkHash, uploadChunk, headers, parameters);
+            }
             updateProgressForListener(numChunks);
 
-            // update the response bitmap
-            int count = response.getResumableUpload().getBitmap().getCount();
-            List<Integer> words = response.getResumableUpload().getBitmap().getWords();
-            ResumableBitmap bitmap = new ResumableBitmap(count, words);
-            uploadItem.setBitmap(bitmap);
-            logger.info("(" + uploadItem.getFileData().getFilePath() + ") upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, (" + uploadItem.getBitmap().getWords().toString() + ") words.");
         } // end loop
 
         // let the listeners know that upload has attempted to upload all chunks.
         notifyListenerCompleted(response);
+    }
+
+    private void clearReferences(int chunkSize, String chunkHash, byte[] uploadChunk, HashMap<String, String> headers, HashMap<String, String> parameters) {
+        chunkSize = 0;
+        chunkHash = null;
+        uploadChunk = null;
+        headers = null;
+        parameters = null;
+    }
+
+    private void printDebugRequestData(HashMap<String, String> headers, HashMap<String, String> parameters) {
+        logger.info("headers: " + headers.toString());
+        logger.info("parameters: " + parameters.toString());
+    }
+
+    private void printDebugCurrentChunk(int chunkNumber, int numChunks, int chunkSize, int unitSize, long fileSize, String chunkHash, byte[] uploadChunk) {
+        logger.info("current thread: " + Thread.currentThread().getName());
+        logger.info("current chunk: " + chunkNumber);
+        logger.info("total chunks: " + numChunks);
+        logger.info("current chunk size: " + chunkSize);
+        logger.info("normal chunk size: " + unitSize);
+        logger.info("total file size: " + fileSize);
+        logger.info("current chunk hash: " + chunkHash);
+        logger.info("upload chunk ");
     }
 
     private void updateProgressForListener(int totalChunks) {
@@ -129,6 +150,7 @@ public class ResumableProcess extends UploadProcess {
                 numUploaded++;
             }
         }
+        logger.info(numUploaded + "/" + totalChunks + " chunks uploaded");
         notifyListenerOnProgressUpdate(numUploaded, totalChunks);
     }
 
@@ -285,6 +307,7 @@ public class ResumableProcess extends UploadProcess {
      */
     private byte[] createUploadChunk(long unitSize, int chunkNumber, BufferedInputStream fileStream) throws IOException {
         logger.info(" createUploadChunk()");
+        logger.info(" creating new byte array of size: " + unitSize);
         byte[] readBytes = new byte[(int) unitSize];
         int offset = (int) (unitSize * chunkNumber);
         fileStream.skip(offset);
@@ -305,7 +328,6 @@ public class ResumableProcess extends UploadProcess {
      * @return The SHA-256 hash of an upload chunk.
      */
     private String getSHA256(byte[] chunkData) throws NoSuchAlgorithmException, IOException {
-        logger.info(" getSHA256()");
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         //test code
         InputStream in = new ByteArrayInputStream(chunkData, 0, chunkData.length);

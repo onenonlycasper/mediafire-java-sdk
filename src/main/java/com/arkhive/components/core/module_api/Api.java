@@ -157,7 +157,7 @@ public class Api {
      * @return The JsonElement created from the response string.
      */
     public static JsonElement getResponseElement(String response) {
-        if (response.length() == 0 || response.isEmpty() || response == null) {
+        if (response == null || response.isEmpty()) {
             response = FAIL_RES;
         }
         JsonElement returnJson = new JsonObject();
@@ -179,7 +179,7 @@ public class Api {
      * @return the response received which can then be parsed into a specific format as per Gson.fromJson()
      */
     public static String getResponseString(String response) {
-        if (response == null || response.length() == 0 || response.isEmpty()) {
+        if (response == null || response.isEmpty()) {
             response = FAIL_RES;
         }
 
