@@ -3,7 +3,7 @@ package com.arkhive.components.uploadmanager.uploaditem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -28,11 +28,11 @@ public class ResumableBitmap {
     public ResumableBitmap(int count, List<Integer> words) {
         this.count = count;
         this.words = words;
-        decodeBitmap();
+        uploadUnits = decodeBitmap(count, words);
     }
 
-    private void decodeBitmap() {
-        List<Boolean> uploadUnits = new ArrayList<Boolean>();
+    private List<Boolean> decodeBitmap(int count, List<Integer> words) {
+        List<Boolean> uploadUnits = new LinkedList<Boolean>();
 
         //loop count times
         for (int i = 0; i < count; i++) {
@@ -50,29 +50,25 @@ public class ResumableBitmap {
             }
         }
 
-        this.uploadUnits = uploadUnits;
+        return uploadUnits;
     }
 
     public boolean isUploaded(int chunkId) {
-        logger.info("getUploadUnits()");
         if (uploadUnits.isEmpty()) {
             return false;
         }
-        return uploadUnits.get(uploadUnits.size() - 1 - chunkId);
+        return uploadUnits.get(chunkId);
     }
 
     public List<Boolean> getUploadUnits() {
-        logger.info("getUploadUnits()");
         return uploadUnits;
     }
 
     public int getCount() {
-        logger.info("getCount()");
         return count;
     }
 
     public List<Integer> getWords() {
-        logger.info("getWords()");
         return words;
     }
 }

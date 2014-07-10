@@ -78,6 +78,7 @@ public class MediaFire {
      * need to be created via MediaFire.newInstance(...)
      */
     public void shutdown() {
+        // TODO: wrap if (instance == null) around below statement.
         applicationCredentials.clearCredentials();
         httpPeriProcessor.shutdown();
         tokenFarm.shutdown();
