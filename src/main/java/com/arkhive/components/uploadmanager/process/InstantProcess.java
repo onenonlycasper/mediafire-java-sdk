@@ -1,12 +1,11 @@
 package com.arkhive.components.uploadmanager.process;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.ApiResponseCode;
 import com.arkhive.components.core.module_api.responses.UploadInstantResponse;
 import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -22,7 +21,8 @@ import java.util.Map;
  * @author
  */
 public class InstantProcess extends UploadProcess {
-    private final Logger logger = LoggerFactory.getLogger(InstantProcess.class);
+
+    private static final String TAG = InstantProcess.class.getSimpleName();
 
     public InstantProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
         super(mediaFire, uploadItem, uploadListenerManager);
@@ -30,14 +30,14 @@ public class InstantProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        logger.info(" doUploadProcess()");
+        Configuration.getErrorTracker().i(TAG, "doUploadProcess()");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
         // url encode the filename
         String filename;
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.info(" Exception: " + e);
+            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
             notifyListenerException(e);
             return;
         }

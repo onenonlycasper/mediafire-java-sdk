@@ -1,13 +1,12 @@
 package com.arkhive.components.uploadmanager.process;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.ApiResponseCode;
 import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
 import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.ResumableBitmap;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -16,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CheckProcess extends UploadProcess {
-    private final Logger logger = LoggerFactory.getLogger(CheckProcess.class);
+
+    private static final String TAG = CheckProcess.class.getSimpleName();
 
     public CheckProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
         super(mediaFire, uploadItem, uploadListenerManager);
@@ -24,7 +24,7 @@ public class CheckProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        logger.info(" doUploadProcess()");
+        Configuration.getErrorTracker().i(TAG, "doUploadProcess()");
         uploadItem.getFileData().setFileSize();
         uploadItem.getFileData().setFileHash();
         //notify listeners that check started
@@ -35,7 +35,7 @@ public class CheckProcess extends UploadProcess {
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.info(" Exception: " + e);
+            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
             e.printStackTrace();
             notifyListenerException(e);
             return;
@@ -62,7 +62,7 @@ public class CheckProcess extends UploadProcess {
         List<Integer> words = response.getResumableUpload().getBitmap().getWords();
         ResumableBitmap bitmap = new ResumableBitmap(count, words);
         uploadItem.setBitmap(bitmap);
-        logger.info(uploadItem.getFileData().getFilePath() + " upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, " + uploadItem.getBitmap().getWords().toString() + " words.");
+        Configuration.getErrorTracker().i(TAG, uploadItem.getFileData().getFilePath() + " upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, " + uploadItem.getBitmap().getWords().toString() + " words.");
 
         // notify listeners that check has completed
         notifyListenerCompleted(response);

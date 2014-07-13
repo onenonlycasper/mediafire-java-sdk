@@ -1,27 +1,28 @@
 package com.arkhive.components.core.module_token_farm.tokens;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.module_token_farm.tokens.interfaces.TokenInterface;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Created by  on 6/15/2014.
  */
 public abstract class Token implements TokenInterface {
+    private static final String TAG = Token.class.getSimpleName();
     private volatile String token;
-    private final Logger logger = LoggerFactory.getLogger(Token.class);
 
     Token() {}
 
     @Override
     public synchronized String getTokenString() {
-        logger.info(" getTokenString()");
+        Configuration.getErrorTracker().i(TAG, "getTokenString()");
         return token;
     }
 
     @Override
     public synchronized void setTokenString(String token) {
-        logger.info(" setTokenString()");
+        Configuration.getErrorTracker().i(TAG, "setTokenString()");
         this.token = token;
     }
 }

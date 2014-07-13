@@ -14,8 +14,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,13 +31,13 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     private static final String OPTIONAL_PARAMETER_RESPONSE_FORMAT = "response_format";
     private static final String REQUIRED_PARAMETER_APPLICATION_ID = "application_id";
     private static final String REQUIRED_PARAMETER_SIGNATURE = "signature";
+    private static final String TAG = GetSessionTokenRunnable.class.getSimpleName();
     private final GetNewSessionTokenCallback getNewSessionTokenCallback;
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ApiRequestObject apiRequestObject;
     private final HttpPeriProcessor httpPeriProcessor;
     private final ApplicationCredentials applicationCredentials;
-    private final Logger logger = LoggerFactory.getLogger(GetSessionTokenRunnable.class);
 
     public GetSessionTokenRunnable(GetNewSessionTokenCallback getNewSessionTokenCallback,
                                    HttpProcessor httpPreProcessor,
@@ -53,7 +53,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
 
     @Override
     public void run() {
-        logger.info(" sendRequest()");
+        Configuration.getErrorTracker().i(TAG, "sendRequest()");
         synchronized (this) {
             // create request object
             apiRequestObject = createApiRequestObjectForNewSessionToken();
@@ -81,28 +81,28 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     }
 
     private void printData(ApiRequestObject apiRequestObject) {
-        logger.info("printData()");
-        logger.info(" response code: " + apiRequestObject.getHttpResponseCode());
-        logger.info(" response string: " + apiRequestObject.getHttpResponseString());
-        logger.info(" domain used: " + apiRequestObject.getDomain());
-        logger.info(" uri used: " + apiRequestObject.getUri());
+        Configuration.getErrorTracker().i(TAG, "printData()");
+        Configuration.getErrorTracker().i(TAG, "response code: " + apiRequestObject.getHttpResponseCode());
+        Configuration.getErrorTracker().i(TAG, "response string: " + apiRequestObject.getHttpResponseString());
+        Configuration.getErrorTracker().i(TAG, "domain used: " + apiRequestObject.getDomain());
+        Configuration.getErrorTracker().i(TAG, "uri used: " + apiRequestObject.getUri());
         for (String key : apiRequestObject.getRequiredParameters().keySet()) {
-            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
+            Configuration.getErrorTracker().i(TAG, "required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
         }
         for (String key : apiRequestObject.getOptionalParameters().keySet()) {
-            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
+            Configuration.getErrorTracker().i(TAG, "required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
         }
 
         if (apiRequestObject.getSessionToken() != null) {
             SessionToken sessionToken = apiRequestObject.getSessionToken();
-            logger.info(" session token secret key used: " + sessionToken.getSecretKey());
-            logger.info(" session token time used: " + sessionToken.getTime());
+            Configuration.getErrorTracker().i(TAG, "session token secret key used: " + sessionToken.getSecretKey());
+            Configuration.getErrorTracker().i(TAG, "session token time used: " + sessionToken.getTime());
         }
-        logger.info(" original url: " + apiRequestObject.getConstructedUrl());
+        Configuration.getErrorTracker().i(TAG, "original url: " + apiRequestObject.getConstructedUrl());
     }
 
     private SessionToken getSessionTokenFromApiRequestObject() {
-        logger.info("getSessionTokenFromApiRequestObject()");
+        Configuration.getErrorTracker().i(TAG, "getSessionTokenFromApiRequestObject()");
         // create a session token object
         SessionToken sessionToken = null;
         // get the response from the api request object
@@ -130,7 +130,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     }
 
     private ApiRequestObject createApiRequestObjectForNewSessionToken() {
-        logger.info("createApiRequestObjectForNewSessionToken()");
+        Configuration.getErrorTracker().i(TAG, "createApiRequestObjectForNewSessionToken()");
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTPS, ApiUris.URI_USER_GET_SESSION_TOKEN);
         Map<String, String> optionalParameters = constructOptionalParameters();
         Map<String, String> requiredParameters = constructRequiredParameters(applicationCredentials);
@@ -141,7 +141,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     }
 
     private Map<String, String> constructRequiredParameters(ApplicationCredentials applicationCredentials) {
-        logger.info("constructRequiredParameters()");
+        Configuration.getErrorTracker().i(TAG, "constructRequiredParameters()");
         Map<String, String> requiredParameters = new LinkedHashMap<String, String>();
         requiredParameters.putAll(applicationCredentials.getCredentials());
         requiredParameters.put(REQUIRED_PARAMETER_APPLICATION_ID, applicationCredentials.getAppId());
@@ -150,7 +150,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     }
 
     private Map<String, String> constructOptionalParameters() {
-        logger.info("constructOptionalParameters()");
+        Configuration.getErrorTracker().i(TAG, "constructOptionalParameters()");
         Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
         optionalParameters.put(OPTIONAL_PARAMETER_TOKEN_VERSION, "2");
         optionalParameters.put(OPTIONAL_PARAMETER_RESPONSE_FORMAT, "json");
@@ -158,7 +158,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     }
 
     private String calculateSignature(ApplicationCredentials applicationCredentials) {
-        logger.info("calculateSignature()");
+        Configuration.getErrorTracker().i(TAG, "calculateSignature()");
         Map<String, String> credentialsMap = applicationCredentials.getCredentials();
         String appId = applicationCredentials.getAppId();
         String apiKey = applicationCredentials.getApiKey();
@@ -181,8 +181,8 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
      * @return hashed string.
      */
     private String calculateSignatureForString(String hashTarget) {
-        logger.info("calculateSignatureForString()");
-        logger.info("pre hashed string: " + hashTarget);
+        Configuration.getErrorTracker().i(TAG, "calculateSignatureForString()");
+        Configuration.getErrorTracker().i(TAG, "pre hashed string: " + hashTarget);
         String signature;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -201,7 +201,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
             e.printStackTrace();
             signature = hashTarget;
         }
-        logger.info("hashed string: " + signature);
+        Configuration.getErrorTracker().i(TAG, "hashed string: " + signature);
         return signature;
     }
 
@@ -213,7 +213,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
      * @return The JsonElement created from the response string.
      */
     private JsonElement getResponseElement(String response) {
-        logger.info(" getResponseElement()");
+        Configuration.getErrorTracker().i(TAG, "getResponseElement()");
         if (response == null) {
             return null;
         }
@@ -234,12 +234,12 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
 
     @Override
     public void httpRequestStarted(ApiRequestObject apiRequestObject) {
-        logger.info(" httpRequestStarted()");
+        Configuration.getErrorTracker().i(TAG, "httpRequestStarted()");
     }
 
     @Override
     public void httpRequestFinished(ApiRequestObject apiRequestObject) {
-        logger.info(" httpRequestFinished()");
+        Configuration.getErrorTracker().i(TAG, "httpRequestFinished()");
         synchronized (this) {
             notify();
         }

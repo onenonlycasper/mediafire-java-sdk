@@ -1,5 +1,6 @@
 package com.arkhive.components.uploadmanager.process;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
 import com.arkhive.components.core.module_api.responses.UploadInstantResponse;
@@ -7,17 +8,17 @@ import com.arkhive.components.core.module_api.responses.UploadPollResponse;
 import com.arkhive.components.core.module_api.responses.UploadResumableResponse;
 import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Created by Chris Najar on 7/8/2014.
  */
 public abstract class UploadProcess implements Runnable {
+    private static final String TAG = UploadProcess.class.getSimpleName();
     protected final MediaFire mediaFire;
     protected final UploadItem uploadItem;
     protected final UploadListenerManager uploadListenerManager;
-    private final Logger logger = LoggerFactory.getLogger(UploadProcess.class);
     
     public UploadProcess(MediaFire mediaFire, UploadItem uploadItem, UploadListenerManager uploadListenerManager) {
         this.mediaFire = mediaFire;
@@ -34,7 +35,7 @@ public abstract class UploadProcess implements Runnable {
 
 
     protected void notifyListenerUploadStarted() {
-        logger.info("  notifyListenerUploadStarted()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerUploadStarted()");
         // notify listeners that task has started.
         if (uploadListenerManager != null) {
             uploadListenerManager.onStartedUploadProcess(uploadItem);
@@ -42,7 +43,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCompleted(UploadCheckResponse response) {
-        logger.info("  notifyListenerCompleted()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onCheckCompleted(uploadItem, response);
@@ -50,7 +51,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCompleted(UploadResumableResponse response) {
-        logger.info("  notifyListenerCompleted()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onResumableCompleted(uploadItem, response);
@@ -58,7 +59,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCompleted(UploadInstantResponse response) {
-        logger.info("  notifyListenerCompleted()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onInstantCompleted(uploadItem, response);
@@ -66,7 +67,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCompleted(UploadPollResponse response) {
-        logger.info("  notifyListenerCompleted()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onPollCompleted(uploadItem, response);
@@ -74,7 +75,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerOnProgressUpdate(int chunkNumber, int numChunks) {
-        logger.info(" notifyListenerOnProgressUpdate()");
+        Configuration.getErrorTracker().i(TAG, "notifyListenerOnProgressUpdate()");
         // notify listeners of progress update
         if (uploadListenerManager != null) {
             uploadListenerManager.onProgressUpdate(uploadItem, chunkNumber, numChunks);
@@ -82,7 +83,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCancelled(UploadCheckResponse response) {
-        logger.info("  notifyListenerCancelled()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
@@ -90,7 +91,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCancelled(UploadInstantResponse response) {
-        logger.info("  notifyListenerCancelled()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
@@ -98,7 +99,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCancelled(UploadResumableResponse response) {
-        logger.info("  notifyListenerCancelled()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
@@ -106,7 +107,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCancelled(UploadPollResponse response) {
-        logger.info("  notifyListenerCancelled()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
@@ -114,7 +115,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerException(Exception e) {
-        logger.info("  notifyListenerException()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerException()");
         //notify listeners that there has been an exception
         if (uploadListenerManager != null) {
             uploadListenerManager.onProcessException(uploadItem, e);
@@ -122,7 +123,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerLostConnection() {
-        logger.info("  notifyListenerLostConnection()");
+        Configuration.getErrorTracker().i(TAG, " notifyListenerLostConnection()");
         // notify listeners that connection was lost
         if (uploadListenerManager != null) {
             uploadListenerManager.onLostConnection(uploadItem);

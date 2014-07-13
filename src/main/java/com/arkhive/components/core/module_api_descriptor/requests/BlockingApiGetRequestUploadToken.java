@@ -6,8 +6,8 @@ import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.core.module_token_farm.interfaces.ActionTokenDistributor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Created by  on 6/19/2014.
@@ -19,7 +19,6 @@ public class BlockingApiGetRequestUploadToken implements HttpRequestCallback {
     private ActionTokenDistributor actionTokenDistributor;
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
-    private final Logger logger = LoggerFactory.getLogger(BlockingApiGetRequestUploadToken.class);
 
     public BlockingApiGetRequestUploadToken(HttpProcessor httpPreProcessor,
                                             HttpProcessor httpPostProcessor,
@@ -34,7 +33,7 @@ public class BlockingApiGetRequestUploadToken implements HttpRequestCallback {
     }
 
     public ApiRequestObject sendRequest() {
-        logger.info(" sendRequest()");
+        Configuration.getErrorTracker().i(TAG, "sendRequest()");
         synchronized (this) {
             // "borrow" an upload action token from the TokenFarm
             actionTokenDistributor.borrowUploadActionToken(apiRequestObject);
@@ -53,12 +52,12 @@ public class BlockingApiGetRequestUploadToken implements HttpRequestCallback {
 
     @Override
     public void httpRequestStarted(ApiRequestObject apiRequestObject) {
-        logger.info(" httpRequestStarted()");
+        Configuration.getErrorTracker().i(TAG, "httpRequestStarted()");
     }
 
     @Override
     public void httpRequestFinished(ApiRequestObject apiRequestObject) {
-        logger.info(" httpRequestFinished()");
+        Configuration.getErrorTracker().i(TAG, "httpRequestFinished()");
         synchronized (this) {
             notify();
         }

@@ -1,8 +1,8 @@
 package com.arkhive.components.core.module_credentials;
 
 import com.arkhive.components.core.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -12,13 +12,12 @@ import java.util.Map;
  * Created by  on 6/15/2014.
  */
 public final class ApplicationCredentials {
+    private static final String TAG = ApplicationCredentials.class.getSimpleName();
     public static final String MEDIAFIRE_PARAMETER_EMAIL = "email";
     public static final String MEDIAFIRE_PARAMETER_PASSWORD = "password";
     public static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
     public static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET = "tw_oauth_token_secret";
     public static final String FACEBOOK_PARAMETER_FB_ACCESS_TOKEN = "fb_access_token";
-
-    private final Logger logger = LoggerFactory.getLogger(ApplicationCredentials.class);
 
     private Map<String, String> userCredentials = new HashMap<String, String>();
     private UserCredentialsType userCredentialsType;
@@ -44,7 +43,7 @@ public final class ApplicationCredentials {
      * @return - true if credentials are stored, false if not.
      */
     public boolean setCredentials(Map<String, String> userCredentials) {
-        logger.info(" addUserCredentials()");
+        Configuration.getErrorTracker().i(TAG, "addUserCredentials()");
         if (isFacebookCredentials(userCredentials)) {
             this.userCredentials = userCredentials;
             userCredentialsType = UserCredentialsType.FACEBOOK;
@@ -77,18 +76,18 @@ public final class ApplicationCredentials {
     }
 
     public void clearCredentials() {
-        logger.info(" clearCredentials()");
+        Configuration.getErrorTracker().i(TAG, "clearCredentials()");
         userCredentials.clear();
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
     public String getAppId() {
-        logger.info(" getAppId()");
+        Configuration.getErrorTracker().i(TAG, "getAppId()");
         return appId;
     }
 
     public String getApiKey() {
-        logger.info(" getApiKey()");
+        Configuration.getErrorTracker().i(TAG, "getApiKey()");
         return apiKey;
     }
 

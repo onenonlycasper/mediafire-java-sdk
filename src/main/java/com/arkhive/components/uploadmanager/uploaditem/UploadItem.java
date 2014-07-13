@@ -1,7 +1,7 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.arkhive.components.core.Configuration;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -25,7 +25,6 @@ public class UploadItem {
     private ChunkData chunkData;
     private ResumableBitmap bitmap;
     private String pollUploadKey;
-    private final Logger logger = LoggerFactory.getLogger(UploadItem.class);
 
     /**
      * Constructor which takes a path and upload attempts.
@@ -36,7 +35,7 @@ public class UploadItem {
      *                      Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, UploadOptions uploadOptions) {
-        logger.info(" UploadItem created");
+        Configuration.getErrorTracker().i(TAG, "UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
@@ -80,7 +79,7 @@ public class UploadItem {
     }
 
     public int getUploadAttemptCount() {
-        logger.info("getUploadAttemptCount(" + uploadAttemptCount + ")");
+        Configuration.getErrorTracker().i(TAG, "getUploadAttemptCount(" + uploadAttemptCount + ")");
         uploadAttemptCount++;
         return uploadAttemptCount;
     }
@@ -91,7 +90,7 @@ public class UploadItem {
      * @return the filename.
      */
     public String getFileName() {
-        logger.info(" getFileName()");
+        Configuration.getErrorTracker().i(TAG, "getFileName()");
         if (!options.getCustomFileName().isEmpty()) {
             fileName = options.getCustomFileName();
         }
@@ -104,7 +103,7 @@ public class UploadItem {
      * @return the file data struct.
      */
     public FileData getFileData() {
-        logger.info(" getFileData()");
+        Configuration.getErrorTracker().i(TAG, "getFileData()");
         return fileData;
     }
 
@@ -114,7 +113,7 @@ public class UploadItem {
      * @return - the poll upload key.
      */
     public String getPollUploadKey() {
-        logger.info(" getPollUploadKey()");
+        Configuration.getErrorTracker().i(TAG, "getPollUploadKey()");
         return pollUploadKey;
     }
 
@@ -124,7 +123,7 @@ public class UploadItem {
      * @return - the upload options struct.
      */
     public UploadOptions getUploadOptions() {
-        logger.info(" getUploadOptions()");
+        Configuration.getErrorTracker().i(TAG, "getUploadOptions()");
         if (options == null) {
             options = new UploadOptions();
         }
@@ -137,7 +136,7 @@ public class UploadItem {
      * @return - the chunkdata struct.
      */
     public ChunkData getChunkData() {
-        logger.info(" getChunkData()");
+        Configuration.getErrorTracker().i(TAG, "getChunkData()");
         if (chunkData == null) {
             chunkData = new ChunkData();
         }
@@ -150,9 +149,9 @@ public class UploadItem {
      * @return - the resumablebitmap struct.
      */
     public ResumableBitmap getBitmap() {
-        logger.info(" getBitmap()");
+        Configuration.getErrorTracker().i(TAG, "getBitmap()");
         if (bitmap == null) {
-            logger.info("   resumable bitmap reference lost");
+            Configuration.getErrorTracker().i(TAG, "  resumable bitmap reference lost");
             bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
         }
         return bitmap;
@@ -164,7 +163,7 @@ public class UploadItem {
      * @param bitmap - the resumablebitmap to set.
      */
     public void setBitmap(ResumableBitmap bitmap) {
-        logger.info(" setBitmap()");
+        Configuration.getErrorTracker().i(TAG, "setBitmap()");
         this.bitmap = bitmap;
     }
 
@@ -174,7 +173,7 @@ public class UploadItem {
      * @param pollUploadKey - the polluploadkey to set.
      */
     public void setPollUploadKey(String pollUploadKey) {
-        logger.info(" setPollUploadKey()");
+        Configuration.getErrorTracker().i(TAG, "setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
     }
 
@@ -184,7 +183,7 @@ public class UploadItem {
      * @param path path of the file.
      */
     private void setFileName(String path) {
-        logger.info(" setFileName()");
+        Configuration.getErrorTracker().i(TAG, "setFileName()");
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {

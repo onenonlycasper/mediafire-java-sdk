@@ -1,13 +1,9 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import com.arkhive.components.core.Configuration;
+
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -19,10 +15,9 @@ public class FileData {
     private final String filePath;
     private long fileSize;
     private String fileHash;
-    private final Logger logger = LoggerFactory.getLogger(FileData.class);
 
     public FileData(String filePath) {
-        logger.info("FileData object created");
+        Configuration.getErrorTracker().i(TAG, "FileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
@@ -37,7 +32,7 @@ public class FileData {
      * @return
      */
     public String getFilePath() {
-        logger.info("getFilePath()");
+        Configuration.getErrorTracker().i(TAG, "getFilePath()");
         return filePath;
     }
 
@@ -47,7 +42,7 @@ public class FileData {
      * @return
      */
     public long getFileSize() {
-        logger.info("getFilePath()");
+        Configuration.getErrorTracker().i(TAG, "getFilePath()");
         return fileSize;
     }
 
@@ -57,20 +52,20 @@ public class FileData {
      * @return
      */
     public String getFileHash() {
-        logger.info("getFilePath()");
+        Configuration.getErrorTracker().i(TAG, "getFilePath()");
         return fileHash;
     }
 
     public void setFileSize() {
-        logger.info(" setFileSize()");
+        Configuration.getErrorTracker().i(TAG, "setFileSize()");
         File file = new File(getFilePath());
         fileSize = file.length();
 
-        logger.info("file size set to " + fileSize);
+        Configuration.getErrorTracker().i(TAG, "file size set to " + fileSize);
     }
 
     public void setFileHash() {
-        logger.info(" setFileHash()");
+        Configuration.getErrorTracker().i(TAG, "setFileHash()");
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;
@@ -78,7 +73,7 @@ public class FileData {
         try {
             fileInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            logger.info("Exception: " + e);
+            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
             fileHash = "";
             return;
         }
@@ -108,16 +103,16 @@ public class FileData {
             fileUri.close();
             in.close();
         } catch (NoSuchAlgorithmException e) {
-            logger.info("Exception: " + e);
+            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
             fileHash = "";
         } catch (IOException e) {
-            logger.info("Exception: " + e);
+            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
             fileHash = "";
         } finally {
             fileInputStream = null;
             fileUri = null;
             in = null;
         }
-        logger.info(" FILE HASH IS SET TO: " + fileHash);
+        Configuration.getErrorTracker().i(TAG, "FILE HASH IS SET TO: " + fileHash);
     }
 }

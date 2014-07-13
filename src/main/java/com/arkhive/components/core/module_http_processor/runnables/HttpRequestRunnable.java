@@ -5,8 +5,8 @@ import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +25,6 @@ public abstract class HttpRequestRunnable implements Runnable {
     protected final HttpPeriProcessor httpPeriProcessor;
     protected int connectionTimeout;
     protected int readTimeout;
-    private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
 
     public HttpRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         this.apiRequestObject = apiRequestObject;
@@ -39,7 +38,7 @@ public abstract class HttpRequestRunnable implements Runnable {
 
     @Override
     public final void run() {
-        logger.info("run()");
+        Configuration.getErrorTracker().i(TAG, "run()");
         notifyHttpRequestStarted();
         setTimeouts();
         doPreProcess();
@@ -50,41 +49,41 @@ public abstract class HttpRequestRunnable implements Runnable {
     }
 
     private void notifyHttpRequestStarted() {
-        logger.info("notifyHttpRequestStarted()");
+        Configuration.getErrorTracker().i(TAG, "notifyHttpRequestStarted()");
         if (callback != null) {
             callback.httpRequestStarted(apiRequestObject);
         }
     }
 
     private void doPreProcess() {
-        logger.info("doPreProcess()");
+        Configuration.getErrorTracker().i(TAG, "doPreProcess()");
         if (httpPreProcessor != null) {
             httpPreProcessor.processApiRequestObject(apiRequestObject);
         }
     }
 
     private void setTimeouts() {
-        logger.info("setTimeouts()");
+        Configuration.getErrorTracker().i(TAG, "setTimeouts()");
         connectionTimeout = httpPeriProcessor.getConnectionTimeout();
         readTimeout = httpPeriProcessor.getReadTimeout();
     }
 
     private void doPostProcess() {
-        logger.info("doPostProcess()");
+        Configuration.getErrorTracker().i(TAG, "doPostProcess()");
         if (httpPostProcessor != null) {
             httpPostProcessor.processApiRequestObject(apiRequestObject);
         }
     }
 
     private void notifyHttpRequestFinished() {
-        logger.info("notifyHttpRequestFinished()");
+        Configuration.getErrorTracker().i(TAG, "notifyHttpRequestFinished()");
         if (callback != null) {
             callback.httpRequestFinished(apiRequestObject);
         }
     }
 
     protected void sendApiErrorIfExists() {
-        logger.info("sendApiErrorIfExists()");
+        Configuration.getErrorTracker().i(TAG, "sendApiErrorIfExists()");
         if (Configuration.getErrorTracker() == null) {
             return;
         }
@@ -94,7 +93,7 @@ public abstract class HttpRequestRunnable implements Runnable {
         }
 
         if (apiRequestObject.getApiResponse() != null && apiRequestObject.getApiResponse().hasError()) {
-            Configuration.getErrorTracker().trackApiError(HttpsGetRequestRunnable.class.getSimpleName(), apiRequestObject);
+            Configuration.getErrorTracker().apiError(HttpsGetRequestRunnable.class.getSimpleName(), apiRequestObject);
         }
 
         StringBuilder builder = new StringBuilder();
@@ -107,12 +106,12 @@ public abstract class HttpRequestRunnable implements Runnable {
                 builder.append("\n");
             }
 
-            Configuration.getErrorTracker().trackError(TAG, 1, 5, "exceptions during http", builder.toString());
+            Configuration.getErrorTracker().e(TAG, "exceptions during http", builder.toString(), 1, 5);
         }
     }
 
     protected String readStream(ApiRequestObject apiRequestObject, InputStream in) {
-        logger.info("readStream()");
+        Configuration.getErrorTracker().i(TAG, "readStream()");
         if (in == null) {
             return null;
         }

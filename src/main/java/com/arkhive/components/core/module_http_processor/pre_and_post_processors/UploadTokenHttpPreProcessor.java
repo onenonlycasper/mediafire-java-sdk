@@ -1,10 +1,9 @@
 package com.arkhive.components.core.module_http_processor.pre_and_post_processors;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_token_farm.tokens.Token;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,7 +15,6 @@ import java.util.Map;
  */
 public class UploadTokenHttpPreProcessor implements HttpProcessor {
     private static final String TAG = UploadTokenHttpPreProcessor.class.getSimpleName();
-    private final Logger logger = LoggerFactory.getLogger(UploadTokenHttpPreProcessor.class);
 
     public UploadTokenHttpPreProcessor() {}
 
@@ -26,7 +24,7 @@ public class UploadTokenHttpPreProcessor implements HttpProcessor {
      * @param apiRequestObject - the descriptor object holding necessary values to make the http request.
      */
     public final void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        logger.info(" processApiRequestObject()");
+        Configuration.getErrorTracker().i(TAG, "processApiRequestObject()");
         // generate a url object using values from a descriptor object
         URL constructedUrl = createUrl(apiRequestObject);
         // sets the constructed url to the descriptor object
@@ -40,7 +38,7 @@ public class UploadTokenHttpPreProcessor implements HttpProcessor {
      * @return a constructed URL object.
      */
     private URL createUrl(ApiRequestObject apiPostRequestObject) {
-        logger.info(" createUrl(ApiPostRequestObject)");
+        Configuration.getErrorTracker().i(TAG, "createUrl(ApiPostRequestObject)");
         String domain = apiPostRequestObject.getDomain();
         String uri = apiPostRequestObject.getUri();
         Map<String, String> requiredParameters = apiPostRequestObject.getRequiredParameters();
@@ -93,7 +91,7 @@ public class UploadTokenHttpPreProcessor implements HttpProcessor {
      * @return a formatted string with the key/value paris for a url.
      */
     private String constructParametersForUrl(Map<String, String> parameters) {
-        logger.info(" constructParametersForUrl(HashMap<String, String>)");
+        Configuration.getErrorTracker().i(TAG, "constructParametersForUrl(HashMap<String, String>)");
         StringBuilder stringBuilder = new StringBuilder();
         if (parameters != null && !parameters.isEmpty()) {
             for (String key : parameters.keySet()) {
@@ -113,7 +111,7 @@ public class UploadTokenHttpPreProcessor implements HttpProcessor {
      * @return a completed string.
      */
     private String constructParametersForUrl(Token token) {
-        logger.info(" constructParametersForUrl(Token)");
+        Configuration.getErrorTracker().i(TAG, "constructParametersForUrl(Token)");
         StringBuilder stringBuilder = new StringBuilder();
 
         if (token.getTokenString() != null) {
@@ -132,7 +130,7 @@ public class UploadTokenHttpPreProcessor implements HttpProcessor {
      * @return a url string with the first instance of & replaced with ?
      */
     private String cleanupUrlString(String urlString) {
-        logger.info(" cleanupUrlString()");
+        Configuration.getErrorTracker().i(TAG, "cleanupUrlString()");
         String cleanedUrlString;
         if (urlString.contains("&") && !urlString.contains("?")) {
             cleanedUrlString = urlString.replaceFirst("&", "?");

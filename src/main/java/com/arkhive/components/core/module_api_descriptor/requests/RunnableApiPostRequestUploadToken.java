@@ -10,8 +10,8 @@ import com.arkhive.components.core.module_http_processor.interfaces.HttpProcesso
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 import com.arkhive.components.core.module_token_farm.interfaces.ActionTokenDistributor;
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Created by  on 6/19/2014.
@@ -25,7 +25,6 @@ public class RunnableApiPostRequestUploadToken<T extends ApiResponse> implements
     private ApiRequestObject apiRequestObject;
     private HttpPeriProcessor httpPeriProcessor;
     private Class<T> clazz;
-    private final Logger logger = LoggerFactory.getLogger(RunnableApiPostRequestUploadToken.class);
 
     public RunnableApiPostRequestUploadToken(Class<T> clazz,
                                              ApiRequestRunnableCallback<T> callback,
@@ -45,7 +44,7 @@ public class RunnableApiPostRequestUploadToken<T extends ApiResponse> implements
 
     @Override
     public void run() {
-        logger.info(" sendRequest()");
+        Configuration.getErrorTracker().i(TAG, "sendRequest()");
         synchronized (this) {
             // notify our callback that the request is being processed now
             if (callback != null) {
@@ -71,12 +70,12 @@ public class RunnableApiPostRequestUploadToken<T extends ApiResponse> implements
 
     @Override
     public void httpRequestStarted(ApiRequestObject apiRequestObject) {
-        logger.info(" httpRequestStarted()");
+        Configuration.getErrorTracker().i(TAG, "httpRequestStarted()");
     }
 
     @Override
     public void httpRequestFinished(ApiRequestObject apiRequestObject) {
-        logger.info(" httpRequestFinished()");
+        Configuration.getErrorTracker().i(TAG, "httpRequestFinished()");
         synchronized (this) {
             notify();
         }

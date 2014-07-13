@@ -8,20 +8,19 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Created by  on 6/15/2014.
  */
 public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
     private static final String TAG = NewSessionTokenHttpPostProcessor.class.getSimpleName();
-    private final Logger logger = LoggerFactory.getLogger(NewSessionTokenHttpPostProcessor.class);
 
     public NewSessionTokenHttpPostProcessor() {}
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        logger.info(" processApiRequestObject()");
+        Configuration.getErrorTracker().i(TAG, "processApiRequestObject()");
         String jsonResponse = apiRequestObject.getHttpResponseString();
         JsonElement jsonElement = getResponseElement(jsonResponse);
         if (jsonElement == null) {
@@ -34,7 +33,7 @@ public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
         // if the signature is invalid then set the flag (so TokenFarm knows)
         if (apiResponse.getError() == 105 || apiResponse.getError() == 127) {
             apiRequestObject.setSessionTokenInvalid(true);
-            Configuration.getErrorTracker().trackApiError(TAG, apiRequestObject);
+            Configuration.getErrorTracker().apiError(TAG, apiRequestObject);
         } else {
             apiRequestObject.setSessionTokenInvalid(false);
         }
@@ -48,7 +47,7 @@ public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
      * @return The JsonElement created from the response string.
      */
     public JsonElement getResponseElement(String response) {
-        logger.info(" getResponseElement()");
+        Configuration.getErrorTracker().i(TAG, "getResponseElement()");
         if (response == null) {
             return null;
         }

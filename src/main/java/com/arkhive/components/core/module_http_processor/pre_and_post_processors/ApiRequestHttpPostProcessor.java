@@ -9,20 +9,19 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Created by  on 6/15/2014.
  */
 public final class ApiRequestHttpPostProcessor implements HttpProcessor {
     private static final String TAG = ApiRequestHttpPostProcessor.class.getSimpleName();
-    private final Logger logger = LoggerFactory.getLogger(ApiRequestHttpPostProcessor.class);
 
     public ApiRequestHttpPostProcessor() {}
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        logger.info(" processApiRequestObject()");
+        Configuration.getErrorTracker().i(TAG, "processApiRequestObject()");
         if (apiRequestObject.getSessionToken() != null) {
             printData(apiRequestObject);
         }
@@ -38,24 +37,24 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
         // if the signature is invalid then set the flag (so TokenFarm knows)
         if (apiResponse.getError() == 105 || apiResponse.getError() == 127) {
             apiRequestObject.setSessionTokenInvalid(true);
-            Configuration.getErrorTracker().trackApiError(TAG, apiRequestObject);
+            Configuration.getErrorTracker().apiError(TAG, apiRequestObject);
         } else {
             apiRequestObject.setSessionTokenInvalid(false);
         }
 
         if (apiResponse.needNewKey()) {
-            logger.info(" need new key");
+            Configuration.getErrorTracker().i(TAG, "need new key");
             SessionToken sessionToken = apiRequestObject.getSessionToken();
             updateSecretKey(sessionToken);
         }
     }
 
     public void updateSecretKey(SessionToken sessionToken) {
-        logger.info(" updateSecretKey()");
+        Configuration.getErrorTracker().i(TAG, "updateSecretKey()");
         String secretKey = sessionToken.getSecretKey();
         long newKey = Long.valueOf(secretKey) * 16807;
         newKey = newKey % 2147483647;
-        logger.info(" updated secret key from: " + secretKey + " to " + newKey);
+        Configuration.getErrorTracker().i(TAG, "updated secret key from: " + secretKey + " to " + newKey);
         secretKey = String.valueOf(newKey);
         sessionToken.setSecretKey(secretKey);
 
@@ -69,7 +68,7 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
      * @return The JsonElement created from the response string.
      */
     public JsonElement getResponseElement(String response) {
-        logger.info(" getResponseElement()");
+        Configuration.getErrorTracker().i(TAG, "getResponseElement()");
         if (response == null) {
             return null;
         }
@@ -89,23 +88,23 @@ public final class ApiRequestHttpPostProcessor implements HttpProcessor {
     }
 
     public void printData(ApiRequestObject apiRequestObject) {
-        logger.info(" response code: " + apiRequestObject.getHttpResponseCode());
-        logger.info(" response string: " + apiRequestObject.getHttpResponseString());
-        logger.info(" domain used: " + apiRequestObject.getDomain());
-        logger.info(" uri used: " + apiRequestObject.getUri());
+        Configuration.getErrorTracker().i(TAG, "response code: " + apiRequestObject.getHttpResponseCode());
+        Configuration.getErrorTracker().i(TAG, "response string: " + apiRequestObject.getHttpResponseString());
+        Configuration.getErrorTracker().i(TAG, "domain used: " + apiRequestObject.getDomain());
+        Configuration.getErrorTracker().i(TAG, "uri used: " + apiRequestObject.getUri());
         for (String key : apiRequestObject.getRequiredParameters().keySet()) {
-            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
+            Configuration.getErrorTracker().i(TAG, "required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
         }
         for (String key : apiRequestObject.getOptionalParameters().keySet()) {
-            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
+            Configuration.getErrorTracker().i(TAG, "required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
         }
 
-        logger.info(" token used: " + apiRequestObject.getSessionToken().getTokenString());
+        Configuration.getErrorTracker().i(TAG, "token used: " + apiRequestObject.getSessionToken().getTokenString());
         if (SessionToken.class.isInstance(apiRequestObject.getSessionToken())) {
             SessionToken sessionToken = apiRequestObject.getSessionToken();
-            logger.info(" session token secret key used: " + sessionToken.getSecretKey());
-            logger.info(" session token time used: " + sessionToken.getTime());
+            Configuration.getErrorTracker().i(TAG, "session token secret key used: " + sessionToken.getSecretKey());
+            Configuration.getErrorTracker().i(TAG, "session token time used: " + sessionToken.getTime());
         }
-        logger.info(" original url: " + apiRequestObject.getConstructedUrl());
+        Configuration.getErrorTracker().i(TAG, "original url: " + apiRequestObject.getConstructedUrl());
     }
 }
