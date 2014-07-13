@@ -1,7 +1,7 @@
 package com.arkhive.components.uploadmanager.uploaditem;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +17,6 @@ public class ResumableBitmap {
     private final int count;
     private List<Integer> words;
     private List<Boolean> uploadUnits;
-    private final Logger logger = LoggerFactory.getLogger(ResumableBitmap.class);
 
     /**
      * Constructor given an int count and Collection of words.

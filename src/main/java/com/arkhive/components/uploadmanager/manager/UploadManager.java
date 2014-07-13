@@ -1,11 +1,10 @@
 package com.arkhive.components.uploadmanager.manager;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.uploadmanager.interfaces.UploadListener;
 import com.arkhive.components.uploadmanager.process.CheckProcess;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -16,7 +15,7 @@ import java.util.concurrent.BlockingQueue;
  * @author
  */
 public class UploadManager extends UploadManagerWorker {
-    private final Logger logger = LoggerFactory.getLogger(UploadManager.class);
+    private static final String TAG = UploadManager.class.getSimpleName();
     private UploadListener uiListener;
 
     /**
@@ -30,22 +29,22 @@ public class UploadManager extends UploadManagerWorker {
     }
 
     public void setUploadListener(UploadListener uiListener) {
-        logger.info("setUploadListener");
+        Configuration.getErrorTracker().i(TAG, "setUploadListener");
         this.uiListener = uiListener;
     }
 
     public int getAllItems() {
-        logger.info("getAllItems()");
+        Configuration.getErrorTracker().i(TAG, "getAllItems()");
         return workQueue.size() + executor.getActiveCount();
     }
 
     public BlockingQueue<Runnable> getAllWaitingRunnables() {
-        logger.info("getAllWaitingRunnables()");
+        Configuration.getErrorTracker().i(TAG, "getAllWaitingRunnables()");
         return workQueue;
     }
 
     public void clearUploadQueue() {
-        logger.info("clearUploadQueue()");
+        Configuration.getErrorTracker().i(TAG, "clearUploadQueue()");
         boolean isPaused = isPaused();
         if (!isPaused) {
             pause();
@@ -63,10 +62,10 @@ public class UploadManager extends UploadManagerWorker {
      * @param uploadItem The UploadItem to add to the backlog queue.
      */
     public void addUploadRequest(UploadItem uploadItem) {
-        logger.info(" addUploadRequest()");
+        Configuration.getErrorTracker().i(TAG, "addUploadRequest()");
         //don't add the item to the backlog queue if it is null or the path is null
         if (uploadItem == null) {
-            logger.info(" one or more required parameters are invalid, not adding item to queue");
+            Configuration.getErrorTracker().i(TAG, "one or more required parameters are invalid, not adding item to queue");
             return;
         }
 
@@ -75,7 +74,7 @@ public class UploadManager extends UploadManagerWorker {
                 || uploadItem.getFileData().getFilePath().isEmpty()
                 || uploadItem.getFileData().getFileHash().isEmpty()
                 || uploadItem.getFileData().getFileSize() == 0) {
-            logger.info(" one or more required parameters are invalid, not adding item to queue");
+            Configuration.getErrorTracker().i(TAG, "one or more required parameters are invalid, not adding item to queue");
             return;
         }
 
@@ -86,28 +85,28 @@ public class UploadManager extends UploadManagerWorker {
     }
 
     protected void notifyUploadListenerStarted(UploadItem uploadItem) {
-        logger.info(" notifyUploadListenerStarted()");
+        Configuration.getErrorTracker().i(TAG, "notifyUploadListenerStarted()");
         if (uiListener != null) {
             uiListener.onStarted(uploadItem);
         }
     }
 
     protected void notifyUploadListenerCompleted(UploadItem uploadItem) {
-        logger.info(" notifyUploadListenerCompleted()");
+        Configuration.getErrorTracker().i(TAG, "notifyUploadListenerCompleted()");
         if (uiListener != null) {
             uiListener.onCompleted(uploadItem);
         }
     }
 
     protected void notifyUploadListenerOnProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        logger.info(" notifyUploadListenerOnProgressUpdate()");
+        Configuration.getErrorTracker().i(TAG, "notifyUploadListenerOnProgressUpdate()");
         if (uiListener != null) {
             uiListener.onProgressUpdate(uploadItem, chunkNumber, numChunks);
         }
     }
 
     protected void notifyUploadListenerCancelled(UploadItem uploadItem) {
-        logger.info("notifyUploadListenerCancelled()");
+        Configuration.getErrorTracker().i(TAG, "notifyUploadListenerCancelled()");
         if (uiListener != null) {
             uiListener.onCancelled(uploadItem);
         }

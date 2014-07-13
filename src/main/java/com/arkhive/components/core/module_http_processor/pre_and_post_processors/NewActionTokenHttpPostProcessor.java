@@ -8,19 +8,18 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Created by on 6/18/2014.
  */
 public class NewActionTokenHttpPostProcessor implements HttpProcessor {
     private static final String TAG = NewActionTokenHttpPostProcessor.class.getSimpleName();
-    private final Logger logger = LoggerFactory.getLogger(NewActionTokenHttpPostProcessor.class);
 
     @Override
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        logger.info(" processApiRequestObject()");
+        Configuration.getErrorTracker().i(TAG, "processApiRequestObject()");
         if (apiRequestObject.getActionToken() != null) {
             printData(apiRequestObject);
         }
@@ -36,7 +35,7 @@ public class NewActionTokenHttpPostProcessor implements HttpProcessor {
         // if the signature is invalid then set the flag (so TokenFarm knows)
         if (apiResponse.getError() == 105 || apiResponse.getError() == 127) {
             apiRequestObject.setActionTokenInvalid(true);
-            Configuration.getErrorTracker().trackApiError(TAG, apiRequestObject);
+            Configuration.getErrorTracker().apiError(TAG, apiRequestObject);
         } else {
             apiRequestObject.setActionTokenInvalid(false);
         }
@@ -50,7 +49,7 @@ public class NewActionTokenHttpPostProcessor implements HttpProcessor {
      * @return The JsonElement created from the response string.
      */
     public JsonElement getResponseElement(String response) {
-        logger.info(" getResponseElement()");
+        Configuration.getErrorTracker().i(TAG, "getResponseElement()");
         if (response == null) {
             return null;
         }
@@ -71,19 +70,19 @@ public class NewActionTokenHttpPostProcessor implements HttpProcessor {
     }
 
     public void printData(ApiRequestObject apiRequestObject) {
-        logger.info(" response code: " + apiRequestObject.getHttpResponseCode());
-        logger.info(" response string: " + apiRequestObject.getHttpResponseString());
-        logger.info(" domain used: " + apiRequestObject.getDomain());
-        logger.info(" uri used: " + apiRequestObject.getUri());
+        Configuration.getErrorTracker().i(TAG, "response code: " + apiRequestObject.getHttpResponseCode());
+        Configuration.getErrorTracker().i(TAG, "response string: " + apiRequestObject.getHttpResponseString());
+        Configuration.getErrorTracker().i(TAG, "domain used: " + apiRequestObject.getDomain());
+        Configuration.getErrorTracker().i(TAG, "uri used: " + apiRequestObject.getUri());
         for (String key : apiRequestObject.getRequiredParameters().keySet()) {
-            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
+            Configuration.getErrorTracker().i(TAG, "required parameter passed (key, value): " + key + ", " + apiRequestObject.getRequiredParameters().get(key));
         }
         for (String key : apiRequestObject.getOptionalParameters().keySet()) {
-            logger.info(" required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
+            Configuration.getErrorTracker().i(TAG, "required parameter passed (key, value): " + key + ", " + apiRequestObject.getOptionalParameters().get(key));
         }
 
-        logger.info(" token used: " + apiRequestObject.getActionToken().getTokenString());
-        logger.info(" original url: " + apiRequestObject.getConstructedUrl());
+        Configuration.getErrorTracker().i(TAG, "token used: " + apiRequestObject.getActionToken().getTokenString());
+        Configuration.getErrorTracker().i(TAG, "original url: " + apiRequestObject.getConstructedUrl());
     }
 
 }

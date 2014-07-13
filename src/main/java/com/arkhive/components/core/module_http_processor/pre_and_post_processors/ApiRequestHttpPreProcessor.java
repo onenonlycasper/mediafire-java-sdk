@@ -1,11 +1,10 @@
 package com.arkhive.components.core.module_http_processor.pre_and_post_processors;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.core.module_token_farm.tokens.Token;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,7 +17,7 @@ import java.util.Map;
  * Created by  on 6/15/2014.
  */
 public final class ApiRequestHttpPreProcessor implements HttpProcessor {
-    private final Logger logger = LoggerFactory.getLogger(ApiRequestHttpPreProcessor.class);
+    private static final String TAG = ApiRequestHttpPreProcessor.class.getSimpleName();
 
     public ApiRequestHttpPreProcessor() {}
 
@@ -28,7 +27,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
      * @param apiRequestObject - the descriptor object holding necessary values to make the http request.
      */
     public final void processApiRequestObject(ApiRequestObject apiRequestObject) {
-        logger.info(" processApiRequestObject()");
+        Configuration.getErrorTracker().i(TAG, "processApiRequestObject()");
         // generate a url object using values from a descriptor object
         URL constructedUrl = createUrl(apiRequestObject);
         // sets the constructed url to the descriptor object
@@ -42,7 +41,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
      * @return a constructed URL object.
      */
     private URL createUrl(ApiRequestObject apiRequestObject) {
-        logger.info(" createUrl(ApiPostRequestObject)");
+        Configuration.getErrorTracker().i(TAG, "createUrl(ApiPostRequestObject)");
         String domain = apiRequestObject.getDomain();
         String uri = apiRequestObject.getUri();
         Map<String, String> requiredParameters = apiRequestObject.getRequiredParameters();
@@ -106,22 +105,22 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
     }
 
     private String createPreHashStringForApiCallSignature(ApiRequestObject apiRequestObject, String generatedUri) {
-        logger.info("createPreHashStringForApiCallSignature()");
+        Configuration.getErrorTracker().i(TAG, "createPreHashStringForApiCallSignature()");
         // formula is session token secret key + time + uri (concatenated)
         // get session token from api request object
         SessionToken sessionToken = apiRequestObject.getSessionToken();
-        logger.info("session token: " + sessionToken.getTokenString());
+        Configuration.getErrorTracker().i(TAG, "session token: " + sessionToken.getTokenString());
         // get secret key from session token
         String secretKeyString = sessionToken.getSecretKey();
-        logger.info("stored secret key: " + secretKeyString);
+        Configuration.getErrorTracker().i(TAG, "stored secret key: " + secretKeyString);
         int secretKey = Integer.valueOf(secretKeyString) % 256;
-        logger.info("stored secret key % 256: " + secretKey);
+        Configuration.getErrorTracker().i(TAG, "stored secret key % 256: " + secretKey);
         // get time from session token
         String time = sessionToken.getTime();
-        logger.info("stored time: " + time);
+        Configuration.getErrorTracker().i(TAG, "stored time: " + time);
         // construct pre hash signature
         // return constructed pre hash signature
-        logger.info("pre hash signature: " + (String.valueOf(secretKey) + time + generatedUri));
+        Configuration.getErrorTracker().i(TAG, "pre hash signature: " + (String.valueOf(secretKey) + time + generatedUri));
         return String.valueOf(secretKey) + time + generatedUri;
     }
 
@@ -132,7 +131,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
      * @return a formatted string with the key/value paris for a url.
      */
     private String constructParametersForUrl(Map<String, String> parameters) {
-        logger.info(" constructParametersForUrl(HashMap<String, String>)");
+        Configuration.getErrorTracker().i(TAG, "constructParametersForUrl(HashMap<String, String>)");
         StringBuilder stringBuilder = new StringBuilder();
         if (parameters != null && !parameters.isEmpty()) {
             for (String key : parameters.keySet()) {
@@ -152,7 +151,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
      * @return a completed string.
      */
     private String constructParametersForUrl(Token token) {
-        logger.info(" constructParametersForUrl(Token)");
+        Configuration.getErrorTracker().i(TAG, "constructParametersForUrl(Token)");
         StringBuilder stringBuilder = new StringBuilder();
 
         if (token.getTokenString() != null) {
@@ -171,7 +170,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
      * @return a url string with the first instance of & replaced with ?
      */
     private String cleanupUrlString(String urlString) {
-        logger.info(" cleanupUrlString()");
+        Configuration.getErrorTracker().i(TAG, "cleanupUrlString()");
         String cleanedUrlString;
         if (urlString.contains("&") && !urlString.contains("?")) {
             cleanedUrlString = urlString.replaceFirst("&", "?");
@@ -190,8 +189,8 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
      * in that case the original string will be returned.
      */
     private String createHash(String hashTarget) {
-        logger.info("createHash()");
-        logger.info("hashing: " + hashTarget);
+        Configuration.getErrorTracker().i(TAG, "createHash()");
+        Configuration.getErrorTracker().i(TAG, "hashing: " + hashTarget);
         String signature;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -210,7 +209,7 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
             e.printStackTrace();
             signature = hashTarget;
         }
-        logger.info("hashed to: " + signature);
+        Configuration.getErrorTracker().i(TAG, "hashed to: " + signature);
         return signature;
     }
 }

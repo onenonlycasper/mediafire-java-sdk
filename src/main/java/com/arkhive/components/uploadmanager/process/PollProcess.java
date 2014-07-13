@@ -1,5 +1,6 @@
 package com.arkhive.components.uploadmanager.process;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
 import com.arkhive.components.core.module_api.codes.PollResultCode;
@@ -7,8 +8,6 @@ import com.arkhive.components.core.module_api.codes.PollStatusCode;
 import com.arkhive.components.core.module_api.responses.UploadPollResponse;
 import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
@@ -24,7 +23,7 @@ import java.util.HashMap;
  * @author
  */
 public class PollProcess extends UploadProcess {
-    private final Logger logger = LoggerFactory.getLogger(PollProcess.class);
+    private static final String TAG = PollProcess.class.getSimpleName();
     private static final long TIME_BETWEEN_POLLS = 2000;
     private static final int MAX_POLLS = 60;
 
@@ -41,7 +40,7 @@ public class PollProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        logger.info(" doUploadProcess()");
+        Configuration.getErrorTracker().i(TAG, "doUploadProcess()");
         //generate our request string
         HashMap<String, String> keyValue = generateGetParameters();
 
@@ -57,7 +56,7 @@ public class PollProcess extends UploadProcess {
                 return;
             }
 
-            logger.info(" received error code: " + response.getErrorCode());
+            Configuration.getErrorTracker().i(TAG, "received error code: " + response.getErrorCode());
             //check to see if we need to call pollUploadCompleted or loop again
             switch (response.getErrorCode()) {
                 case NO_ERROR:
@@ -68,22 +67,22 @@ public class PollProcess extends UploadProcess {
                     //      second  -   fileerror code no error? yes, carry on old chap!. no, cancel upload because error.
                     //      third   -   status code 99 (no more requests)? yes, done. no, continue.
                     if (response.getDoUpload().getResultCode() != PollResultCode.SUCCESS) {
-                        logger.info(" result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
+                        Configuration.getErrorTracker().i(TAG, "result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
                         notifyListenerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getFileErrorCode() != PollFileErrorCode.NO_ERROR) {
-                        logger.info(" result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
-                        logger.info(" file path: " + uploadItem.getFileData().getFilePath());
-                        logger.info(" file hash: " + uploadItem.getFileData().getFileHash());
-                        logger.info(" file size: " + uploadItem.getFileData().getFileSize());
+                        Configuration.getErrorTracker().i(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
+                        Configuration.getErrorTracker().i(TAG, "file path: " + uploadItem.getFileData().getFilePath());
+                        Configuration.getErrorTracker().i(TAG, "file hash: " + uploadItem.getFileData().getFileHash());
+                        Configuration.getErrorTracker().i(TAG, "file size: " + uploadItem.getFileData().getFileSize());
                         notifyListenerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getStatusCode() == PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY) {
-                        logger.info(" status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
+                        Configuration.getErrorTracker().i(TAG, "status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
                         notifyListenerCompleted(response);
                         return;
                     }
@@ -98,7 +97,7 @@ public class PollProcess extends UploadProcess {
             try {
                 Thread.sleep(TIME_BETWEEN_POLLS);
             } catch (InterruptedException e) {
-                logger.info(" Exception: " + e);
+                Configuration.getErrorTracker().i(TAG, "Exception: " + e);
                 notifyListenerException(e);
                 return;
             }
@@ -116,7 +115,7 @@ public class PollProcess extends UploadProcess {
     }
 
     private HashMap<String, String> generateGetParameters() {
-        logger.info(" generateGetParameters()");
+        Configuration.getErrorTracker().i(TAG, "generateGetParameters()");
         HashMap<String, String> keyValue = new HashMap<String, String>();
         keyValue.put("key", uploadItem.getPollUploadKey());
         keyValue.put("response_format", "json");

@@ -12,8 +12,8 @@ import com.arkhive.components.core.module_token_farm.interfaces.SessionTokenDist
 import com.arkhive.components.core.module_api.responses.GetActionTokenResponse;
 import com.arkhive.components.core.module_token_farm.tokens.ActionToken;
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,7 +31,6 @@ public class GetImageActionTokenRunnable implements Runnable, HttpRequestCallbac
     private final GetNewActionTokenCallback actionTokenCallback;
     private final SessionTokenDistributor sessionTokenDistributor;
     private final HttpPeriProcessor httpPeriProcessor;
-    private final Logger logger = LoggerFactory.getLogger(GetImageActionTokenRunnable.class);
 
     public GetImageActionTokenRunnable(HttpProcessor httpPreProcessor,
                                        HttpProcessor httpPostProcessor,
@@ -47,7 +46,7 @@ public class GetImageActionTokenRunnable implements Runnable, HttpRequestCallbac
 
     @Override
     public void run() {
-        logger.info(" sendRequest()");
+        Configuration.getErrorTracker().i(TAG, "sendRequest()");
         synchronized (this) {
             // set up our api request object
             ApiRequestObject apiRequestObject = setupApiRequestObjectForNewImageActionToken();
@@ -106,12 +105,12 @@ public class GetImageActionTokenRunnable implements Runnable, HttpRequestCallbac
 
     @Override
     public void httpRequestStarted(ApiRequestObject apiRequestObject) {
-        logger.info(" httpRequestStarted()");
+        Configuration.getErrorTracker().i(TAG, "httpRequestStarted()");
     }
 
     @Override
     public void httpRequestFinished(ApiRequestObject apiRequestObject) {
-        logger.info(" httpRequestFinished()");
+        Configuration.getErrorTracker().i(TAG, "httpRequestFinished()");
         synchronized (this) {
             notify();
         }

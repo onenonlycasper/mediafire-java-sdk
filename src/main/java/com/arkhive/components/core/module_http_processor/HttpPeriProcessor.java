@@ -8,8 +8,8 @@ import com.arkhive.components.core.module_http_processor.runnables.HttpGetReques
 import com.arkhive.components.core.module_http_processor.runnables.HttpPostRequestRunnable;
 import com.arkhive.components.core.module_http_processor.runnables.HttpsGetRequestRunnable;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -18,10 +18,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by  on 6/15/2014.
  */
 public final class HttpPeriProcessor {
+    private static final String TAG = HttpPeriProcessor.class.getSimpleName();
     private final Configuration configuration;
     private final BlockingQueue<Runnable> workQueue;
     private final PausableThreadPoolExecutor executor;
-    private final Logger logger = LoggerFactory.getLogger(HttpPeriProcessor.class);
 
     public HttpPeriProcessor(Configuration configuration) {
         this.configuration = configuration;
@@ -38,31 +38,31 @@ public final class HttpPeriProcessor {
     }
 
     public void sendGetRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
-        logger.info(" sendGetRequest()");
+        Configuration.getErrorTracker().i(TAG, "sendGetRequest()");
         HttpGetRequestRunnable httpGetRequestRunnable = new HttpGetRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
         executor.execute(httpGetRequestRunnable);
     }
 
     public void sendHttpsGetRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
-        logger.info(" sendHttpsGetRequest");
+        Configuration.getErrorTracker().i(TAG, "sendHttpsGetRequest");
         HttpsGetRequestRunnable httpsGetRequestRunnable = new HttpsGetRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
         executor.execute(httpsGetRequestRunnable);
     }
 
     public void sendPostRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
-        logger.info(" sendPostRequest()");
+        Configuration.getErrorTracker().i(TAG, "sendPostRequest()");
         HttpPostRequestRunnable httpPostRequestRunnable = new HttpPostRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
         executor.execute(httpPostRequestRunnable);
     }
 
     public void sendHttpsPostRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
-        logger.info(" sendHttpsPostRequest");
+        Configuration.getErrorTracker().i(TAG, "sendHttpsPostRequest");
         HttpPostRequestRunnable httpsPostRequestRunnable = new HttpPostRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
         executor.execute(httpsPostRequestRunnable);
     }
 
     public void shutdown() {
-        logger.info(" HttpPeriProcessor shutting down");
+        Configuration.getErrorTracker().i(TAG, "HttpPeriProcessor shutting down");
         executor.pause();
         workQueue.clear();
     }

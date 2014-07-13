@@ -1,12 +1,11 @@
 package com.arkhive.components.uploadmanager.process;
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.ResumableResultCode;
 import com.arkhive.components.core.module_api.responses.UploadResumableResponse;
 import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
 import com.arkhive.components.uploadmanager.uploaditem.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -21,7 +20,8 @@ import java.util.List;
  * @author
  */
 public class ResumableProcess extends UploadProcess {
-    private final Logger logger = LoggerFactory.getLogger(ResumableProcess.class);
+
+    private static final String TAG = ResumableProcess.class.getSimpleName();
 
     /**
      * Constructor for an upload with a listener.
@@ -35,7 +35,7 @@ public class ResumableProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        logger.info(" doUploadProcess()");
+        Configuration.getErrorTracker().i(TAG, "doUploadProcess()");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
 
         //get file size. this will be used for chunks.
@@ -46,7 +46,7 @@ public class ResumableProcess extends UploadProcess {
         try {
             encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.info(" Exception while encoding file name: " + e);
+            Configuration.getErrorTracker().i(TAG, "Exception while encoding file name: " + e);
             notifyListenerException(e);
             return;
         }
@@ -105,7 +105,7 @@ public class ResumableProcess extends UploadProcess {
                 List<Integer> words = response.getResumableUpload().getBitmap().getWords();
                 ResumableBitmap bitmap = new ResumableBitmap(count, words);
                 uploadItem.setBitmap(bitmap);
-                logger.info("(" + uploadItem.getFileData().getFilePath() + ") upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, (" + uploadItem.getBitmap().getWords().toString() + ") words.");
+                Configuration.getErrorTracker().i(TAG, "(" + uploadItem.getFileData().getFilePath() + ") upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, (" + uploadItem.getBitmap().getWords().toString() + ") words.");
 
                 clearReferences(chunkSize, chunkHash, uploadChunk, headers, parameters);
             }
@@ -126,23 +126,23 @@ public class ResumableProcess extends UploadProcess {
     }
 
     private void printDebugRequestData(HashMap<String, String> headers, HashMap<String, String> parameters) {
-        logger.info("headers: " + headers.toString());
-        logger.info("parameters: " + parameters.toString());
+        Configuration.getErrorTracker().i(TAG, "headers: " + headers.toString());
+        Configuration.getErrorTracker().i(TAG, "parameters: " + parameters.toString());
     }
 
     private void printDebugCurrentChunk(int chunkNumber, int numChunks, int chunkSize, int unitSize, long fileSize, String chunkHash, byte[] uploadChunk) {
-        logger.info("current thread: " + Thread.currentThread().getName());
-        logger.info("current chunk: " + chunkNumber);
-        logger.info("total chunks: " + numChunks);
-        logger.info("current chunk size: " + chunkSize);
-        logger.info("normal chunk size: " + unitSize);
-        logger.info("total file size: " + fileSize);
-        logger.info("current chunk hash: " + chunkHash);
-        logger.info("upload chunk ");
+        Configuration.getErrorTracker().i(TAG, "current thread: " + Thread.currentThread().getName());
+        Configuration.getErrorTracker().i(TAG, "current chunk: " + chunkNumber);
+        Configuration.getErrorTracker().i(TAG, "total chunks: " + numChunks);
+        Configuration.getErrorTracker().i(TAG, "current chunk size: " + chunkSize);
+        Configuration.getErrorTracker().i(TAG, "normal chunk size: " + unitSize);
+        Configuration.getErrorTracker().i(TAG, "total file size: " + fileSize);
+        Configuration.getErrorTracker().i(TAG, "current chunk hash: " + chunkHash);
+        Configuration.getErrorTracker().i(TAG, "upload chunk ");
     }
 
     private void updateProgressForListener(int totalChunks) {
-        logger.info("updateProgressForListener()");
+        Configuration.getErrorTracker().i(TAG, "updateProgressForListener()");
         // give number of chunks/numChunks for onProgressUpdate
         int numUploaded = 0;
         for (int i = 0; i < totalChunks; i++) {
@@ -150,15 +150,15 @@ public class ResumableProcess extends UploadProcess {
                 numUploaded++;
             }
         }
-        logger.info(numUploaded + "/" + totalChunks + " chunks uploaded");
+        Configuration.getErrorTracker().i(TAG, numUploaded + "/" + totalChunks + " chunks uploaded");
         notifyListenerOnProgressUpdate(numUploaded, totalChunks);
     }
 
     public boolean shouldCancelUpload(UploadResumableResponse response) {
-        logger.info("shouldCancelUpload()");
+        Configuration.getErrorTracker().i(TAG, "shouldCancelUpload()");
         // if API response code OR Upload Response Result code have an error then we need to terminate the process
         if (response.hasError()) {
-            logger.info(" response has an error # " + response.getError() + ": " + response.getMessage());
+            Configuration.getErrorTracker().i(TAG, "response has an error # " + response.getError() + ": " + response.getMessage());
             notifyListenerCancelled(response);
             return true;
         }
@@ -167,7 +167,7 @@ public class ResumableProcess extends UploadProcess {
             // let the listeners know we are done with this process (because there was an error in this case)
             if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
                 // let the listeners know we are done with this process (because there was an error in this case)
-                logger.info(" cancelling because result code: " + response.getDoUpload().getResultCode().toString());
+                Configuration.getErrorTracker().i(TAG, "cancelling because result code: " + response.getDoUpload().getResultCode().toString());
                 notifyListenerCancelled(response);
                 return true;
             }
@@ -177,7 +177,7 @@ public class ResumableProcess extends UploadProcess {
     }
 
     public ResumableChunkInfo createResumableChunkInfo(int unitSize, int chunkNumber) {
-        logger.info("createResumableChunkInfo");
+        Configuration.getErrorTracker().i(TAG, "createResumableChunkInfo");
         ResumableChunkInfo resumableChunkInfo;
         // generate the chunk
         FileInputStream fis;
@@ -208,16 +208,16 @@ public class ResumableProcess extends UploadProcess {
      * @return The parameters to use for the upload API request.
      */
     private HashMap<String, String> generateGetParameters() {
-        logger.info(" generateGetParameters()");
+        Configuration.getErrorTracker().i(TAG, "generateGetParameters()");
         // get upload options. these will be passed as request parameters
         UploadOptions uploadOptions = uploadItem.getUploadOptions();
         String actionOnDuplicate = uploadOptions.getActionOnDuplicate();
         String versionControl = uploadOptions.getVersionControl();
         String uploadFolderKey = uploadOptions.getUploadFolderKey();
         String uploadPath = uploadOptions.getUploadPath();
-        logger.info(" action on duplicate: " + actionOnDuplicate);
-        logger.info(" version control: " + versionControl);
-        logger.info(" upload folder key: " + uploadFolderKey);
+        Configuration.getErrorTracker().i(TAG, "action on duplicate: " + actionOnDuplicate);
+        Configuration.getErrorTracker().i(TAG, "version control: " + versionControl);
+        Configuration.getErrorTracker().i(TAG, "upload folder key: " + uploadFolderKey);
 
         String actionToken = mediaFire.apiCall().requestUploadActionToken();
         HashMap<String, String> parameters = new HashMap<String, String>();
@@ -245,7 +245,7 @@ public class ResumableProcess extends UploadProcess {
      * @return A HashMap<String, String> containing the parameters to use with the HTTP POST request.
      */
     private HashMap<String, String> generatePostHeaders(String encodedShortFileName, long fileSize, int chunkNumber, String chunkHash, int chunkSize) {
-        logger.info(" generatePostHeaders()");
+        Configuration.getErrorTracker().i(TAG, "generatePostHeaders()");
         HashMap<String, String> headers = new HashMap<String, String>();
         // these headers are related to the entire file
         headers.put("x-filename", encodedShortFileName);
@@ -265,7 +265,7 @@ public class ResumableProcess extends UploadProcess {
      * @return Flag indicating if the upload key should be set.
      */
     private boolean shouldSetPollUploadKey(UploadResumableResponse response) {
-        logger.info(" shouldSetPollUploadKey()");
+        Configuration.getErrorTracker().i(TAG, "shouldSetPollUploadKey()");
         switch (response.getDoUpload().getResultCode()) {
             case NO_ERROR:
             case SUCCESS_FILE_MOVED_TO_ROOT:
@@ -285,7 +285,7 @@ public class ResumableProcess extends UploadProcess {
      * @return The actual chunk size.
      */
     private int getChunkSize(int chunkNumber, int numChunks, long fileSize, int unitSize) {
-        logger.info(" getChunkSize()");
+        Configuration.getErrorTracker().i(TAG, "getChunkSize()");
         int chunkSize;
         if (chunkNumber >= numChunks) {
             chunkSize = 0; // represents bad size
@@ -306,8 +306,8 @@ public class ResumableProcess extends UploadProcess {
      * creates an upload chunk array of bytes based on a position in a file.
      */
     private byte[] createUploadChunk(long unitSize, int chunkNumber, BufferedInputStream fileStream) throws IOException {
-        logger.info(" createUploadChunk()");
-        logger.info(" creating new byte array of size: " + unitSize);
+        Configuration.getErrorTracker().i(TAG, "createUploadChunk()");
+        Configuration.getErrorTracker().i(TAG, "creating new byte array of size: " + unitSize);
         byte[] readBytes = new byte[(int) unitSize];
         int offset = (int) (unitSize * chunkNumber);
         fileStream.skip(offset);
@@ -350,7 +350,7 @@ public class ResumableProcess extends UploadProcess {
      * @return byte array converted to string.
      */
     private String convertHashBytesToString(byte[] hashBytes) {
-        logger.info(" convertHashBytesToString()");
+        Configuration.getErrorTracker().i(TAG, "convertHashBytesToString()");
         StringBuilder sb = new StringBuilder();
         for (byte hashByte : hashBytes) {
             String tempString = Integer.toHexString((hashByte & 0xFF) | 0x100).substring(1, 3);

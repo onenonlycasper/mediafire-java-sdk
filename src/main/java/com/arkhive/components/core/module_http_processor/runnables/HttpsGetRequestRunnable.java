@@ -1,12 +1,11 @@
 package com.arkhive.components.core.module_http_processor.runnables;
 
 
+import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpProcessor;
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -20,7 +19,8 @@ import java.security.cert.X509Certificate;
  * Created by on 6/16/2014.
  */
 public final class HttpsGetRequestRunnable extends HttpRequestRunnable {
-    private final Logger logger = LoggerFactory.getLogger(HttpGetRequestRunnable.class);
+
+    private static final String TAG = HttpsGetRequestRunnable.class.getSimpleName();
 
     public HttpsGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         super(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, httpPeriProcessor);
@@ -28,7 +28,7 @@ public final class HttpsGetRequestRunnable extends HttpRequestRunnable {
 
     @Override
     protected void doRequest() {
-        logger.info("doRequest");
+        Configuration.getErrorTracker().i(TAG, "doRequest");
         HttpsURLConnection connection = null;
         InputStream inputStream = null;
 
