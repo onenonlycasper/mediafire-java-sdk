@@ -1,7 +1,7 @@
 package com.arkhive.components.uploadmanager.process;
 
 /**
-* Created by Chris Najar on 7/8/2014.
+* Created by  on 7/8/2014.
 */
 class ResumableChunkInfo {
     private Exception exception;

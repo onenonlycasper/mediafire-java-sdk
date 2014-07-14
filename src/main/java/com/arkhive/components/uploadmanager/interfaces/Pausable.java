@@ -1,7 +1,7 @@
 package com.arkhive.components.uploadmanager.interfaces;
 
 /**
- * Created by Chris Najar on 7/8/2014.
+ * Created by  on 7/8/2014.
  */
 public interface Pausable {
     public void pause();

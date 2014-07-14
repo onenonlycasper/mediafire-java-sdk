@@ -12,7 +12,7 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 
 
 /**
- * Created by Chris Najar on 7/8/2014.
+ * Created by  on 7/8/2014.
  */
 public abstract class UploadProcess implements Runnable {
     private static final String TAG = UploadProcess.class.getSimpleName();
