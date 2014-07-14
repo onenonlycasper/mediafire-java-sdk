@@ -29,6 +29,8 @@ public class ApiPostRequestHttpsPostProcessor implements HttpProcessor {
         ApiResponse apiResponse = new Gson().fromJson(jsonElement, ApiResponse.class);
         // if the session token is invalid or expired then set the flag (so TokenFarm knows)
         // if the signature is invalid then set the flag (so TokenFarm knows)
+        apiRequestObject.setApiResponse(apiResponse);
+
         if (apiResponse.hasError()) {
             Configuration.getErrorTracker().apiError(TAG, apiRequestObject);
         }
