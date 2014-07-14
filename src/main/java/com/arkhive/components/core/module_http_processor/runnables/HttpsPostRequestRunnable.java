@@ -88,14 +88,7 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setRequestProperty("charset", "utf-8");
                 connection.setRequestProperty("Content-Length", "" + Integer.toString(requestBody.getBytes().length));
-                Map<String, String> headers = apiRequestObject.getPostHeaders();
-                if (headers != null) {
-                    //set headers
-                    for (Map.Entry<String, String> entry : headers.entrySet()) {
-                        connection.addRequestProperty(entry.getKey(), entry.getValue());
-                    }
-                }
-
+                Configuration.getErrorTracker().i(TAG, "sending data: " + requestBody);
                 outputStream = new DataOutputStream(connection.getOutputStream());
                 outputStream.writeBytes(requestBody);
             }
