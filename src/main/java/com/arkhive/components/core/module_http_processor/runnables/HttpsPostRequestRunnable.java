@@ -85,10 +85,9 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             if (requestBody != null) {
 //                connection.setFixedLengthStreamingMode(requestBody.length());
 //                connection.setRequestProperty("Content-Type", "application/octet-stream");
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestProperty("Content-Type", "application/octet-stream");
                 connection.setRequestProperty("charset", "utf-8");
                 connection.setRequestProperty("Content-Length", "" + Integer.toString(requestBody.getBytes().length));
-                Configuration.getErrorTracker().i(TAG, "sending data: " + requestBody);
                 outputStream = new DataOutputStream(connection.getOutputStream());
                 outputStream.writeBytes(requestBody);
             }
