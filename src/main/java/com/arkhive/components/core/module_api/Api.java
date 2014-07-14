@@ -5,10 +5,7 @@ import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.core.module_api_descriptor.requests.*;
 import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
-import com.arkhive.components.core.module_http_processor.pre_and_post_processors.ApiRequestHttpPostProcessor;
-import com.arkhive.components.core.module_http_processor.pre_and_post_processors.ApiRequestHttpPreProcessor;
-import com.arkhive.components.core.module_http_processor.pre_and_post_processors.UploadTokenHttpPostProcessor;
-import com.arkhive.components.core.module_http_processor.pre_and_post_processors.UploadTokenHttpPreProcessor;
+import com.arkhive.components.core.module_http_processor.pre_and_post_processors.*;
 import com.arkhive.components.core.module_token_farm.interfaces.ActionTokenDistributor;
 import com.arkhive.components.core.module_token_farm.interfaces.SessionTokenDistributor;
 import com.google.gson.JsonElement;
@@ -60,6 +57,14 @@ public class Api {
                 new ApiRequestHttpPreProcessor(),
                 new ApiRequestHttpPostProcessor(),
                 sessionTokenDistributor,
+                httpPeriProcessor,
+                apiRequestObject);
+    }
+
+    public static BlockingApiHttpsPostRequest createBlockingApiHttpsPostRequest(ApiRequestObject apiRequestObject) {
+        return new BlockingApiHttpsPostRequest(
+                new ApiPostRequestHttpsPreProcessor(),
+                new ApiPostRequestHttpsPostProcessor(),
                 httpPeriProcessor,
                 apiRequestObject);
     }

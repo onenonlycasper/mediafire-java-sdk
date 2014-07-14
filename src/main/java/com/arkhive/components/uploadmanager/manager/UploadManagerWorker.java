@@ -19,7 +19,7 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Created by Chris Najar on 7/8/2014.
+ * Created by  on 7/8/2014.
  */
 public abstract class UploadManagerWorker implements UploadListenerManager, Pausable {
     private static final String TAG = UploadManagerWorker.class.getSimpleName();

@@ -7,9 +7,8 @@ import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestC
 import com.arkhive.components.core.module_http_processor.runnables.HttpGetRequestRunnable;
 import com.arkhive.components.core.module_http_processor.runnables.HttpPostRequestRunnable;
 import com.arkhive.components.core.module_http_processor.runnables.HttpsGetRequestRunnable;
+import com.arkhive.components.core.module_http_processor.runnables.HttpsPostRequestRunnable;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
-
-
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -57,7 +56,7 @@ public final class HttpPeriProcessor {
 
     public void sendHttpsPostRequest(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject) {
         Configuration.getErrorTracker().i(TAG, "sendHttpsPostRequest");
-        HttpPostRequestRunnable httpsPostRequestRunnable = new HttpPostRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
+        HttpsPostRequestRunnable httpsPostRequestRunnable = new HttpsPostRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
         executor.execute(httpsPostRequestRunnable);
     }
 
