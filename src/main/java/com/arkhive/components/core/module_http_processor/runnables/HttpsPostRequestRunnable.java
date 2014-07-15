@@ -21,7 +21,6 @@ import java.util.Map;
  */
 public class HttpsPostRequestRunnable extends HttpRequestRunnable {
     private static final String TAG = HttpsPostRequestRunnable.class.getSimpleName();
-
     public HttpsPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         super(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, httpPeriProcessor);
     }
@@ -84,9 +83,11 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             String requestBody = constructParametersForUrl(parameters);
 
             if (requestBody != null) {
-                connection.setRequestProperty("Content-Type", "text/plain");
-                connection.setRequestProperty("charset", "utf-8");
-                connection.setRequestProperty("Content-Length", "" + Integer.toString(requestBody.getBytes().length));
+                connection.setFixedLengthStreamingMode(requestBody.getBytes().length);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestProperty("Content-Length", Integer.toString(requestBody.getBytes().length));
+
+                Configuration.getErrorTracker().i(TAG, "connection properties: " + connection.getRequestProperties().toString());
 
                 outputStream = new DataOutputStream(connection.getOutputStream());
                 outputStream.writeBytes(requestBody);
