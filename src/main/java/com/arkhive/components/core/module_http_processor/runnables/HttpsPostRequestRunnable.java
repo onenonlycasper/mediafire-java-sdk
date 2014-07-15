@@ -11,7 +11,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -80,7 +79,6 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             parameters.putAll(apiRequestObject.getRequiredParameters());
 
             String requestBody = constructParametersForUrl(parameters);
-            requestBody = URLEncoder.encode(requestBody, "UTF-8");
 
             if (requestBody != null) {
                 connection.setFixedLengthStreamingMode(requestBody.getBytes().length);
