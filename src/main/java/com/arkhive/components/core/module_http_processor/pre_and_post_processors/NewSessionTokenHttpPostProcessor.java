@@ -15,7 +15,7 @@ import com.google.gson.JsonParser;
  * Created by  on 6/15/2014.
  */
 public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
-    private static final String TAG = NewSessionTokenHttpPostProcessor.class.getSimpleName();
+    private static final String TAG = NewSessionTokenHttpPostProcessor.class.getCanonicalName();
 
     public NewSessionTokenHttpPostProcessor() {}
 

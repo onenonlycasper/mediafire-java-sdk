@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by  on 6/15/2014.
  */
 public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
-    private static final String TAG = NewSessionTokenHttpPreProcessor.class.getSimpleName();
+    private static final String TAG = NewSessionTokenHttpPreProcessor.class.getCanonicalName();
 
     public NewSessionTokenHttpPreProcessor() {}
 

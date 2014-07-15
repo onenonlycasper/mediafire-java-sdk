@@ -14,7 +14,7 @@ import java.util.Map;
  * Created by on 6/19/2014.
  */
 public class UploadTokenHttpPreProcessor implements HttpProcessor {
-    private static final String TAG = UploadTokenHttpPreProcessor.class.getSimpleName();
+    private static final String TAG = UploadTokenHttpPreProcessor.class.getCanonicalName();
 
     public UploadTokenHttpPreProcessor() {}
 

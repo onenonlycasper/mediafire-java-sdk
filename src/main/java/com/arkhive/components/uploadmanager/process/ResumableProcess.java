@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class ResumableProcess extends UploadProcess {
 
-    private static final String TAG = ResumableProcess.class.getSimpleName();
+    private static final String TAG = ResumableProcess.class.getCanonicalName();
 
     /**
      * Constructor for an upload with a listener.

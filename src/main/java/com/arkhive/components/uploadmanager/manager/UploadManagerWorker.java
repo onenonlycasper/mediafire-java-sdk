@@ -22,7 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by  on 7/8/2014.
  */
 public abstract class UploadManagerWorker implements UploadListenerManager, Pausable {
-    private static final String TAG = UploadManagerWorker.class.getSimpleName();
+    private static final String TAG = UploadManagerWorker.class.getCanonicalName();
     protected final int MAX_UPLOAD_ATTEMPTS;
     protected final MediaFire mediaFire;
     protected final PausableThreadPoolExecutor executor;
@@ -204,7 +204,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         Configuration.getErrorTracker().i(TAG, "onProcessException()");
         Configuration.getErrorTracker().i(TAG, "received exception: " + exception);
         if (errorTracker != null) {
-            errorTracker.e(UploadManagerWorker.class.getSimpleName(), exception);
+            errorTracker.e(UploadManagerWorker.class.getCanonicalName(), exception);
         }
         notifyUploadListenerCancelled(uploadItem);
     }

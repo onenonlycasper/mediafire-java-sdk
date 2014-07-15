@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class CheckProcess extends UploadProcess {
 
-    private static final String TAG = CheckProcess.class.getSimpleName();
+    private static final String TAG = CheckProcess.class.getCanonicalName();
 
     public CheckProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
         super(mediaFire, uploadItem, uploadListenerManager);

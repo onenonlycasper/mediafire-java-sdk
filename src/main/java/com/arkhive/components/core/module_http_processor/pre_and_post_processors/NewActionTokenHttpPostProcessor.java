@@ -15,7 +15,7 @@ import com.google.gson.JsonParser;
  * Created by on 6/18/2014.
  */
 public class NewActionTokenHttpPostProcessor implements HttpProcessor {
-    private static final String TAG = NewActionTokenHttpPostProcessor.class.getSimpleName();
+    private static final String TAG = NewActionTokenHttpPostProcessor.class.getCanonicalName();
 
     @Override
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {

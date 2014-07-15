@@ -22,7 +22,7 @@ import java.util.Map;
  * Created by  on 6/19/2014.
  */
 public class GetUploadActionTokenRunnable implements Runnable, HttpRequestCallback {
-    private static final String TAG = GetImageActionTokenRunnable.class.getSimpleName();
+    private static final String TAG = GetImageActionTokenRunnable.class.getCanonicalName();
     private static final String REQUIRED_PARAMETER_TYPE = "type";
     private static final String OPTIONAL_PARAMETER_LIFESPAN = "lifespan";
     private static final String OPTIONAL_PARAMETER_RESPONSE_FORMAT = "response_format";

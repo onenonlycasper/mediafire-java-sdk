@@ -13,7 +13,7 @@ import com.arkhive.components.core.module_token_farm.interfaces.ActionTokenDistr
  * Created by  on 6/19/2014.
  */
 public class BlockingApiGetRequestUploadToken implements HttpRequestCallback {
-    private static final String TAG = BlockingApiGetRequest.class.getSimpleName();
+    private static final String TAG = BlockingApiGetRequest.class.getCanonicalName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ActionTokenDistributor actionTokenDistributor;

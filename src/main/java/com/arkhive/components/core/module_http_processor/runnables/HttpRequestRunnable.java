@@ -17,7 +17,7 @@ import java.io.InputStreamReader;
  * Created by on 7/2/2014.
  */
 public abstract class HttpRequestRunnable implements Runnable {
-    private static final String TAG = HttpRequestRunnable.class.getSimpleName();
+    private static final String TAG = HttpRequestRunnable.class.getCanonicalName();
     protected final ApiRequestObject apiRequestObject;
     protected final HttpRequestCallback callback;
     protected final HttpProcessor httpPreProcessor;
@@ -93,7 +93,7 @@ public abstract class HttpRequestRunnable implements Runnable {
         }
 
         if (apiRequestObject.getApiResponse() != null && apiRequestObject.getApiResponse().hasError()) {
-            Configuration.getErrorTracker().apiError(HttpsGetRequestRunnable.class.getSimpleName(), apiRequestObject);
+            Configuration.getErrorTracker().apiError(HttpsGetRequestRunnable.class.getCanonicalName(), apiRequestObject);
         }
 
         StringBuilder builder = new StringBuilder();
@@ -106,7 +106,7 @@ public abstract class HttpRequestRunnable implements Runnable {
                 builder.append("\n");
             }
 
-            Configuration.getErrorTracker().e(TAG, "exceptions during http", builder.toString(), 1, 5);
+            Configuration.getErrorTracker().w(TAG, builder.toString());
         }
     }
 

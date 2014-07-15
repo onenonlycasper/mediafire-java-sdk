@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by  on 6/15/2014.
  */
 public final class HttpPeriProcessor {
-    private static final String TAG = HttpPeriProcessor.class.getSimpleName();
+    private static final String TAG = HttpPeriProcessor.class.getCanonicalName();
     private final Configuration configuration;
     private final BlockingQueue<Runnable> workQueue;
     private final PausableThreadPoolExecutor executor;

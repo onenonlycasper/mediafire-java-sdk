@@ -16,7 +16,7 @@ import java.net.URL;
  */
 public final class HttpGetRequestRunnable extends HttpRequestRunnable {
 
-    private static final String TAG = HttpGetRequestRunnable.class.getSimpleName();
+    private static final String TAG = HttpGetRequestRunnable.class.getCanonicalName();
 
     public HttpGetRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         super(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, httpPeriProcessor);

@@ -10,7 +10,9 @@ import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -20,7 +22,7 @@ import java.util.Map;
  * Created by  on 7/14/2014.
  */
 public class HttpsPostRequestRunnable extends HttpRequestRunnable {
-    private static final String TAG = HttpsPostRequestRunnable.class.getSimpleName();
+    private static final String TAG = HttpsPostRequestRunnable.class.getCanonicalName();
     public HttpsPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         super(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, httpPeriProcessor);
     }
@@ -34,6 +36,7 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
 
         try {
             URL url = apiRequestObject.getConstructedUrl();
+            Configuration.getErrorTracker().v(TAG, "url used: " + url.toString());
             //create url from request
             //open connection
 
@@ -79,20 +82,24 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             Map<String, String> parameters = apiRequestObject.getOptionalParameters();
             parameters.putAll(apiRequestObject.getRequiredParameters());
 
-            String requestBody = constructParametersForUrl(parameters);
+            String requestBody = getFullKeyFromParameters(parameters);
+//            requestBody = URLEncoder.encode(requestBody, "UTF-8");
+            Configuration.getErrorTracker().v(TAG, "request body: " + requestBody);
             byte[] requestBodyBytes = requestBody.getBytes();
 
             if (requestBody != null) {
+                Configuration.getErrorTracker().v(TAG, "request body length: " + requestBody.length());
                 connection.setFixedLengthStreamingMode(requestBodyBytes.length);
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-                Configuration.getErrorTracker().i(TAG, "connection properties: " + connection.getRequestProperties().toString());
+                connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
                 outputStream = connection.getOutputStream();
-                outputStream.write(requestBodyBytes, 0, requestBodyBytes.length);
-                outputStream.flush();
-                outputStream.close();
+                outputStream.write(requestBodyBytes);
+            } else {
+                Configuration.getErrorTracker().v(TAG, "request body was null");
             }
+
+            Configuration.getErrorTracker().v(TAG, "request body length: " + requestBody.length());
+            Configuration.getErrorTracker().v(TAG, "request body bytes: " + requestBodyBytes.length);
 
             //get response code first so we know what type of stream to open
             int httpResponseCode = connection.getResponseCode();
@@ -105,6 +112,9 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
                 inputStream = connection.getInputStream();
             }
             String httpResponseString = readStream(apiRequestObject, inputStream);
+
+            Configuration.getErrorTracker().w(TAG, "http response string: " + httpResponseString);
+
             apiRequestObject.setHttpResponseString(httpResponseString);
         } catch (IOException e) {
             apiRequestObject.addExceptionDuringRequest(e);
@@ -141,18 +151,19 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
      * @param parameters - the key/value pairs to be formatted
      * @return a formatted string with the key/value paris for a url.
      */
-    private String constructParametersForUrl(Map<String, String> parameters) {
-        Configuration.getErrorTracker().i(TAG, "constructParametersForUrl(HashMap<String, String>)");
-        String constructedString = "";
-        if (parameters != null && !parameters.isEmpty()) {
-            for (String key : parameters.keySet()) {
-                constructedString += "&";
-                constructedString += key;
-                constructedString += "=";
-                constructedString += parameters.get(key);
-            }
+    private String getFullKeyFromParameters(Map<String, String> parameters) {
+        Configuration.getErrorTracker().i(TAG, "getFullKeyFromParameters(HashMap<String, String>)");
+        if (!parameters.containsKey("full")) {
+            return "";
         }
-        constructedString = constructedString.substring(1);
+        String fullValueUrlEncoded;
+        try {
+            fullValueUrlEncoded = URLEncoder.encode(parameters.get("full"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            fullValueUrlEncoded = parameters.get("full");
+            e.printStackTrace();
+        }
+        String constructedString = "full=" + fullValueUrlEncoded;
         return constructedString;
     }
 }

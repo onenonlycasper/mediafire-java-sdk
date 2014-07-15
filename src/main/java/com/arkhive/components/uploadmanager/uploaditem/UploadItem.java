@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * @author
  */
 public class UploadItem {
-    private static final String TAG = UploadItem.class.getSimpleName();
+    private static final String TAG = UploadItem.class.getCanonicalName();
     private int uploadAttemptCount;
     private boolean cancelled;
     private String fileName;

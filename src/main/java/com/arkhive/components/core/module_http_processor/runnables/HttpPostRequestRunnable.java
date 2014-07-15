@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public final class HttpPostRequestRunnable extends HttpRequestRunnable implements Runnable {
 
-    private static final String TAG = HttpPostRequestRunnable.class.getSimpleName();
+    private static final String TAG = HttpPostRequestRunnable.class.getCanonicalName();
 
     public HttpPostRequestRunnable(HttpRequestCallback callback, HttpProcessor httpPreProcessor, HttpProcessor httpPostProcessor, ApiRequestObject apiRequestObject, HttpPeriProcessor httpPeriProcessor) {
         super(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, httpPeriProcessor);

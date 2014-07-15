@@ -23,7 +23,7 @@ import java.util.HashMap;
  * @author
  */
 public class PollProcess extends UploadProcess {
-    private static final String TAG = PollProcess.class.getSimpleName();
+    private static final String TAG = PollProcess.class.getCanonicalName();
     private static final long TIME_BETWEEN_POLLS = 2000;
     private static final int MAX_POLLS = 60;
 

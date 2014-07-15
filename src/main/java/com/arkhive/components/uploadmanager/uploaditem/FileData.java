@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
  * file information for an upload item.
  */
 public class FileData {
-    private static final String TAG = FileData.class.getSimpleName();
+    private static final String TAG = FileData.class.getCanonicalName();
     private final String filePath;
     private long fileSize;
     private String fileHash;

@@ -15,7 +15,7 @@ import java.util.concurrent.BlockingQueue;
  * @author
  */
 public class UploadManager extends UploadManagerWorker {
-    private static final String TAG = UploadManager.class.getSimpleName();
+    private static final String TAG = UploadManager.class.getCanonicalName();
     private UploadListener uiListener;
 
     /**

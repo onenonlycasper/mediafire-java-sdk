@@ -31,7 +31,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     private static final String OPTIONAL_PARAMETER_RESPONSE_FORMAT = "response_format";
     private static final String REQUIRED_PARAMETER_APPLICATION_ID = "application_id";
     private static final String REQUIRED_PARAMETER_SIGNATURE = "signature";
-    private static final String TAG = GetSessionTokenRunnable.class.getSimpleName();
+    private static final String TAG = GetSessionTokenRunnable.class.getCanonicalName();
     private final GetNewSessionTokenCallback getNewSessionTokenCallback;
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;

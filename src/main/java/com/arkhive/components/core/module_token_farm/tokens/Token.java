@@ -9,7 +9,7 @@ import com.arkhive.components.core.module_token_farm.tokens.interfaces.TokenInte
  * Created by  on 6/15/2014.
  */
 public abstract class Token implements TokenInterface {
-    private static final String TAG = Token.class.getSimpleName();
+    private static final String TAG = Token.class.getCanonicalName();
     private volatile String token;
 
     Token() {}

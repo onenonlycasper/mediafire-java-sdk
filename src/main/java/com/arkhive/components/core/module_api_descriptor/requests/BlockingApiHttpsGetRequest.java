@@ -10,7 +10,7 @@ import com.arkhive.components.core.module_token_farm.interfaces.SessionTokenDist
 
 
 public class BlockingApiHttpsGetRequest implements HttpRequestCallback {
-    private static final String TAG = BlockingApiGetRequest.class.getSimpleName();
+    private static final String TAG = BlockingApiGetRequest.class.getCanonicalName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private SessionTokenDistributor sessionTokenDistributor;

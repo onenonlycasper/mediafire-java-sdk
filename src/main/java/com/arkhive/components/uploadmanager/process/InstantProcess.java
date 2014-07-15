@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class InstantProcess extends UploadProcess {
 
-    private static final String TAG = InstantProcess.class.getSimpleName();
+    private static final String TAG = InstantProcess.class.getCanonicalName();
 
     public InstantProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
         super(mediaFire, uploadItem, uploadListenerManager);

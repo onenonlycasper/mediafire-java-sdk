@@ -17,7 +17,7 @@ import com.google.gson.Gson;
  * Created by  on 6/19/2014.
  */
 public class RunnableApiPostRequestUploadToken<T extends ApiResponse> implements Runnable, HttpRequestCallback {
-    private static final String TAG = RunnableApiGetRequest.class.getSimpleName();
+    private static final String TAG = RunnableApiGetRequest.class.getCanonicalName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ApiRequestRunnableCallback<T> callback;

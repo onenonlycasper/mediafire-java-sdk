@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 
 
 public class RunnableApiGetRequest<T extends ApiResponse> implements Runnable, HttpRequestCallback {
-    private static final String TAG = RunnableApiGetRequest.class.getSimpleName();
+    private static final String TAG = RunnableApiGetRequest.class.getCanonicalName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private Class<T> clazz;

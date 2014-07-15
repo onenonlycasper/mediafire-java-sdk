@@ -17,7 +17,7 @@ import java.util.Map;
  * Created by  on 6/15/2014.
  */
 public final class ApiRequestHttpPreProcessor implements HttpProcessor {
-    private static final String TAG = ApiRequestHttpPreProcessor.class.getSimpleName();
+    private static final String TAG = ApiRequestHttpPreProcessor.class.getCanonicalName();
 
     public ApiRequestHttpPreProcessor() {}
 

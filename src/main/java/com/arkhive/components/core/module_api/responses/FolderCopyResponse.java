@@ -12,21 +12,6 @@ public class FolderCopyResponse extends ApiResponse {
 
     private List<String> new_folderkeys;
     private String device_revision;
-    private String new_key;
-
-
-    /**
-     * Returns the JSON object "asynchronous" as a boolean
-     *
-     * @return true if "yes", false if "no"
-     */
-    public boolean isNewKey() {
-        if (this.new_key == null) {
-            this.new_key = "no";
-        }
-
-        return !"no".equalsIgnoreCase(this.new_key);
-    }
 
     /**
      * Returns the JSON object "asynchronous" as a boolean

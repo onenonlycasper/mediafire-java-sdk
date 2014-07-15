@@ -10,7 +10,7 @@ import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestC
  * Created by  on 7/14/2014.
  */
 public class BlockingApiHttpsPostRequest implements HttpRequestCallback {
-    private static final String TAG = BlockingApiGetRequest.class.getSimpleName();
+    private static final String TAG = BlockingApiGetRequest.class.getCanonicalName();
     private final HttpProcessor httpPreProcessor;
     private final HttpProcessor httpPostProcessor;
     private ApiRequestObject apiRequestObject;

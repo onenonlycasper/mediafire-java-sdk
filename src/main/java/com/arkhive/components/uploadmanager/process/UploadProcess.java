@@ -15,7 +15,7 @@ import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
  * Created by  on 7/8/2014.
  */
 public abstract class UploadProcess implements Runnable {
-    private static final String TAG = UploadProcess.class.getSimpleName();
+    private static final String TAG = UploadProcess.class.getCanonicalName();
     protected final MediaFire mediaFire;
     protected final UploadItem uploadItem;
     protected final UploadListenerManager uploadListenerManager;

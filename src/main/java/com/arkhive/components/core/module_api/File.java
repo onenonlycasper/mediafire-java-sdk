@@ -97,7 +97,7 @@ public class File {
         return runnableApiGetRequest;
     }
 
-    public ApiResponse move(
+    public FileMoveResponse move(
             Map<String, String> requiredParameters,
             Map<String, String> optionalParameters) {
         ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_FILE_MOVE);
@@ -106,7 +106,7 @@ public class File {
         BlockingApiGetRequest apiGetRequestRunnable = Api.createBlockingApiGetRequest(apiRequestObject);
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();
-        return new Gson().fromJson(Api.getResponseString(response), ApiResponse.class);
+        return new Gson().fromJson(Api.getResponseString(response), FileMoveResponse.class);
     }
 
     public Runnable update(

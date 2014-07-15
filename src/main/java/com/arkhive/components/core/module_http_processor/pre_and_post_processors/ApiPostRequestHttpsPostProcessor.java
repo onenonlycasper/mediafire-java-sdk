@@ -13,7 +13,7 @@ import com.google.gson.JsonParser;
  * Created by  on 7/14/2014.
  */
 public class ApiPostRequestHttpsPostProcessor implements HttpProcessor {
-    private static final String TAG = ApiRequestHttpPostProcessor.class.getSimpleName();
+    private static final String TAG = ApiRequestHttpPostProcessor.class.getCanonicalName();
 
     public ApiPostRequestHttpsPostProcessor() {}
 
@@ -32,7 +32,7 @@ public class ApiPostRequestHttpsPostProcessor implements HttpProcessor {
         apiRequestObject.setApiResponse(apiResponse);
 
         if (apiResponse.hasError()) {
-            Configuration.getErrorTracker().apiError(TAG, apiRequestObject);
+//            Configuration.getErrorTracker().apiError(TAG, apiRequestObject);
         }
     }
 

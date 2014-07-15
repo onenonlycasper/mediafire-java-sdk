@@ -15,7 +15,7 @@ import com.google.gson.JsonParser;
  * Created by  on 6/19/2014.
  */
 public class UploadTokenHttpPostProcessor implements HttpProcessor {
-    private static final String TAG = ApiRequestHttpPostProcessor.class.getSimpleName();
+    private static final String TAG = ApiRequestHttpPostProcessor.class.getCanonicalName();
 
     public UploadTokenHttpPostProcessor() {}
 

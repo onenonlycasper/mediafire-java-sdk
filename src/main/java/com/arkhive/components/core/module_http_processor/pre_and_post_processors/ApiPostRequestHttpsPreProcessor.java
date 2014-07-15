@@ -6,14 +6,13 @@ import com.arkhive.components.core.module_http_processor.interfaces.HttpProcesso
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Created by  on 7/14/2014.
  */
 public class ApiPostRequestHttpsPreProcessor implements HttpProcessor {
-    private static final String TAG = ApiRequestHttpPreProcessor.class.getSimpleName();
+    private static final String TAG = ApiRequestHttpPreProcessor.class.getCanonicalName();
 
     public ApiPostRequestHttpsPreProcessor() {}
 
@@ -40,7 +39,7 @@ public class ApiPostRequestHttpsPreProcessor implements HttpProcessor {
         Configuration.getErrorTracker().i(TAG, "createUrl(ApiPostRequestObject)");
         String domain = apiRequestObject.getDomain();
         String uri = apiRequestObject.getUri();
-        Map<String, String> optionalParameters = apiRequestObject.getOptionalParameters();
+        Map<String, String> requiredParameters = apiRequestObject.getRequiredParameters();
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -48,26 +47,42 @@ public class ApiPostRequestHttpsPreProcessor implements HttpProcessor {
             stringBuilder.append(uri);
         }
 
-        if (optionalParameters != null) {
-            if (!optionalParameters.containsKey("response_format")) {
-                optionalParameters.put("response_format", "json");
-            }
-        } else {
-            optionalParameters = new LinkedHashMap<String, String>();
-            optionalParameters.put("response_format", "json");
-        }
+        String queryPortionOfUri = createUriExceptForFullKey(requiredParameters);
 
         StringBuilder fullUrlBuilder = new StringBuilder();
         fullUrlBuilder.append(domain);
         fullUrlBuilder.append(uri);
+        fullUrlBuilder.append(queryPortionOfUri);
 
         String completedUrl = fullUrlBuilder.toString();
 
         try {
             return new URL(completedUrl);
         } catch (MalformedURLException e) {
+            Configuration.getErrorTracker().w(TAG, "Exception: " + e);
             apiRequestObject.addExceptionDuringRequest(e);
             return null;
         }
+    }
+
+    private String createUriExceptForFullKey(Map<String, String> requiredParameters) {
+        if (requiredParameters != null) {
+            if (!requiredParameters.containsKey("response_format")) {
+                requiredParameters.put("response_format", "json");
+            }
+        }
+
+        String remainingUri = "?";
+
+        for (String key : requiredParameters.keySet()) {
+            if (!key.equals("full")) {
+                remainingUri += key;
+                remainingUri += "=";
+                remainingUri += requiredParameters.get(key);
+                remainingUri += "&";
+            }
+        }
+
+        return remainingUri.substring(0, remainingUri.length() - 1);
     }
 }

@@ -35,7 +35,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by  on 6/16/2014.
  */
 public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCallback, ActionTokenDistributor, GetNewActionTokenCallback, ApiRequestRunnableCallback<GetActionTokenResponse> {
-    private static final String TAG = TokenFarm.class.getSimpleName();
+    private static final String TAG = TokenFarm.class.getCanonicalName();
     private final Lock lockBorrowImageToken = new ReentrantLock();
     private final Lock lockBorrowUploadToken = new ReentrantLock();
     private final Condition conditionImageTokenNotExpired = lockBorrowImageToken.newCondition();
