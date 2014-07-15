@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -70,9 +71,6 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
 
             connection = (HttpsURLConnection) url.openConnection();
 
-            //set connect and read timeout
-            connection.setConnectTimeout(connectionTimeout);
-            connection.setReadTimeout(readTimeout);
             //sets to POST
             connection.setDoOutput(true);
             connection.setUseCaches(false);
@@ -81,16 +79,15 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             parameters.putAll(apiRequestObject.getRequiredParameters());
 
             String requestBody = constructParametersForUrl(parameters);
+            requestBody = URLEncoder.encode(requestBody, "UTF-8");
 
             if (requestBody != null) {
                 connection.setFixedLengthStreamingMode(requestBody.getBytes().length);
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setRequestProperty("Content-Length", Integer.toString(requestBody.getBytes().length));
-                connection.setRequestProperty("Accept-Language", "en-us");
-//                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-                connection.setRequestMethod("POST");
 
                 Configuration.getErrorTracker().i(TAG, "connection properties: " + connection.getRequestProperties().toString());
+                System.out.println("sending to output stream: \n" + requestBody);
 
                 outputStream = new DataOutputStream(connection.getOutputStream());
                 outputStream.writeBytes(requestBody);
@@ -109,6 +106,7 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
                 inputStream = connection.getInputStream();
             }
             String httpResponseString = readStream(apiRequestObject, inputStream);
+            Configuration.getErrorTracker().i(TAG, "response string: " + httpResponseString);
             apiRequestObject.setHttpResponseString(httpResponseString);
         } catch (IOException e) {
             apiRequestObject.addExceptionDuringRequest(e);
@@ -147,6 +145,7 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
      */
     private String constructParametersForUrl(Map<String, String> parameters) {
         Configuration.getErrorTracker().i(TAG, "constructParametersForUrl(HashMap<String, String>)");
+        parameters.put("response_format", "json");
         String constructedString = "";
         if (parameters != null && !parameters.isEmpty()) {
             for (String key : parameters.keySet()) {
