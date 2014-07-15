@@ -7,9 +7,9 @@ import com.arkhive.components.core.module_http_processor.interfaces.HttpProcesso
 import com.arkhive.components.core.module_http_processor.interfaces.HttpRequestCallback;
 
 import javax.net.ssl.*;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -30,7 +30,7 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
         Configuration.getErrorTracker().i(TAG, "doRequest");
         HttpsURLConnection connection = null;
         InputStream inputStream = null;
-        DataOutputStream outputStream = null;
+        OutputStream outputStream = null;
 
         try {
             URL url = apiRequestObject.getConstructedUrl();
@@ -70,22 +70,32 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
 
             connection = (HttpsURLConnection) url.openConnection();
 
+            //set connect and read timeout
+            connection.setConnectTimeout(connectionTimeout);
+            connection.setReadTimeout(readTimeout);
             //sets to POST
             connection.setDoOutput(true);
             connection.setUseCaches(false);
-            connection.setInstanceFollowRedirects(false);
 
             Map<String, String> parameters = apiRequestObject.getOptionalParameters();
             parameters.putAll(apiRequestObject.getRequiredParameters());
 
             String requestBody = constructParametersForUrl(parameters);
+            byte[] requestBodyBytes = requestBody.getBytes();
 
             if (requestBody != null) {
-                connection.setFixedLengthStreamingMode(requestBody.getBytes().length);
+                connection.setFixedLengthStreamingMode(requestBodyBytes.length);
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestProperty("Content-Length", Integer.toString(requestBodyBytes.length));
+                connection.setRequestProperty("Accept-Language", "en-us");
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+                connection.setRequestMethod("POST");
 
-                outputStream = new DataOutputStream(connection.getOutputStream());
-                outputStream.writeChars(requestBody);
+                Configuration.getErrorTracker().i(TAG, "connection properties: " + connection.getRequestProperties().toString());
+
+                outputStream = connection.getOutputStream();
+                outputStream.write(requestBodyBytes);
+                outputStream.flush();
                 outputStream.close();
             }
 
