@@ -74,6 +74,7 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             //sets to POST
             connection.setDoOutput(true);
             connection.setUseCaches(false);
+            connection.setInstanceFollowRedirects(false);
 
             Map<String, String> parameters = apiRequestObject.getOptionalParameters();
             parameters.putAll(apiRequestObject.getRequiredParameters());
@@ -82,7 +83,7 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             requestBody = URLEncoder.encode(requestBody, "UTF-8");
 
             if (requestBody != null) {
-                connection.setFixedLengthStreamingMode(requestBody.length());
+                connection.setFixedLengthStreamingMode(requestBody.getBytes().length);
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
                 outputStream = new DataOutputStream(connection.getOutputStream());
