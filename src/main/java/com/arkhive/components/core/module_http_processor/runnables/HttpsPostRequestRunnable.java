@@ -82,9 +82,8 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             requestBody = URLEncoder.encode(requestBody, "UTF-8");
 
             if (requestBody != null) {
-                connection.setFixedLengthStreamingMode(requestBody.getBytes().length);
+                connection.setFixedLengthStreamingMode(requestBody.length());
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                connection.setRequestProperty("Content-Length", Integer.toString(requestBody.getBytes().length));
 
                 outputStream = new DataOutputStream(connection.getOutputStream());
                 outputStream.writeChars(requestBody);
