@@ -75,7 +75,6 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             connection.setReadTimeout(readTimeout);
             //sets to POST
             connection.setDoOutput(true);
-            connection.setUseCaches(false);
 
             Map<String, String> parameters = apiRequestObject.getOptionalParameters();
             parameters.putAll(apiRequestObject.getRequiredParameters());
@@ -86,15 +85,11 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
             if (requestBody != null) {
                 connection.setFixedLengthStreamingMode(requestBodyBytes.length);
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                connection.setRequestProperty("Content-Length", Integer.toString(requestBodyBytes.length));
-                connection.setRequestProperty("Accept-Language", "en-us");
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-                connection.setRequestMethod("POST");
 
                 Configuration.getErrorTracker().i(TAG, "connection properties: " + connection.getRequestProperties().toString());
 
                 outputStream = connection.getOutputStream();
-                outputStream.write(requestBodyBytes);
+                outputStream.write(requestBodyBytes, 0, requestBodyBytes.length);
                 outputStream.flush();
                 outputStream.close();
             }
