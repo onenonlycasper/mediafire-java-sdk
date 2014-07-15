@@ -86,11 +86,16 @@ public class HttpsPostRequestRunnable extends HttpRequestRunnable {
                 connection.setFixedLengthStreamingMode(requestBody.getBytes().length);
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setRequestProperty("Content-Length", Integer.toString(requestBody.getBytes().length));
+                connection.setRequestProperty("Accept-Language", "en-us");
+//                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+                connection.setRequestMethod("POST");
 
                 Configuration.getErrorTracker().i(TAG, "connection properties: " + connection.getRequestProperties().toString());
 
                 outputStream = new DataOutputStream(connection.getOutputStream());
                 outputStream.writeBytes(requestBody);
+                outputStream.flush();
+                outputStream.close();
             }
 
             //get response code first so we know what type of stream to open
