@@ -1,6 +1,5 @@
 package com.arkhive.components.core;
 
-import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_errors.ErrorTracker;
 
 /**
@@ -13,17 +12,34 @@ public final class Configuration {
     public static final int DEFAULT_MAXIMUM_SESSION_TOKENS = 3;
     public static final int DEFAULT_HTTP_POOL_SIZE = 6;
 
-    private int httpReadTimeout = DEFAULT_HTTP_READ_TIMEOUT;
-    private int httpConnectionTimeout = DEFAULT_HTTP_CONNECTION_TIMEOUT;
-    private int minimumSessionTokens = DEFAULT_MINIMUM_SESSION_TOKENS;
-    private int maximumSessionTokens = DEFAULT_MAXIMUM_SESSION_TOKENS;
-    private int httpPoolSize = DEFAULT_HTTP_POOL_SIZE;
+    private int httpReadTimeout;
+    private int httpConnectionTimeout;
+    private int minimumSessionTokens;
+    private int maximumSessionTokens;
+    private int httpPoolSize;
     private String appId;
     private String apiKey;
     private static ErrorTracker errorTracker;
 
-    public Configuration(ErrorTracker errorTracker) {
+    public Configuration(ErrorTracker errorTracker, String appId, String apiKey) {
+        if (errorTracker == null) {
+            throw new IllegalStateException("ErrorTracker must not be null");
+        }
+        if (appId == null) {
+            throw new IllegalStateException("appId must not be null");
+        }
+        if (apiKey == null) {
+            throw new IllegalStateException("apiKey must not be null");
+        }
         Configuration.errorTracker = errorTracker;
+        this.appId = appId;
+        this.apiKey = apiKey;
+        httpReadTimeout = DEFAULT_HTTP_READ_TIMEOUT;
+        httpConnectionTimeout = DEFAULT_HTTP_CONNECTION_TIMEOUT;
+        minimumSessionTokens = DEFAULT_MINIMUM_SESSION_TOKENS;
+        maximumSessionTokens = DEFAULT_MAXIMUM_SESSION_TOKENS;
+        httpPoolSize = DEFAULT_HTTP_POOL_SIZE;
+        
     }
 
     public int getHttpReadTimeout() {
@@ -88,36 +104,8 @@ public final class Configuration {
         return appId;
     }
 
-    /**
-     * Sets the app id value.
-     *
-     * @param appId - a string value representing an app id.
-     * @return false if not set (due to bad input), true if set.
-     */
-    public boolean setAppId(String appId) {
-        if (appId == null) {
-            return false;
-        }
-        this.appId = appId;
-        return true;
-    }
-
     public String getApiKey() {
         return apiKey;
-    }
-
-    /**
-     * Sets the api key value.
-     *
-     * @param apiKey - a string value representing an app id.
-     * @return false if not set (due to bad input), true if set.
-     */
-    public boolean setApiKey(String apiKey) {
-        if (apiKey == null) {
-            return false;
-        }
-        this.apiKey = apiKey;
-        return true;
     }
 
     public int getHttpPoolSize() {
@@ -139,78 +127,5 @@ public final class Configuration {
 
     public static ErrorTracker getErrorTracker() {
         return errorTracker;
-    }
-
-    private class DummyErrorTracker implements ErrorTracker {
-
-        @Override
-        public void d(String src, String msg) {
-
-        }
-
-        @Override
-        public void d(String src, String msg, Throwable tr) {
-
-        }
-
-        @Override
-        public void e(String src, String msg) {
-
-        }
-
-        @Override
-        public void e(String src, Exception e) {
-
-        }
-
-        @Override
-        public void e(String src, String msg, Throwable tr) {
-
-        }
-
-        @Override
-        public void e(String src, String shortDescription, String fullDescription, int classId, int id) {
-
-        }
-
-        @Override
-        public void i(String src, String msg) {
-
-        }
-
-        @Override
-        public void i(String src, String msg, Throwable tr) {
-
-        }
-
-        @Override
-        public void v(String src, String msg) {
-
-        }
-
-        @Override
-        public void v(String src, String msg, Throwable tr) {
-
-        }
-
-        @Override
-        public void w(String src, String msg) {
-
-        }
-
-        @Override
-        public void w(String src, String msg, Throwable tr) {
-
-        }
-
-        @Override
-        public void w(String src, Exception e) {
-
-        }
-
-        @Override
-        public void apiError(String src, ApiRequestObject object) {
-
-        }
     }
 }
