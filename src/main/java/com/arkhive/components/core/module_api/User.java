@@ -55,7 +55,7 @@ public class User {
     public Runnable register(
             ApiRequestRunnableCallback callback,
             Map<String, String> requiredParameters, Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_USER_REGISTER);
+        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTPS, ApiUris.URI_USER_REGISTER);
         apiRequestObject.setOptionalParameters(optionalParameters);
         apiRequestObject.setRequiredParameters(requiredParameters);
         RunnableApiGetRequest runnableApiGetRequest =
