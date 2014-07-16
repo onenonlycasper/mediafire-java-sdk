@@ -10,6 +10,7 @@ import com.arkhive.components.core.module_token_farm.interfaces.GetNewSessionTok
  * Created by  on 6/17/2014.
  */
 public class MediaFire {
+    private static final String TAG = MediaFire.class.getCanonicalName();
     private HttpPeriProcessor httpPeriProcessor;
     private ApplicationCredentials applicationCredentials;
     private TokenFarm tokenFarm;
@@ -25,10 +26,12 @@ public class MediaFire {
     }
 
     public static MediaFire getInstance() {
+        Configuration.getErrorTracker().v(TAG, "getInstance()");
         return instance;
     }
 
     public static MediaFire newInstance(Configuration configuration) {
+        Configuration.getErrorTracker().v(TAG, "newInstance()");
         if (instance == null) {
             instance = new MediaFire(configuration);
         } else {
@@ -51,6 +54,7 @@ public class MediaFire {
      * @param getNewSessionTokenCallback
      */
     public void tryLogin(GetNewSessionTokenCallback getNewSessionTokenCallback) {
+        Configuration.getErrorTracker().v(TAG, "tryLogin()");
         tokenFarm.getNewSessionToken(getNewSessionTokenCallback);
     }
 
@@ -59,6 +63,7 @@ public class MediaFire {
      * @return the application credentials object.
      */
     public ApplicationCredentials getApplicationCredentials() {
+        Configuration.getErrorTracker().v(TAG, "getApplicationCredentials()");
         return applicationCredentials;
     }
 
@@ -67,10 +72,12 @@ public class MediaFire {
      * application credentials as validated then call ApplicationCredentials.setCredentialsValid(true)
      */
     public void startup() {
+        Configuration.getErrorTracker().v(TAG, "startup()");
         tokenFarm.startup();
     }
 
     public HttpPeriProcessor getHttpProcessor() {
+        Configuration.getErrorTracker().v(TAG, "getHttpProcessor()");
         return httpPeriProcessor;
     }
     /**
@@ -78,6 +85,7 @@ public class MediaFire {
      * need to be created via MediaFire.newInstance(...)
      */
     public void shutdown() {
+        Configuration.getErrorTracker().v(TAG, "shutdown()");
         // TODO: wrap if (instance == null) around below statement.
         applicationCredentials.clearCredentials();
         httpPeriProcessor.shutdown();

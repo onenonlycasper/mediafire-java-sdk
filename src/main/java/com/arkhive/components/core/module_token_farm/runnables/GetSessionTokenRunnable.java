@@ -53,28 +53,37 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
 
     @Override
     public void run() {
-        Configuration.getErrorTracker().i(TAG, "sendRequest()");
+        Configuration.getErrorTracker().i(TAG, "run()");
         synchronized (this) {
+            Configuration.getErrorTracker().v(TAG, "creating api request object for a new session token");
             // create request object
             apiRequestObject = createApiRequestObjectForNewSessionToken();
+            Configuration.getErrorTracker().v(TAG, "sending request via http handler");
             // send request to http handler
             httpPeriProcessor.sendHttpsGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             try {
+                Configuration.getErrorTracker().v(TAG, "waiting for max " + Configuration.DEFAULT_HTTP_CONNECTION_TIMEOUT + "ms");
                 wait(Configuration.DEFAULT_HTTP_CONNECTION_TIMEOUT);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 apiRequestObject.addExceptionDuringRequest(e);
             }
             printData(apiRequestObject);
+            Configuration.getErrorTracker().v(TAG, "saving response string");
             // get the response string
             String httpResponseString = apiRequestObject.getHttpResponseString();
+
+            Configuration.getErrorTracker().v(TAG, "creating GetSessionTokenResponse instance with Gson");
             // get the actual response in the form of GetSessionTokenResponse
             GetSessionTokenResponse response =
                     new Gson().fromJson(getResponseElement(httpResponseString), GetSessionTokenResponse.class);
+            Configuration.getErrorTracker().v(TAG, "giving ApiRequestObject the response");
             // attach the response to the object
             apiRequestObject.setApiResponse(response);
+            Configuration.getErrorTracker().v(TAG, "giving ApiRequestObject the session token");
             // extract the SessionToken from the response
             apiRequestObject.setSessionToken(getSessionTokenFromApiRequestObject());
+            Configuration.getErrorTracker().v(TAG, "notifying ");
             // now that we have our token, we need to make a getNewSessionTokenCallback to the token factory
             getNewSessionTokenCallback.receiveNewSessionToken(apiRequestObject);
         }

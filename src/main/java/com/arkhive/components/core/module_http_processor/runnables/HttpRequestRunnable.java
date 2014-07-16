@@ -32,6 +32,7 @@ public abstract class HttpRequestRunnable implements Runnable {
         this.httpPreProcessor = httpPreProcessor;
         this.httpPostProcessor = httpPostProcessor;
         this.httpPeriProcessor = httpPeriProcessor;
+        Configuration.getErrorTracker().i(TAG, "HttpRequestRunnable created");
     }
 
     protected abstract void doRequest();
