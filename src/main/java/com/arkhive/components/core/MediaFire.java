@@ -17,7 +17,7 @@ public class MediaFire {
     private Api api;
     private Configuration configuration;
 
-    private MediaFire(Configuration configuration) {
+    public MediaFire(Configuration configuration) {
         if (configuration == null) {
             throw new IllegalArgumentException("Configuration cannot be null");
         }
