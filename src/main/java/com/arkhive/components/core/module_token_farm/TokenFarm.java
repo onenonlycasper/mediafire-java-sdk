@@ -101,6 +101,10 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
         getNewUploadActionToken(this, this);
     }
 
+    public void resumeExecutor() {
+        executor.resume();
+    }
+
     public void shutdown() {
         Configuration.getErrorTracker().i(TAG, "TokenFarm shutting down");
         executor.pause();

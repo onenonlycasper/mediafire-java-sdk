@@ -47,6 +47,7 @@ public class MediaFire {
         Configuration.getErrorTracker().i(TAG, "tryLogin()");
         Configuration.getErrorTracker().i(TAG, "tryLogin() on thread: " + Thread.currentThread().getName());
         httpPeriProcessor.startup();
+        tokenFarm.resumeExecutor();
         tokenFarm.getNewSessionToken(getNewSessionTokenCallback);
     }
 
