@@ -66,4 +66,9 @@ public final class HttpPeriProcessor {
         executor.pause();
         workQueue.clear();
     }
+
+    public void startup() {
+        Configuration.getErrorTracker().i(TAG, "HttpPeriProcessor is starting up");
+        executor.resume();
+    }
 }

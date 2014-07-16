@@ -65,6 +65,7 @@ public class MediaFire {
     public void startup() {
         Configuration.getErrorTracker().i(TAG, "startup()");
         tokenFarm.startup();
+        httpPeriProcessor.startup();
     }
 
     public HttpPeriProcessor getHttpProcessor() {
