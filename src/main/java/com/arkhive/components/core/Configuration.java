@@ -22,8 +22,8 @@ public final class Configuration {
     private String apiKey;
     private static ErrorTracker errorTracker;
 
-    public Configuration() {
-        errorTracker = new DummyErrorTracker();
+    public Configuration(ErrorTracker errorTracker) {
+        Configuration.errorTracker = errorTracker;
     }
 
     public int getHttpReadTimeout() {
@@ -135,10 +135,6 @@ public final class Configuration {
         }
         this.httpPoolSize = httpPoolSize;
         return true;
-    }
-
-    public void setErrorTracker(ErrorTracker errorTracker) {
-        Configuration.errorTracker = errorTracker;
     }
 
     public static ErrorTracker getErrorTracker() {
