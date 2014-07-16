@@ -54,6 +54,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     @Override
     public void run() {
         Configuration.getErrorTracker().i(TAG, "run()");
+        Configuration.getErrorTracker().i(TAG, "run() on thread: " + Thread.currentThread().getName());
         synchronized (this) {
             Configuration.getErrorTracker().v(TAG, "creating api request object for a new session token");
             // create request object
@@ -249,6 +250,7 @@ public class GetSessionTokenRunnable implements Runnable, HttpRequestCallback {
     @Override
     public void httpRequestFinished(ApiRequestObject apiRequestObject) {
         Configuration.getErrorTracker().i(TAG, "httpRequestFinished()");
+        Configuration.getErrorTracker().i(TAG, "httpRequestFinished() called from thread: " + Thread.currentThread().getName());
         synchronized (this) {
             notify();
         }

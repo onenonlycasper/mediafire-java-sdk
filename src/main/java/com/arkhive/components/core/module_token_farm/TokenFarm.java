@@ -56,6 +56,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
 
     public void getNewSessionToken(GetNewSessionTokenCallback getNewSessionTokenCallback) {
         Configuration.getErrorTracker().i(TAG, "getNewSessionToken()");
+        Configuration.getErrorTracker().i(TAG, "getNewSessionToken() on thread: " + Thread.currentThread().getName());
         GetSessionTokenRunnable getSessionTokenRunnable =
                 new GetSessionTokenRunnable(
                         getNewSessionTokenCallback,

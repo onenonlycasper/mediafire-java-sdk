@@ -29,6 +29,7 @@ public final class HttpsGetRequestRunnable extends HttpRequestRunnable {
     @Override
     protected void doRequest() {
         Configuration.getErrorTracker().i(TAG, "doRequest");
+        Configuration.getErrorTracker().i(TAG, "doRequest() on thread: " + Thread.currentThread().getName());
         HttpsURLConnection connection = null;
         InputStream inputStream = null;
 

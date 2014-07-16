@@ -44,7 +44,8 @@ public class MediaFire {
      * @param getNewSessionTokenCallback
      */
     public void tryLogin(GetNewSessionTokenCallback getNewSessionTokenCallback) {
-        Configuration.getErrorTracker().v(TAG, "tryLogin()");
+        Configuration.getErrorTracker().i(TAG, "tryLogin()");
+        Configuration.getErrorTracker().i(TAG, "tryLogin() on thread: " + Thread.currentThread().getName());
         tokenFarm.getNewSessionToken(getNewSessionTokenCallback);
     }
 
@@ -53,7 +54,7 @@ public class MediaFire {
      * @return the application credentials object.
      */
     public ApplicationCredentials getApplicationCredentials() {
-        Configuration.getErrorTracker().v(TAG, "getApplicationCredentials()");
+        Configuration.getErrorTracker().i(TAG, "getApplicationCredentials()");
         return applicationCredentials;
     }
 
@@ -62,12 +63,12 @@ public class MediaFire {
      * application credentials as validated then call ApplicationCredentials.setCredentialsValid(true)
      */
     public void startup() {
-        Configuration.getErrorTracker().v(TAG, "startup()");
+        Configuration.getErrorTracker().i(TAG, "startup()");
         tokenFarm.startup();
     }
 
     public HttpPeriProcessor getHttpProcessor() {
-        Configuration.getErrorTracker().v(TAG, "getHttpProcessor()");
+        Configuration.getErrorTracker().i(TAG, "getHttpProcessor()");
         return httpPeriProcessor;
     }
     /**
@@ -75,7 +76,7 @@ public class MediaFire {
      * need to be created via MediaFire.newInstance(...)
      */
     public void shutdown() {
-        Configuration.getErrorTracker().v(TAG, "shutdown()");
+        Configuration.getErrorTracker().i(TAG, "shutdown()");
         // TODO: wrap if (instance == null) around below statement.
         applicationCredentials.clearCredentials();
         httpPeriProcessor.shutdown();
