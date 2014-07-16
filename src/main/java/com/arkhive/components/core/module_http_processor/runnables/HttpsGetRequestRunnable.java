@@ -37,6 +37,7 @@ public final class HttpsGetRequestRunnable extends HttpRequestRunnable {
             //create url from request
             //open connection
 
+            Configuration.getErrorTracker().i(TAG, "checking for null on url");
             if (url == null) {
                 apiRequestObject.addExceptionDuringRequest(new Exception("HttpGetRequestRunnable produced a null URL"));
                 if (callback != null) {
@@ -68,6 +69,7 @@ public final class HttpsGetRequestRunnable extends HttpRequestRunnable {
             // Install the all-trusting host verifier
             HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
 
+            Configuration.getErrorTracker().i(TAG, "opening connection");
             connection = (HttpsURLConnection) url.openConnection();
 
             //set connect and read timeout
@@ -77,17 +79,24 @@ public final class HttpsGetRequestRunnable extends HttpRequestRunnable {
             //make sure this connection is a GET
             connection.setUseCaches(false);
 
+            Configuration.getErrorTracker().i(TAG, "saving response code");
             //get response code first so we know what type of stream to open
             int httpResponseCode = connection.getResponseCode();
             apiRequestObject.setHttpResponseCode(httpResponseCode);
 
             //now open the correct stream type based on error or not
             if (httpResponseCode / 100 != 2) {
+                Configuration.getErrorTracker().i(TAG, "opening error stream");
                 inputStream = connection.getErrorStream();
             } else {
+                Configuration.getErrorTracker().i(TAG, "opening input stream");
                 inputStream = connection.getInputStream();
             }
+
+            Configuration.getErrorTracker().i(TAG, "reading stream");
             String httpResponseString = readStream(apiRequestObject, inputStream);
+
+            Configuration.getErrorTracker().i(TAG, "saving response string");
             apiRequestObject.setHttpResponseString(httpResponseString);
         } catch (IOException e) {
             apiRequestObject.addExceptionDuringRequest(e);
@@ -96,6 +105,7 @@ public final class HttpsGetRequestRunnable extends HttpRequestRunnable {
         } catch (KeyManagementException e) {
             apiRequestObject.addExceptionDuringRequest(e);
         } finally {
+            Configuration.getErrorTracker().i(TAG, "disconnecting");
             if (connection != null) {
                 connection.disconnect();
             }
