@@ -1,9 +1,7 @@
 package com.arkhive.components.core.module_token_farm;
 
 import com.arkhive.components.core.Configuration;
-import com.arkhive.components.core.module_api.responses.GetActionTokenResponse;
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.core.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
 import com.arkhive.components.core.module_credentials.ApplicationCredentials;
 import com.arkhive.components.core.module_http_processor.HttpPeriProcessor;
 import com.arkhive.components.core.module_http_processor.pre_and_post_processors.ApiRequestHttpPostProcessor;
@@ -21,8 +19,6 @@ import com.arkhive.components.core.module_token_farm.tokens.ActionToken;
 import com.arkhive.components.core.module_token_farm.tokens.SessionToken;
 import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
 
-
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -34,7 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by  on 6/16/2014.
  */
-public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCallback, ActionTokenDistributor, GetNewActionTokenCallback, ApiRequestRunnableCallback<GetActionTokenResponse> {
+public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCallback, ActionTokenDistributor, GetNewActionTokenCallback {
     private static final String TAG = TokenFarm.class.getCanonicalName();
     private final Lock lockBorrowImageToken = new ReentrantLock();
     private final Lock lockBorrowUploadToken = new ReentrantLock();
@@ -70,9 +66,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
         executor.execute(getSessionTokenRunnable);
     }
 
-    private void getNewImageActionToken(
-            SessionTokenDistributor sessionTokenDistributor,
-            GetNewActionTokenCallback actionTokenCallback) {
+    private void getNewImageActionToken(SessionTokenDistributor sessionTokenDistributor, GetNewActionTokenCallback actionTokenCallback) {
         Configuration.getErrorTracker().i(TAG, "getNewImageActionToken()");
         GetImageActionTokenRunnable getImageActionTokenRunnable =
                 new GetImageActionTokenRunnable(
@@ -84,8 +78,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
         executor.execute(getImageActionTokenRunnable);
     }
 
-    private void getNewUploadActionToken(GetNewActionTokenCallback actionTokenCallback,
-                                         SessionTokenDistributor sessionTokenDistributor) {
+    private void getNewUploadActionToken(GetNewActionTokenCallback actionTokenCallback, SessionTokenDistributor sessionTokenDistributor) {
         Configuration.getErrorTracker().i(TAG, "getNewUploadActionToken()");
         GetUploadActionTokenRunnable getUploadActionTokenRunnable =
                 new GetUploadActionTokenRunnable(
@@ -304,13 +297,5 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
                         ", expired: " + uploadActionToken.isExpired());
             }
         }
-    }
-
-    @Override
-    public void apiRequestProcessStarted() {}
-
-    @Override
-    public void apiRequestProcessFinished(GetActionTokenResponse gsonResponse) {
-        Configuration.getErrorTracker().i(TAG, "apiRequestProcessFinished()");
     }
 }
