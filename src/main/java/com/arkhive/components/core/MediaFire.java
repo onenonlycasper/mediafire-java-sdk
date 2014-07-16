@@ -15,35 +15,25 @@ public class MediaFire {
     private ApplicationCredentials applicationCredentials;
     private TokenFarm tokenFarm;
     private Api api;
-
-    private static MediaFire instance;
+    private Configuration configuration;
 
     private MediaFire(Configuration configuration) {
-        httpPeriProcessor = new HttpPeriProcessor(configuration);
-        applicationCredentials = new ApplicationCredentials(configuration);
-        tokenFarm = new TokenFarm(configuration, applicationCredentials, httpPeriProcessor);
-        api = new Api(tokenFarm, tokenFarm, httpPeriProcessor);
-    }
-
-    public static MediaFire getInstance() {
-        Configuration.getErrorTracker().v(TAG, "getInstance()");
-        return instance;
-    }
-
-    public static MediaFire newInstance(Configuration configuration) {
-        Configuration.getErrorTracker().v(TAG, "newInstance()");
-        if (instance == null) {
-            instance = new MediaFire(configuration);
-        } else {
-            instance.shutdown();
-            instance = new MediaFire(configuration);
+        if (configuration == null) {
+            throw new IllegalArgumentException("Configuration cannot be null");
         }
-
-        return instance;
+        this.configuration = configuration;
+        httpPeriProcessor = new HttpPeriProcessor(this.configuration);
+        applicationCredentials = new ApplicationCredentials(this.configuration);
+        tokenFarm = new TokenFarm(this.configuration, applicationCredentials, httpPeriProcessor);
+        api = new Api(tokenFarm, tokenFarm, httpPeriProcessor);
     }
 
     public Api apiCall() {
         return api;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
     }
 
     /**
@@ -90,6 +80,5 @@ public class MediaFire {
         applicationCredentials.clearCredentials();
         httpPeriProcessor.shutdown();
         tokenFarm.shutdown();
-        instance = null;
     }
 }

@@ -1,5 +1,6 @@
 package com.arkhive.components.core;
 
+import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 import com.arkhive.components.core.module_errors.ErrorTracker;
 
 /**
@@ -21,7 +22,9 @@ public final class Configuration {
     private String apiKey;
     private static ErrorTracker errorTracker;
 
-    public Configuration() {}
+    public Configuration() {
+        errorTracker = new DummyErrorTracker();
+    }
 
     public int getHttpReadTimeout() {
         return httpReadTimeout;
@@ -135,10 +138,83 @@ public final class Configuration {
     }
 
     public void setErrorTracker(ErrorTracker errorTracker) {
-        this.errorTracker = errorTracker;
+        Configuration.errorTracker = errorTracker;
     }
 
     public static ErrorTracker getErrorTracker() {
         return errorTracker;
+    }
+
+    private class DummyErrorTracker implements ErrorTracker {
+
+        @Override
+        public void d(String src, String msg) {
+
+        }
+
+        @Override
+        public void d(String src, String msg, Throwable tr) {
+
+        }
+
+        @Override
+        public void e(String src, String msg) {
+
+        }
+
+        @Override
+        public void e(String src, Exception e) {
+
+        }
+
+        @Override
+        public void e(String src, String msg, Throwable tr) {
+
+        }
+
+        @Override
+        public void e(String src, String shortDescription, String fullDescription, int classId, int id) {
+
+        }
+
+        @Override
+        public void i(String src, String msg) {
+
+        }
+
+        @Override
+        public void i(String src, String msg, Throwable tr) {
+
+        }
+
+        @Override
+        public void v(String src, String msg) {
+
+        }
+
+        @Override
+        public void v(String src, String msg, Throwable tr) {
+
+        }
+
+        @Override
+        public void w(String src, String msg) {
+
+        }
+
+        @Override
+        public void w(String src, String msg, Throwable tr) {
+
+        }
+
+        @Override
+        public void w(String src, Exception e) {
+
+        }
+
+        @Override
+        public void apiError(String src, ApiRequestObject object) {
+
+        }
     }
 }
