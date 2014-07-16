@@ -1,9 +1,13 @@
 package com.arkhive.components.core.module_api;
 
-import com.arkhive.components.core.module_api.responses.*;
+import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
+import com.arkhive.components.core.module_api.responses.UploadInstantResponse;
+import com.arkhive.components.core.module_api.responses.UploadPollResponse;
+import com.arkhive.components.core.module_api.responses.UploadResumableResponse;
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
-import com.arkhive.components.core.module_api_descriptor.interfaces.ApiRequestRunnableCallback;
-import com.arkhive.components.core.module_api_descriptor.requests.*;
+import com.arkhive.components.core.module_api_descriptor.requests.BlockingApiGetRequest;
+import com.arkhive.components.core.module_api_descriptor.requests.BlockingApiGetRequestUploadToken;
+import com.arkhive.components.core.module_api_descriptor.requests.BlockingApiPostRequestUploadToken;
 import com.google.gson.Gson;
 
 import java.util.Map;
@@ -24,17 +28,6 @@ public class Upload {
         return new Gson().fromJson(Api.getResponseString(response), UploadCheckResponse.class);
     }
 
-    public Runnable checkUpload(
-            ApiRequestRunnableCallback callback,
-            Map<String, String> requiredParameters,
-            Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_CHECK);
-        apiRequestObject.setOptionalParameters(optionalParameters);
-        apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadCheckResponse.class, callback, apiRequestObject);
-        return runnableApiGetRequest;
-    }
-
     public UploadInstantResponse instantUpload(
             Map<String, String> requiredParameters,
             Map<String, String> optionalParameters) {
@@ -45,28 +38,6 @@ public class Upload {
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();
         return new Gson().fromJson(Api.getResponseString(response), UploadInstantResponse.class);
-    }
-
-    public Runnable instantUpload(
-            ApiRequestRunnableCallback callback,
-            Map<String, String> requiredParameters,
-            Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_INSTANT);
-        apiRequestObject.setOptionalParameters(optionalParameters);
-        apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequestUploadToken runnableApiGetRequest = Api.createApiGetRequestRunnableUploadToken(UploadInstantResponse.class, callback, apiRequestObject);
-        return runnableApiGetRequest;
-    }
-
-    public Runnable resumableUpload(
-            ApiRequestRunnableCallback callback,
-            Map<String, String> requiredParameters,
-            Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_RESUMABLE);
-        apiRequestObject.setOptionalParameters(optionalParameters);
-        apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiPostRequestUploadToken runnableApiGetRequest = Api.createApiPostRequestRunnableUploadToken(UploadResumableResponse.class, callback, apiRequestObject);
-        return runnableApiGetRequest;
     }
 
     public UploadResumableResponse resumableUpload(
@@ -95,16 +66,5 @@ public class Upload {
         apiGetRequestRunnable.sendRequest();
         String response = apiRequestObject.getHttpResponseString();
         return new Gson().fromJson(Api.getResponseString(response), UploadPollResponse.class);
-    }
-
-    public Runnable pollUpload(
-            ApiRequestRunnableCallback callback,
-            Map<String, String> requiredParameters,
-            Map<String, String> optionalParameters) {
-        ApiRequestObject apiRequestObject = new ApiRequestObject(ApiUris.LIVE_HTTP, ApiUris.URI_UPLOAD_POLL_UPLOAD);
-        apiRequestObject.setOptionalParameters(optionalParameters);
-        apiRequestObject.setRequiredParameters(requiredParameters);
-        RunnableApiGetRequest runnableApiGetRequest = Api.createApiGetRequestRunnable(UploadPollResponse.class, callback, apiRequestObject);
-        return runnableApiGetRequest;
     }
 }
