@@ -33,7 +33,10 @@ public class BlockingApiGetRequest implements HttpRequestCallback {
         Configuration.getErrorTracker().i(TAG, "sendRequest()");
         synchronized (this) {
             // borrow a session token from the TokenFarm
-            sessionTokenDistributor.borrowSessionToken(apiRequestObject);
+            // workaround for session token issue for calls that don't require session token (will not be needed once sdk is refactored)
+            if (!apiRequestObject.getRequiredParameters().containsKey("no_session_token_needed")) {
+                sessionTokenDistributor.borrowSessionToken(apiRequestObject);
+            }
             // send request to http handler
             httpPeriProcessor.sendGetRequest(this, httpPreProcessor, httpPostProcessor, apiRequestObject);
             // wait until we get a response from http handler (or 10 seconds pass)
@@ -42,8 +45,12 @@ public class BlockingApiGetRequest implements HttpRequestCallback {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             // try to return the session token to the TokenFarm
-            sessionTokenDistributor.returnSessionToken(apiRequestObject);
+            // workaround for session token issue for calls that don't require session token (will not be needed once sdk is refactored)
+            if (!apiRequestObject.getRequiredParameters().containsKey("no_session_token_needed")) {
+                sessionTokenDistributor.returnSessionToken(apiRequestObject);
+            }
             return apiRequestObject;
         }
     }
