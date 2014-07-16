@@ -46,6 +46,7 @@ public final class HttpPeriProcessor {
         Configuration.getErrorTracker().i(TAG, "sendHttpsGetRequest");
         Configuration.getErrorTracker().i(TAG, "sendHttpsGetRequest() on thread: " + Thread.currentThread().getName());
         HttpsGetRequestRunnable httpsGetRequestRunnable = new HttpsGetRequestRunnable(callback, httpPreProcessor, httpPostProcessor, apiRequestObject, this);
+        Configuration.getErrorTracker().i(TAG, "requesting executor to execute runnable");
         executor.execute(httpsGetRequestRunnable);
     }
 

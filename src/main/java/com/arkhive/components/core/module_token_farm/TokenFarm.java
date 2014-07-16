@@ -92,6 +92,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
     }
 
     public void startup() {
+        executor.resume();
         Configuration.getErrorTracker().i(TAG, "startup()");
         for (int i = 0; i < sessionTokens.remainingCapacity(); i++) {
             getNewSessionToken(this);
@@ -102,6 +103,7 @@ public class TokenFarm implements SessionTokenDistributor, GetNewSessionTokenCal
 
     public void shutdown() {
         Configuration.getErrorTracker().i(TAG, "TokenFarm shutting down");
+        executor.pause();
         sessionTokens.clear();
         imageActionToken = null;
         uploadActionToken = null;
