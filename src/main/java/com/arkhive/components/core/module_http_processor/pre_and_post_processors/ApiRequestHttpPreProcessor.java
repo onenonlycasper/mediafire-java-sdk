@@ -77,20 +77,25 @@ public final class ApiRequestHttpPreProcessor implements HttpProcessor {
         // prior to generating the signature we need to clean up the url (replace first & with ?)
         generatedUri = cleanupUrlString(generatedUri);
 
-        // if there is a token attached to the api request object then we need to calculate the signature correctly
-        // using information from the attached session token and the uri (which contains uri, token, parameters, etc.
-        String signature;
-        signature = createPreHashStringForApiCallSignature(apiRequestObject, generatedUri);
-        signature = createHash(signature);
 
         StringBuilder fullUrlBuilder = new StringBuilder();
         fullUrlBuilder.append(domain);
         fullUrlBuilder.append(generatedUri);
 
-        if (token != null && SessionToken.class.isInstance(token)) {
-            fullUrlBuilder.append("&signature=");
-            fullUrlBuilder.append(signature);
+        // if there is a token attached to the api request object then we need to calculate the signature correctly
+        // using information from the attached session token and the uri (which contains uri, token, parameters, etc.
+        if (!requiredParameters.containsKey("no_session_token_needed")) {
+            String signature;
+            signature = createPreHashStringForApiCallSignature(apiRequestObject, generatedUri);
+            signature = createHash(signature);
+
+            if (token != null && SessionToken.class.isInstance(token)) {
+                fullUrlBuilder.append("&signature=");
+                fullUrlBuilder.append(signature);
+            }
+
         }
+
 
         String completedUrl = fullUrlBuilder.toString();
 
