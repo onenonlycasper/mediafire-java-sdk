@@ -1,4 +1,4 @@
-package com.arkhive.components.core.module_api;
+package com.arkhive.components.core.module_api.requests;
 
 public enum MFHost {
     LIVE_HTTP("www.mediafire.com", TransferScheme.HTTP),
