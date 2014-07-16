@@ -17,7 +17,9 @@ import com.google.gson.JsonParser;
 public final class NewSessionTokenHttpPostProcessor implements HttpProcessor {
     private static final String TAG = NewSessionTokenHttpPostProcessor.class.getCanonicalName();
 
-    public NewSessionTokenHttpPostProcessor() {}
+    public NewSessionTokenHttpPostProcessor() {
+        Configuration.getErrorTracker().i(TAG, "NewSessionTokenHttpPreProcessor created");
+    }
 
     public void processApiRequestObject(ApiRequestObject apiRequestObject) {
         Configuration.getErrorTracker().i(TAG, "processApiRequestObject()");

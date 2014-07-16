@@ -14,7 +14,9 @@ import java.util.Map;
 public final class NewSessionTokenHttpPreProcessor implements HttpProcessor {
     private static final String TAG = NewSessionTokenHttpPreProcessor.class.getCanonicalName();
 
-    public NewSessionTokenHttpPreProcessor() {}
+    public NewSessionTokenHttpPreProcessor() {
+        Configuration.getErrorTracker().i(TAG, "NewSessionTokenHttpPreProcessor created");
+    }
 
     /**
      * processes an api request prior to making an http request.
