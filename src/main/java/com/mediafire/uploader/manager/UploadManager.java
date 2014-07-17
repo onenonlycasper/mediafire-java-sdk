@@ -1,7 +1,6 @@
 package com.mediafire.uploader.manager;
 
-import com.arkhive.components.core.Configuration;
-import com.arkhive.components.core.MediaFire;
+import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.uploader.interfaces.UploadListener;
 import com.mediafire.uploader.process.CheckProcess;
 import com.mediafire.uploader.uploaditem.UploadItem;
@@ -29,22 +28,22 @@ public class UploadManager extends UploadManagerWorker {
     }
 
     public void setUploadListener(UploadListener uiListener) {
-        Configuration.getErrorTracker().i(TAG, "setUploadListener");
+        MFConfiguration.getErrorTracker().i(TAG, "setUploadListener");
         this.uiListener = uiListener;
     }
 
     public int getAllItems() {
-        Configuration.getErrorTracker().i(TAG, "getAllItems()");
+        MFConfiguration.getErrorTracker().i(TAG, "getAllItems()");
         return workQueue.size() + executor.getActiveCount();
     }
 
     public BlockingQueue<Runnable> getAllWaitingRunnables() {
-        Configuration.getErrorTracker().i(TAG, "getAllWaitingRunnables()");
+        MFConfiguration.getErrorTracker().i(TAG, "getAllWaitingRunnables()");
         return workQueue;
     }
 
     public void clearUploadQueue() {
-        Configuration.getErrorTracker().i(TAG, "clearUploadQueue()");
+        MFConfiguration.getErrorTracker().i(TAG, "clearUploadQueue()");
         boolean isPaused = isPaused();
         if (!isPaused) {
             pause();
@@ -62,10 +61,10 @@ public class UploadManager extends UploadManagerWorker {
      * @param uploadItem The UploadItem to add to the backlog queue.
      */
     public void addUploadRequest(UploadItem uploadItem) {
-        Configuration.getErrorTracker().i(TAG, "addUploadRequest()");
+        MFConfiguration.getErrorTracker().i(TAG, "addUploadRequest()");
         //don't add the item to the backlog queue if it is null or the path is null
         if (uploadItem == null) {
-            Configuration.getErrorTracker().i(TAG, "one or more required parameters are invalid, not adding item to queue");
+            MFConfiguration.getErrorTracker().i(TAG, "one or more required parameters are invalid, not adding item to queue");
             return;
         }
 
@@ -74,7 +73,7 @@ public class UploadManager extends UploadManagerWorker {
                 || uploadItem.getFileData().getFilePath().isEmpty()
                 || uploadItem.getFileData().getFileHash().isEmpty()
                 || uploadItem.getFileData().getFileSize() == 0) {
-            Configuration.getErrorTracker().i(TAG, "one or more required parameters are invalid, not adding item to queue");
+            MFConfiguration.getErrorTracker().i(TAG, "one or more required parameters are invalid, not adding item to queue");
             return;
         }
 
@@ -85,28 +84,28 @@ public class UploadManager extends UploadManagerWorker {
     }
 
     protected void notifyUploadListenerStarted(UploadItem uploadItem) {
-        Configuration.getErrorTracker().i(TAG, "notifyUploadListenerStarted()");
+        MFConfiguration.getErrorTracker().i(TAG, "notifyUploadListenerStarted()");
         if (uiListener != null) {
             uiListener.onStarted(uploadItem);
         }
     }
 
     protected void notifyUploadListenerCompleted(UploadItem uploadItem) {
-        Configuration.getErrorTracker().i(TAG, "notifyUploadListenerCompleted()");
+        MFConfiguration.getErrorTracker().i(TAG, "notifyUploadListenerCompleted()");
         if (uiListener != null) {
             uiListener.onCompleted(uploadItem);
         }
     }
 
     protected void notifyUploadListenerOnProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        Configuration.getErrorTracker().i(TAG, "notifyUploadListenerOnProgressUpdate()");
+        MFConfiguration.getErrorTracker().i(TAG, "notifyUploadListenerOnProgressUpdate()");
         if (uiListener != null) {
             uiListener.onProgressUpdate(uploadItem, chunkNumber, numChunks);
         }
     }
 
     protected void notifyUploadListenerCancelled(UploadItem uploadItem) {
-        Configuration.getErrorTracker().i(TAG, "notifyUploadListenerCancelled()");
+        MFConfiguration.getErrorTracker().i(TAG, "notifyUploadListenerCancelled()");
         if (uiListener != null) {
             uiListener.onCancelled(uploadItem);
         }

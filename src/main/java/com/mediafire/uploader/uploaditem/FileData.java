@@ -1,7 +1,6 @@
 package com.mediafire.uploader.uploaditem;
 
-
-import com.arkhive.components.core.Configuration;
+import com.mediafire.sdk.config.MFConfiguration;
 
 import java.io.*;
 import java.security.MessageDigest;
@@ -17,7 +16,7 @@ public class FileData {
     private String fileHash;
 
     public FileData(String filePath) {
-        Configuration.getErrorTracker().i(TAG, "FileData object created");
+        MFConfiguration.getErrorTracker().i(TAG, "FileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
@@ -32,7 +31,7 @@ public class FileData {
      * @return
      */
     public String getFilePath() {
-        Configuration.getErrorTracker().i(TAG, "getFilePath()");
+        MFConfiguration.getErrorTracker().i(TAG, "getFilePath()");
         return filePath;
     }
 
@@ -42,7 +41,7 @@ public class FileData {
      * @return
      */
     public long getFileSize() {
-        Configuration.getErrorTracker().i(TAG, "getFilePath()");
+        MFConfiguration.getErrorTracker().i(TAG, "getFilePath()");
         return fileSize;
     }
 
@@ -52,20 +51,20 @@ public class FileData {
      * @return
      */
     public String getFileHash() {
-        Configuration.getErrorTracker().i(TAG, "getFilePath()");
+        MFConfiguration.getErrorTracker().i(TAG, "getFilePath()");
         return fileHash;
     }
 
     public void setFileSize() {
-        Configuration.getErrorTracker().i(TAG, "setFileSize()");
+        MFConfiguration.getErrorTracker().i(TAG, "setFileSize()");
         File file = new File(getFilePath());
         fileSize = file.length();
 
-        Configuration.getErrorTracker().i(TAG, "file size set to " + fileSize);
+        MFConfiguration.getErrorTracker().i(TAG, "file size set to " + fileSize);
     }
 
     public void setFileHash() {
-        Configuration.getErrorTracker().i(TAG, "setFileHash()");
+        MFConfiguration.getErrorTracker().i(TAG, "setFileHash()");
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;
@@ -73,7 +72,7 @@ public class FileData {
         try {
             fileInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
+            MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
             fileHash = "";
             return;
         }
@@ -103,16 +102,16 @@ public class FileData {
             fileUri.close();
             in.close();
         } catch (NoSuchAlgorithmException e) {
-            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
+            MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
             fileHash = "";
         } catch (IOException e) {
-            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
+            MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
             fileHash = "";
         } finally {
             fileInputStream = null;
             fileUri = null;
             in = null;
         }
-        Configuration.getErrorTracker().i(TAG, "FILE HASH IS SET TO: " + fileHash);
+        MFConfiguration.getErrorTracker().i(TAG, "FILE HASH IS SET TO: " + fileHash);
     }
 }

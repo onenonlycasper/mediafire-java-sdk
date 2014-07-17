@@ -1,9 +1,8 @@
 package com.mediafire.uploader.process;
 
-import com.arkhive.components.core.Configuration;
-import com.arkhive.components.core.MediaFire;
-import com.arkhive.components.core.module_api.codes.ApiResponseCode;
-import com.arkhive.components.core.module_api.responses.UploadInstantResponse;
+import com.mediafire.sdk.api_responses.ApiResponse;
+import com.mediafire.sdk.api_responses.upload.InstantResponse;
+import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
@@ -11,9 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-
-//CHECKSTYLE:OFF
-//CHECKSTYLE:ON
 
 /**
  * Runnable for making a call to upload/instant.php.
@@ -30,28 +26,28 @@ public class InstantProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        Configuration.getErrorTracker().i(TAG, "doUploadProcess()");
+        MFConfiguration.getErrorTracker().i(TAG, "doUploadProcess()");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
         // url encode the filename
         String filename;
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
+            MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
             notifyListenerException(e);
             return;
         }
 
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
-        UploadInstantResponse response = mediaFire.apiCall().upload.instantUpload(keyValue, null);
+        InstantResponse response = mediaFire.apiCall().upload.instantUpload(keyValue, null);
 
         if (response == null) {
             notifyListenerLostConnection();
             return;
         }
 
-        if (response.getErrorCode() != ApiResponseCode.NO_ERROR) {
+        if (response.getErrorCode() != ApiResponse.ResponseCode.NO_ERROR) {
             notifyListenerCancelled(response);
             return;
         }

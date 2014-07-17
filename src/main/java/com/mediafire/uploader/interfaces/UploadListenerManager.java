@@ -1,6 +1,10 @@
 package com.mediafire.uploader.interfaces;
 
-import com.arkhive.components.core.module_api.responses.*;
+import com.mediafire.sdk.api_responses.ApiResponse;
+import com.mediafire.sdk.api_responses.upload.CheckResponse;
+import com.mediafire.sdk.api_responses.upload.InstantResponse;
+import com.mediafire.sdk.api_responses.upload.PollResponse;
+import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
 /**
@@ -22,7 +26,7 @@ public interface UploadListenerManager {
      * @param uploadItem - the item being uploaded.
      * @param response   - the response received.
      */
-    public void onCheckCompleted(UploadItem uploadItem, UploadCheckResponse response);
+    public void onCheckCompleted(UploadItem uploadItem, CheckResponse response);
 
     /**
      * publish progress.
@@ -38,14 +42,14 @@ public interface UploadListenerManager {
      *
      * @param uploadItem - the item being uploaded.
      */
-    public void onInstantCompleted(UploadItem uploadItem, UploadInstantResponse response);
+    public void onInstantCompleted(UploadItem uploadItem, InstantResponse response);
 
     /**
      * Called when the UploadProcess has completed it's cycle.
      *
      * @param uploadItem - the item being uploaded.
      */
-    public void onResumableCompleted(UploadItem uploadItem, UploadResumableResponse response);
+    public void onResumableCompleted(UploadItem uploadItem, ResumableResponse response);
 
     /**
      * Called when the PollUploadProcess has completed it's cycle.
@@ -53,7 +57,7 @@ public interface UploadListenerManager {
      * @param uploadItem - the item being uploaded.
      * @param response   - the response received.
      */
-    public void onPollCompleted(UploadItem uploadItem, UploadPollResponse response);
+    public void onPollCompleted(UploadItem uploadItem, PollResponse response);
 
     /**
      * Called when an exception has been caught such as FileNotFoundException for a path.

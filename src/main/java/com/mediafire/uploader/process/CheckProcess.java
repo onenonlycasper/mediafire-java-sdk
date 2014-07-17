@@ -1,9 +1,7 @@
 package com.mediafire.uploader.process;
 
-import com.arkhive.components.core.Configuration;
-import com.arkhive.components.core.MediaFire;
-import com.arkhive.components.core.module_api.codes.ApiResponseCode;
-import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
+import com.mediafire.sdk.api_responses.upload.CheckResponse;
+import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.ResumableBitmap;
 import com.mediafire.uploader.uploaditem.UploadItem;
@@ -24,7 +22,7 @@ public class CheckProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        Configuration.getErrorTracker().i(TAG, "doUploadProcess()");
+        MFConfiguration.getErrorTracker().i(TAG, "doUploadProcess()");
         uploadItem.getFileData().setFileSize();
         uploadItem.getFileData().setFileHash();
         //notify listeners that check started
@@ -35,7 +33,7 @@ public class CheckProcess extends UploadProcess {
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            Configuration.getErrorTracker().i(TAG, "Exception: " + e);
+            MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
             e.printStackTrace();
             notifyListenerException(e);
             return;
@@ -43,7 +41,7 @@ public class CheckProcess extends UploadProcess {
 
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
-        UploadCheckResponse response = mediaFire.apiCall().upload.checkUpload(keyValue, null);
+        CheckResponse response = mediaFire.apiCall().upload.checkUpload(keyValue, null);
 
         if (response == null) {
             notifyListenerLostConnection();
@@ -62,7 +60,7 @@ public class CheckProcess extends UploadProcess {
         List<Integer> words = response.getResumableUpload().getBitmap().getWords();
         ResumableBitmap bitmap = new ResumableBitmap(count, words);
         uploadItem.setBitmap(bitmap);
-        Configuration.getErrorTracker().i(TAG, uploadItem.getFileData().getFilePath() + " upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, " + uploadItem.getBitmap().getWords().toString() + " words.");
+        MFConfiguration.getErrorTracker().i(TAG, uploadItem.getFileData().getFilePath() + " upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, " + uploadItem.getBitmap().getWords().toString() + " words.");
 
         // notify listeners that check has completed
         notifyListenerCompleted(response);

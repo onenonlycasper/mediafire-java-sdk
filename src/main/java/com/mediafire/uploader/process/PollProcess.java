@@ -1,11 +1,7 @@
 package com.mediafire.uploader.process;
 
-import com.arkhive.components.core.Configuration;
-import com.arkhive.components.core.MediaFire;
-import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
-import com.arkhive.components.core.module_api.codes.PollResultCode;
-import com.arkhive.components.core.module_api.codes.PollStatusCode;
-import com.arkhive.components.core.module_api.responses.UploadPollResponse;
+import com.mediafire.sdk.api_responses.upload.PollResponse;
+import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
@@ -40,7 +36,7 @@ public class PollProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        Configuration.getErrorTracker().i(TAG, "doUploadProcess()");
+        MFConfiguration.getErrorTracker().i(TAG, "doUploadProcess()");
         //generate our request string
         HashMap<String, String> keyValue = generateGetParameters();
 
@@ -49,14 +45,14 @@ public class PollProcess extends UploadProcess {
             // increment counter
             pollCount++;
             // get api response.
-            UploadPollResponse response = mediaFire.apiCall().upload.pollUpload(keyValue, null);
+            PollResponse response = mediaFire.apiCall().upload.pollUpload(keyValue, null);
 
             if (response == null) {
                 notifyListenerLostConnection();
                 return;
             }
 
-            Configuration.getErrorTracker().i(TAG, "received error code: " + response.getErrorCode());
+            MFConfiguration.getErrorTracker().i(TAG, "received error code: " + response.getErrorCode());
             //check to see if we need to call pollUploadCompleted or loop again
             switch (response.getErrorCode()) {
                 case NO_ERROR:
@@ -66,23 +62,23 @@ public class PollProcess extends UploadProcess {
                     //      first   -   result code no error? yes, keep calm and poll on. no, cancel upload because error.
                     //      second  -   fileerror code no error? yes, carry on old chap!. no, cancel upload because error.
                     //      third   -   status code 99 (no more requests)? yes, done. no, continue.
-                    if (response.getDoUpload().getResultCode() != PollResultCode.SUCCESS) {
-                        Configuration.getErrorTracker().i(TAG, "result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
+                    if (response.getDoUpload().getResultCode() != PollResponse.Result.SUCCESS) {
+                        MFConfiguration.getErrorTracker().i(TAG, "result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
                         notifyListenerCancelled(response);
                         return;
                     }
 
-                    if (response.getDoUpload().getFileErrorCode() != PollFileErrorCode.NO_ERROR) {
-                        Configuration.getErrorTracker().i(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
-                        Configuration.getErrorTracker().i(TAG, "file path: " + uploadItem.getFileData().getFilePath());
-                        Configuration.getErrorTracker().i(TAG, "file hash: " + uploadItem.getFileData().getFileHash());
-                        Configuration.getErrorTracker().i(TAG, "file size: " + uploadItem.getFileData().getFileSize());
+                    if (response.getDoUpload().getFileErrorCode() != PollResponse.FileError.NO_ERROR) {
+                        MFConfiguration.getErrorTracker().i(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
+                        MFConfiguration.getErrorTracker().i(TAG, "file path: " + uploadItem.getFileData().getFilePath());
+                        MFConfiguration.getErrorTracker().i(TAG, "file hash: " + uploadItem.getFileData().getFileHash());
+                        MFConfiguration.getErrorTracker().i(TAG, "file size: " + uploadItem.getFileData().getFileSize());
                         notifyListenerCancelled(response);
                         return;
                     }
 
-                    if (response.getDoUpload().getStatusCode() == PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY) {
-                        Configuration.getErrorTracker().i(TAG, "status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
+                    if (response.getDoUpload().getStatusCode() == PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY) {
+                        MFConfiguration.getErrorTracker().i(TAG, "status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
                         notifyListenerCompleted(response);
                         return;
                     }
@@ -97,7 +93,7 @@ public class PollProcess extends UploadProcess {
             try {
                 Thread.sleep(TIME_BETWEEN_POLLS);
             } catch (InterruptedException e) {
-                Configuration.getErrorTracker().i(TAG, "Exception: " + e);
+                MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
                 notifyListenerException(e);
                 return;
             }
@@ -115,7 +111,7 @@ public class PollProcess extends UploadProcess {
     }
 
     private HashMap<String, String> generateGetParameters() {
-        Configuration.getErrorTracker().i(TAG, "generateGetParameters()");
+        MFConfiguration.getErrorTracker().i(TAG, "generateGetParameters()");
         HashMap<String, String> keyValue = new HashMap<String, String>();
         keyValue.put("key", uploadItem.getPollUploadKey());
         keyValue.put("response_format", "json");

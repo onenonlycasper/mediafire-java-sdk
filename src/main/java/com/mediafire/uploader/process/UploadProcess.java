@@ -1,15 +1,12 @@
 package com.mediafire.uploader.process;
 
-import com.arkhive.components.core.Configuration;
-import com.arkhive.components.core.MediaFire;
-import com.arkhive.components.core.module_api.responses.UploadCheckResponse;
-import com.arkhive.components.core.module_api.responses.UploadInstantResponse;
-import com.arkhive.components.core.module_api.responses.UploadPollResponse;
-import com.arkhive.components.core.module_api.responses.UploadResumableResponse;
+import com.mediafire.sdk.api_responses.upload.CheckResponse;
+import com.mediafire.sdk.api_responses.upload.InstantResponse;
+import com.mediafire.sdk.api_responses.upload.PollResponse;
+import com.mediafire.sdk.api_responses.upload.ResumableResponse;
+import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
-
-
 
 /**
  * Created by  on 7/8/2014.
@@ -35,39 +32,39 @@ public abstract class UploadProcess implements Runnable {
 
 
     protected void notifyListenerUploadStarted() {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerUploadStarted()");
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerUploadStarted()");
         // notify listeners that task has started.
         if (uploadListenerManager != null) {
             uploadListenerManager.onStartedUploadProcess(uploadItem);
         }
     }
 
-    protected void notifyListenerCompleted(UploadCheckResponse response) {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
+    protected void notifyListenerCompleted(CheckResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onCheckCompleted(uploadItem, response);
         }
     }
 
-    protected void notifyListenerCompleted(UploadResumableResponse response) {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
+    protected void notifyListenerCompleted(ResumableResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onResumableCompleted(uploadItem, response);
         }
     }
 
-    protected void notifyListenerCompleted(UploadInstantResponse response) {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
+    protected void notifyListenerCompleted(InstantResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onInstantCompleted(uploadItem, response);
         }
     }
 
-    protected void notifyListenerCompleted(UploadPollResponse response) {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
+    protected void notifyListenerCompleted(PollResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onPollCompleted(uploadItem, response);
@@ -75,39 +72,39 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerOnProgressUpdate(int chunkNumber, int numChunks) {
-        Configuration.getErrorTracker().i(TAG, "notifyListenerOnProgressUpdate()");
+        MFConfiguration.getErrorTracker().i(TAG, "notifyListenerOnProgressUpdate()");
         // notify listeners of progress update
         if (uploadListenerManager != null) {
             uploadListenerManager.onProgressUpdate(uploadItem, chunkNumber, numChunks);
         }
     }
 
-    protected void notifyListenerCancelled(UploadCheckResponse response) {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
+    protected void notifyListenerCancelled(CheckResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
         }
     }
 
-    protected void notifyListenerCancelled(UploadInstantResponse response) {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
+    protected void notifyListenerCancelled(InstantResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
         }
     }
 
-    protected void notifyListenerCancelled(UploadResumableResponse response) {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
+    protected void notifyListenerCancelled(ResumableResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
         }
     }
 
-    protected void notifyListenerCancelled(UploadPollResponse response) {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
+    protected void notifyListenerCancelled(PollResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
@@ -115,7 +112,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerException(Exception e) {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerException()");
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerException()");
         //notify listeners that there has been an exception
         if (uploadListenerManager != null) {
             uploadListenerManager.onProcessException(uploadItem, e);
@@ -123,7 +120,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerLostConnection() {
-        Configuration.getErrorTracker().i(TAG, " notifyListenerLostConnection()");
+        MFConfiguration.getErrorTracker().i(TAG, " notifyListenerLostConnection()");
         // notify listeners that connection was lost
         if (uploadListenerManager != null) {
             uploadListenerManager.onLostConnection(uploadItem);

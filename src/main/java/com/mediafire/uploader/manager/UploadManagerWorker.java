@@ -1,12 +1,10 @@
 package com.mediafire.uploader.manager;
 
-import com.arkhive.components.core.Configuration;
-import com.arkhive.components.core.MediaFire;
-import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
-import com.arkhive.components.core.module_api.codes.PollResultCode;
-import com.arkhive.components.core.module_api.codes.PollStatusCode;
-import com.arkhive.components.core.module_api.responses.*;
-import com.arkhive.components.core.module_errors.ErrorTracker;
+import com.mediafire.sdk.api_responses.upload.CheckResponse;
+import com.mediafire.sdk.api_responses.upload.InstantResponse;
+import com.mediafire.sdk.api_responses.upload.PollResponse;
+import com.mediafire.sdk.api_responses.upload.ResumableResponse;
+import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.uploader.PausableThreadPoolExecutor;
 import com.mediafire.uploader.interfaces.Pausable;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
@@ -48,13 +46,13 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onStartedUploadProcess(UploadItem uploadItem) {
-        Configuration.getErrorTracker().i(TAG, "onStartedUploadProcess()");
+        MFConfiguration.getErrorTracker().i(TAG, "onStartedUploadProcess()");
         notifyUploadListenerStarted(uploadItem);
     }
 
     @Override
-    public void onCheckCompleted(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        Configuration.getErrorTracker().i(TAG, "onCheckCompleted()");
+    public void onCheckCompleted(UploadItem uploadItem, CheckResponse checkResponse) {
+        MFConfiguration.getErrorTracker().i(TAG, "onCheckCompleted()");
         //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
         if (uploadItem.getUploadAttemptCount() > MAX_UPLOAD_ATTEMPTS || uploadItem.isCancelled()) {
@@ -63,7 +61,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         }
 
         if (checkResponse.getStorageLimitExceeded()) {
-            Configuration.getErrorTracker().i(TAG, "storage limit is exceeded");
+            MFConfiguration.getErrorTracker().i(TAG, "storage limit is exceeded");
             storageLimitExceeded(uploadItem);
         } else if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             // all units are ready and we have the poll upload key. start polling.
@@ -80,17 +78,17 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        Configuration.getErrorTracker().i(TAG, "onProgressUpdate()");
+        MFConfiguration.getErrorTracker().i(TAG, "onProgressUpdate()");
         notifyUploadListenerOnProgressUpdate(uploadItem, chunkNumber, numChunks);
     }
 
     private void storageLimitExceeded(UploadItem uploadItem) {
-        Configuration.getErrorTracker().i(TAG, "storageLimitExceeded()");
+        MFConfiguration.getErrorTracker().i(TAG, "storageLimitExceeded()");
         notifyUploadListenerCancelled(uploadItem);
     }
 
     private void hashExists(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        Configuration.getErrorTracker().i(TAG, "hashExists()");
+        MFConfiguration.getErrorTracker().i(TAG, "hashExists()");
         if (!checkResponse.isInAccount()) { // hash which exists is not in the account
             hashNotInAccount(uploadItem);
         } else { // hash exists and is in the account
@@ -99,61 +97,61 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     }
 
     private void hashNotInAccount(UploadItem uploadItem) {
-        Configuration.getErrorTracker().i(TAG, "hashNotInAccount()");
+        MFConfiguration.getErrorTracker().i(TAG, "hashNotInAccount()");
         InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
     }
 
     private void hashInAccount(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        Configuration.getErrorTracker().i(TAG, "hashInAccount()");
+        MFConfiguration.getErrorTracker().i(TAG, "hashInAccount()");
         boolean inFolder = checkResponse.isInFolder();
         InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
-        Configuration.getErrorTracker().i(TAG, "ActionOnInAccount: " + uploadItem.getUploadOptions().getActionOnInAccount().toString());
+        MFConfiguration.getErrorTracker().i(TAG, "ActionOnInAccount: " + uploadItem.getUploadOptions().getActionOnInAccount().toString());
         switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
             case UPLOAD_ALWAYS:
-                Configuration.getErrorTracker().i(TAG, "uploading...");
+                MFConfiguration.getErrorTracker().i(TAG, "uploading...");
                 executor.execute(process);
                 break;
             case UPLOAD_IF_NOT_IN_FOLDER:
-                Configuration.getErrorTracker().i(TAG, "uploading if not in folder.");
+                MFConfiguration.getErrorTracker().i(TAG, "uploading if not in folder.");
                 if (!inFolder) {
-                    Configuration.getErrorTracker().i(TAG, "uploading...");
+                    MFConfiguration.getErrorTracker().i(TAG, "uploading...");
                     executor.execute(process);
                 } else {
-                    Configuration.getErrorTracker().i(TAG, "already in folder, not uploading...");
+                    MFConfiguration.getErrorTracker().i(TAG, "already in folder, not uploading...");
                     notifyUploadListenerCompleted(uploadItem);
                 }
                 break;
             case DO_NOT_UPLOAD:
             default:
-                Configuration.getErrorTracker().i(TAG, "not uploading...");
+                MFConfiguration.getErrorTracker().i(TAG, "not uploading...");
                 notifyUploadListenerCompleted(uploadItem);
                 break;
         }
     }
 
-    private void hashDoesNotExist(UploadItem uploadItem, UploadCheckResponse checkResponse) {
-        Configuration.getErrorTracker().i(TAG, "hashDoesNotExist()");
+    private void hashDoesNotExist(UploadItem uploadItem, CheckResponse checkResponse) {
+        MFConfiguration.getErrorTracker().i(TAG, "hashDoesNotExist()");
         if (checkResponse.getResumableUpload().getUnitSize() == 0) {
-            Configuration.getErrorTracker().i(TAG, "unit size received from unit_size was 0. cancelling");
+            MFConfiguration.getErrorTracker().i(TAG, "unit size received from unit_size was 0. cancelling");
             notifyUploadListenerCancelled(uploadItem);
             return;
         }
 
         if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
-            Configuration.getErrorTracker().i(TAG, "number of units received from number_of_units was 0. cancelling");
+            MFConfiguration.getErrorTracker().i(TAG, "number of units received from number_of_units was 0. cancelling");
             notifyUploadListenerCancelled(uploadItem);
             return;
         }
 
         if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
-            Configuration.getErrorTracker().i(TAG, "all units ready and have a poll upload key");
+            MFConfiguration.getErrorTracker().i(TAG, "all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
             PollProcess process = new PollProcess(mediaFire, this, uploadItem);
             executor.execute(process);
         } else {
-            Configuration.getErrorTracker().i(TAG, "all units not ready or do not have poll upload key");
+            MFConfiguration.getErrorTracker().i(TAG, "all units not ready or do not have poll upload key");
             // either we don't have the poll upload key or all units are not ready
             ResumableProcess process = new ResumableProcess(mediaFire, this, uploadItem);
             executor.execute(process);
@@ -161,14 +159,14 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     }
 
     @Override
-    public void onInstantCompleted(UploadItem uploadItem, UploadInstantResponse response) {
-        Configuration.getErrorTracker().i(TAG, "onInstantCompleted()");
+    public void onInstantCompleted(UploadItem uploadItem, InstantResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, "onInstantCompleted()");
         notifyUploadListenerCompleted(uploadItem);
     }
 
     @Override
-    public void onResumableCompleted(UploadItem uploadItem, UploadResumableResponse response) {
-        Configuration.getErrorTracker().i(TAG, "onResumableCompleted()");
+    public void onResumableCompleted(UploadItem uploadItem, ResumableResponse response) {
+        MFConfiguration.getErrorTracker().i(TAG, "onResumableCompleted()");
         if (response != null &&
                 response.getResumableUpload().areAllUnitsReady() &&
                 !response.getDoUpload().getPollUploadKey().isEmpty()) {
@@ -181,17 +179,17 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     }
 
     @Override
-    public void onPollCompleted(UploadItem uploadItem, UploadPollResponse pollResponse) {
-        Configuration.getErrorTracker().i(TAG, "onPollCompleted()");
+    public void onPollCompleted(UploadItem uploadItem, PollResponse pollResponse) {
+        MFConfiguration.getErrorTracker().i(TAG, "onPollCompleted()");
         // if this method is called then filerror and result codes are fine, but we may not have received status 99 so
         // check status code and then possibly senditem to the backlog queue.
-        UploadPollResponse.DoUpload doUpload = pollResponse.getDoUpload();
-        PollStatusCode pollStatusCode = doUpload.getStatusCode();
-        PollResultCode pollResultCode = doUpload.getResultCode();
-        PollFileErrorCode pollFileErrorCode = doUpload.getFileErrorCode();
+        PollResponse.DoUpload doUpload = pollResponse.getDoUpload();
+        PollResponse.Status pollStatusCode = doUpload.getStatusCode();
+        PollResponse.Result pollResultCode = doUpload.getResultCode();
+        PollResponse.FileError pollFileErrorCode = doUpload.getFileErrorCode();
 
         if (pollStatusCode != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResultCode.SUCCESS && pollFileErrorCode == PollFileErrorCode.NO_ERROR) {
-            Configuration.getErrorTracker().i(TAG, "status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
+            MFConfiguration.getErrorTracker().i(TAG, "status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
             notifyUploadListenerCancelled(uploadItem);
             addUploadRequest(uploadItem);
         } else {
@@ -201,8 +199,8 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onProcessException(UploadItem uploadItem, Exception exception) {
-        Configuration.getErrorTracker().i(TAG, "onProcessException()");
-        Configuration.getErrorTracker().i(TAG, "received exception: " + exception);
+        MFConfiguration.getErrorTracker().i(TAG, "onProcessException()");
+        MFConfiguration.getErrorTracker().i(TAG, "received exception: " + exception);
         if (errorTracker != null) {
             errorTracker.e(UploadManagerWorker.class.getCanonicalName(), exception);
         }
@@ -211,7 +209,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onLostConnection(UploadItem uploadItem) {
-        Configuration.getErrorTracker().i(TAG, "onLostConnection()");
+        MFConfiguration.getErrorTracker().i(TAG, "onLostConnection()");
         notifyUploadListenerCancelled(uploadItem);
         //pause upload manager
         pause();
@@ -220,7 +218,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onCancelled(UploadItem uploadItem, ApiResponse apiResponse) {
-        Configuration.getErrorTracker().i(TAG, "onCancelled()");
+        MFConfiguration.getErrorTracker().i(TAG, "onCancelled()");
         notifyUploadListenerCancelled(uploadItem);
         // if there is an api error then re-add upload request.
         if (apiResponse != null && apiResponse.hasError()) {
@@ -232,17 +230,17 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
      * Pausable interface
      */
     public void pause() {
-        Configuration.getErrorTracker().i(TAG, "pause()");
+        MFConfiguration.getErrorTracker().i(TAG, "pause()");
         executor.pause();
     }
 
     public void resume() {
-        Configuration.getErrorTracker().i(TAG, "resume()");
+        MFConfiguration.getErrorTracker().i(TAG, "resume()");
         executor.resume();
     }
 
     public boolean isPaused() {
-        Configuration.getErrorTracker().i(TAG, "isPaused()");
+        MFConfiguration.getErrorTracker().i(TAG, "isPaused()");
         return executor.isPaused();
     }
 }

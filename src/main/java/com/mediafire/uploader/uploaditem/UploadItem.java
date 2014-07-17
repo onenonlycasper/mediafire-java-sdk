@@ -1,7 +1,6 @@
 package com.mediafire.uploader.uploaditem;
 
-
-import com.arkhive.components.core.Configuration;
+import com.mediafire.sdk.config.MFConfiguration;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -35,7 +34,7 @@ public class UploadItem {
      *                      Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, UploadOptions uploadOptions) {
-        Configuration.getErrorTracker().i(TAG, "UploadItem created");
+        MFConfiguration.getErrorTracker().i(TAG, "UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
@@ -79,7 +78,7 @@ public class UploadItem {
     }
 
     public int getUploadAttemptCount() {
-        Configuration.getErrorTracker().i(TAG, "getUploadAttemptCount(" + uploadAttemptCount + ")");
+        MFConfiguration.getErrorTracker().i(TAG, "getUploadAttemptCount(" + uploadAttemptCount + ")");
         uploadAttemptCount++;
         return uploadAttemptCount;
     }
@@ -90,7 +89,7 @@ public class UploadItem {
      * @return the filename.
      */
     public String getFileName() {
-        Configuration.getErrorTracker().i(TAG, "getFileName()");
+        MFConfiguration.getErrorTracker().i(TAG, "getFileName()");
         if (!options.getCustomFileName().isEmpty()) {
             fileName = options.getCustomFileName();
         }
@@ -103,7 +102,7 @@ public class UploadItem {
      * @return the file data struct.
      */
     public FileData getFileData() {
-        Configuration.getErrorTracker().i(TAG, "getFileData()");
+        MFConfiguration.getErrorTracker().i(TAG, "getFileData()");
         return fileData;
     }
 
@@ -113,7 +112,7 @@ public class UploadItem {
      * @return - the poll upload key.
      */
     public String getPollUploadKey() {
-        Configuration.getErrorTracker().i(TAG, "getPollUploadKey()");
+        MFConfiguration.getErrorTracker().i(TAG, "getPollUploadKey()");
         return pollUploadKey;
     }
 
@@ -123,7 +122,7 @@ public class UploadItem {
      * @return - the upload options struct.
      */
     public UploadOptions getUploadOptions() {
-        Configuration.getErrorTracker().i(TAG, "getUploadOptions()");
+        MFConfiguration.getErrorTracker().i(TAG, "getUploadOptions()");
         if (options == null) {
             options = new UploadOptions();
         }
@@ -136,7 +135,7 @@ public class UploadItem {
      * @return - the chunkdata struct.
      */
     public ChunkData getChunkData() {
-        Configuration.getErrorTracker().i(TAG, "getChunkData()");
+        MFConfiguration.getErrorTracker().i(TAG, "getChunkData()");
         if (chunkData == null) {
             chunkData = new ChunkData();
         }
@@ -149,9 +148,9 @@ public class UploadItem {
      * @return - the resumablebitmap struct.
      */
     public ResumableBitmap getBitmap() {
-        Configuration.getErrorTracker().i(TAG, "getBitmap()");
+        MFConfiguration.getErrorTracker().i(TAG, "getBitmap()");
         if (bitmap == null) {
-            Configuration.getErrorTracker().i(TAG, "  resumable bitmap reference lost");
+            MFConfiguration.getErrorTracker().i(TAG, "  resumable bitmap reference lost");
             bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
         }
         return bitmap;
@@ -163,7 +162,7 @@ public class UploadItem {
      * @param bitmap - the resumablebitmap to set.
      */
     public void setBitmap(ResumableBitmap bitmap) {
-        Configuration.getErrorTracker().i(TAG, "setBitmap()");
+        MFConfiguration.getErrorTracker().i(TAG, "setBitmap()");
         this.bitmap = bitmap;
     }
 
@@ -173,7 +172,7 @@ public class UploadItem {
      * @param pollUploadKey - the polluploadkey to set.
      */
     public void setPollUploadKey(String pollUploadKey) {
-        Configuration.getErrorTracker().i(TAG, "setPollUploadKey()");
+        MFConfiguration.getErrorTracker().i(TAG, "setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
     }
 
@@ -183,7 +182,7 @@ public class UploadItem {
      * @param path path of the file.
      */
     private void setFileName(String path) {
-        Configuration.getErrorTracker().i(TAG, "setFileName()");
+        MFConfiguration.getErrorTracker().i(TAG, "setFileName()");
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {
