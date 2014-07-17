@@ -19,10 +19,11 @@ public class MFHttpRunner {
         this.mfHttpClientCleanup = new MFHttpClientCleanup(mfTokenFarmCallback, mfConfiguration);
     }
 
-    public void doRequest(MFRequest mfRequest, MFHttpRunnerCallback callback) {
-        if (callback != null) {
-            callback.jobStarted();
+    public void doRequest(MFRequest mfRequest, MFGenericCallback<RunnerHolder> mfGenericCallback) {
+        if (mfGenericCallback != null) {
+            mfGenericCallback.jobStarted();
         }
+
         MFResponse mfResponse = null;
         try {
             mfHttpClientSetup.prepareMFRequestForHttpClient(mfRequest);
@@ -33,12 +34,33 @@ public class MFHttpRunner {
 
         mfHttpClientCleanup.returnToken(mfRequest);
 
-        if (callback != null) {
-            callback.jobFinished(mfRequest, mfResponse);
+        if (mfGenericCallback != null) {
+            RunnerHolder runnerHolder = new RunnerHolder(mfRequest, mfResponse);
+            mfGenericCallback.jobFinished(runnerHolder);
         }
     }
 
     public void doRequest(MFRequest mfRequest) {
         doRequest(mfRequest, null);
+    }
+
+    public class RunnerHolder {
+
+        public MFRequest mfRequest;
+
+        public MFResponse mfResponse;
+
+        public RunnerHolder(MFRequest mfRequest, MFResponse mfResponse) {
+            this.mfRequest = mfRequest;
+            this.mfResponse = mfResponse;
+        }
+
+        public MFRequest getMfRequest() {
+            return mfRequest;
+        }
+
+        public MFResponse getMfResponse() {
+            return mfResponse;
+        }
     }
 }
