@@ -1,6 +1,6 @@
 package com.mediafire.sdk.http;
 
-import com.mediafire.sdk.tokenfarm.Token;
+import com.mediafire.sdk.tokenfarm.MFToken;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ public class MFRequest {
     private final Map<String, String> requestParameters;
     private Map<String, String> headers;
     private byte[] payload;
-    private Token token;
+    private MFToken mfToken;
 
     public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters, Map<String, String> headers, byte[] payload) {
         if (mfHost == null) {
@@ -64,11 +64,11 @@ public class MFRequest {
         return payload;
     }
 
-    public Token getToken() {
-        return token;
+    public MFToken getToken() {
+        return mfToken;
     }
 
-    public void setToken(Token token) {
-        this.token = token;
+    public void setToken(MFToken MFToken) {
+        this.mfToken = MFToken;
     }
 }
