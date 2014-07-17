@@ -1,6 +1,5 @@
 package com.mediafire.sdk.http;
 
-import com.mediafire.sdk.*;
 import com.mediafire.sdk.token.MFImageActionToken;
 import com.mediafire.sdk.token.MFSessionToken;
 import com.mediafire.sdk.token.MFTokenDistributor;

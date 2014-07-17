@@ -1,4 +1,4 @@
-package com.mediafire.sdk;
+package com.mediafire.sdk.config;
 
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;

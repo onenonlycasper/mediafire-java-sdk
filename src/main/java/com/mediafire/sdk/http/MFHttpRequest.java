@@ -1,7 +1,5 @@
 package com.mediafire.sdk.http;
 
-import com.mediafire.sdk.MFApi;
-import com.mediafire.sdk.MFHost;
 import com.mediafire.sdk.token.MFToken;
 
 import java.util.LinkedHashMap;

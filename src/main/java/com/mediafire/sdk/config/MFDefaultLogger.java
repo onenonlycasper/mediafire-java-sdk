@@ -1,7 +1,7 @@
 package com.mediafire.sdk.config;
 
-import com.mediafire.sdk.MFApi;
-import com.mediafire.sdk.MFHost;
+import com.mediafire.sdk.http.MFApi;
+import com.mediafire.sdk.http.MFHost;
 import com.mediafire.sdk.http.MFHttpRequest;
 import com.mediafire.sdk.http.MFHttpResponse;
 import com.mediafire.sdk.token.MFToken;
