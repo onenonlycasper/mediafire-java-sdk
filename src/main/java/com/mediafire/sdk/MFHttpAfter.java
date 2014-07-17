@@ -23,13 +23,13 @@ public final class MFHttpAfter {
                 break;
             case UNIQUE:
                 // UNIQUE represents requesting a new session token via /api/user/get_session_token or /api/user/get_action_token
-                if (request.getMfApi() == MFApi.URI_USER_GET_SESSION_TOKEN) {
+                if (request.getMfApi() == MFApi.USER_GET_SESSION_TOKEN) {
                     MFSessionToken newSessionToken = (MFSessionToken) request.getToken();
                     mfTokenDistributor.receiveNewSessionToken(newSessionToken);
-                } else if (request.getMfApi() == MFApi.URI_USER_GET_ACTION_TOKEN && request.getToken() instanceof MFImageActionToken) {
+                } else if (request.getMfApi() == MFApi.USER_GET_ACTION_TOKEN && request.getToken() instanceof MFImageActionToken) {
                     MFImageActionToken newActionToken = (MFImageActionToken) request.getToken();
                     mfTokenDistributor.receiveNewImageActionToken(newActionToken);
-                } else if (request.getMfApi() == MFApi.URI_USER_GET_SESSION_TOKEN && request.getToken() instanceof MFUploadActionToken) {
+                } else if (request.getMfApi() == MFApi.USER_GET_SESSION_TOKEN && request.getToken() instanceof MFUploadActionToken) {
                     MFUploadActionToken newActionToken = (MFUploadActionToken) request.getToken();
                     mfTokenDistributor.receiveNewUploadActionToken(newActionToken);
                 } else {
