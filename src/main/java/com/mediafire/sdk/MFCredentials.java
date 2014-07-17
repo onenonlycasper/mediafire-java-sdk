@@ -1,7 +1,5 @@
 package com.mediafire.sdk;
 
-import com.arkhive.components.core.Configuration;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,7 +27,7 @@ public final class MFCredentials {
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
-    public MFCredentials(Configuration configuration) {
+    public MFCredentials(MFConfiguration configuration) {
         this(configuration.getAppId(), configuration.getApiKey());
     }
 
@@ -41,7 +39,6 @@ public final class MFCredentials {
      * @return - true if credentials are stored, false if not.
      */
     public boolean setCredentials(Map<String, String> userCredentials) {
-        Configuration.getErrorTracker().i(TAG, "addUserCredentials()");
         if (isFacebookCredentials(userCredentials)) {
             this.userCredentials = userCredentials;
             userCredentialsType = UserCredentialsType.FACEBOOK;
@@ -74,18 +71,15 @@ public final class MFCredentials {
     }
 
     public void clearCredentials() {
-        Configuration.getErrorTracker().i(TAG, "clearCredentials()");
         userCredentials.clear();
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
     public String getAppId() {
-        Configuration.getErrorTracker().i(TAG, "getAppId()");
         return appId;
     }
 
     public String getApiKey() {
-        Configuration.getErrorTracker().i(TAG, "getApiKey()");
         return apiKey;
     }
 
