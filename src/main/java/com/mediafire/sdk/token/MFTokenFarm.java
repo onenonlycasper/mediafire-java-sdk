@@ -40,7 +40,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     public MFTokenFarm(MFConfiguration mfConfiguration) {
         this.mfConfiguration = mfConfiguration;
         this.mfSessionTokens = new LinkedBlockingQueue<MFSessionToken>(mfConfiguration.getMaximumSessionTokens());
-        this.mfHttpRunner = new MFHttpRunner(this, mfConfiguration);
+        this.mfHttpRunner = new MFHttpRunner(mfConfiguration, this);
     }
 
     public void getNewSessionToken() {
