@@ -47,11 +47,11 @@ public abstract class MFHttp {
         return stringBuilder.toString();
     }
 
-    protected final String makeBaseUrl(MFRequest request) {
+    protected final String makeBaseUrl(MFRequest mfRequest) {
         mfConfiguration.getMfLogger().logMessage(TAG, "making a base url");
-        String scheme = request.getMfHost().getTransferScheme().getScheme();
-        String host = request.getMfHost().getHost();
-        String uri = request.getMfApi().getUri();
+        String scheme = mfRequest.getMfHost().getTransferScheme().getScheme();
+        String host = mfRequest.getMfHost().getHost();
+        String uri = mfRequest.getMfApi().getUri();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(scheme);
         stringBuilder.append(host);
