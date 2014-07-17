@@ -2,8 +2,8 @@ package com.mediafire.sdk.config;
 
 import com.mediafire.sdk.http.MFApi;
 import com.mediafire.sdk.http.MFHost;
-import com.mediafire.sdk.http.MFHttpRequest;
-import com.mediafire.sdk.http.MFHttpResponse;
+import com.mediafire.sdk.http.MFRequest;
+import com.mediafire.sdk.http.MFResponse;
 import com.mediafire.sdk.token.MFToken;
 
 import java.util.List;
@@ -30,37 +30,37 @@ public class MFDefaultLogger implements MFLogger {
     }
 
     @Override
-    public void logApiError(String source, MFHttpRequest mfHttpRequest, MFHttpResponse mfHttpResponse) {
+    public void logApiError(String source, MFRequest mfRequest, MFResponse mfResponse) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(source);
         stringBuilder.append("...");
         stringBuilder.append("\n");
-        stringBuilder.append(createRequestStringLog(mfHttpRequest));
-        stringBuilder.append(createResponseStringLog(mfHttpResponse));
+        stringBuilder.append(createRequestStringLog(mfRequest));
+        stringBuilder.append(createResponseStringLog(mfResponse));
         System.out.println(stringBuilder.toString());
     }
     
-    private String createRequestStringLog(MFHttpRequest mfHttpRequest) {
-        MFApi mfApi = mfHttpRequest.getMfApi();
+    private String createRequestStringLog(MFRequest mfRequest) {
+        MFApi mfApi = mfRequest.getMfApi();
         String apiEnumName = mfApi.toString();
         boolean queryPostable = mfApi.isQueryPostable();
         String uri = mfApi.getUri();
         String tokenTypeEnumName = mfApi.getTokenType().toString();
 
-        MFHost mfHost = mfHttpRequest.getMfHost();
+        MFHost mfHost = mfRequest.getMfHost();
         String hostEnumName = mfHost.toString();
         String host = mfHost.getHost();
         String schemeEnumName = mfHost.getTransferScheme().toString();
         String scheme = mfHost.getTransferScheme().getScheme();
 
-        Map<String, String> requestHeaders = mfHttpRequest.getHeaders();
+        Map<String, String> requestHeaders = mfRequest.getHeaders();
 
-        Map<String, String> requestParameters = mfHttpRequest.getRequestParameters();
+        Map<String, String> requestParameters = mfRequest.getRequestParameters();
 
-        MFToken mfToken = mfHttpRequest.getToken();
+        MFToken mfToken = mfRequest.getToken();
         String tokenString = mfToken.getTokenString();
 
-        int payloadLength = mfHttpRequest.getPayload().length;
+        int payloadLength = mfRequest.getPayload().length;
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("MFHttpRequest").append("\n");
@@ -80,11 +80,11 @@ public class MFDefaultLogger implements MFLogger {
         return stringBuilder.toString();
     }
 
-    private String createResponseStringLog(MFHttpResponse mfHttpResponse) {
-        int statusCode = mfHttpResponse.getStatus();
-        int responseBodyByteLength = mfHttpResponse.getBodyBytes().length;
-        String responseString = mfHttpResponse.getResponseString();
-        Map<String, List<String>> mfHttpResponseHeaders = mfHttpResponse.getHeaders();
+    private String createResponseStringLog(MFResponse mfResponse) {
+        int statusCode = mfResponse.getStatus();
+        int responseBodyByteLength = mfResponse.getBodyBytes().length;
+        String responseString = mfResponse.getResponseString();
+        Map<String, List<String>> mfHttpResponseHeaders = mfResponse.getHeaders();
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("MFHttpResponse").append("\n");

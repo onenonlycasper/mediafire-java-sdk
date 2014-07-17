@@ -19,10 +19,10 @@ public final class MFHttpClient extends MFHttp {
         super(mfConfiguration);
     }
 
-    public MFHttpResponse sendRequest(MFHttpRequest request) {
+    public MFResponse sendRequest(MFRequest request) {
         System.out.println("sending request");
         URLConnection connection = null;
-        MFHttpResponse response = null;
+        MFResponse response = null;
 
         try {
             // create the connection
@@ -42,25 +42,25 @@ public final class MFHttpClient extends MFHttp {
         return response;
     }
 
-    protected MFHttpResponse getResponseFromStream(URLConnection connection) throws IOException {
+    private MFResponse getResponseFromStream(URLConnection connection) throws IOException {
         System.out.println("getting MFResponse from stream");
         int status = ((HttpURLConnection) connection).getResponseCode();
-        MFHttpResponse response = null;
+        MFResponse response = null;
 
         if (status / 100 != 2) {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(((HttpURLConnection) connection).getErrorStream());
             byte[] body = readStream(bufferedInputStream);
-            response = new MFHttpResponse(status, new Hashtable<String, List<String>>(), body);
+            response = new MFResponse(status, new Hashtable<String, List<String>>(), body);
         } else {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
             byte[] body = readStream(bufferedInputStream);
-            response = new MFHttpResponse(status, connection.getHeaderFields(), body);
+            response = new MFResponse(status, connection.getHeaderFields(), body);
         }
 
         return response;
     }
 
-    protected void postData(MFHttpRequest request, URLConnection connection) throws IOException {
+    private void postData(MFRequest request, URLConnection connection) throws IOException {
         System.out.println("trying to post data if possible");
         byte[] payload = null;
         if (request.getMfApi().isQueryPostable()) {
@@ -75,7 +75,7 @@ public final class MFHttpClient extends MFHttp {
         }
     }
 
-    protected byte[] readStream(InputStream inputStream) throws IOException {
+    private byte[] readStream(InputStream inputStream) throws IOException {
         System.out.println("reading input stream");
         if (inputStream == null) {
             return null;
@@ -93,7 +93,7 @@ public final class MFHttpClient extends MFHttp {
         return bytes;
     }
 
-    protected HttpURLConnection createHttpConnection(MFHttpRequest request) throws IOException {
+    private HttpURLConnection createHttpConnection(MFRequest request) throws IOException {
         System.out.println("creating http connection");
         URL url = makeFullUrl(request);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -101,7 +101,7 @@ public final class MFHttpClient extends MFHttp {
         return connection;
     }
 
-    protected void setConnectionParameters(URLConnection connection, MFHttpRequest request) {
+    private void setConnectionParameters(URLConnection connection, MFRequest request) {
         System.out.println("setting connection parameters");
         switch (request.getMfHost().getTransferScheme()) {
             case HTTP:
@@ -128,7 +128,7 @@ public final class MFHttpClient extends MFHttp {
         }
     }
 
-    protected URL makeFullUrl(MFHttpRequest request) throws MalformedURLException, UnsupportedEncodingException {
+    private URL makeFullUrl(MFRequest request) throws MalformedURLException, UnsupportedEncodingException {
         System.out.println("creating url");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(makeBaseUrl(request));
@@ -143,7 +143,7 @@ public final class MFHttpClient extends MFHttp {
         return new URL(stringBuilder.toString());
     }
 
-    protected String makeQueryString(Map<String, String> requestParameters) throws UnsupportedEncodingException {
+    private String makeQueryString(Map<String, String> requestParameters) throws UnsupportedEncodingException {
         return makeQueryString(requestParameters, true);
     }
 }

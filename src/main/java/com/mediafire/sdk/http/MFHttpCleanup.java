@@ -8,15 +8,15 @@ import com.mediafire.sdk.token.MFUploadActionToken;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public final class MFHttpAfter {
+public final class MFHttpCleanup {
 
     private MFTokenDistributor mfTokenDistributor;
 
-    public MFHttpAfter(MFTokenDistributor mfTokenDistributor) {
+    public MFHttpCleanup(MFTokenDistributor mfTokenDistributor) {
         this.mfTokenDistributor = mfTokenDistributor;
     }
 
-    public void returnToken(MFHttpRequest request) {
+    public void returnToken(MFRequest request) {
         if (request.getToken() == null) {
             return;
         }

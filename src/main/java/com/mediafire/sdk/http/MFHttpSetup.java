@@ -15,20 +15,20 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public final class MFHttpBefore extends MFHttp {
-    protected static final String SHA1 = "SHA-1";
-    protected static final String MD5 = "MD5";
+public final class MFHttpSetup extends MFHttp {
+    private static final String SHA1 = "SHA-1";
+    private static final String MD5 = "MD5";
 
-    protected MFTokenDistributor mfTokenDistributor;
-    protected MFCredentials mfCredentials;
+    private MFTokenDistributor mfTokenDistributor;
+    private MFCredentials mfCredentials;
 
-    public MFHttpBefore(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration, MFCredentials mfCredentials) {
+    public MFHttpSetup(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration, MFCredentials mfCredentials) {
         super(mfConfiguration);
         this.mfTokenDistributor = mfTokenDistributor;
         this.mfCredentials = mfCredentials;
     }
 
-    public void prepareMFRequestForHttpClient(MFHttpRequest request) throws UnsupportedEncodingException {
+    public void prepareMFRequestForHttpClient(MFRequest request) throws UnsupportedEncodingException {
         // borrow token, if necessary
         borrowToken(request);
         // add token, if necessary, to request parameters
@@ -37,7 +37,7 @@ public final class MFHttpBefore extends MFHttp {
         addSignatureToRequestParameters(request);
     }
 
-    protected void addSignatureToRequestParameters(MFHttpRequest request) throws UnsupportedEncodingException {
+    private void addSignatureToRequestParameters(MFRequest request) throws UnsupportedEncodingException {
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
                 String recycledSessionTokenSignature = calculateSignature(request);
@@ -54,7 +54,7 @@ public final class MFHttpBefore extends MFHttp {
         }
     }
 
-    protected String calculateSignature(MFConfiguration MFConfiguration, MFCredentials credentials) {
+    private String calculateSignature(MFConfiguration MFConfiguration, MFCredentials credentials) {
         // email + password + app id + api key
         // fb access token + app id + api key
         // tw oauth token + tw oauth token secret + app id + api key
@@ -92,7 +92,7 @@ public final class MFHttpBefore extends MFHttp {
         return hashString(hashTarget, SHA1);
     }
 
-    protected String calculateSignature(MFHttpRequest request) throws UnsupportedEncodingException {
+    private String calculateSignature(MFRequest request) throws UnsupportedEncodingException {
         // session token secret key + time + uri (concatenated)
         MFSessionToken sessionToken = (MFSessionToken) request.getToken();
         int secretKey = Integer.valueOf(sessionToken.getSecretKey()) % 256;
@@ -116,7 +116,7 @@ public final class MFHttpBefore extends MFHttp {
         return hashString(nonUrlEncodedString, MD5);
     }
 
-    protected void addTokenToRequestParameters(MFHttpRequest request) {
+    private void addTokenToRequestParameters(MFRequest request) {
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
             case UPLOAD_ACTION_TOKEN:
@@ -131,7 +131,7 @@ public final class MFHttpBefore extends MFHttp {
         }
     }
 
-    protected void borrowToken(MFHttpRequest request) {
+    private void borrowToken(MFRequest request) {
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
                 MFSessionToken sessionToken = mfTokenDistributor.borrowSessionToken();
@@ -151,7 +151,7 @@ public final class MFHttpBefore extends MFHttp {
         }
     }
 
-    protected String hashString(String target, String hashAlgorithm) {
+    private String hashString(String target, String hashAlgorithm) {
         System.out.println("hashing to " + hashAlgorithm + " - " + target);
         String hash;
         try {

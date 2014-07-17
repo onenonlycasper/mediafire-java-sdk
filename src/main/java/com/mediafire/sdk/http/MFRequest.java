@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public final class MFHttpRequest {
+public final class MFRequest {
     private final MFHost mfHost;
     private final MFApi mfApi;
     private final Map<String, String> requestParameters;
@@ -16,7 +16,7 @@ public final class MFHttpRequest {
     private byte[] payload;
     private MFToken mfToken;
 
-    public MFHttpRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters, Map<String, String> headers, byte[] payload) {
+    public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters, Map<String, String> headers, byte[] payload) {
         if (mfHost == null) {
             throw new IllegalArgumentException("MFHost cannot be null");
         }
@@ -36,11 +36,11 @@ public final class MFHttpRequest {
         this.payload = payload;
     }
 
-    public MFHttpRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
+    public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
         this(mfHost, mfApi, requestParameters, null, null);
     }
 
-    public MFHttpRequest(MFHost mfHost, MFApi mfApi) {
+    public MFRequest(MFHost mfHost, MFApi mfApi) {
         this(mfHost, mfApi, null, null, null);
     }
 

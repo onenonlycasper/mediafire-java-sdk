@@ -3,7 +3,7 @@ package com.mediafire.sdk.token;
 import com.mediafire.sdk.http.MFApi;
 import com.mediafire.sdk.http.MFHost;
 import com.mediafire.sdk.config.MFConfiguration;
-import com.mediafire.sdk.http.MFHttpRequest;
+import com.mediafire.sdk.http.MFRequest;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public final class MFTokenFarm implements MFTokenDistributor {
     public void getNewSessionToken() {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("token_version", "2");
-        MFHttpRequest mfHttpRequest = new MFHttpRequest(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
+        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
 
     }
 
@@ -49,14 +49,14 @@ public final class MFTokenFarm implements MFTokenDistributor {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "image");
-        MFHttpRequest mfHttpRequest = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
+        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
     }
 
     private void getNewUploadActionToken() {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "upload");
-        MFHttpRequest mfHttpRequest = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
+        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
     }
 
     public void shutdown() {

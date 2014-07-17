@@ -6,14 +6,14 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public final class MFHttpResponse {
+public final class MFResponse {
     private int status;
 
     private Map<String, List<String>> headers;
 
     private byte[] bodyBytes;
 
-    public MFHttpResponse(int status, Map<String, List<String>> headers, byte[] bodyBytes) {
+    public MFResponse(int status, Map<String, List<String>> headers, byte[] bodyBytes) {
         this.status = status;
         this.headers = headers;
         this.bodyBytes = bodyBytes;

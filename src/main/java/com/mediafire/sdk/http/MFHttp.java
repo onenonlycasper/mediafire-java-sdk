@@ -18,7 +18,7 @@ public abstract class MFHttp {
         }
         this.mfConfiguration = mfConfiguration;
     }
-
+        
     protected final String makeQueryString(Map<String, String> requestParameters, boolean urlEncode) throws UnsupportedEncodingException {
         System.out.println("making query string. url encoding: " + urlEncode);
         StringBuilder stringBuilder = new StringBuilder();
@@ -45,7 +45,7 @@ public abstract class MFHttp {
         return stringBuilder.toString();
     }
 
-    protected final String makeBaseUrl(MFHttpRequest request) {
+    protected final String makeBaseUrl(MFRequest request) {
         System.out.println("making a base url");
         String scheme = request.getMfHost().getTransferScheme().getScheme();
         String host = request.getMfHost().getHost();
