@@ -10,17 +10,21 @@ import java.io.UnsupportedEncodingException;
  * Created by Chris Najar on 7/17/2014.
  */
 public class MFHttpRunner {
+    private static final String TAG = MFHttpRunner.class.getCanonicalName();
+    private final MFConfiguration mfConfiguration;
     private MFHttpClientSetup mfHttpClientSetup;
     private MFHttpClient mfHttpClient;
     private MFHttpClientCleanup mfHttpClientCleanup;
 
     public MFHttpRunner(MFConfiguration mfConfiguration, MFTokenFarmCallback mfTokenFarmCallback) {
+        this.mfConfiguration = mfConfiguration;
         this.mfHttpClientSetup = new MFHttpClientSetup(mfTokenFarmCallback, mfConfiguration);
         this.mfHttpClient = new MFHttpClient(mfConfiguration);
         this.mfHttpClientCleanup = new MFHttpClientCleanup(mfTokenFarmCallback, mfConfiguration);
     }
 
     public void doRequest(MFRequest mfRequest, MFGenericCallback<RunnerHolder> mfGenericCallback) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "doRequest()");
         if (mfGenericCallback != null) {
             mfGenericCallback.jobStarted();
         }
@@ -46,9 +50,7 @@ public class MFHttpRunner {
     }
 
     public class RunnerHolder {
-
         public MFRequest mfRequest;
-
         public MFResponse mfResponse;
 
         public RunnerHolder(MFRequest mfRequest, MFResponse mfResponse) {

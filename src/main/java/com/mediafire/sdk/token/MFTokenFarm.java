@@ -20,6 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by Chris Najar on 7/16/2014.
  */
 public final class MFTokenFarm implements MFTokenFarmCallback {
+    private static final String TAG = MFTokenFarm.class.getCanonicalName();
     private final MFConfiguration mfConfiguration;
     private final MFHttpRunner mfHttpRunner;
 
@@ -49,6 +50,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     public void getNewSessionToken(MFGenericCallback<Void> mfGenericCallback) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "getNewSessionToken()");
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("token_version", "2");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
@@ -60,6 +62,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     private void getNewImageActionToken(MFGenericCallback<Void> mfGenericCallback) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "getNewImageActionToken()");
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "image");
@@ -72,6 +75,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     private void getNewUploadActionToken(MFGenericCallback<Void> mfGenericCallback) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "getNewUploadActionToken()");
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "upload");
@@ -84,6 +88,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     public void shutdown(MFGenericCallback<Void> mfGenericCallback) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "shutdown()");
         if (mfGenericCallback != null) {
             mfGenericCallback.jobStarted();
         }
@@ -102,19 +107,23 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     public void startup(MFGenericCallback<Void> mfGenericCallback) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "startup()");
         if (mfGenericCallback != null) {
             mfGenericCallback.jobStarted();
         }
 
         while (mfSessionTokens.remainingCapacity() > 0) {
+            mfConfiguration.getMfLogger().logMessage(TAG, "fetching new session token (remaining capacity " + mfSessionTokens.remainingCapacity() + ")");
             getNewSessionToken();
         }
 
         if (mfUploadActionToken == null || mfUploadActionToken.isExpired()) {
+            mfConfiguration.getMfLogger().logMessage(TAG, "fetching upload action token");
             getNewUploadActionToken();
         }
 
         if (mfImageActionToken == null || mfImageActionToken.isExpired()) {
+            mfConfiguration.getMfLogger().logMessage(TAG, "fetching image action token()");
             getNewImageActionToken();
         }
 
@@ -129,6 +138,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     @Override
     public void returnSessionToken(MFSessionToken sessionToken) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "returnSessionToken()");
         if (sessionToken == null) {
             getNewSessionToken();
             return;
@@ -144,6 +154,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     @Override
     public void receiveNewSessionToken(MFSessionToken mfSessionToken) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "receiveNewSessionToken()");
         synchronized (sessionTokenLock) {
             if (mfSessionToken != null && mfSessionToken != null) {
                 try {
@@ -159,6 +170,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     @Override
     public void receiveNewImageActionToken(MFImageActionToken mfImageActionToken) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "receiveNewImageActionToken()");
         synchronized (imageTokenLock) {
             if (mfImageActionToken != null && !mfImageActionToken.isExpired() && mfImageActionToken.getTokenString() != null) {
                 this.mfImageActionToken = mfImageActionToken;
@@ -171,6 +183,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     @Override
     public void receiveNewUploadActionToken(MFUploadActionToken mfUploadActionToken) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "receiveNewUploadActionToken()");
         synchronized (uploadTokenLock) {
             if (mfUploadActionToken != null && !mfUploadActionToken.isExpired() && mfUploadActionToken.getTokenString() != null) {
                 this.mfUploadActionToken = mfUploadActionToken;
@@ -183,6 +196,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     @Override
     public MFSessionToken borrowSessionToken() {
+        mfConfiguration.getMfLogger().logMessage(TAG, "borrowSessionToken()");
         MFSessionToken sessionToken = null;
         try {
             sessionToken = mfSessionTokens.take();
@@ -194,6 +208,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     @Override
     public MFUploadActionToken borrowUploadActionToken() {
+        mfConfiguration.getMfLogger().logMessage(TAG, "borrowUploadActionToken()");
         // lock and fetch new token if necessary
         lockBorrowUploadToken.lock();
         // fetch new action token if token is null or expired
@@ -220,6 +235,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     @Override
     public MFImageActionToken borrowImageActionToken() {
+        mfConfiguration.getMfLogger().logMessage(TAG, "borrowImageActionToken()");
         // lock and fetch new token if necessary
         lockBorrowImageToken.lock();
         if (mfImageActionToken == null || mfImageActionToken.isExpired()) {

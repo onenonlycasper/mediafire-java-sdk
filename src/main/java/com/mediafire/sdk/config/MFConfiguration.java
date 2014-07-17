@@ -75,7 +75,7 @@ public final class MFConfiguration {
         private static final int DEFAULT_HTTP_READ_TIMEOUT = 45000;
         private static final int DEFAULT_HTTP_CONNECTION_TIMEOUT = 45000;
         private static final int DEFAULT_MINIMUM_SESSION_TOKENS = 1;
-        private static final int DEFAULT_MAXIMUM_SESSION_TOKENS = 1;
+        private static final int DEFAULT_MAXIMUM_SESSION_TOKENS = 3;
         private static final int DEFAULT_HTTP_POOL_SIZE = 6;
         private static final MFLogger DEFAULT_MF_LOGGER = new MFDefaultLogger();
         private static final MFCredentials DEFAULT_MF_CREDENTIALS = new MFDefaultCredentials();

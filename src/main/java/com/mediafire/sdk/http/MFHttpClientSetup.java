@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by Chris Najar on 7/16/2014.
  */
 public final class MFHttpClientSetup extends MFHttp {
+    private static final String TAG = MFHttpClientSetup.class.getCanonicalName();
     private static final String SHA1 = "SHA-1";
     private static final String MD5 = "MD5";
 
@@ -29,7 +30,8 @@ public final class MFHttpClientSetup extends MFHttp {
     }
 
     public void prepareMFRequestForHttpClient(MFRequest request) throws UnsupportedEncodingException {
-        // borrow token, if necessary
+        mfConfiguration.getMfLogger().logMessage(TAG, "prepareMFRequestForHttpClient()");
+                // borrow token, if necessary
         borrowToken(request);
         // add token, if necessary, to request parameters
         addTokenToRequestParameters(request);
@@ -38,6 +40,7 @@ public final class MFHttpClientSetup extends MFHttp {
     }
 
     private void addSignatureToRequestParameters(MFRequest request) throws UnsupportedEncodingException {
+        mfConfiguration.getMfLogger().logMessage(TAG, "addSignatureToRequestParameters()");
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
                 String recycledSessionTokenSignature = calculateSignature(request);
@@ -55,6 +58,7 @@ public final class MFHttpClientSetup extends MFHttp {
     }
 
     private String calculateSignature(MFConfiguration MFConfiguration, MFCredentials credentials) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "calculateSignature()");
         // email + password + app id + api key
         // fb access token + app id + api key
         // tw oauth token + tw oauth token secret + app id + api key
@@ -93,6 +97,7 @@ public final class MFHttpClientSetup extends MFHttp {
     }
 
     private String calculateSignature(MFRequest request) throws UnsupportedEncodingException {
+        mfConfiguration.getMfLogger().logMessage(TAG, "calculateSignature()");
         // session token secret key + time + uri (concatenated)
         MFSessionToken sessionToken = (MFSessionToken) request.getToken();
         int secretKey = Integer.valueOf(sessionToken.getSecretKey()) % 256;
@@ -117,6 +122,7 @@ public final class MFHttpClientSetup extends MFHttp {
     }
 
     private void addTokenToRequestParameters(MFRequest request) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "addTokenToRequestParameters()");
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
             case UPLOAD_ACTION_TOKEN:
@@ -132,6 +138,7 @@ public final class MFHttpClientSetup extends MFHttp {
     }
 
     private void borrowToken(MFRequest request) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "borrowToken()");
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
                 MFSessionToken sessionToken = mfTokenFarmCallback.borrowSessionToken();
@@ -152,6 +159,7 @@ public final class MFHttpClientSetup extends MFHttp {
     }
 
     private String hashString(String target, String hashAlgorithm) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "hashString()");
         System.out.println("hashing to " + hashAlgorithm + " - " + target);
         String hash;
         try {

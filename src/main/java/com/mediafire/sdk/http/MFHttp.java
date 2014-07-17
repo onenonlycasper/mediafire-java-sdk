@@ -10,6 +10,7 @@ import java.util.Map;
  * Created by Chris Najar on 7/16/2014.
  */
 public abstract class MFHttp {
+    private static final String TAG = MFHttp.class.getCanonicalName();
     protected final MFConfiguration mfConfiguration;
 
     public MFHttp (MFConfiguration mfConfiguration) {
@@ -20,7 +21,7 @@ public abstract class MFHttp {
     }
 
     protected final String makeQueryString(Map<String, String> requestParameters, boolean urlEncode) throws UnsupportedEncodingException {
-        System.out.println("making query string. url encoding: " + urlEncode);
+        mfConfiguration.getMfLogger().logMessage(TAG, "making query string. url encoding: " + urlEncode);
         StringBuilder stringBuilder = new StringBuilder();
         for (String key : requestParameters.keySet()) {
             stringBuilder.append("&");
@@ -28,7 +29,7 @@ public abstract class MFHttp {
             stringBuilder.append("=");
             stringBuilder.append(urlEncodedQueryValue(requestParameters.get(key)));
         }
-        System.out.println("made query string - " + stringBuilder.toString());
+        mfConfiguration.getMfLogger().logMessage(TAG, "made query string - " + stringBuilder.toString());
         return stringBuilder.toString().substring(1);
     }
 
@@ -37,16 +38,16 @@ public abstract class MFHttp {
     }
 
     protected final String makeUrlAttachableQueryString(String queryString) {
-        System.out.println("making a url attachable query string");
+        mfConfiguration.getMfLogger().logMessage(TAG, "making a url attachable query string");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("?");
         stringBuilder.append(queryString);
-        System.out.println("made query string - " + stringBuilder.toString());
+        mfConfiguration.getMfLogger().logMessage(TAG, "made query string - " + stringBuilder.toString());
         return stringBuilder.toString();
     }
 
     protected final String makeBaseUrl(MFRequest request) {
-        System.out.println("making a base url");
+        mfConfiguration.getMfLogger().logMessage(TAG, "making a base url");
         String scheme = request.getMfHost().getTransferScheme().getScheme();
         String host = request.getMfHost().getHost();
         String uri = request.getMfApi().getUri();
@@ -54,7 +55,7 @@ public abstract class MFHttp {
         stringBuilder.append(scheme);
         stringBuilder.append(host);
         stringBuilder.append(uri);
-        System.out.println("made base url - " + stringBuilder.toString());
+        mfConfiguration.getMfLogger().logMessage(TAG, "made base url - " + stringBuilder.toString());
         return stringBuilder.toString();
     }
 }

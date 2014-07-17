@@ -15,7 +15,7 @@ import java.util.Map;
 public class MFDefaultLogger implements MFLogger {
     @Override
     public void logMessage(String source, String message) {
-        System.out.println(source + " - " + message);
+        System.out.println("[" + Thread.currentThread().getName() + "] [" + source + "] - " + message);
     }
 
     @Override
@@ -26,18 +26,17 @@ public class MFDefaultLogger implements MFLogger {
             stringBuilder.append(stackTraceElement.toString());
             stringBuilder.append("\n");
         }
-        System.out.println(source + " - " + stringBuilder.toString());
+        System.out.println("[" + Thread.currentThread().getName() + "] [" + source + "]  - " + stringBuilder.toString());
     }
 
     @Override
     public void logApiError(String source, MFRequest mfRequest, MFResponse mfResponse) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(source);
         stringBuilder.append("...");
         stringBuilder.append("\n");
         stringBuilder.append(createRequestStringLog(mfRequest));
         stringBuilder.append(createResponseStringLog(mfResponse));
-        System.out.println(stringBuilder.toString());
+        System.out.println("[" + Thread.currentThread().getName() + "] [" + source + "] - " + stringBuilder.toString());
     }
     
     private String createRequestStringLog(MFRequest mfRequest) {

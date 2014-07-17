@@ -10,7 +10,7 @@ import com.mediafire.sdk.token.MFUploadActionToken;
  * Created by Chris Najar on 7/16/2014.
  */
 public final class MFHttpClientCleanup extends MFHttp {
-
+    private static final String TAG = MFHttpClientCleanup.class.getCanonicalName();
     private MFTokenFarmCallback mfTokenFarmCallback;
 
     public MFHttpClientCleanup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
@@ -19,6 +19,7 @@ public final class MFHttpClientCleanup extends MFHttp {
     }
 
     public void returnToken(MFRequest request) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "returning token");
         if (request.getToken() == null) {
             return;
         }

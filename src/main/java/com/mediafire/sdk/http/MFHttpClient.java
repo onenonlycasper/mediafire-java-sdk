@@ -15,12 +15,14 @@ import java.util.Map;
  * Created by Chris Najar on 7/16/2014.
  */
 public final class MFHttpClient extends MFHttp {
+    private static final String TAG = MFHttpClient.class.getCanonicalName();
+
     public MFHttpClient(MFConfiguration mfConfiguration) {
         super(mfConfiguration);
     }
 
     public MFResponse sendRequest(MFRequest request) {
-        System.out.println("sending request");
+        mfConfiguration.getMfLogger().logMessage(TAG, "sending request");
         URLConnection connection = null;
         MFResponse response = null;
 
@@ -43,7 +45,7 @@ public final class MFHttpClient extends MFHttp {
     }
 
     private MFResponse getResponseFromStream(URLConnection connection) throws IOException {
-        System.out.println("getting MFResponse from stream");
+        mfConfiguration.getMfLogger().logMessage(TAG, "getting MFResponse from stream");
         int status = ((HttpURLConnection) connection).getResponseCode();
         MFResponse response = null;
 
@@ -61,7 +63,7 @@ public final class MFHttpClient extends MFHttp {
     }
 
     private void postData(MFRequest request, URLConnection connection) throws IOException {
-        System.out.println("trying to post data if possible");
+        mfConfiguration.getMfLogger().logMessage(TAG, "trying to post data if possible");
         byte[] payload = null;
         if (request.getMfApi().isQueryPostable()) {
             payload = makeQueryString(request.getRequestParameters()).getBytes();
@@ -76,7 +78,7 @@ public final class MFHttpClient extends MFHttp {
     }
 
     private byte[] readStream(InputStream inputStream) throws IOException {
-        System.out.println("reading input stream");
+        mfConfiguration.getMfLogger().logMessage(TAG, "reading input stream");
         if (inputStream == null) {
             return null;
         }
@@ -94,7 +96,7 @@ public final class MFHttpClient extends MFHttp {
     }
 
     private HttpURLConnection createHttpConnection(MFRequest request) throws IOException {
-        System.out.println("creating http connection");
+        mfConfiguration.getMfLogger().logMessage(TAG, "creating http connection");
         URL url = makeFullUrl(request);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         setConnectionParameters(connection, request);
@@ -102,7 +104,7 @@ public final class MFHttpClient extends MFHttp {
     }
 
     private void setConnectionParameters(URLConnection connection, MFRequest request) {
-        System.out.println("setting connection parameters");
+        mfConfiguration.getMfLogger().logMessage(TAG, "setting connection parameters");
         switch (request.getMfHost().getTransferScheme()) {
             case HTTP:
                 break;
@@ -129,7 +131,7 @@ public final class MFHttpClient extends MFHttp {
     }
 
     private URL makeFullUrl(MFRequest request) throws MalformedURLException, UnsupportedEncodingException {
-        System.out.println("creating url");
+        mfConfiguration.getMfLogger().logMessage(TAG, "creating url");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(makeBaseUrl(request));
 
@@ -139,7 +141,7 @@ public final class MFHttpClient extends MFHttp {
             stringBuilder.append(queryString);
         }
 
-        System.out.println("attempted to create url - " + stringBuilder.toString());
+        mfConfiguration.getMfLogger().logMessage(TAG, "attempted to create url - " + stringBuilder.toString());
         return new URL(stringBuilder.toString());
     }
 

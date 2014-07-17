@@ -9,6 +9,7 @@ import com.mediafire.sdk.util.MFGenericCallback;
  */
 public class MFTokenFarmInternalRunnable implements Runnable {
 
+    private static final String TAG = MFTokenFarmInternalRunnable.class.getCanonicalName();
     private MFHttpRunner mfHttpRunner;
     private MFRequest mfRequest;
     private MFGenericCallback<Void> mfGenericCallback;
