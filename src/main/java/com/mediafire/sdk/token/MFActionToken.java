@@ -4,12 +4,13 @@ package com.mediafire.sdk.token;
  * Created by Chris Najar on 7/16/2014.
  */
 public abstract class MFActionToken extends MFToken {
-    private long expiration;
+    protected long expiration;
     private Type type;
 
     public MFActionToken(String tokenString, Type type, long expiration) {
         super(tokenString);
         this.type = type;
+        this.expiration = expiration;
     }
 
     public boolean isExpired() {
@@ -32,5 +33,10 @@ public abstract class MFActionToken extends MFToken {
         public String getValue() {
             return value;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "MFActionToken [" + type.getValue() + "], expiry [" + expiration + "], token [" + tokenString + "]";
     }
 }

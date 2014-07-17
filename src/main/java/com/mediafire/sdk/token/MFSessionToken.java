@@ -29,11 +29,20 @@ public final class MFSessionToken extends MFToken {
         return pkey;
     }
 
+    public String getEkey() {
+        return ekey;
+    }
+
     public MFSessionToken getUpdatedSessionToken() {
         long newKey = Long.valueOf(secretKey) * 16807;
         newKey = newKey % 2147483647;
         String newSecretKey = String.valueOf(newKey);
 
         return new MFSessionToken(tokenString, newSecretKey, time, pkey, ekey);
+    }
+
+    @Override
+    public String toString() {
+        return "MFSessionToken time [" + time + "], secret key [" + secretKey + "], pkey [" + pkey + "], ekey [" + ekey + "], token [" + tokenString + "]";
     }
 }
