@@ -8,22 +8,22 @@ import java.io.UnsupportedEncodingException;
 /**
  * Created by Chris Najar on 7/17/2014.
  */
-public class MFHttpRunnable implements Runnable {
+public class MFHttpRunner {
     private MFTokenFarmCallback mfTokenFarmCallback;
     private MFConfiguration mfConfiguration;
-    private MFRequest mfRequest;
+    private MFHttpSetup mfHttpSetup; // = new MFHttpSetup(mfTokenFarmCallback, mfConfiguration);
+    private MFHttpClient mfHttpClient; // = new MFHttpClient(mfConfiguration);
+    private MFHttpCleanup mfHttpCleanup; // = new MFHttpCleanup(mfTokenFarmCallback, mfConfiguration);
 
-    public MFHttpRunnable(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration, MFRequest mfRequest) {
+    public MFHttpRunner(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
         this.mfTokenFarmCallback = mfTokenFarmCallback;
         this.mfConfiguration = mfConfiguration;
-        this.mfRequest = mfRequest;
+        this.mfHttpSetup = new MFHttpSetup(mfTokenFarmCallback, mfConfiguration);
+        this.mfHttpClient = new MFHttpClient(mfConfiguration);
+        this.mfHttpCleanup = new MFHttpCleanup(mfTokenFarmCallback, mfConfiguration);
     }
 
-    @Override
-    public void run() {
-        MFHttpSetup mfHttpSetup = new MFHttpSetup(mfTokenFarmCallback, mfConfiguration);
-        MFHttpClient mfHttpClient = new MFHttpClient(mfConfiguration);
-        MFHttpCleanup mfHttpCleanup = new MFHttpCleanup(mfTokenFarmCallback, mfConfiguration);
+    public void doRequest(MFRequest mfRequest) {
 
         try {
             mfHttpSetup.prepareMFRequestForHttpClient(mfRequest);
