@@ -12,8 +12,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by  on 6/16/2014.
  */
 public final class MFTokenFarm implements MFTokenDistributor {
-    private final MFCredentials applicationCredentials;
-    private final MFConfiguration configuration;
+    private final MFCredentials mfCredentials;
+    private final MFConfiguration mfConfiguration;
 
     private BlockingQueue<MFSessionToken> mfSessionTokens;
     private MFUploadActionToken mfUploadActionToken;
@@ -30,15 +30,15 @@ public final class MFTokenFarm implements MFTokenDistributor {
     private final Condition conditionImageTokenNotExpired = lockBorrowImageToken.newCondition();
     private final Condition conditionUploadTokenNotExpired = lockBorrowUploadToken.newCondition();
 
-    public MFTokenFarm(MFConfiguration configuration, MFCredentials applicationCredentials) {
-        this.configuration = configuration;
-        this.applicationCredentials = applicationCredentials;
+    public MFTokenFarm(MFConfiguration mfConfiguration, MFCredentials mfCredentials) {
+        this.mfConfiguration = mfConfiguration;
+        this.mfCredentials = mfCredentials;
     }
 
     public void getNewSessionToken() {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("token_version", "2");
-        MFHttpRequest mfHttpRequest = new MFHttpRequest(MFHost.LIVE_HTTPS, MFApi.URI_USER_GET_SESSION_TOKEN, requestParameters);
+        MFHttpRequest mfHttpRequest = new MFHttpRequest(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
 
     }
 
@@ -46,14 +46,14 @@ public final class MFTokenFarm implements MFTokenDistributor {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "image");
-        MFHttpRequest mfHttpRequest = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.URI_USER_GET_ACTION_TOKEN, requestParameters);
+        MFHttpRequest mfHttpRequest = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
     }
 
     private void getNewUploadActionToken() {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "upload");
-        MFHttpRequest mfHttpRequest = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.URI_USER_GET_ACTION_TOKEN, requestParameters);
+        MFHttpRequest mfHttpRequest = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
     }
 
     public void shutdown() {
