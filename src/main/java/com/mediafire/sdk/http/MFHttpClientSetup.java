@@ -54,14 +54,14 @@ public final class MFHttpClientSetup extends MFHttp {
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
                 mfConfiguration.getMfLogger().logMessage(TAG, "adding session token signature to request (api required: " + request.getMfApi().getTokenType() + ")");
-                String recycledSessionTokenSignature = calculateSignature(request);
+                String recycledSessionTokenSignature = calculateSignatureForApiRequest(request);
                 request.getRequestParameters().put("signature", recycledSessionTokenSignature);
                 break;
             case UNIQUE:
                 mfConfiguration.getMfLogger().logMessage(TAG, "adding unique token signature to request (api required: " + request.getMfApi().getTokenType() + ")");
                 // add additional request parameters required for this signature
                 addRequestParametersForNewSessionToken(request);
-                String newSessionTokenSignature = calculateSignature(mfConfiguration, mfCredentials);
+                String newSessionTokenSignature = calculateSignatureForNewSessionToken(mfConfiguration, mfCredentials);
                 request.getRequestParameters().put("signature", newSessionTokenSignature);
                 break;
             default:
@@ -72,8 +72,8 @@ public final class MFHttpClientSetup extends MFHttp {
         }
     }
 
-    private String calculateSignature(MFConfiguration MFConfiguration, MFCredentials credentials) {
-        mfConfiguration.getMfLogger().logMessage(TAG, "calculateSignature()");
+    private String calculateSignatureForNewSessionToken(MFConfiguration MFConfiguration, MFCredentials credentials) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "calculateSignatureForNewSessionToken()");
         // email + password + app id + api key
         // fb access token + app id + api key
         // tw oauth token + tw oauth token secret + app id + api key
@@ -111,8 +111,8 @@ public final class MFHttpClientSetup extends MFHttp {
         return hashString(hashTarget, SHA1);
     }
 
-    private String calculateSignature(MFRequest request) throws UnsupportedEncodingException {
-        mfConfiguration.getMfLogger().logMessage(TAG, "calculateSignature()");
+    private String calculateSignatureForApiRequest(MFRequest request) throws UnsupportedEncodingException {
+        mfConfiguration.getMfLogger().logMessage(TAG, "calculateSignatureForApiRequest()");
         // session token secret key + time + uri (concatenated)
         MFSessionToken sessionToken = (MFSessionToken) request.getToken();
         int secretKey = Integer.valueOf(sessionToken.getSecretKey()) % 256;
