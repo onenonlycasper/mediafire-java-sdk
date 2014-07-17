@@ -67,7 +67,7 @@ public final class MFConfiguration {
         return mfCredentials;
     }
 
-    public Executor getMfExecutorService() {
+    public Executor getMfExecutor() {
         return mfExecutorService;
     }
 
