@@ -1,36 +1,23 @@
 package com.mediafire.sdk.tokenfarm;
 
 /**
- * Created by  on 6/15/2014.
+ * Created by Chris Najar on 7/16/2014.
  */
-public final class ActionToken extends Token {
-    private final Type type;
+public abstract class ActionToken extends Token {
     private long expiration;
+    private Type type;
 
-    private ActionToken(Type type) {
-        super();
+    public ActionToken(String tokenString, Type type, long expiration) {
+        super(tokenString);
         this.type = type;
-    }
-
-    public static ActionToken newInstance(Type type) {
-        if (type == null) {
-            return null;
-        }
-
-        return new ActionToken(type);
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-
-    public void setExpiration(long expiration) {
-        this.expiration = expiration;
     }
 
     public boolean isExpired() {
         return (System.currentTimeMillis() + 3600000) >= expiration;
+    }
+
+    public String getType() {
+        return type.getValue();
     }
 
     public enum Type {
@@ -42,7 +29,7 @@ public final class ActionToken extends Token {
             this.value = value;
         }
 
-        public String toString() {
+        public String getValue() {
             return value;
         }
     }

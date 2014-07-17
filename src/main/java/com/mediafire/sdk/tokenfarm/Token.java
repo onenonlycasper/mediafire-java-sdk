@@ -4,15 +4,13 @@ package com.mediafire.sdk.tokenfarm;
  * Created by  on 6/15/2014.
  */
 public abstract class Token {
-    private volatile String token;
+    protected String tokenString;
 
-    Token() {}
-
-    public synchronized String getTokenString() {
-        return token;
+    public Token(String tokenString) {
+        this.tokenString = tokenString;
     }
 
-    public synchronized void setTokenString(String token) {
-        this.token = token;
+    public String getTokenString() {
+        return tokenString;
     }
 }
