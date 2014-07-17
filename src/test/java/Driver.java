@@ -1,6 +1,7 @@
-import com.mediafire.sdk.*;
+import com.mediafire.sdk.MFApi;
+import com.mediafire.sdk.MFHost;
 import com.mediafire.sdk.config.MFConfiguration;
-import com.mediafire.sdk.config.MFDefaultCredentials;
+import com.mediafire.sdk.config.MFCredentials;
 import com.mediafire.sdk.http.MFHttpClient;
 import com.mediafire.sdk.http.MFHttpRequest;
 import com.mediafire.sdk.http.MFHttpResponse;
@@ -19,12 +20,12 @@ public class Driver {
         driver.userGetSessionToken();
         MFConfiguration.MFConfigurationBuilder mfConfigurationBuilder = new MFConfiguration.MFConfigurationBuilder("35", "1ngvq4h5rn8om4at7u9884z9i3sbww44b923w5ee");
         MFConfiguration mfConfiguration = mfConfigurationBuilder.build();
-        MFDefaultCredentials mfCredentials = new MFDefaultCredentials(mfConfiguration);
         Map<String, String> userCredentials = new LinkedHashMap<String, String>();
         userCredentials.put("email", "javasdktest@example.com");
         userCredentials.put("password", "74107410");
+        MFCredentials mfCredentials =mfConfiguration.getMfCredentials();
         mfCredentials.setCredentials(userCredentials);
-        MFTokenFarm mfTokenFarm = new MFTokenFarm(mfConfiguration, mfCredentials);
+        MFTokenFarm mfTokenFarm = new MFTokenFarm(mfConfiguration);
         mfTokenFarm.getNewSessionToken();
     }
 
