@@ -38,4 +38,7 @@ public class MFHttpRunner {
         }
     }
 
+    public void doRequest(MFRequest mfRequest) {
+        doRequest(mfRequest, null);
+    }
 }
