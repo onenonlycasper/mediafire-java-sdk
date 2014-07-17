@@ -135,7 +135,7 @@ public final class MFHttpClientCleanup extends MFHttp {
     }
 
     public MFSessionToken createNewSessionToken(GetSessionTokenResponse newSessionTokenResponse) {
-        mfConfiguration.getMfLogger().logMessage(TAG, "createNewSessionToken");
+        mfConfiguration.getMfLogger().logMessage(TAG, "createNewSessionToken()");
         if (newSessionTokenResponse == null) {
             mfConfiguration.getMfLogger().logMessage(TAG, "response was null, returning null");
             return null;
@@ -147,7 +147,7 @@ public final class MFHttpClientCleanup extends MFHttp {
         }
 
         String tokenString = newSessionTokenResponse.getSessionToken();
-        String secretKey = newSessionTokenResponse.getSessionToken();
+        String secretKey = newSessionTokenResponse.getSecretKey();
         String time = newSessionTokenResponse.getTime();
         String pkey = newSessionTokenResponse.getPkey();
         String ekey = newSessionTokenResponse.getEkey();
