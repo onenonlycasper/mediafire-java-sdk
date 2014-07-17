@@ -1,7 +1,10 @@
 package com.mediafire.sdk.token;
 
-import com.mediafire.sdk.http.*;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.http.MFApi;
+import com.mediafire.sdk.http.MFHost;
+import com.mediafire.sdk.http.MFHttpRunner;
+import com.mediafire.sdk.http.MFRequest;
 import com.mediafire.sdk.util.MFGenericCallback;
 
 import java.util.LinkedHashMap;
@@ -45,27 +48,39 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         return mfHttpRunner;
     }
 
-    public void getNewSessionToken() {
+    public void getNewSessionToken(MFGenericCallback<Void> mfGenericCallback) {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("token_version", "2");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
-        mfHttpRunner.doRequest(mfRequest);
+        mfConfiguration.getMfExecutor().execute(new MFTokenFarmInternalRunnable(mfHttpRunner, mfRequest, mfGenericCallback));
     }
 
-    private void getNewImageActionToken() {
+    public void getNewSessionToken() {
+        getNewSessionToken(null);
+    }
+
+    private void getNewImageActionToken(MFGenericCallback<Void> mfGenericCallback) {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "image");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
-        mfHttpRunner.doRequest(mfRequest);
+        mfConfiguration.getMfExecutor().execute(new MFTokenFarmInternalRunnable(mfHttpRunner, mfRequest, mfGenericCallback));
     }
 
-    private void getNewUploadActionToken() {
+    public void getNewImageActionToken() {
+        getNewImageActionToken(null);
+    }
+
+    private void getNewUploadActionToken(MFGenericCallback<Void> mfGenericCallback) {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "upload");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
-        mfHttpRunner.doRequest(mfRequest);
+        mfConfiguration.getMfExecutor().execute(new MFTokenFarmInternalRunnable(mfHttpRunner, mfRequest, mfGenericCallback));
+    }
+
+    public void getNewUploadActionToken() {
+        getNewUploadActionToken(null);
     }
 
     public void shutdown(MFGenericCallback<Void> mfGenericCallback) {
@@ -128,23 +143,39 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     @Override
-    public void receiveNewSessionToken(MFSessionToken sessionToken) {
-        synchronized (sessionTokenLock) {
-            // store the session token if it is valid
+    public void receiveNewSessionToken(MFSessionToken mfSessionToken) {
+        if (mfSessionToken != null  && mfSessionToken != null) {
+            try {
+                mfSessionTokens.offer(mfSessionToken);
+            } catch (IllegalStateException e) {
+                getNewSessionToken();
+            }
+        } else {
+            getNewSessionToken();
         }
     }
 
     @Override
-    public void receiveNewImageActionToken(MFImageActionToken uploadActionToken) {
+    public void receiveNewImageActionToken(MFImageActionToken mfImageActionToken) {
         synchronized (imageTokenLock) {
-            // store the image token if it is valid
+            if (mfImageActionToken != null && !mfImageActionToken.isExpired() && mfImageActionToken.getTokenString() != null) {
+                this.mfImageActionToken = mfImageActionToken;
+                return;
+            } else {
+                getNewImageActionToken();
+            }
         }
     }
 
     @Override
-    public void receiveNewUploadActionToken(MFUploadActionToken uploadActionToken) {
+    public void receiveNewUploadActionToken(MFUploadActionToken mfUploadActionToken) {
         synchronized (uploadTokenLock) {
-            // store the upload token if it is valid
+            if (mfUploadActionToken != null && !mfUploadActionToken.isExpired() && mfUploadActionToken.getTokenString() != null) {
+                this.mfUploadActionToken = mfUploadActionToken;
+                return;
+            } else {
+                getNewUploadActionToken();
+            }
         }
     }
 
