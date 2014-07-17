@@ -8,7 +8,6 @@ import java.util.Map;
  * Created by  on 6/15/2014.
  */
 public final class MFDefaultCredentials implements MFCredentials {
-    private static final String TAG = MFDefaultCredentials.class.getCanonicalName();
     public static final String MEDIAFIRE_PARAMETER_EMAIL = "email";
     public static final String MEDIAFIRE_PARAMETER_PASSWORD = "password";
     public static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
@@ -18,17 +17,8 @@ public final class MFDefaultCredentials implements MFCredentials {
     private Map<String, String> userCredentials = new HashMap<String, String>();
     private UserCredentialsType userCredentialsType;
 
-    private final String appId;
-    private final String apiKey;
-
-    private MFDefaultCredentials(String appId, String apiKey) {
-        this.appId = appId;
-        this.apiKey = apiKey;
+    public MFDefaultCredentials() {
         userCredentialsType = UserCredentialsType.UNSET;
-    }
-
-    public MFDefaultCredentials(MFConfiguration configuration) {
-        this(configuration.getAppId(), configuration.getApiKey());
     }
 
     /**
@@ -76,14 +66,6 @@ public final class MFDefaultCredentials implements MFCredentials {
     public void clearCredentials() {
         userCredentials.clear();
         userCredentialsType = UserCredentialsType.UNSET;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public String getApiKey() {
-        return apiKey;
     }
 
     public UserCredentialsType getUserCredentialsType() {
