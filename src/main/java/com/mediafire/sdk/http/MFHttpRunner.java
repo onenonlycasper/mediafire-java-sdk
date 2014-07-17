@@ -9,30 +9,33 @@ import java.io.UnsupportedEncodingException;
  * Created by Chris Najar on 7/17/2014.
  */
 public class MFHttpRunner {
-    private MFTokenFarmCallback mfTokenFarmCallback;
-    private MFConfiguration mfConfiguration;
-    private MFHttpSetup mfHttpSetup; // = new MFHttpSetup(mfTokenFarmCallback, mfConfiguration);
-    private MFHttpClient mfHttpClient; // = new MFHttpClient(mfConfiguration);
-    private MFHttpCleanup mfHttpCleanup; // = new MFHttpCleanup(mfTokenFarmCallback, mfConfiguration);
+    private MFHttpClientSetup mfHttpClientSetup;
+    private MFHttpClient mfHttpClient;
+    private MFHttpClientCleanup mfHttpClientCleanup;
 
-    public MFHttpRunner(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
-        this.mfTokenFarmCallback = mfTokenFarmCallback;
-        this.mfConfiguration = mfConfiguration;
-        this.mfHttpSetup = new MFHttpSetup(mfTokenFarmCallback, mfConfiguration);
+    public MFHttpRunner(MFConfiguration mfConfiguration, MFTokenFarmCallback mfTokenFarmCallback) {
+        this.mfHttpClientSetup = new MFHttpClientSetup(mfTokenFarmCallback, mfConfiguration);
         this.mfHttpClient = new MFHttpClient(mfConfiguration);
-        this.mfHttpCleanup = new MFHttpCleanup(mfTokenFarmCallback, mfConfiguration);
+        this.mfHttpClientCleanup = new MFHttpClientCleanup(mfTokenFarmCallback, mfConfiguration);
     }
 
-    public void doRequest(MFRequest mfRequest) {
-
+    public void doRequest(MFRequest mfRequest, MFHttpRunnerCallback callback) {
+        if (callback != null) {
+            callback.jobStarted();
+        }
+        MFResponse mfResponse = null;
         try {
-            mfHttpSetup.prepareMFRequestForHttpClient(mfRequest);
-            mfHttpClient.sendRequest(mfRequest);
+            mfHttpClientSetup.prepareMFRequestForHttpClient(mfRequest);
+            mfResponse = mfHttpClient.sendRequest(mfRequest);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
-        mfHttpCleanup.returnToken(mfRequest);
+        mfHttpClientCleanup.returnToken(mfRequest);
+
+        if (callback != null) {
+            callback.jobFinished(mfRequest, mfResponse);
+        }
     }
 
 }
