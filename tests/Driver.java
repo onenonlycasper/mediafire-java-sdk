@@ -15,9 +15,9 @@ public class Driver {
 
     public void systemGetInfo() {
         System.out.println("\n\nSYSTEM/GET_INFO");
-        HttpClient httpClient = new HttpClient(null, null, null);
+        MFHttpClient mfHttpClient = new MFHttpClient(null, null, null);
         MFRequest request = new MFRequest(MFHost.LIVE_HTTP, MFApi.URI_SYSTEM_GET_INFO);
-        MFResponse response = httpClient.sendRequest(request);
+        MFResponse response = mfHttpClient.sendRequest(request);
         System.out.println("status: " + response.getStatus());
         System.out.println("headers ");
         for (String key : response.getHeaders().keySet()) {
@@ -32,7 +32,7 @@ public class Driver {
 
     public void userGetSessionToken() {
         System.out.println("\n\nUSER/GET_SESSION_TOKEN");
-        HttpClient httpClient = new HttpClient(null, null, null);
+        MFHttpClient mfHttpClient = new MFHttpClient(null, null, null);
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("email", "javasdktest@example.com");
         requestParameters.put("password", "74107410");
@@ -40,7 +40,7 @@ public class Driver {
         requestParameters.put("signature", "30abbbd4a3f8827d1a6408f1f2ee20d5edcc4799");
         requestParameters.put("token_version", "2");
         MFRequest request = new MFRequest(MFHost.LIVE_HTTP, MFApi.URI_USER_GET_SESSION_TOKEN, requestParameters);
-        MFResponse response = httpClient.sendRequest(request);
+        MFResponse response = mfHttpClient.sendRequest(request);
         System.out.println("status: " + response.getStatus());
         System.out.println("headers ");
         for (String key : response.getHeaders().keySet()) {
