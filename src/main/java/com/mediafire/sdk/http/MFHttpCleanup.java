@@ -1,5 +1,6 @@
 package com.mediafire.sdk.http;
 
+import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.token.MFImageActionToken;
 import com.mediafire.sdk.token.MFSessionToken;
 import com.mediafire.sdk.token.MFTokenDistributor;
@@ -8,11 +9,12 @@ import com.mediafire.sdk.token.MFUploadActionToken;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public final class MFHttpCleanup {
+public final class MFHttpCleanup extends MFHttp {
 
     private MFTokenDistributor mfTokenDistributor;
 
-    public MFHttpCleanup(MFTokenDistributor mfTokenDistributor) {
+    public MFHttpCleanup(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration) {
+        super(mfConfiguration);
         this.mfTokenDistributor = mfTokenDistributor;
     }
 
