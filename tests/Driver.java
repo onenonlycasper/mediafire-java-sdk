@@ -1,4 +1,4 @@
-import com.mediafire.sdk.http.*;
+import com.mediafire.sdk.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ public class Driver {
 
     public void systemGetInfo() {
         System.out.println("\n\nSYSTEM/GET_INFO");
-        MFHttpClient mfHttpClient = new MFHttpClient(null, null, null);
+        MFHttpClient mfHttpClient = new MFHttpClient(null);
         MFRequest request = new MFRequest(MFHost.LIVE_HTTP, MFApi.URI_SYSTEM_GET_INFO);
         MFResponse response = mfHttpClient.sendRequest(request);
         System.out.println("status: " + response.getStatus());
@@ -32,7 +32,7 @@ public class Driver {
 
     public void userGetSessionToken() {
         System.out.println("\n\nUSER/GET_SESSION_TOKEN");
-        MFHttpClient mfHttpClient = new MFHttpClient(null, null, null);
+        MFHttpClient mfHttpClient = new MFHttpClient(null);
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("email", "javasdktest@example.com");
         requestParameters.put("password", "74107410");

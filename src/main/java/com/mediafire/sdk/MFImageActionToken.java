@@ -1,4 +1,4 @@
-package com.mediafire.sdk.tokenfarm;
+package com.mediafire.sdk;
 
 /**
  * Created by Chris Najar on 7/16/2014.

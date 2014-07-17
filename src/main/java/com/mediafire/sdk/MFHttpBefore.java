@@ -1,11 +1,4 @@
-package com.mediafire.sdk.http;
-
-import com.mediafire.sdk.configuration.MFConfiguration;
-import com.mediafire.sdk.credentials.MFCredentials;
-import com.mediafire.sdk.tokenfarm.MFImageActionToken;
-import com.mediafire.sdk.tokenfarm.MFSessionToken;
-import com.mediafire.sdk.tokenfarm.MFTokenDistributor;
-import com.mediafire.sdk.tokenfarm.MFUploadActionToken;
+package com.mediafire.sdk;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;

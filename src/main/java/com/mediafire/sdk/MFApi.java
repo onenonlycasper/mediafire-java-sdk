@@ -1,4 +1,4 @@
-package com.mediafire.sdk.http;
+package com.mediafire.sdk;
 
 /**
  * Created by on 6/17/2014.

@@ -1,9 +1,4 @@
-package com.mediafire.sdk.http;
-
-import com.mediafire.sdk.tokenfarm.MFImageActionToken;
-import com.mediafire.sdk.tokenfarm.MFSessionToken;
-import com.mediafire.sdk.tokenfarm.MFTokenDistributor;
-import com.mediafire.sdk.tokenfarm.MFUploadActionToken;
+package com.mediafire.sdk;
 
 /**
  * Created by Chris Najar on 7/16/2014.

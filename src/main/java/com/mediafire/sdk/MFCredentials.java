@@ -1,4 +1,4 @@
-package com.mediafire.sdk.credentials;
+package com.mediafire.sdk;
 
 import com.arkhive.components.core.Configuration;
 

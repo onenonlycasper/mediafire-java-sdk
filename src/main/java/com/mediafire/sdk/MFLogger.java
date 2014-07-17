@@ -1,4 +1,4 @@
-package com.mediafire.sdk.logger;
+package com.mediafire.sdk;
 
 import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 

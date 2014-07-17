@@ -1,4 +1,4 @@
-package com.mediafire.sdk.tokenfarm;
+package com.mediafire.sdk;
 
 import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.module_credentials.ApplicationCredentials;
@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by  on 6/16/2014.
  */
-public class MFMFTokenFarm implements MFTokenDistributor {
+public class MFTokenFarm implements MFTokenDistributor {
     private final Lock lockBorrowImageToken = new ReentrantLock();
     private final Lock lockBorrowUploadToken = new ReentrantLock();
     private final Condition conditionImageTokenNotExpired = lockBorrowImageToken.newCondition();
@@ -24,7 +24,7 @@ public class MFMFTokenFarm implements MFTokenDistributor {
     private final Object imageTokenLock = new Object();
     private final Object uploadTokenLock = new Object();
 
-    public MFMFTokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials) {
+    public MFTokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials) {
         int maximumSessionTokens = configuration.getMaximumSessionTokens();
         sessionTokens = new LinkedBlockingQueue<MFSessionToken>(maximumSessionTokens);
         this.applicationCredentials = applicationCredentials;

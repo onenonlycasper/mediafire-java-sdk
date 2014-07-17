@@ -1,4 +1,4 @@
-package com.mediafire.sdk.http;
+package com.mediafire.sdk;
 
 import java.util.List;
 import java.util.Map;

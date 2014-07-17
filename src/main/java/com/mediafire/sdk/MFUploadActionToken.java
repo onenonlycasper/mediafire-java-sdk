@@ -1,4 +1,4 @@
-package com.mediafire.sdk.tokenfarm;
+package com.mediafire.sdk;
 
 /**
  * Created by  on 6/15/2014.

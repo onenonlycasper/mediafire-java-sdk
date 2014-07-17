@@ -1,6 +1,4 @@
-package com.mediafire.sdk.http;
-
-import com.mediafire.sdk.configuration.MFConfiguration;
+package com.mediafire.sdk;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

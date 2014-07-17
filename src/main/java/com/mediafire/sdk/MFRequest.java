@@ -1,6 +1,4 @@
-package com.mediafire.sdk.http;
-
-import com.mediafire.sdk.tokenfarm.MFToken;
+package com.mediafire.sdk;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
