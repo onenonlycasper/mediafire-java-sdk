@@ -115,12 +115,10 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
             mfGenericCallback.jobStarted();
         }
 
-//        while (mfSessionTokens.remainingCapacity() > 0) {
-//            mfConfiguration.getMfLogger().logMessage(TAG, "fetching new session token (remaining capacity " + mfSessionTokens.remainingCapacity() + ")");
-//            getNewSessionToken();
-//        }
-
-        getNewSessionToken();
+        while (mfSessionTokens.remainingCapacity() > 0) {
+            mfConfiguration.getMfLogger().logMessage(TAG, "fetching new session token (remaining capacity " + mfSessionTokens.remainingCapacity() + ")");
+            getNewSessionToken();
+        }
 
         if (mfUploadActionToken == null || mfUploadActionToken.isExpired()) {
             mfConfiguration.getMfLogger().logMessage(TAG, "fetching upload action token");
