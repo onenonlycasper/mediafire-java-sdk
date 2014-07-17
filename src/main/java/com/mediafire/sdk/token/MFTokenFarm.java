@@ -14,7 +14,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by  on 6/16/2014.
+ * Created by Chris Najar on 7/16/2014.
  */
 public final class MFTokenFarm implements MFTokenDistributor {
     private final MFConfiguration mfConfiguration;

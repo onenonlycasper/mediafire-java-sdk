@@ -1,7 +1,7 @@
 package com.mediafire.sdk.token;
 
 /**
- * Created by  on 6/15/2014.
+ * Created by Chris Najar on 7/17/2014.
  */
 public final class MFSessionToken extends MFToken {
     private String time;

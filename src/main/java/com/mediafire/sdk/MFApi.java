@@ -1,7 +1,7 @@
 package com.mediafire.sdk;
 
 /**
- * Created by on 6/17/2014.
+ * Created by Chris Najar on 7/17/2014.
  */
 public enum MFApi {
     // contact api calls

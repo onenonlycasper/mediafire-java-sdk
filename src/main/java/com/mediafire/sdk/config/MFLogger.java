@@ -4,7 +4,7 @@ import com.mediafire.sdk.http.MFHttpRequest;
 import com.mediafire.sdk.http.MFHttpResponse;
 
 /**
- * Created by  on 7/2/2014.
+ * Created by Chris Najar on 7/16/2014.
  */
 public interface MFLogger {
     public void logMessage(String src, String message);

@@ -1,5 +1,8 @@
 package com.mediafire.sdk;
 
+/**
+ * Created by Chris Najar on 7/17/2014.
+ */
 public enum MFHost {
     LIVE_HTTP("www.mediafire.com", TransferScheme.HTTP),
     LIVE_HTTPS("www.mediafire.com", TransferScheme.HTTPS),

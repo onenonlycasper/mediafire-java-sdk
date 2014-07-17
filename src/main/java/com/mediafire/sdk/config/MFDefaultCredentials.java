@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by  on 6/15/2014.
+ * Created by Chris Najar on 7/17/2014.
  */
 public final class MFDefaultCredentials implements MFCredentials {
     public static final String MEDIAFIRE_PARAMETER_EMAIL = "email";
