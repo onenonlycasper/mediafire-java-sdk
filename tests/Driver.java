@@ -11,9 +11,15 @@ public class Driver {
         Driver driver = new Driver();
         driver.systemGetInfo();
         driver.userGetSessionToken();
-        MFConfiguration mfConfiguration = null;
-        MFCredentials mfCredentials = null;
+        MFConfiguration.MFConfigurationBuilder mfConfigurationBuilder = new MFConfiguration.MFConfigurationBuilder("35", "1ngvq4h5rn8om4at7u9884z9i3sbww44b923w5ee");
+        MFConfiguration mfConfiguration = mfConfigurationBuilder.build();
+        MFCredentials mfCredentials = new MFCredentials(mfConfiguration);
+        Map<String, String> userCredentials = new LinkedHashMap<String, String>();
+        userCredentials.put("email", "javasdktest@example.com");
+        userCredentials.put("password", "74107410");
+        mfCredentials.setCredentials(userCredentials);
         MFTokenFarm mfTokenFarm = new MFTokenFarm(mfConfiguration, mfCredentials);
+        mfTokenFarm.getNewSessionToken();
     }
 
     public void systemGetInfo() {
