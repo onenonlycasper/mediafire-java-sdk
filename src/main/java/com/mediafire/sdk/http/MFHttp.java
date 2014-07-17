@@ -29,8 +29,9 @@ public abstract class MFHttp {
             stringBuilder.append("=");
             stringBuilder.append(urlEncodedQueryValue(requestParameters.get(key)));
         }
-        mfConfiguration.getMfLogger().logMessage(TAG, "made query string - " + stringBuilder.toString());
-        return stringBuilder.toString().substring(1);
+        String queryString = stringBuilder.toString().substring(1);
+        mfConfiguration.getMfLogger().logMessage(TAG, "made query string - " + queryString);
+        return queryString;
     }
 
     protected final String urlEncodedQueryValue(String value) throws UnsupportedEncodingException {
