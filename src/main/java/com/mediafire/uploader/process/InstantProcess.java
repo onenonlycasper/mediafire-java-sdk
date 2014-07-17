@@ -19,7 +19,6 @@ import java.util.Map;
  * @author
  */
 public class InstantProcess extends UploadProcess {
-
     private static final String TAG = InstantProcess.class.getCanonicalName();
 
     public InstantProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
@@ -29,7 +28,6 @@ public class InstantProcess extends UploadProcess {
     @Override
     protected void doUploadProcess() {
         MFConfiguration.getStaticMFLogger().logMessage(TAG, "doUploadProcess()");
-        Thread.currentThread().setPriority(3); //uploads are set to low priority
         // url encode the filename
         String filename;
         try {

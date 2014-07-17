@@ -36,7 +36,6 @@ public class ResumableProcess extends UploadProcess {
     @Override
     protected void doUploadProcess() {
         MFConfiguration.getStaticMFLogger().logMessage(TAG, "doUploadProcess()");
-        Thread.currentThread().setPriority(3); //uploads are set to low priority
 
         //get file size. this will be used for chunks.
         FileData fileData = uploadItem.getFileData();
