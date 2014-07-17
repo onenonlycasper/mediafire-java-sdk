@@ -12,6 +12,7 @@ public final class MFConfiguration {
     private final String appId;
     private final String apiKey;
     private MFLogger mfLogger;
+    private MFCredentials mfCredentials;
 
     private MFConfiguration(MFConfigurationBuilder mfConfigurationBuilder) {
         this.httpReadTimeout = mfConfigurationBuilder.httpReadTimeout;
@@ -22,6 +23,7 @@ public final class MFConfiguration {
         this.appId = mfConfigurationBuilder.appId;
         this.apiKey = mfConfigurationBuilder.apiKey;
         this.mfLogger = mfConfigurationBuilder.mfLogger;
+        this.mfCredentials = mfConfigurationBuilder.mfCredentials;
     }
 
     public int getHttpReadTimeout() {
@@ -57,6 +59,10 @@ public final class MFConfiguration {
         return mfLogger;
     }
 
+    public MFCredentials getMfCredentials() {
+        return mfCredentials;
+    }
+
     public static class MFConfigurationBuilder {
         private static final int DEFAULT_HTTP_READ_TIMEOUT = 45000;
         private static final int DEFAULT_HTTP_CONNECTION_TIMEOUT = 45000;
@@ -64,6 +70,7 @@ public final class MFConfiguration {
         private static final int DEFAULT_MAXIMUM_SESSION_TOKENS = 1;
         private static final int DEFAULT_HTTP_POOL_SIZE = 6;
         private static final MFLogger DEFAULT_MF_LOGGER = new MFDefaultLogger();
+        private static final MFCredentials DEFAULT_MF_CREDENTIALS = new MFDefaultCredentials();
 
         private int httpReadTimeout = DEFAULT_HTTP_READ_TIMEOUT;
         private int httpConnectionTimeout = DEFAULT_HTTP_CONNECTION_TIMEOUT;
@@ -71,6 +78,7 @@ public final class MFConfiguration {
         private int maximumSessionTokens = DEFAULT_MAXIMUM_SESSION_TOKENS;
         private int httpPoolSize = DEFAULT_HTTP_POOL_SIZE;
         private MFLogger mfLogger = DEFAULT_MF_LOGGER;
+        private MFCredentials mfCredentials = DEFAULT_MF_CREDENTIALS;
         private String appId;
         private String apiKey;
 
@@ -108,6 +116,14 @@ public final class MFConfiguration {
                 throw new IllegalStateException("MFLogger cannot be null");
             }
             this.mfLogger = mfLogger;
+            return this;
+        }
+
+        public MFConfigurationBuilder mfCredentials(MFCredentials mfCredentials) {
+            if (mfCredentials == null) {
+                throw new IllegalStateException("MFCredentials cannot be null");
+            }
+            this.mfCredentials = mfCredentials;
             return this;
         }
 
