@@ -82,7 +82,7 @@ public final class MFTokenFarm implements MFTokenDistributor {
 
     @Override
     public void receiveNewSessionToken(MFSessionToken sessionToken) {
-        synchronized (imageTokenLock) {
+        synchronized (sessionTokenLock) {
             // store the session token if it is valid
         }
     }
@@ -97,7 +97,7 @@ public final class MFTokenFarm implements MFTokenDistributor {
     @Override
     public void receiveNewUploadActionToken(MFUploadActionToken uploadActionToken) {
         synchronized (uploadTokenLock) {
-
+            // store the upload token if it is valid
         }
     }
 
