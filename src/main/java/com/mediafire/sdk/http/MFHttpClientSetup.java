@@ -118,20 +118,20 @@ public final class MFHttpClientSetup extends MFHttp {
         int secretKey = Integer.valueOf(sessionToken.getSecretKey()) % 256;
         String time = sessionToken.getTime();
 
-        String baseUrl = makeBaseUrl(request);
         String nonUrlEncodedQueryString = makeQueryString(request.getRequestParameters(), false);
         String urlAttachableQueryString = makeUrlAttachableQueryString(nonUrlEncodedQueryString);
+        String baseUri = request.getMfApi().getUri();
 
         StringBuilder uriStringBuilder = new StringBuilder();
-        uriStringBuilder.append(baseUrl);
+        uriStringBuilder.append(baseUri);
         uriStringBuilder.append(urlAttachableQueryString);
 
-        String uri = uriStringBuilder.toString();
+        String fullUri = uriStringBuilder.toString();
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(secretKey);
         stringBuilder.append(time);
-        stringBuilder.append(uri);
+        stringBuilder.append(fullUri);
         String nonUrlEncodedString = stringBuilder.toString();
         return hashString(nonUrlEncodedString, MD5);
     }
