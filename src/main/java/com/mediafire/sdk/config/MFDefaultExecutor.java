@@ -7,13 +7,13 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by Chris Najar on 7/17/2014.
  */
-public class MFExecutor extends ThreadPoolExecutor {
+public class MFDefaultExecutor extends ThreadPoolExecutor implements MFPausableExecutorService {
     private boolean isPaused;
     private final ReentrantLock pauseLock = new ReentrantLock();
     private final Condition unPaused = pauseLock.newCondition();
 
-    public MFExecutor(int poolSize, BlockingQueue<Runnable> workQueue) {
-        super(poolSize, poolSize, 250, TimeUnit.MILLISECONDS, workQueue, Executors.defaultThreadFactory(), new DiscardOldestPolicy());
+    public MFDefaultExecutor() {
+        super(10, 10, 250, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), Executors.defaultThreadFactory(), new DiscardOldestPolicy());
     }
 
     @Override
@@ -29,6 +29,7 @@ public class MFExecutor extends ThreadPoolExecutor {
         }
     }
 
+    @Override
     public void pause() {
         pauseLock.lock();
         try {
@@ -38,6 +39,7 @@ public class MFExecutor extends ThreadPoolExecutor {
         }
     }
 
+    @Override
     public void resume() {
         pauseLock.lock();
         try {
@@ -48,6 +50,7 @@ public class MFExecutor extends ThreadPoolExecutor {
         }
     }
 
+    @Override
     public boolean isPaused() {
         return isPaused;
     }
