@@ -22,10 +22,10 @@ public final class MFHttpSetup extends MFHttp {
     private MFTokenDistributor mfTokenDistributor;
     private MFCredentials mfCredentials;
 
-    public MFHttpSetup(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration, MFCredentials mfCredentials) {
+    public MFHttpSetup(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration) {
         super(mfConfiguration);
         this.mfTokenDistributor = mfTokenDistributor;
-        this.mfCredentials = mfCredentials;
+        this.mfCredentials = mfConfiguration.getMfCredentials();
     }
 
     public void prepareMFRequestForHttpClient(MFRequest request) throws UnsupportedEncodingException {
