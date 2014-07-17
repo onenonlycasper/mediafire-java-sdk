@@ -9,11 +9,11 @@ import com.mediafire.sdk.token.MFUploadActionToken;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public final class MFHttpCleanup extends MFHttp {
+public final class MFHttpClientCleanup extends MFHttp {
 
     private MFTokenFarmCallback mfTokenFarmCallback;
 
-    public MFHttpCleanup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
+    public MFHttpClientCleanup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
         super(mfConfiguration);
         this.mfTokenFarmCallback = mfTokenFarmCallback;
     }

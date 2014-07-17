@@ -15,14 +15,14 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public final class MFHttpSetup extends MFHttp {
+public final class MFHttpClientSetup extends MFHttp {
     private static final String SHA1 = "SHA-1";
     private static final String MD5 = "MD5";
 
     private MFTokenFarmCallback mfTokenFarmCallback;
     private MFCredentials mfCredentials;
 
-    public MFHttpSetup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
+    public MFHttpClientSetup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
         super(mfConfiguration);
         this.mfTokenFarmCallback = mfTokenFarmCallback;
         this.mfCredentials = mfConfiguration.getMfCredentials();
