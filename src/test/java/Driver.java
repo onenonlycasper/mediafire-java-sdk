@@ -1,10 +1,7 @@
-import com.mediafire.sdk.http.MFApi;
-import com.mediafire.sdk.http.MFHost;
+import com.mediafire.sdk.http.*;
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.config.MFCredentials;
-import com.mediafire.sdk.http.MFHttpClient;
-import com.mediafire.sdk.http.MFHttpRequest;
-import com.mediafire.sdk.http.MFHttpResponse;
+import com.mediafire.sdk.http.MFHttpRequestSender;
 import com.mediafire.sdk.token.MFTokenFarm;
 
 import java.util.LinkedHashMap;
@@ -31,9 +28,9 @@ public class Driver {
 
     public void systemGetInfo() {
         System.out.println("\n\nSYSTEM/GET_INFO");
-        MFHttpClient mfHttpClient = new MFHttpClient(null);
+        MFHttpRequestSender mfHttpRequestSender = new MFHttpRequestSender(null);
         MFHttpRequest request = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.SYSTEM_GET_INFO);
-        MFHttpResponse response = mfHttpClient.sendRequest(request);
+        MFHttpResponse response = mfHttpRequestSender.sendRequest(request);
         System.out.println("status: " + response.getStatus());
         System.out.println("headers ");
         for (String key : response.getHeaders().keySet()) {
@@ -48,7 +45,7 @@ public class Driver {
 
     public void userGetSessionToken() {
         System.out.println("\n\nUSER/GET_SESSION_TOKEN");
-        MFHttpClient mfHttpClient = new MFHttpClient(null);
+        MFHttpRequestSender mfHttpRequestSender = new MFHttpRequestSender(null);
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("email", "javasdktest@example.com");
         requestParameters.put("password", "74107410");
@@ -56,7 +53,7 @@ public class Driver {
         requestParameters.put("signature", "30abbbd4a3f8827d1a6408f1f2ee20d5edcc4799");
         requestParameters.put("token_version", "2");
         MFHttpRequest request = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
-        MFHttpResponse response = mfHttpClient.sendRequest(request);
+        MFHttpResponse response = mfHttpRequestSender.sendRequest(request);
         System.out.println("status: " + response.getStatus());
         System.out.println("headers ");
         for (String key : response.getHeaders().keySet()) {
