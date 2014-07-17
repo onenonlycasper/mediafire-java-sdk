@@ -10,6 +10,7 @@ public class GetSessionTokenResponse extends ApiResponse {
     private String secret_key;
     private String pkey;
     private String ekey;
+    private String time;
 
     public String getSessionToken() {
         return session_token;
@@ -25,5 +26,9 @@ public class GetSessionTokenResponse extends ApiResponse {
 
     public String getEkey() {
         return ekey;
+    }
+
+    public String getTime() {
+        return time;
     }
 }
