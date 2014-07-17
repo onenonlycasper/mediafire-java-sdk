@@ -2,6 +2,7 @@ package com.mediafire.sdk.http;
 
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.token.MFTokenFarmCallback;
+import com.mediafire.sdk.util.MFGenericCallback;
 
 import java.io.UnsupportedEncodingException;
 
