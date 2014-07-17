@@ -37,7 +37,7 @@ public final class MFRequest {
     }
 
     public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
-        this(mfHost, mfApi, requestParameters, null, null);
+        this(mfHost, mfApi, requestParameters, new LinkedHashMap<String, String>(), new byte[0]);
     }
 
     public MFRequest(MFHost mfHost, MFApi mfApi) {
