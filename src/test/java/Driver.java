@@ -36,9 +36,9 @@ public class Driver {
         for (String key : response.getHeaders().keySet()) {
             System.out.println(key + " - " + response.getHeaders().get(key).toString());
         }
-        System.out.println("body - " + response.getResponseString());
+        System.out.println("body - " + response.getResponseAsString());
         System.out.println("body bytes");
-        for (byte b : response.getBodyBytes()) {
+        for (byte b : response.getResponseAsBytes()) {
             System.out.print(b);
         }
     }
@@ -59,9 +59,9 @@ public class Driver {
         for (String key : response.getHeaders().keySet()) {
             System.out.println(key + " - " + response.getHeaders().get(key).toString());
         }
-        System.out.println("body - " + response.getResponseString());
+        System.out.println("body - " + response.getResponseAsString());
         System.out.println("body bytes");
-        for (byte b : response.getBodyBytes()) {
+        for (byte b : response.getResponseAsBytes()) {
             System.out.print(b);
         }
     }
