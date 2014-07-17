@@ -144,14 +144,16 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     @Override
     public void receiveNewSessionToken(MFSessionToken mfSessionToken) {
-        if (mfSessionToken != null  && mfSessionToken != null) {
-            try {
-                mfSessionTokens.offer(mfSessionToken);
-            } catch (IllegalStateException e) {
+        synchronized (sessionTokenLock) {
+            if (mfSessionToken != null && mfSessionToken != null) {
+                try {
+                    mfSessionTokens.offer(mfSessionToken);
+                } catch (IllegalStateException e) {
+                    getNewSessionToken();
+                }
+            } else {
                 getNewSessionToken();
             }
-        } else {
-            getNewSessionToken();
         }
     }
 
