@@ -1,8 +1,8 @@
 package com.mediafire.uploader.process;
 
-import com.mediafire.sdk.api_responses.ApiResponse;
 import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.*;
 
@@ -25,11 +25,11 @@ public class ResumableProcess extends UploadProcess {
     /**
      * Constructor for an upload with a listener.
      *
-     * @param mediaFire - the session to use for this upload process
+     * @param mfTokenFarm - the session to use for this upload process
      * @param uploadItem     - the item to be uploaded
      */
-    public ResumableProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
-        super(mediaFire, uploadItem, uploadListenerManager);
+    public ResumableProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadListenerManager);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ResumableProcess extends UploadProcess {
 
                 printDebugRequestData(headers, parameters);
 
-                response = mediaFire.apiCall().upload.resumableUpload(parameters, null, headers, uploadChunk);
+                response = mfTokenFarm.apiCall().upload.resumableUpload(parameters, null, headers, uploadChunk);
 
                 // set poll upload key if possible
                 if (shouldSetPollUploadKey(response)) {
@@ -164,7 +164,7 @@ public class ResumableProcess extends UploadProcess {
 
         if (response.getDoUpload().getResultCode() != ResumableResponse.Result.NO_ERROR) {
             // let the listeners know we are done with this process (because there was an error in this case)
-            if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
+            if (response.getDoUpload().getResultCode() != ResumableResponse.Result.SUCCESS_FILE_MOVED_TO_ROOT) {
                 // let the listeners know we are done with this process (because there was an error in this case)
                 MFConfiguration.getErrorTracker().i(TAG, "cancelling because result code: " + response.getDoUpload().getResultCode().toString());
                 notifyListenerCancelled(response);
@@ -218,7 +218,7 @@ public class ResumableProcess extends UploadProcess {
         MFConfiguration.getErrorTracker().i(TAG, "version control: " + versionControl);
         MFConfiguration.getErrorTracker().i(TAG, "upload folder key: " + uploadFolderKey);
 
-        String actionToken = mediaFire.apiCall().requestUploadActionToken();
+        String actionToken = mfTokenFarm.apiCall().requestUploadActionToken();
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("session_token", actionToken);
         parameters.put("action_on_duplicate", actionOnDuplicate);

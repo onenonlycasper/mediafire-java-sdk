@@ -2,6 +2,7 @@ package com.mediafire.uploader.process;
 
 import com.mediafire.sdk.api_responses.upload.PollResponse;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
@@ -27,11 +28,11 @@ public class PollProcess extends UploadProcess {
      * Constructor for an upload with a listener. This constructor uses sleepTime for the loop sleep time with
      * loopAttempts for the loop attempts.
      *
-     * @param mediaFire - the session to use for this upload process
+     * @param mfTokenFarm - the session to use for this upload process
      * @param uploadItem     - the item to be uploaded
      */
-    public PollProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
-        super(mediaFire, uploadItem, uploadListenerManager);
+    public PollProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadListenerManager);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class PollProcess extends UploadProcess {
             // increment counter
             pollCount++;
             // get api response.
-            PollResponse response = mediaFire.apiCall().upload.pollUpload(keyValue, null);
+            PollResponse response = mfTokenFarm.apiCall().upload.pollUpload(keyValue, null);
 
             if (response == null) {
                 notifyListenerLostConnection();

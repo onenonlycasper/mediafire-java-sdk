@@ -5,20 +5,18 @@ import com.mediafire.sdk.api_responses.upload.InstantResponse;
 import com.mediafire.sdk.api_responses.upload.PollResponse;
 import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
-/**
- * Created by  on 7/8/2014.
- */
 public abstract class UploadProcess implements Runnable {
     private static final String TAG = UploadProcess.class.getCanonicalName();
-    protected final MediaFire mediaFire;
+    protected final MFTokenFarm mfTokenFarm;
     protected final UploadItem uploadItem;
     protected final UploadListenerManager uploadListenerManager;
     
-    public UploadProcess(MediaFire mediaFire, UploadItem uploadItem, UploadListenerManager uploadListenerManager) {
-        this.mediaFire = mediaFire;
+    public UploadProcess(MFTokenFarm mfTokenFarm, UploadItem uploadItem, UploadListenerManager uploadListenerManager) {
+        this.mfTokenFarm = mfTokenFarm;
         this.uploadItem = uploadItem;
         this.uploadListenerManager = uploadListenerManager;
     }

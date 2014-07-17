@@ -3,6 +3,7 @@ package com.mediafire.uploader.process;
 import com.mediafire.sdk.api_responses.ApiResponse;
 import com.mediafire.sdk.api_responses.upload.CheckResponse;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.ResumableBitmap;
 import com.mediafire.uploader.uploaditem.UploadItem;
@@ -17,8 +18,8 @@ public class CheckProcess extends UploadProcess {
 
     private static final String TAG = CheckProcess.class.getCanonicalName();
 
-    public CheckProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
-        super(mediaFire, uploadItem, uploadListenerManager);
+    public CheckProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadListenerManager);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class CheckProcess extends UploadProcess {
 
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
-        CheckResponse response = mediaFire.apiCall().upload.checkUpload(keyValue, null);
+        CheckResponse response = mfTokenFarm.apiCall().upload.checkUpload(keyValue, null);
 
         if (response == null) {
             notifyListenerLostConnection();

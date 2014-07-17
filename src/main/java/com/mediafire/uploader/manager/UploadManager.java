@@ -1,30 +1,19 @@
 package com.mediafire.uploader.manager;
 
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListener;
 import com.mediafire.uploader.process.CheckProcess;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
 import java.util.concurrent.BlockingQueue;
 
-/**
- * UploadManager moves UploadItems from a Collection into Threads.
- * Number of threads that will be started is limited to the maximumThreadCount (default = 5)
- *
- * @author
- */
 public class UploadManager extends UploadManagerWorker {
     private static final String TAG = UploadManager.class.getCanonicalName();
     private UploadListener uiListener;
 
-    /**
-     * Constructor that takes a SessionManager, HttpInterface, and a maximum thread count.
-     *
-     * @param mediaFire     The SessionManager to use for API operations.
-     * @param maximumThreadCount The maximum number of threads to use for uploading.
-     */
-    public UploadManager(MediaFire mediaFire, int maximumThreadCount, int maximumUploadAttempts) {
-        super(mediaFire, maximumUploadAttempts, maximumUploadAttempts);
+    public UploadManager(MFTokenFarm mfTokenFarm, int maximumThreadCount, int maximumUploadAttempts) {
+        super(mfTokenFarm, maximumUploadAttempts, maximumUploadAttempts);
     }
 
     public void setUploadListener(UploadListener uiListener) {
@@ -54,12 +43,6 @@ public class UploadManager extends UploadManagerWorker {
         }
     }
 
-    /**
-     * adds an UploadItem to the backlog queue.
-     * If the UploadItem already exists in the backlog queue then we do not add the item.
-     *
-     * @param uploadItem The UploadItem to add to the backlog queue.
-     */
     public void addUploadRequest(UploadItem uploadItem) {
         MFConfiguration.getErrorTracker().i(TAG, "addUploadRequest()");
         //don't add the item to the backlog queue if it is null or the path is null
@@ -78,7 +61,7 @@ public class UploadManager extends UploadManagerWorker {
         }
 
         if (uploadItem.getUploadAttemptCount() < MAX_UPLOAD_ATTEMPTS) {
-            CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
+            CheckProcess process = new CheckProcess(mfTokenFarm, this, uploadItem);
             executor.execute(process);
         }
     }

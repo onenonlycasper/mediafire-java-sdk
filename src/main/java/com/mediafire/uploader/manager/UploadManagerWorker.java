@@ -7,6 +7,7 @@ import com.mediafire.sdk.api_responses.upload.PollResponse;
 import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.config.MFLogger;
+import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.PausableThreadPoolExecutor;
 import com.mediafire.uploader.interfaces.Pausable;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
@@ -19,18 +20,18 @@ import com.mediafire.uploader.uploaditem.UploadItem;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Created by  on 7/8/2014.
+ * Created by Chris Najar on 7/8/2014.
  */
 public abstract class UploadManagerWorker implements UploadListenerManager, Pausable {
     private static final String TAG = UploadManagerWorker.class.getCanonicalName();
     protected final int MAX_UPLOAD_ATTEMPTS;
-    protected final MediaFire mediaFire;
+    protected final MFTokenFarm mfTokenFarm;
     protected final PausableThreadPoolExecutor executor;
     protected final LinkedBlockingQueue<Runnable> workQueue;
     protected MFLogger errorTracker;
 
-    public UploadManagerWorker(MediaFire mediaFire, int maxUploadAttempts, int maxThreadQueue) {
-        this.mediaFire = mediaFire;
+    public UploadManagerWorker(MFTokenFarm mfTokenFarm, int maxUploadAttempts, int maxThreadQueue) {
+        this.mfTokenFarm = mfTokenFarm;
         this.workQueue = new LinkedBlockingQueue<Runnable>();
         executor = new PausableThreadPoolExecutor(maxThreadQueue, workQueue);
         this.MAX_UPLOAD_ATTEMPTS = maxUploadAttempts;
@@ -67,7 +68,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
             storageLimitExceeded(uploadItem);
         } else if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             // all units are ready and we have the poll upload key. start polling.
-            PollProcess process = new PollProcess(mediaFire, this, uploadItem);
+            PollProcess process = new PollProcess(mfTokenFarm, this, uploadItem);
             executor.execute(process);
         } else {
             if (checkResponse.doesHashExists()) { //hash does exist for the file
@@ -89,7 +90,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         notifyUploadListenerCancelled(uploadItem);
     }
 
-    private void hashExists(UploadItem uploadItem, UploadCheckResponse checkResponse) {
+    private void hashExists(UploadItem uploadItem, CheckResponse checkResponse) {
         MFConfiguration.getErrorTracker().i(TAG, "hashExists()");
         if (!checkResponse.isInAccount()) { // hash which exists is not in the account
             hashNotInAccount(uploadItem);
@@ -100,7 +101,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     private void hashNotInAccount(UploadItem uploadItem) {
         MFConfiguration.getErrorTracker().i(TAG, "hashNotInAccount()");
-        InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
+        InstantProcess process = new InstantProcess(mfTokenFarm, this, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
     }
@@ -108,7 +109,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     private void hashInAccount(UploadItem uploadItem, CheckResponse checkResponse) {
         MFConfiguration.getErrorTracker().i(TAG, "hashInAccount()");
         boolean inFolder = checkResponse.isInFolder();
-        InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
+        InstantProcess process = new InstantProcess(mfTokenFarm, this, uploadItem);
         MFConfiguration.getErrorTracker().i(TAG, "ActionOnInAccount: " + uploadItem.getUploadOptions().getActionOnInAccount().toString());
         switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
             case UPLOAD_ALWAYS:
@@ -150,12 +151,12 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             MFConfiguration.getErrorTracker().i(TAG, "all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
-            PollProcess process = new PollProcess(mediaFire, this, uploadItem);
+            PollProcess process = new PollProcess(mfTokenFarm, this, uploadItem);
             executor.execute(process);
         } else {
             MFConfiguration.getErrorTracker().i(TAG, "all units not ready or do not have poll upload key");
             // either we don't have the poll upload key or all units are not ready
-            ResumableProcess process = new ResumableProcess(mediaFire, this, uploadItem);
+            ResumableProcess process = new ResumableProcess(mfTokenFarm, this, uploadItem);
             executor.execute(process);
         }
     }
@@ -172,10 +173,10 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         if (response != null &&
                 response.getResumableUpload().areAllUnitsReady() &&
                 !response.getDoUpload().getPollUploadKey().isEmpty()) {
-            PollProcess process = new PollProcess(mediaFire, this, uploadItem);
+            PollProcess process = new PollProcess(mfTokenFarm, this, uploadItem);
             executor.execute(process);
         } else {
-            CheckProcess process = new CheckProcess(mediaFire, this, uploadItem);
+            CheckProcess process = new CheckProcess(mfTokenFarm, this, uploadItem);
             executor.execute(process);
         }
     }

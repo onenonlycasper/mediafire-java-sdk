@@ -3,6 +3,7 @@ package com.mediafire.uploader.process;
 import com.mediafire.sdk.api_responses.ApiResponse;
 import com.mediafire.sdk.api_responses.upload.InstantResponse;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
@@ -20,8 +21,8 @@ public class InstantProcess extends UploadProcess {
 
     private static final String TAG = InstantProcess.class.getCanonicalName();
 
-    public InstantProcess(MediaFire mediaFire, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
-        super(mediaFire, uploadItem, uploadListenerManager);
+    public InstantProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadListenerManager);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class InstantProcess extends UploadProcess {
 
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
-        InstantResponse response = mediaFire.apiCall().upload.instantUpload(keyValue, null);
+        InstantResponse response = mfTokenFarm.apiCall().upload.instantUpload(keyValue, null);
 
         if (response == null) {
             notifyListenerLostConnection();
