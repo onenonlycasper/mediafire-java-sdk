@@ -1,4 +1,4 @@
-package com.mediafire.sdk.requests;
+package com.mediafire.sdk.http;
 
 public enum MFHost {
     LIVE_HTTP("www.mediafire.com", TransferScheme.HTTP),

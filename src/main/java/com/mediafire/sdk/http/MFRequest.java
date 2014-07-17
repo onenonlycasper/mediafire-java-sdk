@@ -1,4 +1,4 @@
-package com.mediafire.sdk.requests;
+package com.mediafire.sdk.http;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -6,12 +6,14 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public abstract class MFAbstractRequest {
+public class MFRequest {
     private final MFHost mfHost;
     private final MFApi mfApi;
     private final Map<String, String> requestParameters;
+    private Map<String, String> headers;
+    private byte[] payload;
 
-    public MFAbstractRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
+    public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters, Map<String, String> headers, byte[] payload) {
         if (mfHost == null) {
             throw new IllegalArgumentException("MFHost cannot be null");
         }
@@ -25,7 +27,16 @@ public abstract class MFAbstractRequest {
         this.mfHost = mfHost;
         this.mfApi = mfApi;
         this.requestParameters = requestParameters;
+        this.headers = headers;
+        this.payload = payload;
+    }
 
+    public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
+        this(mfHost, mfApi, requestParameters, null, null);
+    }
+
+    public MFRequest(MFHost mfHost, MFApi mfApi) {
+        this(mfHost, mfApi, null, null, null);
     }
 
     public MFHost getMfHost() {
@@ -38,5 +49,13 @@ public abstract class MFAbstractRequest {
 
     public Map<String, String> getRequestParameters() {
         return requestParameters;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public byte[] getPayload() {
+        return payload;
     }
 }
