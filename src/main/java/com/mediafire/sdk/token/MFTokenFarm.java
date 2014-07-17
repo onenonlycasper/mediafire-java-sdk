@@ -3,11 +3,13 @@ package com.mediafire.sdk.token;
 import com.mediafire.sdk.http.MFApi;
 import com.mediafire.sdk.http.MFHost;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.http.MFHttpRunner;
 import com.mediafire.sdk.http.MFRequest;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -18,6 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class MFTokenFarm implements MFTokenFarmCallback {
     private final MFConfiguration mfConfiguration;
+    private final MFHttpRunner mfHttpRunner;
 
     private BlockingQueue<MFSessionToken> mfSessionTokens;
     private MFUploadActionToken mfUploadActionToken;
@@ -36,13 +39,15 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     public MFTokenFarm(MFConfiguration mfConfiguration) {
         this.mfConfiguration = mfConfiguration;
+        this.mfSessionTokens = new LinkedBlockingQueue<MFSessionToken>(mfConfiguration.getMaximumSessionTokens());
+        this.mfHttpRunner = new MFHttpRunner(this, mfConfiguration);
     }
 
     public void getNewSessionToken() {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("token_version", "2");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
-
+        mfHttpRunner.doRequest(mfRequest);
     }
 
     private void getNewImageActionToken() {
@@ -50,6 +55,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "image");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
+        mfHttpRunner.doRequest(mfRequest);
     }
 
     private void getNewUploadActionToken() {
@@ -57,6 +63,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "upload");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
+        mfHttpRunner.doRequest(mfRequest);
     }
 
     public void shutdown() {
