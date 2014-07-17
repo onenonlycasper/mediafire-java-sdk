@@ -1,6 +1,7 @@
 package com.mediafire.sdk.http;
 
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.config.MFCredentials;
 import com.mediafire.sdk.config.MFDefaultCredentials;
 import com.mediafire.sdk.token.MFImageActionToken;
 import com.mediafire.sdk.token.MFSessionToken;
@@ -19,9 +20,9 @@ public final class MFHttpBefore extends MFHttp {
     protected static final String MD5 = "MD5";
 
     protected MFTokenDistributor mfTokenDistributor;
-    protected MFDefaultCredentials mfCredentials;
+    protected MFCredentials mfCredentials;
 
-    public MFHttpBefore(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration, MFDefaultCredentials mfCredentials) {
+    public MFHttpBefore(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration, MFCredentials mfCredentials) {
         super(mfConfiguration);
         this.mfTokenDistributor = mfTokenDistributor;
         this.mfCredentials = mfCredentials;
@@ -53,7 +54,7 @@ public final class MFHttpBefore extends MFHttp {
         }
     }
 
-    protected String calculateSignature(MFConfiguration MFConfiguration, MFDefaultCredentials credentials) {
+    protected String calculateSignature(MFConfiguration MFConfiguration, MFCredentials credentials) {
         // email + password + app id + api key
         // fb access token + app id + api key
         // tw oauth token + tw oauth token secret + app id + api key
