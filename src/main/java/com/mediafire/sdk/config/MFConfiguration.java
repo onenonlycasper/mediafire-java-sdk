@@ -42,7 +42,6 @@ public final class MFConfiguration {
         return maximumSessionTokens;
     }
 
-
     public String getAppId() {
         return appId;
     }
