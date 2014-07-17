@@ -54,7 +54,8 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("token_version", "2");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
-        mfConfiguration.getMfExecutor().execute(new MFTokenFarmInternalRunnable(mfHttpRunner, mfRequest, mfGenericCallback));
+        mfHttpRunner.doRequest(mfRequest);
+//        mfConfiguration.getMfExecutor().execute(new MFTokenFarmInternalRunnable(mfHttpRunner, mfRequest, mfGenericCallback));
     }
 
     public void getNewSessionToken() {
@@ -67,7 +68,8 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "image");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
-        mfConfiguration.getMfExecutor().execute(new MFTokenFarmInternalRunnable(mfHttpRunner, mfRequest, mfGenericCallback));
+        mfHttpRunner.doRequest(mfRequest);
+//        mfConfiguration.getMfExecutor().execute(new MFTokenFarmInternalRunnable(mfHttpRunner, mfRequest, mfGenericCallback));
     }
 
     public void getNewImageActionToken() {
@@ -80,7 +82,8 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "upload");
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
-        mfConfiguration.getMfExecutor().execute(new MFTokenFarmInternalRunnable(mfHttpRunner, mfRequest, mfGenericCallback));
+        mfHttpRunner.doRequest(mfRequest);
+//        mfConfiguration.getMfExecutor().execute(new MFTokenFarmInternalRunnable(mfHttpRunner, mfRequest, mfGenericCallback));
     }
 
     public void getNewUploadActionToken() {
@@ -112,10 +115,12 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
             mfGenericCallback.jobStarted();
         }
 
-        while (mfSessionTokens.remainingCapacity() > 0) {
-            mfConfiguration.getMfLogger().logMessage(TAG, "fetching new session token (remaining capacity " + mfSessionTokens.remainingCapacity() + ")");
-            getNewSessionToken();
-        }
+//        while (mfSessionTokens.remainingCapacity() > 0) {
+//            mfConfiguration.getMfLogger().logMessage(TAG, "fetching new session token (remaining capacity " + mfSessionTokens.remainingCapacity() + ")");
+//            getNewSessionToken();
+//        }
+
+        getNewSessionToken();
 
         if (mfUploadActionToken == null || mfUploadActionToken.isExpired()) {
             mfConfiguration.getMfLogger().logMessage(TAG, "fetching upload action token");
