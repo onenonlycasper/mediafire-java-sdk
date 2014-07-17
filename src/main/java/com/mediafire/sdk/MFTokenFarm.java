@@ -1,12 +1,9 @@
 package com.mediafire.sdk;
 
-import com.arkhive.components.core.Configuration;
-import com.arkhive.components.core.module_credentials.ApplicationCredentials;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -15,20 +12,26 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by  on 6/16/2014.
  */
 public final class MFTokenFarm implements MFTokenDistributor {
+    private final MFCredentials applicationCredentials;
+    private final MFConfiguration configuration;
+
+    private BlockingQueue<MFSessionToken> mfSessionTokens;
+    private MFUploadActionToken mfUploadActionToken;
+    private MFImageActionToken mfImageActionToken;
+
+    // receive new token locks
+    private final Object imageTokenLock = new Object();
+    private final Object uploadTokenLock = new Object();
+    private final Object sessionTokenLock = new Object();
+
+    // borrow token locks
     private final Lock lockBorrowImageToken = new ReentrantLock();
     private final Lock lockBorrowUploadToken = new ReentrantLock();
     private final Condition conditionImageTokenNotExpired = lockBorrowImageToken.newCondition();
     private final Condition conditionUploadTokenNotExpired = lockBorrowUploadToken.newCondition();
-    private final ApplicationCredentials applicationCredentials;
-    private final BlockingQueue<MFSessionToken> sessionTokens;
-    private MFUploadActionToken uploadActionToken;
-    private MFImageActionToken imageActionToken;
-    private final Object imageTokenLock = new Object();
-    private final Object uploadTokenLock = new Object();
 
-    public MFTokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials) {
-        int maximumSessionTokens = configuration.getMaximumSessionTokens();
-        sessionTokens = new LinkedBlockingQueue<MFSessionToken>(maximumSessionTokens);
+    public MFTokenFarm(MFConfiguration configuration, MFCredentials applicationCredentials) {
+        this.configuration = configuration;
         this.applicationCredentials = applicationCredentials;
     }
 
@@ -54,43 +57,106 @@ public final class MFTokenFarm implements MFTokenDistributor {
     }
 
     public void shutdown() {
-        sessionTokens.clear();
-        uploadActionToken = null;
-        imageActionToken = null;
+        mfSessionTokens.clear();
+        mfUploadActionToken = null;
+        mfImageActionToken = null;
     }
 
     @Override
     public void returnSessionToken(MFSessionToken sessionToken) {
+        if (sessionToken == null) {
+            getNewSessionToken();
+            return;
+        }
 
+        try {
+            mfSessionTokens.put(sessionToken);
+            return;
+        } catch (InterruptedException e) { }
+
+        getNewSessionToken();
     }
 
     @Override
     public void receiveNewSessionToken(MFSessionToken sessionToken) {
-
+        synchronized (imageTokenLock) {
+            // store the session token if it is valid
+        }
     }
 
     @Override
     public void receiveNewImageActionToken(MFImageActionToken uploadActionToken) {
-
+        synchronized (imageTokenLock) {
+            // store the image token if it is valid
+        }
     }
 
     @Override
     public void receiveNewUploadActionToken(MFUploadActionToken uploadActionToken) {
+        synchronized (uploadTokenLock) {
 
+        }
     }
 
     @Override
     public MFSessionToken borrowSessionToken() {
-        return null;
+        MFSessionToken sessionToken = null;
+        try {
+            sessionToken = mfSessionTokens.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return sessionToken;
     }
 
     @Override
     public MFUploadActionToken borrowUploadActionToken() {
-        return null;
+        // lock and fetch new token if necessary
+        lockBorrowUploadToken.lock();
+        // fetch new action token if token is null or expired
+        if (mfUploadActionToken == null || mfUploadActionToken.isExpired()) {
+            getNewUploadActionToken();
+        }
+
+        try {
+            // wait while we get an image action token, condition is that image
+            // action token is null or action token is expired or action token
+            // string is null
+            while (mfUploadActionToken == null ||
+                    mfUploadActionToken.isExpired() ||
+                    mfUploadActionToken.getTokenString() == null) {
+                conditionUploadTokenNotExpired.await(1, TimeUnit.SECONDS);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lockBorrowUploadToken.unlock();
+        }
+        return mfUploadActionToken;
     }
 
     @Override
     public MFImageActionToken borrowImageActionToken() {
-        return null;
+        // lock and fetch new token if necessary
+        lockBorrowImageToken.lock();
+        if (mfImageActionToken == null || mfImageActionToken.isExpired()) {
+            getNewImageActionToken();
+        }
+        try {
+            // wait while we get an image action token, condition is that image
+            // action token is null or action token is expired or action token
+            // string is null
+            while (mfImageActionToken == null ||
+                    mfImageActionToken.isExpired() ||
+                    mfImageActionToken.getTokenString() == null) {
+                conditionImageTokenNotExpired.await(1, TimeUnit.SECONDS);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            // attach new one to apiRequestObject
+            lockBorrowImageToken.unlock();
+        }
+        return mfImageActionToken;
     }
 }
