@@ -37,12 +37,23 @@ public class MFHttpRunner {
             e.printStackTrace();
         }
 
-        mfHttpClientCleanup.returnToken(mfRequest);
+        mfConfiguration.getMfLogger().logApiError(TAG, mfRequest, mfResponse);
+
+        mfHttpClientCleanup.returnToken(mfRequest, mfResponse);
+
+        synchronized (this) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
         if (mfGenericCallback != null) {
             RunnerHolder runnerHolder = new RunnerHolder(mfRequest, mfResponse);
             mfGenericCallback.jobFinished(runnerHolder);
         }
+
     }
 
     public void doRequest(MFRequest mfRequest) {
