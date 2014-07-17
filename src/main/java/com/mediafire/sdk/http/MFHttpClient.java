@@ -117,8 +117,8 @@ public final class MFHttpClient extends MFHttp {
         }
 
         // set timeouts
-        connection.setConnectTimeout(mfConfiguration.getHttpConnectionTimeout());
-        connection.setReadTimeout(mfConfiguration.getHttpReadTimeout());
+        connection.setConnectTimeout(45000);
+        connection.setReadTimeout(45000);
 
         // set request headers (if any)
         if (request.getHeaders() != null) {
