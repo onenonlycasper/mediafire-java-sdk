@@ -138,7 +138,7 @@ public class HttpClient {
         stringBuilder.append(time);
         stringBuilder.append(uri);
         String nonUrlEncodedString = stringBuilder.toString();
-        return hashString(nonUrlEncodedString, "MD5");
+        return hashString(nonUrlEncodedString, MD5);
     }
 
     private void addTokenToRequestParameters(MFRequest request) {
