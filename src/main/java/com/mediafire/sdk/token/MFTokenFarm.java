@@ -115,7 +115,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
             mfGenericCallback.jobStarted();
         }
 
-        while (mfSessionTokens.remainingCapacity() > 0) {
+        for (int i = 0; i < mfSessionTokens.remainingCapacity(); i++) {
             mfConfiguration.getMfLogger().logMessage(TAG, "fetching new session token (remaining capacity " + mfSessionTokens.remainingCapacity() + ")");
             getNewSessionToken();
         }
