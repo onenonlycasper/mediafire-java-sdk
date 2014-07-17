@@ -11,12 +11,15 @@ public class Driver {
         Driver driver = new Driver();
         driver.systemGetInfo();
         driver.userGetSessionToken();
+        MFConfiguration mfConfiguration = null;
+        MFCredentials mfCredentials = null;
+        MFTokenFarm mfTokenFarm = new MFTokenFarm(mfConfiguration, mfCredentials);
     }
 
     public void systemGetInfo() {
         System.out.println("\n\nSYSTEM/GET_INFO");
         MFHttpClient mfHttpClient = new MFHttpClient(null);
-        MFHttpRequest request = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.URI_SYSTEM_GET_INFO);
+        MFHttpRequest request = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.SYSTEM_GET_INFO);
         MFHttpResponse response = mfHttpClient.sendRequest(request);
         System.out.println("status: " + response.getStatus());
         System.out.println("headers ");
@@ -39,7 +42,7 @@ public class Driver {
         requestParameters.put("application_id", "35");
         requestParameters.put("signature", "30abbbd4a3f8827d1a6408f1f2ee20d5edcc4799");
         requestParameters.put("token_version", "2");
-        MFHttpRequest request = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.URI_USER_GET_SESSION_TOKEN, requestParameters);
+        MFHttpRequest request = new MFHttpRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
         MFHttpResponse response = mfHttpClient.sendRequest(request);
         System.out.println("status: " + response.getStatus());
         System.out.println("headers ");
