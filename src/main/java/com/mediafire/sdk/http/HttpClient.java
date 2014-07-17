@@ -44,6 +44,7 @@ public class HttpClient {
             addTokenToRequestParameters(request);
             // add signature, if necessary, to request parameters
             addSignatureToRequestParameters(request);
+            // create the connection
             connection = createHttpConnection(request);
             // send any data possible via POST
             postData(request, connection);
