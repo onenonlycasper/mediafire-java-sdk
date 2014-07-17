@@ -1,4 +1,10 @@
-package com.mediafire.sdk;
+package com.mediafire.sdk.token;
+
+import com.mediafire.sdk.MFApi;
+import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.config.MFDefaultCredentials;
+import com.mediafire.sdk.MFHost;
+import com.mediafire.sdk.http.MFHttpRequest;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by  on 6/16/2014.
  */
 public final class MFTokenFarm implements MFTokenDistributor {
-    private final MFCredentials mfCredentials;
+    private final MFDefaultCredentials mfCredentials;
     private final MFConfiguration mfConfiguration;
 
     private BlockingQueue<MFSessionToken> mfSessionTokens;
@@ -30,7 +36,7 @@ public final class MFTokenFarm implements MFTokenDistributor {
     private final Condition conditionImageTokenNotExpired = lockBorrowImageToken.newCondition();
     private final Condition conditionUploadTokenNotExpired = lockBorrowUploadToken.newCondition();
 
-    public MFTokenFarm(MFConfiguration mfConfiguration, MFCredentials mfCredentials) {
+    public MFTokenFarm(MFConfiguration mfConfiguration, MFDefaultCredentials mfCredentials) {
         this.mfConfiguration = mfConfiguration;
         this.mfCredentials = mfCredentials;
     }

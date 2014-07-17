@@ -1,7 +1,12 @@
-package com.mediafire.sdk;
+package com.mediafire.sdk.http;
+
+import com.mediafire.sdk.config.MFConfiguration;
 
 import java.io.*;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;

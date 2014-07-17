@@ -1,4 +1,4 @@
-package com.mediafire.sdk;
+package com.mediafire.sdk.token;
 
 /**
  * Created by  on 6/15/2014.

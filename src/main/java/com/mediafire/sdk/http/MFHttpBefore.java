@@ -1,4 +1,11 @@
-package com.mediafire.sdk;
+package com.mediafire.sdk.http;
+
+import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.config.MFDefaultCredentials;
+import com.mediafire.sdk.token.MFImageActionToken;
+import com.mediafire.sdk.token.MFSessionToken;
+import com.mediafire.sdk.token.MFTokenDistributor;
+import com.mediafire.sdk.token.MFUploadActionToken;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -12,9 +19,9 @@ public final class MFHttpBefore extends MFHttp {
     protected static final String MD5 = "MD5";
 
     protected MFTokenDistributor mfTokenDistributor;
-    protected MFCredentials mfCredentials;
+    protected MFDefaultCredentials mfCredentials;
 
-    public MFHttpBefore(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration, MFCredentials mfCredentials) {
+    public MFHttpBefore(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration, MFDefaultCredentials mfCredentials) {
         super(mfConfiguration);
         this.mfTokenDistributor = mfTokenDistributor;
         this.mfCredentials = mfCredentials;
@@ -46,7 +53,7 @@ public final class MFHttpBefore extends MFHttp {
         }
     }
 
-    protected String calculateSignature(MFConfiguration MFConfiguration, MFCredentials credentials) {
+    protected String calculateSignature(MFConfiguration MFConfiguration, MFDefaultCredentials credentials) {
         // email + password + app id + api key
         // fb access token + app id + api key
         // tw oauth token + tw oauth token secret + app id + api key
@@ -54,17 +61,17 @@ public final class MFHttpBefore extends MFHttp {
         String userInfoPortionOfHashTarget = null;
         switch (credentials.getUserCredentialsType()) {
             case FACEBOOK:
-                String fb_token_key = MFCredentials.FACEBOOK_PARAMETER_FB_ACCESS_TOKEN;
+                String fb_token_key = MFDefaultCredentials.FACEBOOK_PARAMETER_FB_ACCESS_TOKEN;
                 userInfoPortionOfHashTarget = credentials.getCredentials().get(fb_token_key);
                 break;
             case TWITTER:
-                String tw_oauth_token = MFCredentials.TWITTER_PARAMETER_TW_OAUTH_TOKEN;
-                String tw_oauth_token_secret = MFCredentials.TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET;
+                String tw_oauth_token = MFDefaultCredentials.TWITTER_PARAMETER_TW_OAUTH_TOKEN;
+                String tw_oauth_token_secret = MFDefaultCredentials.TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET;
                 userInfoPortionOfHashTarget = credentials.getCredentials().get(tw_oauth_token) + credentials.getCredentials().get(tw_oauth_token_secret);
                 break;
             case MEDIAFIRE:
-                String mf_email = MFCredentials.MEDIAFIRE_PARAMETER_EMAIL;
-                String mf_pass = MFCredentials.MEDIAFIRE_PARAMETER_PASSWORD;
+                String mf_email = MFDefaultCredentials.MEDIAFIRE_PARAMETER_EMAIL;
+                String mf_pass = MFDefaultCredentials.MEDIAFIRE_PARAMETER_PASSWORD;
                 userInfoPortionOfHashTarget = credentials.getCredentials().get(mf_email) + credentials.getCredentials().get(mf_pass);
                 break;
             case UNSET:
