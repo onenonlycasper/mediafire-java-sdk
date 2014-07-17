@@ -1,10 +1,7 @@
 package com.mediafire.sdk.token;
 
-import com.mediafire.sdk.http.MFApi;
-import com.mediafire.sdk.http.MFHost;
+import com.mediafire.sdk.http.*;
 import com.mediafire.sdk.config.MFConfiguration;
-import com.mediafire.sdk.http.MFHttpRunner;
-import com.mediafire.sdk.http.MFRequest;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -70,10 +67,48 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         mfHttpRunner.doRequest(mfRequest);
     }
 
-    public void shutdown() {
+    public void shutdown(MFGenericCallback<Void> mfGenericCallback) {
+        if (mfGenericCallback != null) {
+            mfGenericCallback.jobStarted();
+        }
+
         mfSessionTokens.clear();
         mfUploadActionToken = null;
         mfImageActionToken = null;
+
+        if (mfGenericCallback != null) {
+            mfGenericCallback.jobFinished(null);
+        }
+    }
+
+    public void shutdown() {
+        shutdown(null);
+    }
+
+    public void startup(MFGenericCallback<Void> mfGenericCallback) {
+        if (mfGenericCallback != null) {
+            mfGenericCallback.jobStarted();
+        }
+
+        while (mfSessionTokens.remainingCapacity() > 0) {
+            getNewSessionToken();
+        }
+
+        if (mfUploadActionToken == null || mfUploadActionToken.isExpired()) {
+            getNewUploadActionToken();
+        }
+
+        if (mfImageActionToken == null || mfImageActionToken.isExpired()) {
+            getNewImageActionToken();
+        }
+
+        if (mfGenericCallback != null) {
+            mfGenericCallback.jobFinished(null);
+        }
+    }
+
+    public void startup() {
+        startup(null);
     }
 
     @Override
