@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by  on 6/15/2014.
  */
-public final class MFDefaultCredentials {
+public final class MFDefaultCredentials implements MFCredentials {
     private static final String TAG = MFDefaultCredentials.class.getCanonicalName();
     public static final String MEDIAFIRE_PARAMETER_EMAIL = "email";
     public static final String MEDIAFIRE_PARAMETER_PASSWORD = "password";
@@ -38,6 +38,7 @@ public final class MFDefaultCredentials {
      *
      * @return - true if credentials are stored, false if not.
      */
+    @Override
     public boolean setCredentials(Map<String, String> userCredentials) {
         if (isFacebookCredentials(userCredentials)) {
             this.userCredentials = userCredentials;
@@ -66,10 +67,12 @@ public final class MFDefaultCredentials {
         return false;
     }
 
+    @Override
     public Map<String, String> getCredentials() {
         return userCredentials;
     }
 
+    @Override
     public void clearCredentials() {
         userCredentials.clear();
         userCredentialsType = UserCredentialsType.UNSET;
