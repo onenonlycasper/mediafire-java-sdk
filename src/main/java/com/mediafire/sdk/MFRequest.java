@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public class MFRequest {
+public final class MFRequest {
     private final MFHost mfHost;
     private final MFApi mfApi;
     private final Map<String, String> requestParameters;

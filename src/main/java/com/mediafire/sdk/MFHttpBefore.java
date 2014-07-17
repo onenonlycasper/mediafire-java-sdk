@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public class MFHttpBefore extends MFHttp {
+public final class MFHttpBefore extends MFHttp {
     protected static final String SHA1 = "SHA-1";
     protected static final String MD5 = "MD5";
 

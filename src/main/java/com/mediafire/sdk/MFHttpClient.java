@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public class MFHttpClient extends MFHttp {
+public final class MFHttpClient extends MFHttp {
     public MFHttpClient(MFConfiguration mfConfiguration) {
         super(mfConfiguration);
     }

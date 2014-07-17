@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by  on 6/16/2014.
  */
-public class MFTokenFarm implements MFTokenDistributor {
+public final class MFTokenFarm implements MFTokenDistributor {
     private final Lock lockBorrowImageToken = new ReentrantLock();
     private final Lock lockBorrowUploadToken = new ReentrantLock();
     private final Condition conditionImageTokenNotExpired = lockBorrowImageToken.newCondition();

@@ -3,7 +3,7 @@ package com.mediafire.sdk;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public class MFHttpAfter {
+public final class MFHttpAfter {
 
     private MFTokenDistributor mfTokenDistributor;
 

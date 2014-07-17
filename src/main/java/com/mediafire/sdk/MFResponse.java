@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public class MFResponse {
+public final class MFResponse {
     private int status;
 
     private Map<String, List<String>> headers;
