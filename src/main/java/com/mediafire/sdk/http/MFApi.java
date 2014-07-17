@@ -38,7 +38,7 @@ public enum MFApi {
     URI_USER_UNLINK_TWITTER("/api/1.0/user/unlink_twitter.php", TokenType.SESSION_TOKEN_V2, true),
     URI_USER_GET_AVATAR("/api/1.0/user/get_avatar.php", TokenType.SESSION_TOKEN_V2, true),
     URI_USER_SET_AVATAR("/api/1.0/user/set_avatar.php", TokenType.SESSION_TOKEN_V2, true),
-    URI_USER_GET_SESSION_TOKEN("/api/1.0/user/get_session_token.php", TokenType.NONE, true),
+    URI_USER_GET_SESSION_TOKEN("/api/1.0/user/get_session_token.php", TokenType.UNIQUE, true),
     URI_USER_GET_ACTION_TOKEN("/api/1.0/user/get_action_token.php", TokenType.SESSION_TOKEN_V2, true),
     // upload api calls
     URI_UPLOAD_CHECK("/api/1.0/upload/check.php", TokenType.SESSION_TOKEN_V2, true),
@@ -72,6 +72,6 @@ public enum MFApi {
     }
 
     public enum TokenType {
-        SESSION_TOKEN_V2, UPLOAD_ACTION_TOKEN, IMAGE_ACTION_TOKEN, NONE,
+        SESSION_TOKEN_V2, UPLOAD_ACTION_TOKEN, IMAGE_ACTION_TOKEN, NONE, UNIQUE,
     }
 }

@@ -5,38 +5,33 @@ package com.mediafire.sdk.tokenfarm;
  */
 public final class SessionToken extends Token {
     private String time;
-    private volatile String secretKey;
+    private String secretKey;
     private String pkey;
 
-    private SessionToken() {
-        super();
-    }
-
-    public static SessionToken newInstance() {
-        return new SessionToken();
-    }
-
-    public void setTime(String time) {
+    private SessionToken(String tokenString, String secretKey, String time, String pkey) {
+        super(tokenString);
+        this.secretKey = secretKey;
         this.time = time;
+        this.pkey = pkey;
     }
 
     public String getTime() {
         return time;
     }
 
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public synchronized String getSecretKey() {
+    public String getSecretKey() {
         return secretKey;
-    }
-
-    public void setPkey(String pkey) {
-        this.pkey = pkey;
     }
 
     public String getPkey() {
         return pkey;
+    }
+
+    private SessionToken getUpdatedSessionToken() {
+        long newKey = Long.valueOf(secretKey) * 16807;
+        newKey = newKey % 2147483647;
+        String newSecretKey = String.valueOf(newKey);
+
+        return new SessionToken(tokenString, newSecretKey, time, pkey);
     }
 }

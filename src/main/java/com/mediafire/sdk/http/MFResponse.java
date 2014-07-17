@@ -11,12 +11,12 @@ public class MFResponse {
 
     private Map<String, List<String>> headers;
 
-    private byte[] body;
+    private byte[] bodyBytes;
 
-    public MFResponse(int status, Map<String, List<String>> headers, byte[] body) {
+    public MFResponse(int status, Map<String, List<String>> headers, byte[] bodyBytes) {
         this.status = status;
         this.headers = headers;
-        this.body = body;
+        this.bodyBytes = bodyBytes;
     }
 
     public int getStatus() {
@@ -27,7 +27,11 @@ public class MFResponse {
         return headers;
     }
 
-    public byte[] getBody() {
-        return body;
+    public byte[] getBodyBytes() {
+        return bodyBytes;
+    }
+
+    public String getResponseString() {
+        return new String(bodyBytes);
     }
 }
