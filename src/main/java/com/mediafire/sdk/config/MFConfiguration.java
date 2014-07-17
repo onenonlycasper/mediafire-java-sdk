@@ -1,5 +1,7 @@
 package com.mediafire.sdk.config;
 
+import java.util.concurrent.ExecutorService;
+
 /**
  * Created by Chris Najar on 7/17/2014.
  */
@@ -8,11 +10,12 @@ public final class MFConfiguration {
     private final int httpConnectionTimeout;
     private final int minimumSessionTokens;
     private final int maximumSessionTokens;
-    private int httpPoolSize;
+    private final int httpPoolSize;
     private final String appId;
     private final String apiKey;
-    private MFLogger mfLogger;
-    private MFCredentials mfCredentials;
+    private final MFLogger mfLogger;
+    private final MFCredentials mfCredentials;
+    private final ExecutorService mfExecutorService;
 
     private MFConfiguration(MFConfigurationBuilder mfConfigurationBuilder) {
         this.httpReadTimeout = mfConfigurationBuilder.httpReadTimeout;
@@ -24,6 +27,7 @@ public final class MFConfiguration {
         this.apiKey = mfConfigurationBuilder.apiKey;
         this.mfLogger = mfConfigurationBuilder.mfLogger;
         this.mfCredentials = mfConfigurationBuilder.mfCredentials;
+        this.mfExecutorService = mfConfigurationBuilder.mfExecutorService;
     }
 
     public int getHttpReadTimeout() {
@@ -62,6 +66,10 @@ public final class MFConfiguration {
         return mfCredentials;
     }
 
+    public ExecutorService getMfExecutorService() {
+        return mfExecutorService;
+    }
+
     public static class MFConfigurationBuilder {
         private static final int DEFAULT_HTTP_READ_TIMEOUT = 45000;
         private static final int DEFAULT_HTTP_CONNECTION_TIMEOUT = 45000;
@@ -70,6 +78,7 @@ public final class MFConfiguration {
         private static final int DEFAULT_HTTP_POOL_SIZE = 6;
         private static final MFLogger DEFAULT_MF_LOGGER = new MFDefaultLogger();
         private static final MFCredentials DEFAULT_MF_CREDENTIALS = new MFDefaultCredentials();
+        private static final ExecutorService DEFAULT_EXECUTOR_SERVICE = new MFDefaultExecutor();
 
         private int httpReadTimeout = DEFAULT_HTTP_READ_TIMEOUT;
         private int httpConnectionTimeout = DEFAULT_HTTP_CONNECTION_TIMEOUT;
@@ -78,6 +87,7 @@ public final class MFConfiguration {
         private int httpPoolSize = DEFAULT_HTTP_POOL_SIZE;
         private MFLogger mfLogger = DEFAULT_MF_LOGGER;
         private MFCredentials mfCredentials = DEFAULT_MF_CREDENTIALS;
+        private ExecutorService mfExecutorService = DEFAULT_EXECUTOR_SERVICE;
         private String appId;
         private String apiKey;
 
@@ -123,6 +133,14 @@ public final class MFConfiguration {
                 throw new IllegalStateException("MFCredentials cannot be null");
             }
             this.mfCredentials = mfCredentials;
+            return this;
+        }
+
+        public MFConfigurationBuilder mfExecutorService(ExecutorService mfExecutorService) {
+            if (mfExecutorService == null) {
+                throw new IllegalStateException("ExecutorService cannot be null");
+            }
+            this.mfExecutorService = mfExecutorService;
             return this;
         }
 
