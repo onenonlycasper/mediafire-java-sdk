@@ -26,6 +26,9 @@ public final class MFRequest {
         if (requestParameters == null) {
             requestParameters = new LinkedHashMap<String, String>();
         }
+        if (payload == null) {
+            payload = new byte[0];
+        }
 
         requestParameters.put("response_format", "json");
 
@@ -41,7 +44,7 @@ public final class MFRequest {
     }
 
     public MFRequest(MFHost mfHost, MFApi mfApi) {
-        this(mfHost, mfApi, null, null, null);
+        this(mfHost, mfApi, new LinkedHashMap<String, String>(), new LinkedHashMap<String, String>(), new byte[0]);
     }
 
     public MFHost getMfHost() {
