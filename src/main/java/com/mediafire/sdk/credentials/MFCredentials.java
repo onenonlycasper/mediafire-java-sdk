@@ -9,8 +9,8 @@ import java.util.Map;
 /**
  * Created by  on 6/15/2014.
  */
-public final class ApplicationCredentials {
-    private static final String TAG = ApplicationCredentials.class.getCanonicalName();
+public final class MFCredentials {
+    private static final String TAG = MFCredentials.class.getCanonicalName();
     public static final String MEDIAFIRE_PARAMETER_EMAIL = "email";
     public static final String MEDIAFIRE_PARAMETER_PASSWORD = "password";
     public static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
@@ -23,13 +23,13 @@ public final class ApplicationCredentials {
     private final String appId;
     private final String apiKey;
 
-    private ApplicationCredentials(String appId, String apiKey) {
+    private MFCredentials(String appId, String apiKey) {
         this.appId = appId;
         this.apiKey = apiKey;
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
-    public ApplicationCredentials(Configuration configuration) {
+    public MFCredentials(Configuration configuration) {
         this(configuration.getAppId(), configuration.getApiKey());
     }
 

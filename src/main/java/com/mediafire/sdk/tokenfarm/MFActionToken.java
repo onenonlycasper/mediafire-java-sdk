@@ -3,11 +3,11 @@ package com.mediafire.sdk.tokenfarm;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public abstract class ActionToken extends Token {
+public abstract class MFActionToken extends MFToken {
     private long expiration;
     private Type type;
 
-    public ActionToken(String tokenString, Type type, long expiration) {
+    public MFActionToken(String tokenString, Type type, long expiration) {
         super(tokenString);
         this.type = type;
     }

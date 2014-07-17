@@ -12,21 +12,21 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by  on 6/16/2014.
  */
-public class TokenFarm {
+public class MFMFTokenFarm implements MFTokenDistributor {
     private final Lock lockBorrowImageToken = new ReentrantLock();
     private final Lock lockBorrowUploadToken = new ReentrantLock();
     private final Condition conditionImageTokenNotExpired = lockBorrowImageToken.newCondition();
     private final Condition conditionUploadTokenNotExpired = lockBorrowUploadToken.newCondition();
     private final ApplicationCredentials applicationCredentials;
-    private final BlockingQueue<SessionToken> sessionTokens;
-    private UploadActionToken uploadActionToken;
-    private ImageActionToken imageActionToken;
+    private final BlockingQueue<MFSessionToken> sessionTokens;
+    private MFUploadActionToken uploadActionToken;
+    private MFImageActionToken imageActionToken;
     private final Object imageTokenLock = new Object();
     private final Object uploadTokenLock = new Object();
 
-    public TokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials) {
+    public MFMFTokenFarm(Configuration configuration, ApplicationCredentials applicationCredentials) {
         int maximumSessionTokens = configuration.getMaximumSessionTokens();
-        sessionTokens = new LinkedBlockingQueue<SessionToken>(maximumSessionTokens);
+        sessionTokens = new LinkedBlockingQueue<MFSessionToken>(maximumSessionTokens);
         this.applicationCredentials = applicationCredentials;
     }
 
@@ -37,7 +37,6 @@ public class TokenFarm {
     }
 
     private void getNewUploadActionToken() {
-
     }
 
     public void shutdown() {
@@ -46,31 +45,38 @@ public class TokenFarm {
         imageActionToken = null;
     }
 
-    public void receiveNewSessionToken(SessionToken sessionToken) {
+    @Override
+    public void returnSessionToken(MFSessionToken sessionToken) {
 
     }
 
-    public void returnSessionToken(SessionToken sessionToken) {
+    @Override
+    public void receiveNewSessionToken(MFSessionToken sessionToken) {
 
     }
 
-    public void receiveNewImageActionToken(UploadActionToken uploadActionToken) {
+    @Override
+    public void receiveNewImageActionToken(MFImageActionToken uploadActionToken) {
 
     }
 
-    public void receiveNewUploadActionToken(UploadActionToken uploadActionToken) {
+    @Override
+    public void receiveNewUploadActionToken(MFUploadActionToken uploadActionToken) {
 
     }
 
-    public SessionToken borrowSessionToken() {
+    @Override
+    public MFSessionToken borrowSessionToken() {
         return null;
     }
 
-    public UploadActionToken borrowUploadActionToken() {
+    @Override
+    public MFUploadActionToken borrowUploadActionToken() {
         return null;
     }
 
-    public ImageActionToken borrowImageActionToken() {
+    @Override
+    public MFImageActionToken borrowImageActionToken() {
         return null;
     }
 }

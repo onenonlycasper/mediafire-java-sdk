@@ -3,12 +3,12 @@ package com.mediafire.sdk.tokenfarm;
 /**
  * Created by  on 6/15/2014.
  */
-public final class SessionToken extends Token {
+public final class MFSessionToken extends MFToken {
     private String time;
     private String secretKey;
     private String pkey;
 
-    private SessionToken(String tokenString, String secretKey, String time, String pkey) {
+    private MFSessionToken(String tokenString, String secretKey, String time, String pkey) {
         super(tokenString);
         this.secretKey = secretKey;
         this.time = time;
@@ -27,11 +27,11 @@ public final class SessionToken extends Token {
         return pkey;
     }
 
-    private SessionToken getUpdatedSessionToken() {
+    public MFSessionToken getUpdatedSessionToken() {
         long newKey = Long.valueOf(secretKey) * 16807;
         newKey = newKey % 2147483647;
         String newSecretKey = String.valueOf(newKey);
 
-        return new SessionToken(tokenString, newSecretKey, time, pkey);
+        return new MFSessionToken(tokenString, newSecretKey, time, pkey);
     }
 }

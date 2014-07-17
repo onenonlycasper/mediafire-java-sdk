@@ -3,10 +3,10 @@ package com.mediafire.sdk.tokenfarm;
 /**
  * Created by  on 6/15/2014.
  */
-public abstract class Token {
+public abstract class MFToken {
     protected String tokenString;
 
-    public Token(String tokenString) {
+    public MFToken(String tokenString) {
         this.tokenString = tokenString;
     }
 

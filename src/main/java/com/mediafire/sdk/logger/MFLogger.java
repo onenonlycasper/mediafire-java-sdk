@@ -5,7 +5,7 @@ import com.arkhive.components.core.module_api_descriptor.ApiRequestObject;
 /**
  * Created by  on 7/2/2014.
  */
-public interface ErrorTracker {
+public interface MFLogger {
     // debug
     public void d(String src, String msg);
     public void d(String src, String msg, Throwable tr);

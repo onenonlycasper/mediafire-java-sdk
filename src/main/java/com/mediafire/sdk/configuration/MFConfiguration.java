@@ -5,7 +5,7 @@ import com.arkhive.components.core.module_errors.ErrorTracker;
 /**
  * Created by on 6/17/2014.
  */
-public final class Configuration {
+public final class MFConfiguration {
     public static final int DEFAULT_HTTP_READ_TIMEOUT = 30000;
     public static final int DEFAULT_HTTP_CONNECTION_TIMEOUT = 30000;
     public static final int DEFAULT_MINIMUM_SESSION_TOKENS = 1;
@@ -21,7 +21,7 @@ public final class Configuration {
     private String apiKey;
     private static ErrorTracker errorTracker;
 
-    public Configuration(ErrorTracker errorTracker, String appId, String apiKey) {
+    public MFConfiguration(ErrorTracker errorTracker, String appId, String apiKey) {
         if (errorTracker == null) {
             throw new IllegalStateException("ErrorTracker must not be null");
         }
@@ -31,7 +31,7 @@ public final class Configuration {
         if (apiKey == null) {
             throw new IllegalStateException("apiKey must not be null");
         }
-        Configuration.errorTracker = errorTracker;
+        MFConfiguration.errorTracker = errorTracker;
         this.appId = appId;
         this.apiKey = apiKey;
         httpReadTimeout = DEFAULT_HTTP_READ_TIMEOUT;
