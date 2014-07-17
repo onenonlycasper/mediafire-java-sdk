@@ -2,6 +2,7 @@ package com.mediafire.sdk.http;
 
 import com.mediafire.sdk.config.MFConfiguration;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -21,18 +22,21 @@ public final class MFHttpClient extends MFHttp {
         super(mfConfiguration);
     }
 
-    public MFResponse sendRequest(MFRequest request) {
-        mfConfiguration.getMfLogger().logMessage(TAG, "sending request");
+    public MFResponse sendRequest(MFRequest mfRequest) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "sendRequest()");
         URLConnection connection = null;
-        MFResponse response = null;
+        MFResponse mfResponse = null;
 
         try {
+            mfConfiguration.getMfLogger().logMessage(TAG, "creating connection");
             // create the connection
-            connection = createHttpConnection(request);
+            connection = createHttpConnection(mfRequest);
+            mfConfiguration.getMfLogger().logMessage(TAG, "posting data, if possible");
             // send any data possible via POST
-            postData(request, connection);
+            postData(mfRequest, connection);
+            mfConfiguration.getMfLogger().logMessage(TAG, "receiving response");
             // receive response from request
-            response = getResponseFromStream(connection);
+            mfResponse = getResponseFromStream(connection);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -41,34 +45,34 @@ public final class MFHttpClient extends MFHttp {
             }
         }
 
-        return response;
+        return mfResponse;
     }
 
     private MFResponse getResponseFromStream(URLConnection connection) throws IOException {
-        mfConfiguration.getMfLogger().logMessage(TAG, "getting MFResponse from stream");
+        mfConfiguration.getMfLogger().logMessage(TAG, "getResponseFromStream()");
         int status = ((HttpURLConnection) connection).getResponseCode();
-        MFResponse response = null;
+        MFResponse mfResponse = null;
 
         if (status / 100 != 2) {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(((HttpURLConnection) connection).getErrorStream());
             byte[] body = readStream(bufferedInputStream);
-            response = new MFResponse(status, new Hashtable<String, List<String>>(), body);
+            mfResponse = new MFResponse(status, new Hashtable<String, List<String>>(), body);
         } else {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
             byte[] body = readStream(bufferedInputStream);
-            response = new MFResponse(status, connection.getHeaderFields(), body);
+            mfResponse = new MFResponse(status, connection.getHeaderFields(), body);
         }
 
-        return response;
+        return mfResponse;
     }
 
-    private void postData(MFRequest request, URLConnection connection) throws IOException {
-        mfConfiguration.getMfLogger().logMessage(TAG, "trying to post data if possible");
+    private void postData(MFRequest mfRequest, URLConnection connection) throws IOException {
+        mfConfiguration.getMfLogger().logMessage(TAG, "postData()");
         byte[] payload = null;
-        if (request.getMfApi().isQueryPostable()) {
-            payload = makeQueryString(request.getRequestParameters()).getBytes();
-        } else if (request.getPayload() != null) {
-            payload = request.getPayload();
+        if (mfRequest.getMfApi().isQueryPostable()) {
+            payload = makeQueryString(mfRequest.getRequestParameters()).getBytes();
+        } else if (mfRequest.getPayload() != null) {
+            payload = mfRequest.getPayload();
         }
 
         if (payload != null) {
@@ -78,7 +82,7 @@ public final class MFHttpClient extends MFHttp {
     }
 
     private byte[] readStream(InputStream inputStream) throws IOException {
-        mfConfiguration.getMfLogger().logMessage(TAG, "reading input stream");
+        mfConfiguration.getMfLogger().logMessage(TAG, "readStream()");
         if (inputStream == null) {
             return null;
         }
@@ -95,53 +99,64 @@ public final class MFHttpClient extends MFHttp {
         return bytes;
     }
 
-    private HttpURLConnection createHttpConnection(MFRequest request) throws IOException {
-        mfConfiguration.getMfLogger().logMessage(TAG, "creating http connection");
-        URL url = makeFullUrl(request);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        setConnectionParameters(connection, request);
-        return connection;
+    private HttpURLConnection createHttpConnection(MFRequest mfRequest) throws IOException {
+        mfConfiguration.getMfLogger().logMessage(TAG, "createHttpConnection()");
+        URL url = makeFullUrl(mfRequest);
+        mfConfiguration.getMfLogger().logMessage(TAG, "opening connection to: " + url.toString());
+        URLConnection connection;
+        switch (mfRequest.getMfHost().getTransferScheme()) {
+            case HTTP:
+                mfConfiguration.getMfLogger().logMessage(TAG, "transfer scheme for this request: " + mfRequest.getMfHost().getTransferScheme().toString());
+                connection = url.openConnection();
+                setConnectionParameters(connection, mfRequest);
+                return (HttpURLConnection) connection;
+            case HTTPS:
+                mfConfiguration.getMfLogger().logMessage(TAG, "transfer scheme for this request: " + mfRequest.getMfHost().getTransferScheme().toString());
+                connection = url.openConnection();
+                setConnectionParameters(connection, mfRequest);
+                // set ssl context and trust manager
+                return (HttpsURLConnection) connection;
+            default:
+                throw new IllegalStateException("MFHost.TransferScheme must be HTTP or HTTPS");
+        }
     }
 
-    private void setConnectionParameters(URLConnection connection, MFRequest request) {
-        mfConfiguration.getMfLogger().logMessage(TAG, "setting connection parameters");
-        switch (request.getMfHost().getTransferScheme()) {
-            case HTTP:
-                break;
-            case HTTPS:
-                // set ssl context and trust manager
-                break;
-        }
+    private void setConnectionParameters(URLConnection connection, MFRequest mfRequest) {
+        mfConfiguration.getMfLogger().logMessage(TAG, "setConnectionParameters()");
 
         // if query can be made via POST then set to post
-        if (request.getMfApi().isQueryPostable() || request.getPayload() != null) {
+        if (mfRequest.getMfApi().isQueryPostable() || mfRequest.getPayload() != null) {
+            mfConfiguration.getMfLogger().logMessage(TAG, "query can be sent via POST");
             connection.setDoOutput(true);
         }
 
+        mfConfiguration.getMfLogger().logMessage(TAG, "setting connection timeout");
         // set timeouts
         connection.setConnectTimeout(45000);
         connection.setReadTimeout(45000);
 
+        mfConfiguration.getMfLogger().logMessage(TAG, "setting request headers");
         // set request headers (if any)
-        if (request.getHeaders() != null) {
-            for (String key : request.getHeaders().keySet()) {
-                connection.addRequestProperty(key, request.getHeaders().get(key));
+        if (mfRequest.getHeaders() != null) {
+            for (String key : mfRequest.getHeaders().keySet()) {
+                connection.addRequestProperty(key, mfRequest.getHeaders().get(key));
             }
         }
     }
 
-    private URL makeFullUrl(MFRequest request) throws MalformedURLException, UnsupportedEncodingException {
-        mfConfiguration.getMfLogger().logMessage(TAG, "creating url");
+    private URL makeFullUrl(MFRequest mfRequest) throws MalformedURLException, UnsupportedEncodingException {
+        mfConfiguration.getMfLogger().logMessage(TAG, "makeFullUrl");
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(makeBaseUrl(request));
+        stringBuilder.append(makeBaseUrl(mfRequest));
 
-        if (!request.getMfApi().isQueryPostable()) {
-            String queryString = makeQueryString(request.getRequestParameters());
+        if (!mfRequest.getMfApi().isQueryPostable()) {
+            mfConfiguration.getMfLogger().logMessage(TAG, "query is not postable. appending query to url");
+            String queryString = makeQueryString(mfRequest.getRequestParameters());
             queryString = makeUrlAttachableQueryString(queryString);
             stringBuilder.append(queryString);
         }
 
-        mfConfiguration.getMfLogger().logMessage(TAG, "attempted to create url - " + stringBuilder.toString());
+        mfConfiguration.getMfLogger().logMessage(TAG, "attempting to create url - " + stringBuilder.toString());
         return new URL(stringBuilder.toString());
     }
 
