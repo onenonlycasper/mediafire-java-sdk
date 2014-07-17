@@ -68,6 +68,7 @@ public final class MFDefaultCredentials implements MFCredentials {
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
+    @Override
     public UserCredentialsType getUserCredentialsType() {
         return userCredentialsType;
     }

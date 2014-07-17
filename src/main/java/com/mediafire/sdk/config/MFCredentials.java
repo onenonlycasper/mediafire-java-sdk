@@ -11,4 +11,6 @@ public interface MFCredentials {
     public Map<String, String> getCredentials();
 
     public void clearCredentials();
+
+    public MFDefaultCredentials.UserCredentialsType getUserCredentialsType();
 }
