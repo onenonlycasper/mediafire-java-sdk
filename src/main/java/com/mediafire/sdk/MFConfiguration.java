@@ -58,8 +58,8 @@ public final class MFConfiguration {
     }
 
     public static class MFConfigurationBuilder {
-        private static final int DEFAULT_HTTP_READ_TIMEOUT = 30000;
-        private static final int DEFAULT_HTTP_CONNECTION_TIMEOUT = 30000;
+        private static final int DEFAULT_HTTP_READ_TIMEOUT = 45000;
+        private static final int DEFAULT_HTTP_CONNECTION_TIMEOUT = 45000;
         private static final int DEFAULT_MINIMUM_SESSION_TOKENS = 1;
         private static final int DEFAULT_MAXIMUM_SESSION_TOKENS = 1;
         private static final int DEFAULT_HTTP_POOL_SIZE = 6;
