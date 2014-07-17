@@ -36,7 +36,6 @@ public class MFHttpBefore extends MFHttp {
         addSignatureToRequestParameters(request);
     }
 
-
     protected void addSignatureToRequestParameters(MFRequest request) throws UnsupportedEncodingException {
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
