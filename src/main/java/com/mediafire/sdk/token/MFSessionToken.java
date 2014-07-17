@@ -7,12 +7,14 @@ public final class MFSessionToken extends MFToken {
     private String time;
     private String secretKey;
     private String pkey;
+    private String ekey;
 
-    private MFSessionToken(String tokenString, String secretKey, String time, String pkey) {
+    public MFSessionToken(String tokenString, String secretKey, String time, String pkey, String ekey) {
         super(tokenString);
         this.secretKey = secretKey;
         this.time = time;
         this.pkey = pkey;
+        this.ekey = ekey;
     }
 
     public String getTime() {
@@ -32,6 +34,6 @@ public final class MFSessionToken extends MFToken {
         newKey = newKey % 2147483647;
         String newSecretKey = String.valueOf(newKey);
 
-        return new MFSessionToken(tokenString, newSecretKey, time, pkey);
+        return new MFSessionToken(tokenString, newSecretKey, time, pkey, ekey);
     }
 }
