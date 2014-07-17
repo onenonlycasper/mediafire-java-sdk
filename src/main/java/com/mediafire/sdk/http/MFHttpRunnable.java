@@ -1,7 +1,7 @@
 package com.mediafire.sdk.http;
 
 import com.mediafire.sdk.config.MFConfiguration;
-import com.mediafire.sdk.token.MFTokenDistributor;
+import com.mediafire.sdk.token.MFTokenFarmCallback;
 
 import java.io.UnsupportedEncodingException;
 
@@ -9,21 +9,21 @@ import java.io.UnsupportedEncodingException;
  * Created by Chris Najar on 7/17/2014.
  */
 public class MFHttpRunnable implements Runnable {
-    private MFTokenDistributor mfTokenDistributor;
+    private MFTokenFarmCallback mfTokenFarmCallback;
     private MFConfiguration mfConfiguration;
     private MFRequest mfRequest;
 
-    public MFHttpRunnable(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration, MFRequest mfRequest) {
-        this.mfTokenDistributor = mfTokenDistributor;
+    public MFHttpRunnable(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration, MFRequest mfRequest) {
+        this.mfTokenFarmCallback = mfTokenFarmCallback;
         this.mfConfiguration = mfConfiguration;
         this.mfRequest = mfRequest;
     }
 
     @Override
     public void run() {
-        MFHttpSetup mfHttpSetup = new MFHttpSetup(mfTokenDistributor, mfConfiguration);
+        MFHttpSetup mfHttpSetup = new MFHttpSetup(mfTokenFarmCallback, mfConfiguration);
         MFHttpClient mfHttpClient = new MFHttpClient(mfConfiguration);
-        MFHttpCleanup mfHttpCleanup = new MFHttpCleanup(mfTokenDistributor, mfConfiguration);
+        MFHttpCleanup mfHttpCleanup = new MFHttpCleanup(mfTokenFarmCallback, mfConfiguration);
 
         try {
             mfHttpSetup.prepareMFRequestForHttpClient(mfRequest);
@@ -34,4 +34,5 @@ public class MFHttpRunnable implements Runnable {
 
         mfHttpCleanup.returnToken(mfRequest);
     }
+
 }

@@ -3,7 +3,7 @@ package com.mediafire.sdk.http;
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.token.MFImageActionToken;
 import com.mediafire.sdk.token.MFSessionToken;
-import com.mediafire.sdk.token.MFTokenDistributor;
+import com.mediafire.sdk.token.MFTokenFarmCallback;
 import com.mediafire.sdk.token.MFUploadActionToken;
 
 /**
@@ -11,11 +11,11 @@ import com.mediafire.sdk.token.MFUploadActionToken;
  */
 public final class MFHttpCleanup extends MFHttp {
 
-    private MFTokenDistributor mfTokenDistributor;
+    private MFTokenFarmCallback mfTokenFarmCallback;
 
-    public MFHttpCleanup(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration) {
+    public MFHttpCleanup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
         super(mfConfiguration);
-        this.mfTokenDistributor = mfTokenDistributor;
+        this.mfTokenFarmCallback = mfTokenFarmCallback;
     }
 
     public void returnToken(MFRequest request) {
@@ -26,19 +26,19 @@ public final class MFHttpCleanup extends MFHttp {
             case SESSION_TOKEN_V2:
                 MFSessionToken mfSessionToken = (MFSessionToken) request.getToken();
                 MFSessionToken updatedMFSessionToken = mfSessionToken.getUpdatedSessionToken();
-                mfTokenDistributor.returnSessionToken(updatedMFSessionToken);
+                mfTokenFarmCallback.returnSessionToken(updatedMFSessionToken);
                 break;
             case UNIQUE:
                 // UNIQUE represents requesting a new session token via /api/user/get_session_token or /api/user/get_action_token
                 if (request.getMfApi() == MFApi.USER_GET_SESSION_TOKEN) {
                     MFSessionToken newSessionToken = (MFSessionToken) request.getToken();
-                    mfTokenDistributor.receiveNewSessionToken(newSessionToken);
+                    mfTokenFarmCallback.receiveNewSessionToken(newSessionToken);
                 } else if (request.getMfApi() == MFApi.USER_GET_ACTION_TOKEN && request.getToken() instanceof MFImageActionToken) {
                     MFImageActionToken newActionToken = (MFImageActionToken) request.getToken();
-                    mfTokenDistributor.receiveNewImageActionToken(newActionToken);
+                    mfTokenFarmCallback.receiveNewImageActionToken(newActionToken);
                 } else if (request.getMfApi() == MFApi.USER_GET_SESSION_TOKEN && request.getToken() instanceof MFUploadActionToken) {
                     MFUploadActionToken newActionToken = (MFUploadActionToken) request.getToken();
-                    mfTokenDistributor.receiveNewUploadActionToken(newActionToken);
+                    mfTokenFarmCallback.receiveNewUploadActionToken(newActionToken);
                 } else {
                     // don't need to return anything to the token distributor.
                 }

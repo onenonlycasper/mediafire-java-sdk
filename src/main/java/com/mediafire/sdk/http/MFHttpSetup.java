@@ -5,7 +5,7 @@ import com.mediafire.sdk.config.MFCredentials;
 import com.mediafire.sdk.config.MFDefaultCredentials;
 import com.mediafire.sdk.token.MFImageActionToken;
 import com.mediafire.sdk.token.MFSessionToken;
-import com.mediafire.sdk.token.MFTokenDistributor;
+import com.mediafire.sdk.token.MFTokenFarmCallback;
 import com.mediafire.sdk.token.MFUploadActionToken;
 
 import java.io.UnsupportedEncodingException;
@@ -19,12 +19,12 @@ public final class MFHttpSetup extends MFHttp {
     private static final String SHA1 = "SHA-1";
     private static final String MD5 = "MD5";
 
-    private MFTokenDistributor mfTokenDistributor;
+    private MFTokenFarmCallback mfTokenFarmCallback;
     private MFCredentials mfCredentials;
 
-    public MFHttpSetup(MFTokenDistributor mfTokenDistributor, MFConfiguration mfConfiguration) {
+    public MFHttpSetup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
         super(mfConfiguration);
-        this.mfTokenDistributor = mfTokenDistributor;
+        this.mfTokenFarmCallback = mfTokenFarmCallback;
         this.mfCredentials = mfConfiguration.getMfCredentials();
     }
 
@@ -134,15 +134,15 @@ public final class MFHttpSetup extends MFHttp {
     private void borrowToken(MFRequest request) {
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
-                MFSessionToken sessionToken = mfTokenDistributor.borrowSessionToken();
+                MFSessionToken sessionToken = mfTokenFarmCallback.borrowSessionToken();
                 request.setToken(sessionToken);
                 break;
             case UPLOAD_ACTION_TOKEN:
-                MFUploadActionToken uploadActionToken = mfTokenDistributor.borrowUploadActionToken();
+                MFUploadActionToken uploadActionToken = mfTokenFarmCallback.borrowUploadActionToken();
                 request.setToken(uploadActionToken);
                 break;
             case IMAGE_ACTION_TOKEN:
-                MFImageActionToken imageActionToken = mfTokenDistributor.borrowImageActionToken();
+                MFImageActionToken imageActionToken = mfTokenFarmCallback.borrowImageActionToken();
                 request.setToken(imageActionToken);
                 break;
             default:

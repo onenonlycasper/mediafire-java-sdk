@@ -3,7 +3,7 @@ package com.mediafire.sdk.token;
 /**
  * Created by Chris Najar on 7/16/2014.
  */
-public interface MFTokenDistributor {
+public interface MFTokenFarmCallback {
     public void returnSessionToken(MFSessionToken sessionToken);
 
     public void receiveNewSessionToken(MFSessionToken sessionToken);
