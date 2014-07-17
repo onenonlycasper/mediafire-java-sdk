@@ -8,7 +8,7 @@ import com.arkhive.components.core.module_http_processor.runnables.HttpGetReques
 import com.arkhive.components.core.module_http_processor.runnables.HttpPostRequestRunnable;
 import com.arkhive.components.core.module_http_processor.runnables.HttpsGetRequestRunnable;
 import com.arkhive.components.core.module_http_processor.runnables.HttpsPostRequestRunnable;
-import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
+import com.mediafire.uploader.PausableThreadPoolExecutor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

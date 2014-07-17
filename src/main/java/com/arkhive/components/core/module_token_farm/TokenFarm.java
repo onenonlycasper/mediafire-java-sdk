@@ -17,7 +17,7 @@ import com.arkhive.components.core.module_token_farm.runnables.GetSessionTokenRu
 import com.arkhive.components.core.module_token_farm.runnables.GetUploadActionTokenRunnable;
 import com.arkhive.components.core.module_token_farm.tokens.ActionToken;
 import com.arkhive.components.core.module_token_farm.tokens.SessionToken;
-import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
+import com.mediafire.uploader.PausableThreadPoolExecutor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;

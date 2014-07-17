@@ -1,4 +1,4 @@
-package com.arkhive.components.uploadmanager.interfaces;
+package com.mediafire.uploader.interfaces;
 
 /**
  * Created by  on 7/8/2014.

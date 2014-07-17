@@ -1,4 +1,4 @@
-package com.arkhive.components.uploadmanager.manager;
+package com.mediafire.uploader.manager;
 
 import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
@@ -7,14 +7,14 @@ import com.arkhive.components.core.module_api.codes.PollResultCode;
 import com.arkhive.components.core.module_api.codes.PollStatusCode;
 import com.arkhive.components.core.module_api.responses.*;
 import com.arkhive.components.core.module_errors.ErrorTracker;
-import com.arkhive.components.uploadmanager.PausableThreadPoolExecutor;
-import com.arkhive.components.uploadmanager.interfaces.Pausable;
-import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
-import com.arkhive.components.uploadmanager.process.CheckProcess;
-import com.arkhive.components.uploadmanager.process.InstantProcess;
-import com.arkhive.components.uploadmanager.process.PollProcess;
-import com.arkhive.components.uploadmanager.process.ResumableProcess;
-import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
+import com.mediafire.uploader.PausableThreadPoolExecutor;
+import com.mediafire.uploader.interfaces.Pausable;
+import com.mediafire.uploader.interfaces.UploadListenerManager;
+import com.mediafire.uploader.process.CheckProcess;
+import com.mediafire.uploader.process.InstantProcess;
+import com.mediafire.uploader.process.PollProcess;
+import com.mediafire.uploader.process.ResumableProcess;
+import com.mediafire.uploader.uploaditem.UploadItem;
 
 import java.util.concurrent.LinkedBlockingQueue;
 

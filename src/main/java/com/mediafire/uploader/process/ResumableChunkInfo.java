@@ -1,4 +1,4 @@
-package com.arkhive.components.uploadmanager.process;
+package com.mediafire.uploader.process;
 
 /**
 * Created by  on 7/8/2014.

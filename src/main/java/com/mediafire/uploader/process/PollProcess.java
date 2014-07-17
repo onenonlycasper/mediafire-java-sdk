@@ -1,4 +1,4 @@
-package com.arkhive.components.uploadmanager.process;
+package com.mediafire.uploader.process;
 
 import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
@@ -6,8 +6,8 @@ import com.arkhive.components.core.module_api.codes.PollFileErrorCode;
 import com.arkhive.components.core.module_api.codes.PollResultCode;
 import com.arkhive.components.core.module_api.codes.PollStatusCode;
 import com.arkhive.components.core.module_api.responses.UploadPollResponse;
-import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
-import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
+import com.mediafire.uploader.interfaces.UploadListenerManager;
+import com.mediafire.uploader.uploaditem.UploadItem;
 
 import java.util.HashMap;
 

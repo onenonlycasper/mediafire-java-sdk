@@ -1,4 +1,4 @@
-package com.arkhive.components.uploadmanager.uploaditem;
+package com.mediafire.uploader.uploaditem;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

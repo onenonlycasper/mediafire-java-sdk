@@ -1,10 +1,10 @@
-package com.arkhive.components.uploadmanager.manager;
+package com.mediafire.uploader.manager;
 
 import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
-import com.arkhive.components.uploadmanager.interfaces.UploadListener;
-import com.arkhive.components.uploadmanager.process.CheckProcess;
-import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
+import com.mediafire.uploader.interfaces.UploadListener;
+import com.mediafire.uploader.process.CheckProcess;
+import com.mediafire.uploader.uploaditem.UploadItem;
 
 import java.util.concurrent.BlockingQueue;
 

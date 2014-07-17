@@ -1,4 +1,4 @@
-package com.arkhive.components.uploadmanager.uploaditem;
+package com.mediafire.uploader.uploaditem;
 
 /**
  * Data structure used within UploadItem.

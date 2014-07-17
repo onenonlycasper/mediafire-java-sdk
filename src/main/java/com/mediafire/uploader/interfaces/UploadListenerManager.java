@@ -1,7 +1,7 @@
-package com.arkhive.components.uploadmanager.interfaces;
+package com.mediafire.uploader.interfaces;
 
 import com.arkhive.components.core.module_api.responses.*;
-import com.arkhive.components.uploadmanager.uploaditem.UploadItem;
+import com.mediafire.uploader.uploaditem.UploadItem;
 
 /**
  * interface aimed at being used by a class that manages the upload process.

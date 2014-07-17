@@ -1,11 +1,11 @@
-package com.arkhive.components.uploadmanager.process;
+package com.mediafire.uploader.process;
 
 import com.arkhive.components.core.Configuration;
 import com.arkhive.components.core.MediaFire;
 import com.arkhive.components.core.module_api.codes.ResumableResultCode;
 import com.arkhive.components.core.module_api.responses.UploadResumableResponse;
-import com.arkhive.components.uploadmanager.interfaces.UploadListenerManager;
-import com.arkhive.components.uploadmanager.uploaditem.*;
+import com.mediafire.uploader.interfaces.UploadListenerManager;
+import com.mediafire.uploader.uploaditem.*;
 
 import java.io.*;
 import java.net.URLEncoder;

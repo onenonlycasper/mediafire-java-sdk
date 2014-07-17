@@ -1,4 +1,4 @@
-package com.arkhive.components.uploadmanager;
+package com.mediafire.uploader;
 
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
