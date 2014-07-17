@@ -1,5 +1,6 @@
 package com.mediafire.sdk.config;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -15,7 +16,7 @@ public final class MFConfiguration {
     private final String apiKey;
     private final MFLogger mfLogger;
     private final MFCredentials mfCredentials;
-    private final ExecutorService mfExecutorService;
+    private final Executor mfExecutorService;
 
     private MFConfiguration(MFConfigurationBuilder mfConfigurationBuilder) {
         this.httpReadTimeout = mfConfigurationBuilder.httpReadTimeout;
@@ -66,7 +67,7 @@ public final class MFConfiguration {
         return mfCredentials;
     }
 
-    public ExecutorService getMfExecutorService() {
+    public Executor getMfExecutorService() {
         return mfExecutorService;
     }
 
@@ -78,7 +79,7 @@ public final class MFConfiguration {
         private static final int DEFAULT_HTTP_POOL_SIZE = 6;
         private static final MFLogger DEFAULT_MF_LOGGER = new MFDefaultLogger();
         private static final MFCredentials DEFAULT_MF_CREDENTIALS = new MFDefaultCredentials();
-        private static final ExecutorService DEFAULT_EXECUTOR_SERVICE = new MFDefaultExecutor();
+        private static final Executor DEFAULT_EXECUTOR_SERVICE = new MFDefaultExecutor();
 
         private int httpReadTimeout = DEFAULT_HTTP_READ_TIMEOUT;
         private int httpConnectionTimeout = DEFAULT_HTTP_CONNECTION_TIMEOUT;
@@ -87,7 +88,7 @@ public final class MFConfiguration {
         private int httpPoolSize = DEFAULT_HTTP_POOL_SIZE;
         private MFLogger mfLogger = DEFAULT_MF_LOGGER;
         private MFCredentials mfCredentials = DEFAULT_MF_CREDENTIALS;
-        private ExecutorService mfExecutorService = DEFAULT_EXECUTOR_SERVICE;
+        private Executor mfExecutorService = DEFAULT_EXECUTOR_SERVICE;
         private String appId;
         private String apiKey;
 
