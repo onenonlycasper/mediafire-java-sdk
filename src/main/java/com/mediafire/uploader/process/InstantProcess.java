@@ -3,6 +3,7 @@ package com.mediafire.uploader.process;
 import com.mediafire.sdk.api_responses.ApiResponse;
 import com.mediafire.sdk.api_responses.upload.InstantResponse;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.http.*;
 import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
@@ -27,21 +28,24 @@ public class InstantProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        MFConfiguration.getErrorTracker().i(TAG, "doUploadProcess()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "doUploadProcess()");
         Thread.currentThread().setPriority(3); //uploads are set to low priority
         // url encode the filename
         String filename;
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "Exception: " + e);
             notifyListenerException(e);
             return;
         }
 
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
-        InstantResponse response = mfTokenFarm.apiCall().upload.instantUpload(keyValue, null);
+        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_INSTANT, keyValue);
+        MFHttpRunner.RunnerHolder runnerHolder = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
+        MFResponse receivedMFResponse = runnerHolder.getMfResponse();
+        InstantResponse response = receivedMFResponse.getResponseObject(InstantResponse.class);
 
         if (response == null) {
             notifyListenerLostConnection();

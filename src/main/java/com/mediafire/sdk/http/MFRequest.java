@@ -39,6 +39,10 @@ public final class MFRequest {
         this.payload = payload;
     }
 
+    public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters, Map<String, String> headers) {
+        this(mfHost, mfApi, requestParameters, headers, new byte[0]);
+    }
+
     public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
         this(mfHost, mfApi, requestParameters, new LinkedHashMap<String, String>(), new byte[0]);
     }

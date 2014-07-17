@@ -16,7 +16,7 @@ public class FileData {
     private String fileHash;
 
     public FileData(String filePath) {
-        MFConfiguration.getErrorTracker().i(TAG, "FileData object created");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "FileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
@@ -31,7 +31,7 @@ public class FileData {
      * @return
      */
     public String getFilePath() {
-        MFConfiguration.getErrorTracker().i(TAG, "getFilePath()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getFilePath()");
         return filePath;
     }
 
@@ -41,7 +41,7 @@ public class FileData {
      * @return
      */
     public long getFileSize() {
-        MFConfiguration.getErrorTracker().i(TAG, "getFilePath()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getFilePath()");
         return fileSize;
     }
 
@@ -51,20 +51,20 @@ public class FileData {
      * @return
      */
     public String getFileHash() {
-        MFConfiguration.getErrorTracker().i(TAG, "getFilePath()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getFilePath()");
         return fileHash;
     }
 
     public void setFileSize() {
-        MFConfiguration.getErrorTracker().i(TAG, "setFileSize()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "setFileSize()");
         File file = new File(getFilePath());
         fileSize = file.length();
 
-        MFConfiguration.getErrorTracker().i(TAG, "file size set to " + fileSize);
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "file size set to " + fileSize);
     }
 
     public void setFileHash() {
-        MFConfiguration.getErrorTracker().i(TAG, "setFileHash()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "setFileHash()");
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;
@@ -72,7 +72,7 @@ public class FileData {
         try {
             fileInputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "Exception: " + e);
             fileHash = "";
             return;
         }
@@ -102,16 +102,16 @@ public class FileData {
             fileUri.close();
             in.close();
         } catch (NoSuchAlgorithmException e) {
-            MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "Exception: " + e);
             fileHash = "";
         } catch (IOException e) {
-            MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "Exception: " + e);
             fileHash = "";
         } finally {
             fileInputStream = null;
             fileUri = null;
             in = null;
         }
-        MFConfiguration.getErrorTracker().i(TAG, "FILE HASH IS SET TO: " + fileHash);
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "FILE HASH IS SET TO: " + fileHash);
     }
 }

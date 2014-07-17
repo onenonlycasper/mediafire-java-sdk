@@ -2,6 +2,7 @@ package com.mediafire.uploader.process;
 
 import com.mediafire.sdk.api_responses.upload.PollResponse;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.http.*;
 import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
@@ -37,7 +38,7 @@ public class PollProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        MFConfiguration.getErrorTracker().i(TAG, "doUploadProcess()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "doUploadProcess()");
         //generate our request string
         HashMap<String, String> keyValue = generateGetParameters();
 
@@ -46,14 +47,18 @@ public class PollProcess extends UploadProcess {
             // increment counter
             pollCount++;
             // get api response.
-            PollResponse response = mfTokenFarm.apiCall().upload.pollUpload(keyValue, null);
+
+            MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_POLL_UPLOAD, keyValue);
+            MFHttpRunner.RunnerHolder runnerHolder = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
+            MFResponse receivedMFResponse = runnerHolder.getMfResponse();
+            PollResponse response = receivedMFResponse.getResponseObject(PollResponse.class);
 
             if (response == null) {
                 notifyListenerLostConnection();
                 return;
             }
 
-            MFConfiguration.getErrorTracker().i(TAG, "received error code: " + response.getErrorCode());
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "received error code: " + response.getErrorCode());
             //check to see if we need to call pollUploadCompleted or loop again
             switch (response.getErrorCode()) {
                 case NO_ERROR:
@@ -64,22 +69,22 @@ public class PollProcess extends UploadProcess {
                     //      second  -   fileerror code no error? yes, carry on old chap!. no, cancel upload because error.
                     //      third   -   status code 99 (no more requests)? yes, done. no, continue.
                     if (response.getDoUpload().getResultCode() != PollResponse.Result.SUCCESS) {
-                        MFConfiguration.getErrorTracker().i(TAG, "result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
+                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
                         notifyListenerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getFileErrorCode() != PollResponse.FileError.NO_ERROR) {
-                        MFConfiguration.getErrorTracker().i(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
-                        MFConfiguration.getErrorTracker().i(TAG, "file path: " + uploadItem.getFileData().getFilePath());
-                        MFConfiguration.getErrorTracker().i(TAG, "file hash: " + uploadItem.getFileData().getFileHash());
-                        MFConfiguration.getErrorTracker().i(TAG, "file size: " + uploadItem.getFileData().getFileSize());
+                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
+                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "file path: " + uploadItem.getFileData().getFilePath());
+                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "file hash: " + uploadItem.getFileData().getFileHash());
+                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "file size: " + uploadItem.getFileData().getFileSize());
                         notifyListenerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getStatusCode() == PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY) {
-                        MFConfiguration.getErrorTracker().i(TAG, "status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
+                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
                         notifyListenerCompleted(response);
                         return;
                     }
@@ -94,7 +99,7 @@ public class PollProcess extends UploadProcess {
             try {
                 Thread.sleep(TIME_BETWEEN_POLLS);
             } catch (InterruptedException e) {
-                MFConfiguration.getErrorTracker().i(TAG, "Exception: " + e);
+                MFConfiguration.getStaticMFLogger().logMessage(TAG, "Exception: " + e);
                 notifyListenerException(e);
                 return;
             }
@@ -112,7 +117,7 @@ public class PollProcess extends UploadProcess {
     }
 
     private HashMap<String, String> generateGetParameters() {
-        MFConfiguration.getErrorTracker().i(TAG, "generateGetParameters()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "generateGetParameters()");
         HashMap<String, String> keyValue = new HashMap<String, String>();
         keyValue.put("key", uploadItem.getPollUploadKey());
         keyValue.put("response_format", "json");

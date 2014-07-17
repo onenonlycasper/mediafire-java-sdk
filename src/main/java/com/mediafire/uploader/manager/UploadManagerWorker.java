@@ -49,13 +49,13 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onStartedUploadProcess(UploadItem uploadItem) {
-        MFConfiguration.getErrorTracker().i(TAG, "onStartedUploadProcess()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "onStartedUploadProcess()");
         notifyUploadListenerStarted(uploadItem);
     }
 
     @Override
     public void onCheckCompleted(UploadItem uploadItem, CheckResponse checkResponse) {
-        MFConfiguration.getErrorTracker().i(TAG, "onCheckCompleted()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "onCheckCompleted()");
         //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
         if (uploadItem.getUploadAttemptCount() > MAX_UPLOAD_ATTEMPTS || uploadItem.isCancelled()) {
@@ -64,7 +64,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         }
 
         if (checkResponse.getStorageLimitExceeded()) {
-            MFConfiguration.getErrorTracker().i(TAG, "storage limit is exceeded");
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "storage limit is exceeded");
             storageLimitExceeded(uploadItem);
         } else if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
             // all units are ready and we have the poll upload key. start polling.
@@ -81,17 +81,17 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
-        MFConfiguration.getErrorTracker().i(TAG, "onProgressUpdate()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "onProgressUpdate()");
         notifyUploadListenerOnProgressUpdate(uploadItem, chunkNumber, numChunks);
     }
 
     private void storageLimitExceeded(UploadItem uploadItem) {
-        MFConfiguration.getErrorTracker().i(TAG, "storageLimitExceeded()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "storageLimitExceeded()");
         notifyUploadListenerCancelled(uploadItem);
     }
 
     private void hashExists(UploadItem uploadItem, CheckResponse checkResponse) {
-        MFConfiguration.getErrorTracker().i(TAG, "hashExists()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "hashExists()");
         if (!checkResponse.isInAccount()) { // hash which exists is not in the account
             hashNotInAccount(uploadItem);
         } else { // hash exists and is in the account
@@ -100,61 +100,61 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     }
 
     private void hashNotInAccount(UploadItem uploadItem) {
-        MFConfiguration.getErrorTracker().i(TAG, "hashNotInAccount()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "hashNotInAccount()");
         InstantProcess process = new InstantProcess(mfTokenFarm, this, uploadItem);
         Thread thread = new Thread(process);
         thread.start();
     }
 
     private void hashInAccount(UploadItem uploadItem, CheckResponse checkResponse) {
-        MFConfiguration.getErrorTracker().i(TAG, "hashInAccount()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "hashInAccount()");
         boolean inFolder = checkResponse.isInFolder();
         InstantProcess process = new InstantProcess(mfTokenFarm, this, uploadItem);
-        MFConfiguration.getErrorTracker().i(TAG, "ActionOnInAccount: " + uploadItem.getUploadOptions().getActionOnInAccount().toString());
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "ActionOnInAccount: " + uploadItem.getUploadOptions().getActionOnInAccount().toString());
         switch (uploadItem.getUploadOptions().getActionOnInAccount()) {
             case UPLOAD_ALWAYS:
-                MFConfiguration.getErrorTracker().i(TAG, "uploading...");
+                MFConfiguration.getStaticMFLogger().logMessage(TAG, "uploading...");
                 executor.execute(process);
                 break;
             case UPLOAD_IF_NOT_IN_FOLDER:
-                MFConfiguration.getErrorTracker().i(TAG, "uploading if not in folder.");
+                MFConfiguration.getStaticMFLogger().logMessage(TAG, "uploading if not in folder.");
                 if (!inFolder) {
-                    MFConfiguration.getErrorTracker().i(TAG, "uploading...");
+                    MFConfiguration.getStaticMFLogger().logMessage(TAG, "uploading...");
                     executor.execute(process);
                 } else {
-                    MFConfiguration.getErrorTracker().i(TAG, "already in folder, not uploading...");
+                    MFConfiguration.getStaticMFLogger().logMessage(TAG, "already in folder, not uploading...");
                     notifyUploadListenerCompleted(uploadItem);
                 }
                 break;
             case DO_NOT_UPLOAD:
             default:
-                MFConfiguration.getErrorTracker().i(TAG, "not uploading...");
+                MFConfiguration.getStaticMFLogger().logMessage(TAG, "not uploading...");
                 notifyUploadListenerCompleted(uploadItem);
                 break;
         }
     }
 
     private void hashDoesNotExist(UploadItem uploadItem, CheckResponse checkResponse) {
-        MFConfiguration.getErrorTracker().i(TAG, "hashDoesNotExist()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "hashDoesNotExist()");
         if (checkResponse.getResumableUpload().getUnitSize() == 0) {
-            MFConfiguration.getErrorTracker().i(TAG, "unit size received from unit_size was 0. cancelling");
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "unit size received from unit_size was 0. cancelling");
             notifyUploadListenerCancelled(uploadItem);
             return;
         }
 
         if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
-            MFConfiguration.getErrorTracker().i(TAG, "number of units received from number_of_units was 0. cancelling");
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "number of units received from number_of_units was 0. cancelling");
             notifyUploadListenerCancelled(uploadItem);
             return;
         }
 
         if (checkResponse.getResumableUpload().areAllUnitsReady() && !uploadItem.getPollUploadKey().isEmpty()) {
-            MFConfiguration.getErrorTracker().i(TAG, "all units ready and have a poll upload key");
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
             PollProcess process = new PollProcess(mfTokenFarm, this, uploadItem);
             executor.execute(process);
         } else {
-            MFConfiguration.getErrorTracker().i(TAG, "all units not ready or do not have poll upload key");
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "all units not ready or do not have poll upload key");
             // either we don't have the poll upload key or all units are not ready
             ResumableProcess process = new ResumableProcess(mfTokenFarm, this, uploadItem);
             executor.execute(process);
@@ -163,13 +163,13 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onInstantCompleted(UploadItem uploadItem, InstantResponse response) {
-        MFConfiguration.getErrorTracker().i(TAG, "onInstantCompleted()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "onInstantCompleted()");
         notifyUploadListenerCompleted(uploadItem);
     }
 
     @Override
     public void onResumableCompleted(UploadItem uploadItem, ResumableResponse response) {
-        MFConfiguration.getErrorTracker().i(TAG, "onResumableCompleted()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "onResumableCompleted()");
         if (response != null &&
                 response.getResumableUpload().areAllUnitsReady() &&
                 !response.getDoUpload().getPollUploadKey().isEmpty()) {
@@ -183,7 +183,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onPollCompleted(UploadItem uploadItem, PollResponse pollResponse) {
-        MFConfiguration.getErrorTracker().i(TAG, "onPollCompleted()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "onPollCompleted()");
         // if this method is called then filerror and result codes are fine, but we may not have received status 99 so
         // check status code and then possibly senditem to the backlog queue.
         PollResponse.DoUpload doUpload = pollResponse.getDoUpload();
@@ -192,7 +192,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         PollResponse.FileError pollFileErrorCode = doUpload.getFileErrorCode();
 
         if (pollStatusCode != PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResponse.Result.SUCCESS && pollFileErrorCode == PollResponse.FileError.NO_ERROR) {
-            MFConfiguration.getErrorTracker().i(TAG, "status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
+            MFConfiguration.getStaticMFLogger().logMessage(TAG, "status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
             notifyUploadListenerCancelled(uploadItem);
             addUploadRequest(uploadItem);
         } else {
@@ -202,17 +202,17 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onProcessException(UploadItem uploadItem, Exception exception) {
-        MFConfiguration.getErrorTracker().i(TAG, "onProcessException()");
-        MFConfiguration.getErrorTracker().i(TAG, "received exception: " + exception);
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "onProcessException()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "received exception: " + exception);
         if (errorTracker != null) {
-            errorTracker.e(UploadManagerWorker.class.getCanonicalName(), exception);
+            errorTracker.logException(UploadManagerWorker.class.getCanonicalName(), exception);
         }
         notifyUploadListenerCancelled(uploadItem);
     }
 
     @Override
     public void onLostConnection(UploadItem uploadItem) {
-        MFConfiguration.getErrorTracker().i(TAG, "onLostConnection()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "onLostConnection()");
         notifyUploadListenerCancelled(uploadItem);
         //pause upload manager
         pause();
@@ -221,7 +221,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
 
     @Override
     public void onCancelled(UploadItem uploadItem, ApiResponse apiResponse) {
-        MFConfiguration.getErrorTracker().i(TAG, "onCancelled()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "onCancelled()");
         notifyUploadListenerCancelled(uploadItem);
         // if there is an api error then re-add upload request.
         if (apiResponse != null && apiResponse.hasError()) {
@@ -233,17 +233,17 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
      * Pausable interface
      */
     public void pause() {
-        MFConfiguration.getErrorTracker().i(TAG, "pause()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "pause()");
         executor.pause();
     }
 
     public void resume() {
-        MFConfiguration.getErrorTracker().i(TAG, "resume()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "resume()");
         executor.resume();
     }
 
     public boolean isPaused() {
-        MFConfiguration.getErrorTracker().i(TAG, "isPaused()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "isPaused()");
         return executor.isPaused();
     }
 }

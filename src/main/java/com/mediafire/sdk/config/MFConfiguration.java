@@ -17,6 +17,7 @@ public final class MFConfiguration {
     private final MFLogger mfLogger;
     private final MFCredentials mfCredentials;
     private final Executor mfExecutorService;
+    private static MFLogger staticMFLogger;
 
     private MFConfiguration(MFConfigurationBuilder mfConfigurationBuilder) {
         this.httpReadTimeout = mfConfigurationBuilder.httpReadTimeout;
@@ -29,6 +30,11 @@ public final class MFConfiguration {
         this.mfLogger = mfConfigurationBuilder.mfLogger;
         this.mfCredentials = mfConfigurationBuilder.mfCredentials;
         this.mfExecutorService = mfConfigurationBuilder.mfExecutorService;
+        staticMFLogger = this.mfLogger;
+    }
+
+    public static MFLogger getStaticMFLogger() {
+        return staticMFLogger;
     }
 
     public int getHttpReadTimeout() {

@@ -2,7 +2,6 @@ package com.mediafire.sdk.http;
 
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.token.MFTokenFarmCallback;
-import com.mediafire.sdk.util.MFGenericCallback;
 
 import java.io.UnsupportedEncodingException;
 
@@ -23,11 +22,8 @@ public class MFHttpRunner {
         this.mfHttpClientCleanup = new MFHttpClientCleanup(mfTokenFarmCallback, mfConfiguration);
     }
 
-    public void doRequest(MFRequest mfRequest, MFGenericCallback<RunnerHolder> mfGenericCallback) {
+    public RunnerHolder doRequest(MFRequest mfRequest) {
         mfConfiguration.getMfLogger().logMessage(TAG, "doRequest()");
-        if (mfGenericCallback != null) {
-            mfGenericCallback.jobStarted();
-        }
 
         MFResponse mfResponse = null;
         try {
@@ -41,23 +37,8 @@ public class MFHttpRunner {
 
         mfHttpClientCleanup.returnToken(mfRequest, mfResponse);
 
-//        synchronized (this) {
-//            try {
-//                wait();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        return new RunnerHolder(mfRequest, mfResponse);
 
-        if (mfGenericCallback != null) {
-            RunnerHolder runnerHolder = new RunnerHolder(mfRequest, mfResponse);
-            mfGenericCallback.jobFinished(runnerHolder);
-        }
-
-    }
-
-    public void doRequest(MFRequest mfRequest) {
-        doRequest(mfRequest, null);
     }
 
     public class RunnerHolder {
