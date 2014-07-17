@@ -1,5 +1,6 @@
 package com.mediafire.uploader.process;
 
+import com.mediafire.sdk.api_responses.ApiResponse;
 import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
@@ -161,7 +162,7 @@ public class ResumableProcess extends UploadProcess {
             return true;
         }
 
-        if (response.getDoUpload().getResultCode() != ResumableResultCode.NO_ERROR) {
+        if (response.getDoUpload().getResultCode() != ResumableResponse.Result.NO_ERROR) {
             // let the listeners know we are done with this process (because there was an error in this case)
             if (response.getDoUpload().getResultCode() != ResumableResultCode.SUCCESS_FILE_MOVED_TO_ROOT) {
                 // let the listeners know we are done with this process (because there was an error in this case)

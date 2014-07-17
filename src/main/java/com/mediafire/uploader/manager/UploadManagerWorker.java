@@ -1,10 +1,12 @@
 package com.mediafire.uploader.manager;
 
+import com.mediafire.sdk.api_responses.ApiResponse;
 import com.mediafire.sdk.api_responses.upload.CheckResponse;
 import com.mediafire.sdk.api_responses.upload.InstantResponse;
 import com.mediafire.sdk.api_responses.upload.PollResponse;
 import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.config.MFLogger;
 import com.mediafire.uploader.PausableThreadPoolExecutor;
 import com.mediafire.uploader.interfaces.Pausable;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
@@ -25,7 +27,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     protected final MediaFire mediaFire;
     protected final PausableThreadPoolExecutor executor;
     protected final LinkedBlockingQueue<Runnable> workQueue;
-    protected ErrorTracker errorTracker;
+    protected MFLogger errorTracker;
 
     public UploadManagerWorker(MediaFire mediaFire, int maxUploadAttempts, int maxThreadQueue) {
         this.mediaFire = mediaFire;
@@ -40,7 +42,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     protected abstract void notifyUploadListenerOnProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks);
     protected abstract void notifyUploadListenerCancelled(UploadItem uploadItem);
 
-    public void setErrorTracker(ErrorTracker errorTracker) {
+    public void setErrorTracker(MFLogger errorTracker) {
         this.errorTracker = errorTracker;
     }
 
@@ -103,7 +105,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         thread.start();
     }
 
-    private void hashInAccount(UploadItem uploadItem, UploadCheckResponse checkResponse) {
+    private void hashInAccount(UploadItem uploadItem, CheckResponse checkResponse) {
         MFConfiguration.getErrorTracker().i(TAG, "hashInAccount()");
         boolean inFolder = checkResponse.isInFolder();
         InstantProcess process = new InstantProcess(mediaFire, this, uploadItem);
@@ -188,7 +190,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         PollResponse.Result pollResultCode = doUpload.getResultCode();
         PollResponse.FileError pollFileErrorCode = doUpload.getFileErrorCode();
 
-        if (pollStatusCode != PollStatusCode.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResultCode.SUCCESS && pollFileErrorCode == PollFileErrorCode.NO_ERROR) {
+        if (pollStatusCode != PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResponse.Result.SUCCESS && pollFileErrorCode == PollResponse.FileError.NO_ERROR) {
             MFConfiguration.getErrorTracker().i(TAG, "status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
             notifyUploadListenerCancelled(uploadItem);
             addUploadRequest(uploadItem);

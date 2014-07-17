@@ -1,5 +1,6 @@
 package com.mediafire.uploader.process;
 
+import com.mediafire.sdk.api_responses.ApiResponse;
 import com.mediafire.sdk.api_responses.upload.CheckResponse;
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
@@ -49,7 +50,7 @@ public class CheckProcess extends UploadProcess {
         }
 
         // if there is an error code, cancel the upload
-        if (response.getErrorCode() != ApiResponseCode.NO_ERROR) {
+        if (response.getErrorCode() != ApiResponse.ResponseCode.NO_ERROR) {
             notifyListenerCancelled(response);
             return;
         }
