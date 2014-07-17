@@ -160,16 +160,16 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     @Override
     public void receiveNewSessionToken(MFSessionToken mfSessionToken) {
         mfConfiguration.getMfLogger().logMessage(TAG, "receiveNewSessionToken()");
-        synchronized (sessionTokenLock) {
-            if (mfSessionToken != null && mfSessionToken != null) {
-                try {
-                    mfSessionTokens.offer(mfSessionToken);
-                } catch (IllegalStateException e) {
-                    getNewSessionToken();
-                }
-            } else {
+        if (mfSessionToken != null) {
+            mfConfiguration.getMfLogger().logMessage(TAG, "received good session token");
+            try {
+                mfSessionTokens.offer(mfSessionToken);
+            } catch (IllegalStateException e) {
                 getNewSessionToken();
             }
+        } else {
+            mfConfiguration.getMfLogger().logMessage(TAG, "received bad session token");
+            getNewSessionToken();
         }
     }
 
