@@ -11,7 +11,7 @@ public final class MFHttpAfter {
         this.mfTokenDistributor = mfTokenDistributor;
     }
 
-    public void returnToken(MFRequest request) {
+    public void returnToken(MFHttpRequest request) {
         if (request.getToken() == null) {
             return;
         }

@@ -20,7 +20,7 @@ public final class MFHttpBefore extends MFHttp {
         this.mfCredentials = mfCredentials;
     }
 
-    public void prepareMFRequestForHttpClient(MFRequest request) throws UnsupportedEncodingException {
+    public void prepareMFRequestForHttpClient(MFHttpRequest request) throws UnsupportedEncodingException {
         // borrow token, if necessary
         borrowToken(request);
         // add token, if necessary, to request parameters
@@ -29,7 +29,7 @@ public final class MFHttpBefore extends MFHttp {
         addSignatureToRequestParameters(request);
     }
 
-    protected void addSignatureToRequestParameters(MFRequest request) throws UnsupportedEncodingException {
+    protected void addSignatureToRequestParameters(MFHttpRequest request) throws UnsupportedEncodingException {
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
                 String recycledSessionTokenSignature = calculateSignature(request);
@@ -84,7 +84,7 @@ public final class MFHttpBefore extends MFHttp {
         return hashString(hashTarget, SHA1);
     }
 
-    protected String calculateSignature(MFRequest request) throws UnsupportedEncodingException {
+    protected String calculateSignature(MFHttpRequest request) throws UnsupportedEncodingException {
         // session token secret key + time + uri (concatenated)
         MFSessionToken sessionToken = (MFSessionToken) request.getToken();
         int secretKey = Integer.valueOf(sessionToken.getSecretKey()) % 256;
@@ -108,7 +108,7 @@ public final class MFHttpBefore extends MFHttp {
         return hashString(nonUrlEncodedString, MD5);
     }
 
-    protected void addTokenToRequestParameters(MFRequest request) {
+    protected void addTokenToRequestParameters(MFHttpRequest request) {
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
             case UPLOAD_ACTION_TOKEN:
@@ -123,7 +123,7 @@ public final class MFHttpBefore extends MFHttp {
         }
     }
 
-    protected void borrowToken(MFRequest request) {
+    protected void borrowToken(MFHttpRequest request) {
         switch (request.getMfApi().getTokenType()) {
             case SESSION_TOKEN_V2:
                 MFSessionToken sessionToken = mfTokenDistributor.borrowSessionToken();

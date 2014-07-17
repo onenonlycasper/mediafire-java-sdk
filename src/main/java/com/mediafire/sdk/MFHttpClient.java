@@ -14,10 +14,10 @@ public final class MFHttpClient extends MFHttp {
         super(mfConfiguration);
     }
 
-    public MFResponse sendRequest(MFRequest request) {
+    public MFHttpResponse sendRequest(MFHttpRequest request) {
         System.out.println("sending request");
         URLConnection connection = null;
-        MFResponse response = null;
+        MFHttpResponse response = null;
 
         try {
             // create the connection
@@ -37,25 +37,25 @@ public final class MFHttpClient extends MFHttp {
         return response;
     }
 
-    protected MFResponse getResponseFromStream(URLConnection connection) throws IOException {
+    protected MFHttpResponse getResponseFromStream(URLConnection connection) throws IOException {
         System.out.println("getting MFResponse from stream");
         int status = ((HttpURLConnection) connection).getResponseCode();
-        MFResponse response = null;
+        MFHttpResponse response = null;
 
         if (status / 100 != 2) {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(((HttpURLConnection) connection).getErrorStream());
             byte[] body = readStream(bufferedInputStream);
-            response = new MFResponse(status, new Hashtable<String, List<String>>(), body);
+            response = new MFHttpResponse(status, new Hashtable<String, List<String>>(), body);
         } else {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
             byte[] body = readStream(bufferedInputStream);
-            response = new MFResponse(status, connection.getHeaderFields(), body);
+            response = new MFHttpResponse(status, connection.getHeaderFields(), body);
         }
 
         return response;
     }
 
-    protected void postData(MFRequest request, URLConnection connection) throws IOException {
+    protected void postData(MFHttpRequest request, URLConnection connection) throws IOException {
         System.out.println("trying to post data if possible");
         byte[] payload = null;
         if (request.getMfApi().isQueryPostable()) {
@@ -88,7 +88,7 @@ public final class MFHttpClient extends MFHttp {
         return bytes;
     }
 
-    protected HttpURLConnection createHttpConnection(MFRequest request) throws IOException {
+    protected HttpURLConnection createHttpConnection(MFHttpRequest request) throws IOException {
         System.out.println("creating http connection");
         URL url = makeFullUrl(request);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -96,7 +96,7 @@ public final class MFHttpClient extends MFHttp {
         return connection;
     }
 
-    protected void setConnectionParameters(URLConnection connection, MFRequest request) {
+    protected void setConnectionParameters(URLConnection connection, MFHttpRequest request) {
         System.out.println("setting connection parameters");
         switch (request.getMfHost().getTransferScheme()) {
             case HTTP:
@@ -123,7 +123,7 @@ public final class MFHttpClient extends MFHttp {
         }
     }
 
-    protected URL makeFullUrl(MFRequest request) throws MalformedURLException, UnsupportedEncodingException {
+    protected URL makeFullUrl(MFHttpRequest request) throws MalformedURLException, UnsupportedEncodingException {
         System.out.println("creating url");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(makeBaseUrl(request));
