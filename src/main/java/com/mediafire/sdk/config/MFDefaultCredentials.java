@@ -1,4 +1,4 @@
-package com.mediafire.sdk;
+package com.mediafire.sdk.config;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -7,8 +7,8 @@ import java.util.Map;
 /**
  * Created by  on 6/15/2014.
  */
-public final class MFCredentials {
-    private static final String TAG = MFCredentials.class.getCanonicalName();
+public final class MFDefaultCredentials {
+    private static final String TAG = MFDefaultCredentials.class.getCanonicalName();
     public static final String MEDIAFIRE_PARAMETER_EMAIL = "email";
     public static final String MEDIAFIRE_PARAMETER_PASSWORD = "password";
     public static final String TWITTER_PARAMETER_TW_OAUTH_TOKEN = "tw_oauth_token";
@@ -21,13 +21,13 @@ public final class MFCredentials {
     private final String appId;
     private final String apiKey;
 
-    private MFCredentials(String appId, String apiKey) {
+    private MFDefaultCredentials(String appId, String apiKey) {
         this.appId = appId;
         this.apiKey = apiKey;
         userCredentialsType = UserCredentialsType.UNSET;
     }
 
-    public MFCredentials(MFConfiguration configuration) {
+    public MFDefaultCredentials(MFConfiguration configuration) {
         this(configuration.getAppId(), configuration.getApiKey());
     }
 

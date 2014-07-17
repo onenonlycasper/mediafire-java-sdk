@@ -1,4 +1,7 @@
-package com.mediafire.sdk;
+package com.mediafire.sdk.config;
+
+import com.mediafire.sdk.http.MFHttpRequest;
+import com.mediafire.sdk.http.MFHttpResponse;
 
 /**
  * Created by  on 7/2/2014.

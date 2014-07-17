@@ -1,4 +1,10 @@
-package com.mediafire.sdk;
+package com.mediafire.sdk.config;
+
+import com.mediafire.sdk.MFApi;
+import com.mediafire.sdk.MFHost;
+import com.mediafire.sdk.http.MFHttpRequest;
+import com.mediafire.sdk.http.MFHttpResponse;
+import com.mediafire.sdk.token.MFToken;
 
 import java.util.List;
 import java.util.Map;
