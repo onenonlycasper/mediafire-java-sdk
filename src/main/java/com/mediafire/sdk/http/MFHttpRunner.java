@@ -41,13 +41,13 @@ public class MFHttpRunner {
 
         mfHttpClientCleanup.returnToken(mfRequest, mfResponse);
 
-        synchronized (this) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        synchronized (this) {
+//            try {
+//                wait();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         if (mfGenericCallback != null) {
             RunnerHolder runnerHolder = new RunnerHolder(mfRequest, mfResponse);
