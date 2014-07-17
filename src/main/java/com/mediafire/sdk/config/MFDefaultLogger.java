@@ -57,9 +57,16 @@ public class MFDefaultLogger implements MFLogger {
         Map<String, String> requestParameters = mfRequest.getRequestParameters();
 
         MFToken mfToken = mfRequest.getToken();
-        String tokenString = mfToken.getTokenString();
 
-        int payloadLength = mfRequest.getPayload().length;
+        String tokenString;
+        int payloadLength;
+        if (mfToken != null) {
+            tokenString = mfToken.getTokenString();
+            payloadLength = mfRequest.getPayload().length;
+        } else {
+            tokenString = null;
+            payloadLength = 0;
+        }
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("MFHttpRequest").append("\n");
