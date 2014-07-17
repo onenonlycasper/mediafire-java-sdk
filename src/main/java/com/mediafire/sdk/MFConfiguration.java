@@ -1,79 +1,35 @@
 package com.mediafire.sdk;
 
-import com.arkhive.components.core.module_errors.ErrorTracker;
-
 /**
  * Created by on 6/17/2014.
  */
 public final class MFConfiguration {
-    public static final int DEFAULT_HTTP_READ_TIMEOUT = 30000;
-    public static final int DEFAULT_HTTP_CONNECTION_TIMEOUT = 30000;
-    public static final int DEFAULT_MINIMUM_SESSION_TOKENS = 1;
-    public static final int DEFAULT_MAXIMUM_SESSION_TOKENS = 3;
-    public static final int DEFAULT_HTTP_POOL_SIZE = 6;
-
-    private int httpReadTimeout;
-    private int httpConnectionTimeout;
-    private int minimumSessionTokens;
-    private int maximumSessionTokens;
+    private final int httpReadTimeout;
+    private final int httpConnectionTimeout;
+    private final int minimumSessionTokens;
+    private final int maximumSessionTokens;
     private int httpPoolSize;
-    private String appId;
-    private String apiKey;
-    private static ErrorTracker errorTracker;
+    private final String appId;
+    private final String apiKey;
+    private MFLogger mfLogger;
 
-    public MFConfiguration(ErrorTracker errorTracker, String appId, String apiKey) {
-        if (errorTracker == null) {
-            throw new IllegalStateException("ErrorTracker must not be null");
-        }
-        if (appId == null) {
-            throw new IllegalStateException("appId must not be null");
-        }
-        if (apiKey == null) {
-            throw new IllegalStateException("apiKey must not be null");
-        }
-        MFConfiguration.errorTracker = errorTracker;
-        this.appId = appId;
-        this.apiKey = apiKey;
-        httpReadTimeout = DEFAULT_HTTP_READ_TIMEOUT;
-        httpConnectionTimeout = DEFAULT_HTTP_CONNECTION_TIMEOUT;
-        minimumSessionTokens = DEFAULT_MINIMUM_SESSION_TOKENS;
-        maximumSessionTokens = DEFAULT_MAXIMUM_SESSION_TOKENS;
-        httpPoolSize = DEFAULT_HTTP_POOL_SIZE;
-        
+    private MFConfiguration(MFConfigurationBuilder mfConfigurationBuilder) {
+        this.httpReadTimeout = mfConfigurationBuilder.httpReadTimeout;
+        this.httpConnectionTimeout = mfConfigurationBuilder.httpConnectionTimeout;
+        this.minimumSessionTokens = mfConfigurationBuilder.minimumSessionTokens;
+        this.maximumSessionTokens = mfConfigurationBuilder.maximumSessionTokens;
+        this.httpPoolSize = mfConfigurationBuilder.httpPoolSize;
+        this.appId = mfConfigurationBuilder.appId;
+        this.apiKey = mfConfigurationBuilder.apiKey;
+        this.mfLogger = mfConfigurationBuilder.mfLogger;
     }
 
     public int getHttpReadTimeout() {
         return httpReadTimeout;
     }
 
-    /**
-     * Sets the http connection timeout time.
-     * @param httpReadTimeout - between 5 and 60 seconds
-     * @return false if not set (due to bad input), true if set.
-     */
-    public boolean setHttpReadTimeout(int httpReadTimeout) {
-        if (httpReadTimeout < 5 || httpReadTimeout > 60) {
-            return false;
-        }
-        this.httpReadTimeout = httpReadTimeout * 1000;
-        return true;
-    }
-
     public int getHttpConnectionTimeout() {
         return httpConnectionTimeout;
-    }
-
-    /**
-     * Sets the http connection timeout time.
-     * @param httpConnectionTimeout - between 5 and 60 seconds
-     * @return false if not set (due to bad input), true if set.
-     */
-    public boolean setHttpConnectionTimeout(int httpConnectionTimeout) {
-        if (httpConnectionTimeout < 5 || httpConnectionTimeout > 60) {
-            return false;
-        }
-        this.httpConnectionTimeout = httpConnectionTimeout * 1000;
-        return true;
     }
 
     public int getMinimumSessionTokens() {
@@ -84,21 +40,6 @@ public final class MFConfiguration {
         return maximumSessionTokens;
     }
 
-    /**
-     * Sets the limit on the number of session tokens stored.
-     *
-     * @param min - between 0 and 10, must be less than maximumSessionTokens
-     * @param max - between 1 and 10, must be greater than minimumSessionTokens
-     * @return false if not set (due to bad input), true if set.
-     */
-    public boolean setSessionTokensInBlockingQueueMinMax(int min, int max) {
-        if (min > max || min < 0 || max < 1 || min > 10 || max > 10) {
-            return false;
-        }
-        maximumSessionTokens = max;
-        minimumSessionTokens = min;
-        return true;
-    }
 
     public String getAppId() {
         return appId;
@@ -112,20 +53,89 @@ public final class MFConfiguration {
         return httpPoolSize;
     }
 
-    /**
-     * Sets the thread pool size for the http processor
-     * @param httpPoolSize - minimum 1
-     * @return false if not set (bad input), true if set
-     */
-    public boolean setHttpPoolSize(int httpPoolSize) {
-        if (httpPoolSize < 1) {
-            return false;
-        }
-        this.httpPoolSize = httpPoolSize;
-        return true;
+    public MFLogger getMfLogger() {
+        return mfLogger;
     }
 
-    public static ErrorTracker getErrorTracker() {
-        return errorTracker;
+    public static class MFConfigurationBuilder {
+        private static final int DEFAULT_HTTP_READ_TIMEOUT = 30000;
+        private static final int DEFAULT_HTTP_CONNECTION_TIMEOUT = 30000;
+        private static final int DEFAULT_MINIMUM_SESSION_TOKENS = 1;
+        private static final int DEFAULT_MAXIMUM_SESSION_TOKENS = 1;
+        private static final int DEFAULT_HTTP_POOL_SIZE = 6;
+        private static final MFLogger DEFAULT_MF_LOGGER = new MFDefaultLogger();
+
+        private int httpReadTimeout = DEFAULT_HTTP_READ_TIMEOUT;
+        private int httpConnectionTimeout = DEFAULT_HTTP_CONNECTION_TIMEOUT;
+        private int minimumSessionTokens = DEFAULT_MINIMUM_SESSION_TOKENS;
+        private int maximumSessionTokens = DEFAULT_MAXIMUM_SESSION_TOKENS;
+        private int httpPoolSize = DEFAULT_HTTP_POOL_SIZE;
+        private MFLogger mfLogger = DEFAULT_MF_LOGGER;
+        private String appId;
+        private String apiKey;
+
+        public MFConfigurationBuilder(String appId, String apiKey) {
+            this.appId = appId;
+            this.apiKey = apiKey;
+        }
+
+        public MFConfigurationBuilder httpReadTimeout(int httpReadTimeout) {
+            if (httpReadTimeout < 0) {
+                throw new IllegalStateException("http read timeout must not be negative");
+            }
+            this.httpReadTimeout = httpReadTimeout;
+            return this;
+        }
+
+        public MFConfigurationBuilder httpConnectionTimeout(int httpConnectionTimeout) {
+            if (httpConnectionTimeout < 0) {
+                throw new IllegalStateException("http connection timeout must not be negative");
+            }
+            this.httpConnectionTimeout = httpConnectionTimeout;
+            return this;
+        }
+
+        public MFConfigurationBuilder httpPoolSize(int httpPoolSize) {
+            if (httpPoolSize < 1) {
+                throw new IllegalStateException("http pool size must be greater than 0");
+            }
+            this.httpPoolSize = httpPoolSize;
+            return this;
+        }
+
+        public MFConfigurationBuilder mfLogger(MFLogger mfLogger) {
+            if (mfLogger == null) {
+                throw new IllegalStateException("MFLogger cannot be null");
+            }
+            this.mfLogger = mfLogger;
+            return this;
+        }
+
+        public MFConfigurationBuilder minimumSessionTokens(int minimumSessionTokens) {
+            if (minimumSessionTokens < 1) {
+                throw new IllegalStateException("minimumSessionTokens session tokens must be greater than 0");
+            }
+            this.minimumSessionTokens = minimumSessionTokens;
+            return this;
+        }
+
+        public MFConfigurationBuilder maximumSessionTokens(int maximumSessionTokens) {
+            if (maximumSessionTokens < 1) {
+                throw new IllegalStateException("maximum session tokens must be greater than 0");
+            }
+            this.maximumSessionTokens = maximumSessionTokens;
+            return this;
+        }
+
+        public MFConfiguration build() {
+            if (appId == null) {
+                throw new IllegalStateException("app id cannot be null");
+            }
+
+            if (apiKey == null) {
+                throw new IllegalStateException("api key cannot be null");
+            }
+            return new MFConfiguration(this);
+        }
     }
 }
