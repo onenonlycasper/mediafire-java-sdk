@@ -15,7 +15,7 @@ public class Driver {
 
     public void systemGetInfo() {
         System.out.println("\n\nSYSTEM/GET_INFO");
-        HttpClient httpClient = new HttpClient(null);
+        HttpClient httpClient = new HttpClient(null, null, null);
         MFRequest request = new MFRequest(MFHost.LIVE_HTTP, MFApi.URI_SYSTEM_GET_INFO);
         MFResponse response = httpClient.sendRequest(request);
         System.out.println("status: " + response.getStatus());
@@ -32,7 +32,7 @@ public class Driver {
 
     public void userGetSessionToken() {
         System.out.println("\n\nUSER/GET_SESSION_TOKEN");
-        HttpClient httpClient = new HttpClient(null);
+        HttpClient httpClient = new HttpClient(null, null, null);
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("email", "javasdktest@example.com");
         requestParameters.put("password", "74107410");
