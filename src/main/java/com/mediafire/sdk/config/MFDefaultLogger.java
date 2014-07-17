@@ -82,8 +82,8 @@ public class MFDefaultLogger implements MFLogger {
 
     private String createResponseStringLog(MFResponse mfResponse) {
         int statusCode = mfResponse.getStatus();
-        int responseBodyByteLength = mfResponse.getBodyBytes().length;
-        String responseString = mfResponse.getResponseString();
+        int responseBodyByteLength = mfResponse.getResponseAsBytes().length;
+        String responseString = mfResponse.getResponseAsString();
         Map<String, List<String>> mfHttpResponseHeaders = mfResponse.getHeaders();
 
         StringBuilder stringBuilder = new StringBuilder();
