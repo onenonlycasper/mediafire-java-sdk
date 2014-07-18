@@ -23,7 +23,7 @@ public class MFHttpRunner {
     }
 
     public MFResponse doRequest(MFRequest mfRequest) {
-        mfConfiguration.getMfLogger().logMessage(TAG, "doRequest()");
+        MFConfiguration.getStaticMFLogger().logMessage(TAG, "doRequest()");
 
         MFResponse mfResponse = null;
         try {
@@ -33,7 +33,7 @@ public class MFHttpRunner {
             e.printStackTrace();
         }
 
-        mfConfiguration.getMfLogger().logApiError(TAG, mfRequest, mfResponse);
+        MFConfiguration.getStaticMFLogger().logApiError(TAG, mfRequest, mfResponse);
 
         mfHttpClientCleanup.returnToken(mfRequest, mfResponse);
 

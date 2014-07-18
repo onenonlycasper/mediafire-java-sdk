@@ -65,7 +65,7 @@ public final class MFConfiguration {
         return httpPoolSize;
     }
 
-    public MFLogger getMfLogger() {
+    public MFLogger getMFLogger() {
         return mfLogger;
     }
 
