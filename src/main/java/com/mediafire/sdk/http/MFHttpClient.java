@@ -76,7 +76,9 @@ public final class MFHttpClient extends MFHttp {
         }
 
         if (payload != null) {
+            // TODO add request property content length etc.
             ((HttpURLConnection) connection).setFixedLengthStreamingMode(payload.length);
+
             connection.getOutputStream().write(payload);
         }
     }
