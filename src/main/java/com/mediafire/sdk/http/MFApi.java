@@ -1,8 +1,5 @@
 package com.mediafire.sdk.http;
 
-/**
- * TODO: doc
- */
 public enum MFApi {
     // contact api calls
     CONTACT_ADD("/api/1.0/contact/add.php", TokenType.SESSION_TOKEN_V2, true),
@@ -66,7 +63,7 @@ public enum MFApi {
     public TokenType getTokenType() {
         return type;
     }
-    
+
     public boolean isQueryPostable() {
         return queryPostable;
     }
