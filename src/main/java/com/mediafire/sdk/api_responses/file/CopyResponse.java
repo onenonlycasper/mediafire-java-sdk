@@ -5,9 +5,6 @@ import com.mediafire.sdk.api_responses.ApiResponse;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Response from a file copy request.
- */
 public class CopyResponse extends ApiResponse {
 
     private int skipped_count;

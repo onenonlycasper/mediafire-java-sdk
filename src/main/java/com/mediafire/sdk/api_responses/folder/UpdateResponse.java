@@ -2,9 +2,6 @@ package com.mediafire.sdk.api_responses.folder;
 
 import com.mediafire.sdk.api_responses.ApiResponse;
 
-/**
- * @author
- */
 public class UpdateResponse extends ApiResponse {
     private String asynchronous;
     private MyFilesRevision myfiles_revision;
@@ -31,20 +28,10 @@ public class UpdateResponse extends ApiResponse {
         return this.myfiles_revision;
     }
 
-    /**
-     * Class representation of "myfiles_revision" JSON object.
-     *
-     * @author
-     */
     public class MyFilesRevision {
         private String revision;
         private String epoch;
 
-        /**
-         * Returns JSON object "revision".
-         *
-         * @return String representation of "revision".
-         */
         public String getRevision() {
             if (this.revision == null) {
                 this.revision = "";
@@ -52,11 +39,6 @@ public class UpdateResponse extends ApiResponse {
             return this.revision;
         }
 
-        /**
-         * Returns JSON object "epoch".
-         *
-         * @return long representation of "epoch".
-         */
         public long getEpoch() {
             if (this.epoch == null) {
                 this.epoch = "0";

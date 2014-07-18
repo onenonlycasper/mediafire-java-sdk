@@ -1,11 +1,7 @@
 package com.mediafire.sdk.api_responses.folder;
 
-
 import com.mediafire.sdk.api_responses.ApiResponse;
 
-/**
- * @author
- */
 public class CreateResponse extends ApiResponse {
     private String folder_key;
     private String upload_key;
@@ -76,10 +72,7 @@ public class CreateResponse extends ApiResponse {
     }
 
     public boolean isPrivate() {
-        if (privacy == null || privacy.equalsIgnoreCase("public")) {
-            return false;
-        }
-        return true;
+        return !(privacy == null || "public".equalsIgnoreCase(privacy));
     }
 
     public int getFileCount() {
@@ -104,10 +97,7 @@ public class CreateResponse extends ApiResponse {
     }
 
     public boolean isDropboxEnabled() {
-        if (dropbox_enabled == null || dropbox_enabled.equalsIgnoreCase("yes")) {
-            return true;
-        }
-        return false;
+        return dropbox_enabled == null || "yes".equalsIgnoreCase(dropbox_enabled);
     }
 
     public String getFlag() {

@@ -1,13 +1,10 @@
 package com.mediafire.sdk.token;
 
-/**
- * TODO: doc
- */
 public final class MFSessionToken extends MFToken {
-    private String time;
-    private String secretKey;
-    private String pkey;
-    private String ekey;
+    private final String time;
+    private final String secretKey;
+    private final String pkey;
+    private final String ekey;
 
     public MFSessionToken(String tokenString, String secretKey, String time, String pkey, String ekey) {
         super(tokenString);

@@ -1,8 +1,5 @@
 package com.mediafire.sdk.config;
 
-/**
- * TODO: doc
- */
 public final class MFConfiguration {
     private final int httpReadTimeout;
     private final int httpConnectionTimeout;
@@ -10,7 +7,6 @@ public final class MFConfiguration {
     private final int maximumSessionTokens;
     private final String appId;
     private final String apiKey;
-    private final MFLogger mfLogger;
     private final MFCredentials mfCredentials;
     private static MFLogger staticMFLogger;
 
@@ -21,9 +17,9 @@ public final class MFConfiguration {
         this.maximumSessionTokens = mfConfigurationBuilder.maximumSessionTokens;
         this.appId = mfConfigurationBuilder.appId;
         this.apiKey = mfConfigurationBuilder.apiKey;
-        this.mfLogger = mfConfigurationBuilder.mfLogger;
+        MFLogger mfLogger = mfConfigurationBuilder.mfLogger;
         this.mfCredentials = mfConfigurationBuilder.mfCredentials;
-        staticMFLogger = this.mfLogger;
+        staticMFLogger = mfLogger;
     }
 
     public static MFLogger getStaticMFLogger() {
@@ -72,8 +68,8 @@ public final class MFConfiguration {
         private int maximumSessionTokens = DEFAULT_MAXIMUM_SESSION_TOKENS;
         private MFLogger mfLogger = DEFAULT_MF_LOGGER;
         private MFCredentials mfCredentials = DEFAULT_MF_CREDENTIALS;
-        private String appId;
-        private String apiKey;
+        private final String appId;
+        private final String apiKey;
 
         public MFConfigurationBuilder(String appId, String apiKey) {
             this.appId = appId;

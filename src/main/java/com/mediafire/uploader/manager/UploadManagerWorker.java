@@ -56,7 +56,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     @Override
     public void onCheckCompleted(UploadItem uploadItem, CheckResponse checkResponse) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onCheckCompleted()");
-        //as a failsafe, an upload item cannot continue after upload/check.php if it has gone through the process 20x
+        //as a preventable infinite loop measure, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
         if (uploadItem.getUploadAttemptCount() > MAX_UPLOAD_ATTEMPTS || uploadItem.isCancelled()) {
             notifyUploadListenerCancelled(uploadItem);
@@ -184,8 +184,8 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
     @Override
     public void onPollCompleted(UploadItem uploadItem, PollResponse pollResponse) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onPollCompleted()");
-        // if this method is called then filerror and result codes are fine, but we may not have received status 99 so
-        // check status code and then possibly senditem to the backlog queue.
+        // if this method is called then file error and result codes are fine, but we may not have received status 99 so
+        // check status code and then possibly send item to the backlog queue.
         PollResponse.DoUpload doUpload = pollResponse.getDoUpload();
         PollResponse.Status pollStatusCode = doUpload.getStatusCode();
         PollResponse.Result pollResultCode = doUpload.getResultCode();

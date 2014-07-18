@@ -1,10 +1,7 @@
 package com.mediafire.sdk.token;
 
-/**
- * TODO: doc
- */
 public abstract class MFToken {
-    protected String tokenString;
+    protected final String tokenString;
 
     public MFToken(String tokenString) {
         this.tokenString = tokenString;

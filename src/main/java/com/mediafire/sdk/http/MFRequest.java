@@ -5,15 +5,12 @@ import com.mediafire.sdk.token.MFToken;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * TODO: doc
- */
 public final class MFRequest {
     private final MFHost mfHost;
     private final MFApi mfApi;
     private final Map<String, String> requestParameters;
-    private Map<String, String> headers;
-    private byte[] payload;
+    private final Map<String, String> headers;
+    private final byte[] payload;
     private MFToken mfToken;
 
     public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters, Map<String, String> headers, byte[] payload) {

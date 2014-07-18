@@ -5,18 +5,13 @@ import com.mediafire.sdk.token.MFTokenFarmCallback;
 
 import java.io.UnsupportedEncodingException;
 
-/**
- * TODO: doc
- */
 public final class MFHttpRunner {
     private static final String TAG = MFHttpRunner.class.getCanonicalName();
-    private final MFConfiguration mfConfiguration;
-    private MFHttpClientSetup mfHttpClientSetup;
-    private MFHttpClient mfHttpClient;
-    private MFHttpClientCleanup mfHttpClientCleanup;
+    private final MFHttpClientSetup mfHttpClientSetup;
+    private final MFHttpClient mfHttpClient;
+    private final MFHttpClientCleanup mfHttpClientCleanup;
 
     public MFHttpRunner(MFConfiguration mfConfiguration, MFTokenFarmCallback mfTokenFarmCallback) {
-        this.mfConfiguration = mfConfiguration;
         this.mfHttpClientSetup = new MFHttpClientSetup(mfTokenFarmCallback, mfConfiguration);
         this.mfHttpClient = new MFHttpClient(mfConfiguration);
         this.mfHttpClientCleanup = new MFHttpClientCleanup(mfTokenFarmCallback, mfConfiguration);

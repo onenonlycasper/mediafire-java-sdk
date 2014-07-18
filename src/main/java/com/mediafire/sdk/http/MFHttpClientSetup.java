@@ -13,16 +13,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-/**
- * TODO: doc
- */
 public final class MFHttpClientSetup extends MFHttp {
     private static final String TAG = MFHttpClientSetup.class.getCanonicalName();
     private static final String SHA1 = "SHA-1";
     private static final String MD5 = "MD5";
 
-    private MFTokenFarmCallback mfTokenFarmCallback;
-    private MFCredentials mfCredentials;
+    private final MFTokenFarmCallback mfTokenFarmCallback;
+    private final MFCredentials mfCredentials;
 
     public MFHttpClientSetup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
         super(mfConfiguration);
@@ -72,7 +69,7 @@ public final class MFHttpClientSetup extends MFHttp {
         }
     }
 
-    private String calculateSignatureForNewSessionToken(MFConfiguration MFConfiguration, MFCredentials credentials) {
+    private String calculateSignatureForNewSessionToken(MFConfiguration mfConfiguration, MFCredentials credentials) {
         MFConfiguration.getStaticMFLogger().v(TAG, "calculateSignatureForNewSessionToken()");
         // email + password + app id + api key
         // fb access token + app id + api key
@@ -98,15 +95,10 @@ public final class MFHttpClientSetup extends MFHttp {
                 throw new IllegalArgumentException("credentials must be set to call /api/user/get_session_token");
         }
 
-        String appId = MFConfiguration.getAppId();
-        String apiKey = MFConfiguration.getApiKey();
+        String appId = mfConfiguration.getAppId();
+        String apiKey = mfConfiguration.getApiKey();
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(userInfoPortionOfHashTarget);
-        stringBuilder.append(appId);
-        stringBuilder.append(apiKey);
-
-        String hashTarget = stringBuilder.toString();
+        String hashTarget = userInfoPortionOfHashTarget + appId + apiKey;
 
         return hashString(hashTarget, SHA1);
     }
@@ -122,17 +114,9 @@ public final class MFHttpClientSetup extends MFHttp {
         String urlAttachableQueryString = makeUrlAttachableQueryString(nonUrlEncodedQueryString);
         String baseUri = request.getMfApi().getUri();
 
-        StringBuilder uriStringBuilder = new StringBuilder();
-        uriStringBuilder.append(baseUri);
-        uriStringBuilder.append(urlAttachableQueryString);
+        String fullUri = baseUri + urlAttachableQueryString;
 
-        String fullUri = uriStringBuilder.toString();
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(secretKey);
-        stringBuilder.append(time);
-        stringBuilder.append(fullUri);
-        String nonUrlEncodedString = stringBuilder.toString();
+        String nonUrlEncodedString = String.valueOf(secretKey) + time + fullUri;
         return hashString(nonUrlEncodedString, MD5);
     }
 

@@ -9,29 +9,11 @@ import com.mediafire.uploader.uploaditem.UploadItem;
 
 import java.util.HashMap;
 
-/**
- * This is the Runnable which executes the call /api/upload/poll_upload.
- * The process is as follows:
- * 1. create GET request
- * 2. send GET request
- * 3. get response
- * 4. check response data
- * 5. step 1 again until 2 minutes is up, there is an error, or status code 99 (no more requests for this key)
- *
- * @author
- */
 public class PollProcess extends UploadProcess {
     private static final String TAG = PollProcess.class.getCanonicalName();
     private static final long TIME_BETWEEN_POLLS = 2000;
     private static final int MAX_POLLS = 60;
 
-    /**
-     * Constructor for an upload with a listener. This constructor uses sleepTime for the loop sleep time with
-     * loopAttempts for the loop attempts.
-     *
-     * @param mfTokenFarm - the session to use for this upload process
-     * @param uploadItem     - the item to be uploaded
-     */
     public PollProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
         super(mfTokenFarm, uploadItem, uploadListenerManager);
     }

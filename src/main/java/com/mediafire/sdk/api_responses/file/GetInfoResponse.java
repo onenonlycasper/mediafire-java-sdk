@@ -5,9 +5,6 @@ import com.mediafire.sdk.api_responses.ApiResponse;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author
- */
 public class GetInfoResponse extends ApiResponse {
     private FileInfo file_info;
     private List<FileInfos> file_infos;
@@ -63,11 +60,7 @@ public class GetInfoResponse extends ApiResponse {
         }
     }
 
-    /**
-     * class representing contents of "file_info" jsonobject.
-     *
-     * @author
-     */
+
     public class FileInfo {
         protected String password_protected;
         protected String owner_name;

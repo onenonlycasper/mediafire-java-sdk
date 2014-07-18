@@ -13,9 +13,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * TODO: doc
- */
 public final class MFTokenFarm implements MFTokenFarmCallback {
     private static final String TAG = MFTokenFarm.class.getCanonicalName();
     private final MFConfiguration mfConfiguration;
@@ -23,7 +20,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     private final int minimumSessionTokens;
     private final int maximumSessionTokens;
 
-    private BlockingQueue<MFSessionToken> mfSessionTokens;
+    private final BlockingQueue<MFSessionToken> mfSessionTokens;
     private MFUploadActionToken mfUploadActionToken;
     private MFImageActionToken mfImageActionToken;
 
@@ -60,11 +57,8 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         }
 
         ApiResponse apiResponse = mfResponse.getResponseObject(ApiResponse.class);
-        if (apiResponse == null || apiResponse.hasError()) {
-            return false;
-        }
+        return !(apiResponse == null || apiResponse.hasError());
 
-        return true;
     }
 
     private void getNewSessionToken() {
@@ -133,8 +127,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
         try {
             mfSessionTokens.put(sessionToken);
-            return;
-        } catch (InterruptedException e) { 
+        } catch (InterruptedException e) {
             MFConfiguration.getStaticMFLogger().e(TAG, "exception while trying to return a session token", e);
         }
     }
@@ -161,7 +154,6 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         if (isActionTokenValid(mfImageActionToken)) {
             this.mfImageActionToken = mfImageActionToken;
             MFConfiguration.getStaticMFLogger().v(TAG, "received good image action token");
-            return;
         } else {
             MFConfiguration.getStaticMFLogger().v(TAG, "received bad image action token, not keeping it");
         }
@@ -174,7 +166,6 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         if (isActionTokenValid(mfUploadActionToken)) {
             this.mfUploadActionToken = mfUploadActionToken;
             MFConfiguration.getStaticMFLogger().v(TAG, "received good upload action token");
-            return;
         } else {
             MFConfiguration.getStaticMFLogger().v(TAG, "received bad upload action token, not keeping it");
         }

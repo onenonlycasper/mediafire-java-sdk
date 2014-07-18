@@ -1,17 +1,10 @@
 package com.mediafire.sdk.api_responses.folder;
 
-
-
 import com.mediafire.sdk.api_responses.ApiResponse;
 
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * folder search response class.
- *
- * @author John Moore
- */
 public class SearchResponse extends ApiResponse {
 
     private String results_count;
@@ -32,11 +25,6 @@ public class SearchResponse extends ApiResponse {
         return results;
     }
 
-    /**
-     * result from folder search.
-     *
-     * @author John Moore
-     */
     public class Result {
         private String type;
         private String quickkey;

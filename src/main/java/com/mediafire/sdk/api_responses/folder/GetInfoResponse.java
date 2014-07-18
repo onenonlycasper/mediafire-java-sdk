@@ -1,15 +1,9 @@
 package com.mediafire.sdk.api_responses.folder;
 
-
 import com.mediafire.sdk.api_responses.ApiResponse;
 
-/**
- * @author
- */
 public class GetInfoResponse extends ApiResponse {
-
     private FolderInfo folder_info;
-
 
     public FolderInfo getFolderInfo() {
         if (folder_info == null) {
@@ -18,9 +12,6 @@ public class GetInfoResponse extends ApiResponse {
         return folder_info;
     }
 
-    /**
-     * @author
-     */
     public class FolderInfo {
         private String folderkey;
         private String name;

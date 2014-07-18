@@ -14,21 +14,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Runnable for making api call to upload/resumable.php. *
- *
- * @author
- */
 public class ResumableProcess extends UploadProcess {
 
     private static final String TAG = ResumableProcess.class.getCanonicalName();
 
-    /**
-     * Constructor for an upload with a listener.
-     *
-     * @param mfTokenFarm - the session to use for this upload process
-     * @param uploadItem     - the item to be uploaded
-     */
     public ResumableProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
         super(mfTokenFarm, uploadItem, uploadListenerManager);
     }
@@ -234,16 +223,6 @@ public class ResumableProcess extends UploadProcess {
         return parameters;
     }
 
-    /**
-     * generates a HashMap of the POST headers.
-     *
-     * @param encodedShortFileName The file name after being URLEncoded.
-     * @param fileSize             The size of the file in bytes.
-     * @param chunkNumber          The number of the current chunk.
-     * @param chunkHash            The hash of the current chunk.
-     * @param chunkSize            The size of the current chunk in bytes.
-     * @return A HashMap<String, String> containing the parameters to use with the HTTP POST request.
-     */
     private HashMap<String, String> generatePostHeaders(String encodedShortFileName, long fileSize, int chunkNumber, String chunkHash, int chunkSize) {
         MFConfiguration.getStaticMFLogger().v(TAG, "generatePostHeaders()");
         HashMap<String, String> headers = new HashMap<String, String>();
@@ -258,12 +237,6 @@ public class ResumableProcess extends UploadProcess {
         return headers;
     }
 
-    /**
-     * only set the upload key for the upload item if response/doupload/result is 14 or 0.
-     *
-     * @param response The response from the resumable upload API request.
-     * @return Flag indicating if the upload key should be set.
-     */
     private boolean shouldSetPollUploadKey(ResumableResponse response) {
         MFConfiguration.getStaticMFLogger().v(TAG, "shouldSetPollUploadKey()");
         switch (response.getDoUpload().getResultCode()) {
@@ -275,15 +248,6 @@ public class ResumableProcess extends UploadProcess {
         }
     }
 
-    /**
-     * calculates the chunk size.
-     *
-     * @param chunkNumber The current chunk number.
-     * @param numChunks   The total number of chunks.
-     * @param fileSize    The file size in bytes.
-     * @param unitSize    The size of a single chunk.
-     * @return The actual chunk size.
-     */
     private int getChunkSize(int chunkNumber, int numChunks, long fileSize, int unitSize) {
         MFConfiguration.getStaticMFLogger().v(TAG, "getChunkSize()");
         int chunkSize;
@@ -302,9 +266,6 @@ public class ResumableProcess extends UploadProcess {
         return chunkSize;
     }
 
-    /**
-     * creates an upload chunk array of bytes based on a position in a file.
-     */
     private byte[] createUploadChunk(long unitSize, int chunkNumber, BufferedInputStream fileStream) throws IOException {
         MFConfiguration.getStaticMFLogger().v(TAG, "createUploadChunk()");
         MFConfiguration.getStaticMFLogger().v(TAG, "creating new byte array of size: " + unitSize);
@@ -321,12 +282,6 @@ public class ResumableProcess extends UploadProcess {
         return readBytes;
     }
 
-    /**
-     * converts an array of bytes into a SHA256 hash.
-     *
-     * @param chunkData The chunk to hash.
-     * @return The SHA-256 hash of an upload chunk.
-     */
     private String getSHA256(byte[] chunkData) throws NoSuchAlgorithmException, IOException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         //test code
@@ -343,12 +298,6 @@ public class ResumableProcess extends UploadProcess {
         return convertHashBytesToString(hashBytes);
     }
 
-    /**
-     * Convert hash bytes to string.
-     *
-     * @param hashBytes
-     * @return byte array converted to string.
-     */
     private String convertHashBytesToString(byte[] hashBytes) {
         MFConfiguration.getStaticMFLogger().v(TAG, "convertHashBytesToString()");
         StringBuilder sb = new StringBuilder();
@@ -356,7 +305,7 @@ public class ResumableProcess extends UploadProcess {
             String tempString = Integer.toHexString((hashByte & 0xFF) | 0x100).substring(1, 3);
             sb.append(tempString);
         }
-        String hash = sb.toString();
-        return hash;
+
+        return sb.toString();
     }
 }

@@ -6,9 +6,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
 
-/**
- * TODO: doc
- */
 public abstract class MFHttp {
     private static final String TAG = MFHttp.class.getCanonicalName();
     protected final MFConfiguration mfConfiguration;

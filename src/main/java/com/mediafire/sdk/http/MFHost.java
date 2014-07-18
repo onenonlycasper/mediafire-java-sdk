@@ -1,16 +1,13 @@
 package com.mediafire.sdk.http;
 
-/**
- * TODO: doc
- */
 public enum MFHost {
     LIVE_HTTP("www.mediafire.com", TransferScheme.HTTP),
     LIVE_HTTPS("www.mediafire.com", TransferScheme.HTTPS),
     DEV_HTTP("dev.mediafire.com", TransferScheme.HTTP),
     DEV_HTTPS("dev.mediafire.com", TransferScheme.HTTPS);
 
-    private String host;
-    private TransferScheme transferScheme;
+    private final String host;
+    private final TransferScheme transferScheme;
 
     private MFHost(String host, TransferScheme transferScheme) {
         this.host = host;
@@ -29,7 +26,7 @@ public enum MFHost {
         HTTP("http://"),
         HTTPS("https://");
 
-        private String scheme;
+        private final String scheme;
 
         private TransferScheme(String scheme) {
             this.scheme = scheme;

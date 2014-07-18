@@ -13,11 +13,6 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Runnable for making a call to upload/instant.php.
- *
- * @author
- */
 public class InstantProcess extends UploadProcess {
     private static final String TAG = InstantProcess.class.getCanonicalName();
 

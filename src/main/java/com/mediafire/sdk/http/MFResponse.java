@@ -9,14 +9,11 @@ import com.mediafire.sdk.api_responses.ApiResponse;
 import java.util.List;
 import java.util.Map;
 
-/**
- * TODO: doc
- */
 public final class MFResponse {
-    private int status;
-    private Map<String, List<String>> headers;
-    private byte[] bodyBytes;
-    private MFRequest mfRequest;
+    private final int status;
+    private final Map<String, List<String>> headers;
+    private final byte[] bodyBytes;
+    private final MFRequest mfRequest;
 
     public MFResponse(int status, Map<String, List<String>> headers, byte[] bodyBytes, MFRequest mfRequest) {
         this.status = status;

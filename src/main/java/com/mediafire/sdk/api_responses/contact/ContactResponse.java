@@ -5,9 +5,6 @@ import com.mediafire.sdk.api_responses.ApiResponse;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Response from a request for contacts.
- */
 public class ContactResponse extends ApiResponse {
 
     private int count;
@@ -34,9 +31,6 @@ public class ContactResponse extends ApiResponse {
         return Arrays.asList(contacts);
     }
 
-    /**
-     * Holds a single contact response.
-     */
     public class SingleContactResponse {
 
         private String display_name;
@@ -104,7 +98,7 @@ public class ContactResponse extends ApiResponse {
             return means_of_contact;
         }
 
-        public String getBirthdate() {
+        public String getBirthDate() {
             if (birthdate == null) {
                 birthdate = "";
             }

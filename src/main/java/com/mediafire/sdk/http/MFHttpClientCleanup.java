@@ -9,12 +9,9 @@ import com.mediafire.sdk.token.MFSessionToken;
 import com.mediafire.sdk.token.MFTokenFarmCallback;
 import com.mediafire.sdk.token.MFUploadActionToken;
 
-/**
- * TODO: doc
- */
 public final class MFHttpClientCleanup extends MFHttp {
     private static final String TAG = MFHttpClientCleanup.class.getCanonicalName();
-    private MFTokenFarmCallback mfTokenFarmCallback;
+    private final MFTokenFarmCallback mfTokenFarmCallback;
 
     public MFHttpClientCleanup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
         super(mfConfiguration);

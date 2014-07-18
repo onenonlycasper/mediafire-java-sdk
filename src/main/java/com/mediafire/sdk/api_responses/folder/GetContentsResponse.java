@@ -1,15 +1,10 @@
 package com.mediafire.sdk.api_responses.folder;
 
-
-
 import com.mediafire.sdk.api_responses.ApiResponse;
 
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author
- */
 public class GetContentsResponse extends ApiResponse {
     public FolderContents folder_content;
 
@@ -20,9 +15,6 @@ public class GetContentsResponse extends ApiResponse {
         return this.folder_content;
     }
 
-    /**
-     * @author
-     */
     public class FolderContents {
         public String chunk_size;
         public String content_type;
@@ -66,9 +58,6 @@ public class GetContentsResponse extends ApiResponse {
         }
     }
 
-    /**
-     * @author
-     */
     public class Folder {
         private String folderkey;
         private String name;
@@ -192,9 +181,6 @@ public class GetContentsResponse extends ApiResponse {
         }
     }
 
-    /**
-     * @author
-     */
     public class File {
         private String quickkey;
         private String filename;

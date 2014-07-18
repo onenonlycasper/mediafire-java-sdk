@@ -6,14 +6,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-/**
- * This data structure represents an item to be uploaded.
- * The only mandatory parameter that needs to be passed to
- * the constructor is a path, but the implementer of this
- * data structure can also pass specific upload options.
- *
- * @author
- */
 public class UploadItem {
     private static final String TAG = UploadItem.class.getCanonicalName();
     private int uploadAttemptCount;
@@ -25,14 +17,7 @@ public class UploadItem {
     private ResumableBitmap bitmap;
     private String pollUploadKey;
 
-    /**
-     * Constructor which takes a path and upload attempts.
-     * Use this method when you want to customize the upload options for this UploadItem.
-     *
-     * @param path          - file path on the device
-     * @param uploadOptions - upload options to use for the upload item.
-     *                      Should use the single or dual argument constructor for the most part.
-     */
+
     public UploadItem(String path, UploadOptions uploadOptions) {
         MFConfiguration.getStaticMFLogger().v(TAG, "UploadItem created");
         if (path == null) {
@@ -59,12 +44,7 @@ public class UploadItem {
         uploadAttemptCount = 0;
     }
 
-    /**
-     * Constructor which takes a path and an image id
-     * Use this method when you want to use default upload options for this UploadItem.
-     *
-     * @param path - path to data
-     */
+
     public UploadItem(String path) {
         this(path, null);
     }
@@ -83,11 +63,6 @@ public class UploadItem {
         return uploadAttemptCount;
     }
 
-    /**
-     * Called to get the Short file name.
-     *
-     * @return the filename.
-     */
     public String getFileName() {
         MFConfiguration.getStaticMFLogger().v(TAG, "getFileName()");
         if (!options.getCustomFileName().isEmpty()) {
@@ -96,31 +71,16 @@ public class UploadItem {
         return fileName;
     }
 
-    /**
-     * Called to get the UploadItemFileData.
-     *
-     * @return the file data struct.
-     */
     public FileData getFileData() {
         MFConfiguration.getStaticMFLogger().v(TAG, "getFileData()");
         return fileData;
     }
 
-    /**
-     * Called to get the poll upload key.
-     *
-     * @return - the poll upload key.
-     */
     public String getPollUploadKey() {
         MFConfiguration.getStaticMFLogger().v(TAG, "getPollUploadKey()");
         return pollUploadKey;
     }
 
-    /**
-     * Called to get the UploadItemFileUploadOptions.
-     *
-     * @return - the upload options struct.
-     */
     public UploadOptions getUploadOptions() {
         MFConfiguration.getStaticMFLogger().v(TAG, "getUploadOptions()");
         if (options == null) {
@@ -129,11 +89,6 @@ public class UploadItem {
         return options;
     }
 
-    /**
-     * Called to get the UploadItemChunkData.
-     *
-     * @return - the chunkdata struct.
-     */
     public ChunkData getChunkData() {
         MFConfiguration.getStaticMFLogger().v(TAG, "getChunkData()");
         if (chunkData == null) {
@@ -142,11 +97,6 @@ public class UploadItem {
         return chunkData;
     }
 
-    /**
-     * Called to get the ResumableUploadBitmap.
-     *
-     * @return - the resumablebitmap struct.
-     */
     public ResumableBitmap getBitmap() {
         MFConfiguration.getStaticMFLogger().v(TAG, "getBitmap()");
         if (bitmap == null) {
@@ -156,35 +106,20 @@ public class UploadItem {
         return bitmap;
     }
 
-    /**
-     * Sets the ResumableUploadBitmap.
-     *
-     * @param bitmap - the resumablebitmap to set.
-     */
     public void setBitmap(ResumableBitmap bitmap) {
         MFConfiguration.getStaticMFLogger().v(TAG, "setBitmap()");
         this.bitmap = bitmap;
     }
 
-    /**
-     * Sets the poll upload key.
-     *
-     * @param pollUploadKey - the polluploadkey to set.
-     */
     public void setPollUploadKey(String pollUploadKey) {
         MFConfiguration.getStaticMFLogger().v(TAG, "setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
     }
 
-    /**
-     * sets the short file name given the path.
-     *
-     * @param path path of the file.
-     */
     private void setFileName(String path) {
         MFConfiguration.getStaticMFLogger().v(TAG, "setFileName()");
         String[] splitName = path.split("/");
-        //just throwing the unsupportedcoding exception to whoever creates the upload item
+        //just throwing the UnsupportedEncodingException exception to whoever creates the upload item
         try {
             this.fileName = URLEncoder.encode(splitName[splitName.length - 1], "UTF-8");
         } catch (UnsupportedEncodingException e) {

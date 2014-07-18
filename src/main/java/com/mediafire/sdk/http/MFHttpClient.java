@@ -12,13 +12,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-/**
- * TODO: doc
- */
 public final class MFHttpClient extends MFHttp {
     private static final String TAG = MFHttpClient.class.getCanonicalName();
-    private int readTimeout;
-    private int connectionTimeout;
+    private final int readTimeout;
+    private final int connectionTimeout;
     public MFHttpClient(MFConfiguration mfConfiguration) {
         super(mfConfiguration);
         this.readTimeout = mfConfiguration.getHttpReadTimeout();
@@ -54,7 +51,7 @@ public final class MFHttpClient extends MFHttp {
     private MFResponse getResponseFromStream(URLConnection connection, MFRequest mfRequest) throws IOException {
         MFConfiguration.getStaticMFLogger().v(TAG, "getResponseFromStream()");
         int status = ((HttpURLConnection) connection).getResponseCode();
-        MFResponse mfResponse = null;
+        MFResponse mfResponse;
 
         if (status / 100 != 2) {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(((HttpURLConnection) connection).getErrorStream());
@@ -90,7 +87,7 @@ public final class MFHttpClient extends MFHttp {
             return null;
         }
         byte[] buffer = new byte[1024];
-        int count = 0;
+        int count;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
         while ((count = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, count);

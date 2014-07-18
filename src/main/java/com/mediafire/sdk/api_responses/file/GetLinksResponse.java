@@ -5,8 +5,6 @@ import com.mediafire.sdk.api_responses.ApiResponse;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- */
 public class GetLinksResponse extends ApiResponse {
 
     private String direct_download_free_bandwidth;

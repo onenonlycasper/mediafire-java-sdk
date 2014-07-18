@@ -1,11 +1,7 @@
 package com.mediafire.sdk.api_responses.device;
 
-
 import com.mediafire.sdk.api_responses.ApiResponse;
 
-/**
- * Created by  on 4/15/2014.
- */
 public class GetStatusResponse extends ApiResponse {
     private String async_jobs_in_progress;
     private String device_revision;

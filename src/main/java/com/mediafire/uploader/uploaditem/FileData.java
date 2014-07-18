@@ -25,31 +25,16 @@ public class FileData {
         setFileHash();
     }
 
-    /**
-     * Gets the filename.
-     *
-     * @return
-     */
     public String getFilePath() {
         MFConfiguration.getStaticMFLogger().v(TAG, "getFilePath()");
         return filePath;
     }
 
-    /**
-     * gets the file size.
-     *
-     * @return
-     */
     public long getFileSize() {
         MFConfiguration.getStaticMFLogger().v(TAG, "getFilePath()");
         return fileSize;
     }
 
-    /**
-     * gets the file hash.
-     *
-     * @return
-     */
     public String getFileHash() {
         MFConfiguration.getStaticMFLogger().v(TAG, "getFilePath()");
         return fileHash;

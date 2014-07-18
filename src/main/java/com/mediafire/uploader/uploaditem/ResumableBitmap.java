@@ -1,29 +1,13 @@
 package com.mediafire.uploader.uploaditem;
 
-
-
-
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * This data structure represents the bitmap
- * which is received from the pre upload response
- * which is made by calling api/upload/pre_upload.php.
- *
- * @author
- */
 public class ResumableBitmap {
     private final int count;
-    private List<Integer> words;
-    private List<Boolean> uploadUnits;
+    private final List<Integer> words;
+    private final List<Boolean> uploadUnits;
 
-    /**
-     * Constructor given an int count and Collection of words.
-     *
-     * @param count
-     * @param words
-     */
     public ResumableBitmap(int count, List<Integer> words) {
         this.count = count;
         this.words = words;

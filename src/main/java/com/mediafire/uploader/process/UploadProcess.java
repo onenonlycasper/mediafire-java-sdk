@@ -9,11 +9,11 @@ import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
-public abstract class UploadProcess implements Runnable {
+abstract class UploadProcess implements Runnable {
     private static final String TAG = UploadProcess.class.getCanonicalName();
     protected final MFTokenFarm mfTokenFarm;
     protected final UploadItem uploadItem;
-    protected final UploadListenerManager uploadListenerManager;
+    private final UploadListenerManager uploadListenerManager;
     
     public UploadProcess(MFTokenFarm mfTokenFarm, UploadItem uploadItem, UploadListenerManager uploadListenerManager) {
         this.mfTokenFarm = mfTokenFarm;
@@ -27,7 +27,6 @@ public abstract class UploadProcess implements Runnable {
     public void run() {
         doUploadProcess();
     }
-
 
     protected void notifyListenerUploadStarted() {
         MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerUploadStarted()");
