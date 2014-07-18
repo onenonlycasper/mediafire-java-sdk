@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 7/17/2014.
+ * TODO: doc
  */
 public class MFDefaultLogger implements MFLogger {
     @Override

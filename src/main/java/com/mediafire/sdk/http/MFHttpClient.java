@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 7/16/2014.
+ * TODO: doc
  */
 public final class MFHttpClient extends MFHttp {
     private static final String TAG = MFHttpClient.class.getCanonicalName();

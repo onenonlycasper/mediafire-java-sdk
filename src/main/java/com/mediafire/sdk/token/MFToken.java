@@ -1,7 +1,7 @@
 package com.mediafire.sdk.token;
 
 /**
- * Created by Chris Najar on 7/16/2014.
+ * TODO: doc
  */
 public abstract class MFToken {
     protected String tokenString;

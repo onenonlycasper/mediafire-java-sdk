@@ -6,9 +6,9 @@ import com.mediafire.sdk.token.MFTokenFarmCallback;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Created by Chris Najar on 7/17/2014.
+ * TODO: doc
  */
-public class MFHttpRunner {
+public final class MFHttpRunner {
     private static final String TAG = MFHttpRunner.class.getCanonicalName();
     private final MFConfiguration mfConfiguration;
     private MFHttpClientSetup mfHttpClientSetup;
@@ -38,6 +38,5 @@ public class MFHttpRunner {
         mfHttpClientCleanup.returnToken(mfRequest, mfResponse);
 
         return mfResponse;
-
     }
 }

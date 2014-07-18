@@ -1,7 +1,7 @@
 package com.mediafire.sdk.config;
 
 /**
- * Created by Chris Najar on 7/17/2014.
+ * TODO: doc
  */
 public final class MFConfiguration {
     private final int httpReadTimeout;

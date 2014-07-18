@@ -3,7 +3,7 @@ package com.mediafire.sdk.config;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 7/17/2014.
+ * TODO: doc
  */
 public interface MFCredentials {
     public boolean setCredentials(Map<String, String> userCredentials);

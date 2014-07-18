@@ -5,7 +5,7 @@ import com.mediafire.sdk.http.MFRequest;
 import com.mediafire.sdk.util.MFGenericCallback;
 
 /**
- * Created by Chris Najar on 7/17/2014.
+ * TODO: doc
  */
 public class MFTokenFarmInternalRunnable implements Runnable {
 

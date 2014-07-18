@@ -10,7 +10,7 @@ import com.mediafire.sdk.token.MFTokenFarmCallback;
 import com.mediafire.sdk.token.MFUploadActionToken;
 
 /**
- * Created by Chris Najar on 7/16/2014.
+ * TODO: doc
  */
 public final class MFHttpClientCleanup extends MFHttp {
     private static final String TAG = MFHttpClientCleanup.class.getCanonicalName();

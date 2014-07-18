@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 7/16/2014.
+ * TODO: doc
  */
 public final class MFRequest {
     private final MFHost mfHost;

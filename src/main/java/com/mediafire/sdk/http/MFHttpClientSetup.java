@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 7/16/2014.
+ * TODO: doc
  */
 public final class MFHttpClientSetup extends MFHttp {
     private static final String TAG = MFHttpClientSetup.class.getCanonicalName();

@@ -7,7 +7,7 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 /**
- * Created by Chris Najar on 7/16/2014.
+ * TODO: doc
  */
 public abstract class MFHttp {
     private static final String TAG = MFHttp.class.getCanonicalName();

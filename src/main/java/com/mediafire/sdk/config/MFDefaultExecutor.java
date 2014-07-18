@@ -5,7 +5,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by Chris Najar on 7/17/2014.
+ * TODO: doc
  */
 public class MFDefaultExecutor extends ThreadPoolExecutor implements MFPausableExecutorService {
     private boolean isPaused;
