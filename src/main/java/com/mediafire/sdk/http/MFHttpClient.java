@@ -17,9 +17,12 @@ import java.util.Map;
  */
 public final class MFHttpClient extends MFHttp {
     private static final String TAG = MFHttpClient.class.getCanonicalName();
-
+    private int readTimeout;
+    private int connectionTimeout;
     public MFHttpClient(MFConfiguration mfConfiguration) {
         super(mfConfiguration);
+        this.readTimeout = mfConfiguration.getHttpReadTimeout();
+        this.connectionTimeout = mfConfiguration.getHttpConnectionTimeout();
     }
 
     public MFResponse sendRequest(MFRequest mfRequest) {
@@ -132,8 +135,8 @@ public final class MFHttpClient extends MFHttp {
 
         MFConfiguration.getStaticMFLogger().v(TAG, "setting connection timeout");
         // set timeouts
-        connection.setConnectTimeout(45000);
-        connection.setReadTimeout(45000);
+        connection.setConnectTimeout(connectionTimeout);
+        connection.setReadTimeout(readTimeout);
 
         MFConfiguration.getStaticMFLogger().v(TAG, "setting request headers");
         // set request headers (if any)
