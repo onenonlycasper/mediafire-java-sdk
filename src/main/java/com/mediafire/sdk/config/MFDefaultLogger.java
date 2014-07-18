@@ -14,12 +14,12 @@ import java.util.Map;
  */
 public class MFDefaultLogger implements MFLogger {
     @Override
-    public void logMessage(String source, String message) {
+    public void v(String source, String message) {
         System.out.println("[" + Thread.currentThread().getName() + "] [" + source + "] - " + message);
     }
 
     @Override
-    public void logException(String source, Exception exception) {
+    public void e(String source, Exception exception) {
         StackTraceElement[] stackTraceElements = exception.getStackTrace();
         StringBuilder stringBuilder = new StringBuilder();
         for (StackTraceElement stackTraceElement : stackTraceElements) {

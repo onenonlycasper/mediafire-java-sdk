@@ -34,7 +34,7 @@ public class UploadItem {
      *                      Should use the single or dual argument constructor for the most part.
      */
     public UploadItem(String path, UploadOptions uploadOptions) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "UploadItem created");
+        MFConfiguration.getStaticMFLogger().v(TAG, "UploadItem created");
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
@@ -78,7 +78,7 @@ public class UploadItem {
     }
 
     public int getUploadAttemptCount() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getUploadAttemptCount(" + uploadAttemptCount + ")");
+        MFConfiguration.getStaticMFLogger().v(TAG, "getUploadAttemptCount(" + uploadAttemptCount + ")");
         uploadAttemptCount++;
         return uploadAttemptCount;
     }
@@ -89,7 +89,7 @@ public class UploadItem {
      * @return the filename.
      */
     public String getFileName() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getFileName()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "getFileName()");
         if (!options.getCustomFileName().isEmpty()) {
             fileName = options.getCustomFileName();
         }
@@ -102,7 +102,7 @@ public class UploadItem {
      * @return the file data struct.
      */
     public FileData getFileData() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getFileData()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "getFileData()");
         return fileData;
     }
 
@@ -112,7 +112,7 @@ public class UploadItem {
      * @return - the poll upload key.
      */
     public String getPollUploadKey() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getPollUploadKey()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "getPollUploadKey()");
         return pollUploadKey;
     }
 
@@ -122,7 +122,7 @@ public class UploadItem {
      * @return - the upload options struct.
      */
     public UploadOptions getUploadOptions() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getUploadOptions()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "getUploadOptions()");
         if (options == null) {
             options = new UploadOptions();
         }
@@ -135,7 +135,7 @@ public class UploadItem {
      * @return - the chunkdata struct.
      */
     public ChunkData getChunkData() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getChunkData()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "getChunkData()");
         if (chunkData == null) {
             chunkData = new ChunkData();
         }
@@ -148,9 +148,9 @@ public class UploadItem {
      * @return - the resumablebitmap struct.
      */
     public ResumableBitmap getBitmap() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getBitmap()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "getBitmap()");
         if (bitmap == null) {
-            MFConfiguration.getStaticMFLogger().logMessage(TAG, "  resumable bitmap reference lost");
+            MFConfiguration.getStaticMFLogger().v(TAG, "  resumable bitmap reference lost");
             bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
         }
         return bitmap;
@@ -162,7 +162,7 @@ public class UploadItem {
      * @param bitmap - the resumablebitmap to set.
      */
     public void setBitmap(ResumableBitmap bitmap) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "setBitmap()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "setBitmap()");
         this.bitmap = bitmap;
     }
 
@@ -172,7 +172,7 @@ public class UploadItem {
      * @param pollUploadKey - the polluploadkey to set.
      */
     public void setPollUploadKey(String pollUploadKey) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "setPollUploadKey()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "setPollUploadKey()");
         this.pollUploadKey = pollUploadKey;
     }
 
@@ -182,7 +182,7 @@ public class UploadItem {
      * @param path path of the file.
      */
     private void setFileName(String path) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "setFileName()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "setFileName()");
         String[] splitName = path.split("/");
         //just throwing the unsupportedcoding exception to whoever creates the upload item
         try {

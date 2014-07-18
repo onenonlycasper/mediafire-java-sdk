@@ -27,13 +27,13 @@ public class InstantProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "doUploadProcess()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "doUploadProcess()");
         // url encode the filename
         String filename;
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            MFConfiguration.getStaticMFLogger().logMessage(TAG, "Exception: " + e);
+            MFConfiguration.getStaticMFLogger().v(TAG, "Exception: " + e);
             notifyListenerException(e);
             return;
         }

@@ -25,7 +25,7 @@ public class CheckProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "doUploadProcess()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "doUploadProcess()");
         uploadItem.getFileData().setFileSize();
         uploadItem.getFileData().setFileHash();
         //notify listeners that check started
@@ -36,7 +36,7 @@ public class CheckProcess extends UploadProcess {
         try {
             filename = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            MFConfiguration.getStaticMFLogger().logMessage(TAG, "Exception: " + e);
+            MFConfiguration.getStaticMFLogger().v(TAG, "Exception: " + e);
             notifyListenerException(e);
             return;
         }
@@ -64,7 +64,7 @@ public class CheckProcess extends UploadProcess {
         List<Integer> words = response.getResumableUpload().getBitmap().getWords();
         ResumableBitmap bitmap = new ResumableBitmap(count, words);
         uploadItem.setBitmap(bitmap);
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, uploadItem.getFileData().getFilePath() + " upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, " + uploadItem.getBitmap().getWords().toString() + " words.");
+        MFConfiguration.getStaticMFLogger().v(TAG, uploadItem.getFileData().getFilePath() + " upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, " + uploadItem.getBitmap().getWords().toString() + " words.");
 
         // notify listeners that check has completed
         notifyListenerCompleted(response);

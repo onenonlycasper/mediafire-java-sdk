@@ -35,7 +35,7 @@ public class ResumableProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "doUploadProcess()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "doUploadProcess()");
 
         //get file size. this will be used for chunks.
         FileData fileData = uploadItem.getFileData();
@@ -45,7 +45,7 @@ public class ResumableProcess extends UploadProcess {
         try {
             encodedShortFileName = URLEncoder.encode(uploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            MFConfiguration.getStaticMFLogger().logMessage(TAG, "Exception while encoding file name: " + e);
+            MFConfiguration.getStaticMFLogger().v(TAG, "Exception while encoding file name: " + e);
             notifyListenerException(e);
             return;
         }
@@ -105,7 +105,7 @@ public class ResumableProcess extends UploadProcess {
                 List<Integer> words = response.getResumableUpload().getBitmap().getWords();
                 ResumableBitmap bitmap = new ResumableBitmap(count, words);
                 uploadItem.setBitmap(bitmap);
-                MFConfiguration.getStaticMFLogger().logMessage(TAG, "(" + uploadItem.getFileData().getFilePath() + ") upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, (" + uploadItem.getBitmap().getWords().toString() + ") words.");
+                MFConfiguration.getStaticMFLogger().v(TAG, "(" + uploadItem.getFileData().getFilePath() + ") upload item bitmap: " + uploadItem.getBitmap().getCount() + " count, (" + uploadItem.getBitmap().getWords().toString() + ") words.");
 
                 clearReferences(chunkSize, chunkHash, uploadChunk, headers, parameters);
             }
@@ -126,23 +126,23 @@ public class ResumableProcess extends UploadProcess {
     }
 
     private void printDebugRequestData(HashMap<String, String> headers, HashMap<String, String> parameters) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "headers: " + headers.toString());
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "parameters: " + parameters.toString());
+        MFConfiguration.getStaticMFLogger().v(TAG, "headers: " + headers.toString());
+        MFConfiguration.getStaticMFLogger().v(TAG, "parameters: " + parameters.toString());
     }
 
     private void printDebugCurrentChunk(int chunkNumber, int numChunks, int chunkSize, int unitSize, long fileSize, String chunkHash, byte[] uploadChunk) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "current thread: " + Thread.currentThread().getName());
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "current chunk: " + chunkNumber);
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "total chunks: " + numChunks);
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "current chunk size: " + chunkSize);
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "normal chunk size: " + unitSize);
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "total file size: " + fileSize);
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "current chunk hash: " + chunkHash);
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "upload chunk ");
+        MFConfiguration.getStaticMFLogger().v(TAG, "current thread: " + Thread.currentThread().getName());
+        MFConfiguration.getStaticMFLogger().v(TAG, "current chunk: " + chunkNumber);
+        MFConfiguration.getStaticMFLogger().v(TAG, "total chunks: " + numChunks);
+        MFConfiguration.getStaticMFLogger().v(TAG, "current chunk size: " + chunkSize);
+        MFConfiguration.getStaticMFLogger().v(TAG, "normal chunk size: " + unitSize);
+        MFConfiguration.getStaticMFLogger().v(TAG, "total file size: " + fileSize);
+        MFConfiguration.getStaticMFLogger().v(TAG, "current chunk hash: " + chunkHash);
+        MFConfiguration.getStaticMFLogger().v(TAG, "upload chunk ");
     }
 
     private void updateProgressForListener(int totalChunks) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "updateProgressForListener()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "updateProgressForListener()");
         // give number of chunks/numChunks for onProgressUpdate
         int numUploaded = 0;
         for (int i = 0; i < totalChunks; i++) {
@@ -150,15 +150,15 @@ public class ResumableProcess extends UploadProcess {
                 numUploaded++;
             }
         }
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, numUploaded + "/" + totalChunks + " chunks uploaded");
+        MFConfiguration.getStaticMFLogger().v(TAG, numUploaded + "/" + totalChunks + " chunks uploaded");
         notifyListenerOnProgressUpdate(numUploaded, totalChunks);
     }
 
     public boolean shouldCancelUpload(ResumableResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "shouldCancelUpload()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "shouldCancelUpload()");
         // if API response code OR Upload Response Result code have an error then we need to terminate the process
         if (response.hasError()) {
-            MFConfiguration.getStaticMFLogger().logMessage(TAG, "response has an error # " + response.getError() + ": " + response.getMessage());
+            MFConfiguration.getStaticMFLogger().v(TAG, "response has an error # " + response.getError() + ": " + response.getMessage());
             notifyListenerCancelled(response);
             return true;
         }
@@ -167,7 +167,7 @@ public class ResumableProcess extends UploadProcess {
             // let the listeners know we are done with this process (because there was an error in this case)
             if (response.getDoUpload().getResultCode() != ResumableResponse.Result.SUCCESS_FILE_MOVED_TO_ROOT) {
                 // let the listeners know we are done with this process (because there was an error in this case)
-                MFConfiguration.getStaticMFLogger().logMessage(TAG, "cancelling because result code: " + response.getDoUpload().getResultCode().toString());
+                MFConfiguration.getStaticMFLogger().v(TAG, "cancelling because result code: " + response.getDoUpload().getResultCode().toString());
                 notifyListenerCancelled(response);
                 return true;
             }
@@ -177,7 +177,7 @@ public class ResumableProcess extends UploadProcess {
     }
 
     public ResumableChunkInfo createResumableChunkInfo(int unitSize, int chunkNumber) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "createResumableChunkInfo");
+        MFConfiguration.getStaticMFLogger().v(TAG, "createResumableChunkInfo");
         ResumableChunkInfo resumableChunkInfo;
         // generate the chunk
         FileInputStream fis;
@@ -208,16 +208,16 @@ public class ResumableProcess extends UploadProcess {
      * @return The parameters to use for the upload API request.
      */
     private HashMap<String, String> generateGetParameters() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "generateGetParameters()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "generateGetParameters()");
         // get upload options. these will be passed as request parameters
         UploadOptions uploadOptions = uploadItem.getUploadOptions();
         String actionOnDuplicate = uploadOptions.getActionOnDuplicate();
         String versionControl = uploadOptions.getVersionControl();
         String uploadFolderKey = uploadOptions.getUploadFolderKey();
         String uploadPath = uploadOptions.getUploadPath();
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "action on duplicate: " + actionOnDuplicate);
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "version control: " + versionControl);
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "upload folder key: " + uploadFolderKey);
+        MFConfiguration.getStaticMFLogger().v(TAG, "action on duplicate: " + actionOnDuplicate);
+        MFConfiguration.getStaticMFLogger().v(TAG, "version control: " + versionControl);
+        MFConfiguration.getStaticMFLogger().v(TAG, "upload folder key: " + uploadFolderKey);
 
         String actionToken = mfTokenFarm.borrowUploadActionToken().getTokenString();
         HashMap<String, String> parameters = new HashMap<String, String>();
@@ -245,7 +245,7 @@ public class ResumableProcess extends UploadProcess {
      * @return A HashMap<String, String> containing the parameters to use with the HTTP POST request.
      */
     private HashMap<String, String> generatePostHeaders(String encodedShortFileName, long fileSize, int chunkNumber, String chunkHash, int chunkSize) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "generatePostHeaders()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "generatePostHeaders()");
         HashMap<String, String> headers = new HashMap<String, String>();
         // these headers are related to the entire file
         headers.put("x-filename", encodedShortFileName);
@@ -265,7 +265,7 @@ public class ResumableProcess extends UploadProcess {
      * @return Flag indicating if the upload key should be set.
      */
     private boolean shouldSetPollUploadKey(ResumableResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "shouldSetPollUploadKey()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "shouldSetPollUploadKey()");
         switch (response.getDoUpload().getResultCode()) {
             case NO_ERROR:
             case SUCCESS_FILE_MOVED_TO_ROOT:
@@ -285,7 +285,7 @@ public class ResumableProcess extends UploadProcess {
      * @return The actual chunk size.
      */
     private int getChunkSize(int chunkNumber, int numChunks, long fileSize, int unitSize) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "getChunkSize()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "getChunkSize()");
         int chunkSize;
         if (chunkNumber >= numChunks) {
             chunkSize = 0; // represents bad size
@@ -306,8 +306,8 @@ public class ResumableProcess extends UploadProcess {
      * creates an upload chunk array of bytes based on a position in a file.
      */
     private byte[] createUploadChunk(long unitSize, int chunkNumber, BufferedInputStream fileStream) throws IOException {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "createUploadChunk()");
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "creating new byte array of size: " + unitSize);
+        MFConfiguration.getStaticMFLogger().v(TAG, "createUploadChunk()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "creating new byte array of size: " + unitSize);
         byte[] readBytes = new byte[(int) unitSize];
         int offset = (int) (unitSize * chunkNumber);
         fileStream.skip(offset);
@@ -350,7 +350,7 @@ public class ResumableProcess extends UploadProcess {
      * @return byte array converted to string.
      */
     private String convertHashBytesToString(byte[] hashBytes) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "convertHashBytesToString()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "convertHashBytesToString()");
         StringBuilder sb = new StringBuilder();
         for (byte hashByte : hashBytes) {
             String tempString = Integer.toHexString((hashByte & 0xFF) | 0x100).substring(1, 3);

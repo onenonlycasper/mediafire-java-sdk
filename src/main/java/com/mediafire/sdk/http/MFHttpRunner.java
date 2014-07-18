@@ -23,7 +23,7 @@ public class MFHttpRunner {
     }
 
     public MFResponse doRequest(MFRequest mfRequest) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "doRequest()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "doRequest()");
 
         MFResponse mfResponse = null;
         try {

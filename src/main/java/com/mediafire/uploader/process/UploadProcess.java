@@ -30,7 +30,7 @@ public abstract class UploadProcess implements Runnable {
 
 
     protected void notifyListenerUploadStarted() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerUploadStarted()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerUploadStarted()");
         // notify listeners that task has started.
         if (uploadListenerManager != null) {
             uploadListenerManager.onStartedUploadProcess(uploadItem);
@@ -38,7 +38,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCompleted(CheckResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerCompleted()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onCheckCompleted(uploadItem, response);
@@ -46,7 +46,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCompleted(ResumableResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerCompleted()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onResumableCompleted(uploadItem, response);
@@ -54,7 +54,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCompleted(InstantResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerCompleted()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onInstantCompleted(uploadItem, response);
@@ -62,7 +62,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCompleted(PollResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerCompleted()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerCompleted()");
         // notify listeners that check is completed
         if (uploadListenerManager != null) {
             uploadListenerManager.onPollCompleted(uploadItem, response);
@@ -70,7 +70,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerOnProgressUpdate(int chunkNumber, int numChunks) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "notifyListenerOnProgressUpdate()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "notifyListenerOnProgressUpdate()");
         // notify listeners of progress update
         if (uploadListenerManager != null) {
             uploadListenerManager.onProgressUpdate(uploadItem, chunkNumber, numChunks);
@@ -78,7 +78,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCancelled(CheckResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerCancelled()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
@@ -86,7 +86,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCancelled(InstantResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerCancelled()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
@@ -94,7 +94,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCancelled(ResumableResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerCancelled()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
@@ -102,7 +102,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerCancelled(PollResponse response) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerCancelled()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerCancelled()");
         // notify listeners task cancelled
         if (uploadListenerManager != null) {
             uploadListenerManager.onCancelled(uploadItem, response);
@@ -110,7 +110,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerException(Exception e) {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerException()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerException()");
         //notify listeners that there has been an exception
         if (uploadListenerManager != null) {
             uploadListenerManager.onProcessException(uploadItem, e);
@@ -118,7 +118,7 @@ public abstract class UploadProcess implements Runnable {
     }
 
     protected void notifyListenerLostConnection() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, " notifyListenerLostConnection()");
+        MFConfiguration.getStaticMFLogger().v(TAG, " notifyListenerLostConnection()");
         // notify listeners that connection was lost
         if (uploadListenerManager != null) {
             uploadListenerManager.onLostConnection(uploadItem);

@@ -38,7 +38,7 @@ public class PollProcess extends UploadProcess {
 
     @Override
     protected void doUploadProcess() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "doUploadProcess()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "doUploadProcess()");
         //generate our request string
         HashMap<String, String> keyValue = generateGetParameters();
 
@@ -57,7 +57,7 @@ public class PollProcess extends UploadProcess {
                 return;
             }
 
-            MFConfiguration.getStaticMFLogger().logMessage(TAG, "received error code: " + response.getErrorCode());
+            MFConfiguration.getStaticMFLogger().v(TAG, "received error code: " + response.getErrorCode());
             //check to see if we need to call pollUploadCompleted or loop again
             switch (response.getErrorCode()) {
                 case NO_ERROR:
@@ -68,22 +68,22 @@ public class PollProcess extends UploadProcess {
                     //      second  -   fileerror code no error? yes, carry on old chap!. no, cancel upload because error.
                     //      third   -   status code 99 (no more requests)? yes, done. no, continue.
                     if (response.getDoUpload().getResultCode() != PollResponse.Result.SUCCESS) {
-                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
+                        MFConfiguration.getStaticMFLogger().v(TAG, "result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
                         notifyListenerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getFileErrorCode() != PollResponse.FileError.NO_ERROR) {
-                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
-                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "file path: " + uploadItem.getFileData().getFilePath());
-                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "file hash: " + uploadItem.getFileData().getFileHash());
-                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "file size: " + uploadItem.getFileData().getFileSize());
+                        MFConfiguration.getStaticMFLogger().v(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
+                        MFConfiguration.getStaticMFLogger().v(TAG, "file path: " + uploadItem.getFileData().getFilePath());
+                        MFConfiguration.getStaticMFLogger().v(TAG, "file hash: " + uploadItem.getFileData().getFileHash());
+                        MFConfiguration.getStaticMFLogger().v(TAG, "file size: " + uploadItem.getFileData().getFileSize());
                         notifyListenerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getStatusCode() == PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY) {
-                        MFConfiguration.getStaticMFLogger().logMessage(TAG, "status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
+                        MFConfiguration.getStaticMFLogger().v(TAG, "status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
                         notifyListenerCompleted(response);
                         return;
                     }
@@ -98,7 +98,7 @@ public class PollProcess extends UploadProcess {
             try {
                 Thread.sleep(TIME_BETWEEN_POLLS);
             } catch (InterruptedException e) {
-                MFConfiguration.getStaticMFLogger().logMessage(TAG, "Exception: " + e);
+                MFConfiguration.getStaticMFLogger().v(TAG, "Exception: " + e);
                 notifyListenerException(e);
                 return;
             }
@@ -116,7 +116,7 @@ public class PollProcess extends UploadProcess {
     }
 
     private HashMap<String, String> generateGetParameters() {
-        MFConfiguration.getStaticMFLogger().logMessage(TAG, "generateGetParameters()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "generateGetParameters()");
         HashMap<String, String> keyValue = new HashMap<String, String>();
         keyValue.put("key", uploadItem.getPollUploadKey());
         keyValue.put("response_format", "json");
