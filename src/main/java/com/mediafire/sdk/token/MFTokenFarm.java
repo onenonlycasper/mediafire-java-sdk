@@ -45,6 +45,10 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         return mfHttpRunner;
     }
 
+    public MFConfiguration getMfConfiguration() {
+        return mfConfiguration;
+    }
+
     private boolean canGetSessionToken() {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("token_version", "2");
