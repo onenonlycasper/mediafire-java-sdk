@@ -205,7 +205,7 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         MFConfiguration.getStaticMFLogger().v(TAG, "onProcessException()");
         MFConfiguration.getStaticMFLogger().v(TAG, "received exception: " + exception);
         if (errorTracker != null) {
-            errorTracker.e(UploadManagerWorker.class.getCanonicalName(), exception);
+            errorTracker.e(UploadManagerWorker.class.getCanonicalName(), "exception during upload", exception);
         }
         notifyUploadListenerCancelled(uploadItem);
     }

@@ -15,12 +15,52 @@ import java.util.Map;
 public class MFDefaultLogger implements MFLogger {
     @Override
     public void v(String source, String message) {
+        e(source, message);
+    }
+
+    @Override
+    public void v(String source, String message, Throwable throwable) {
+        e(source, message, throwable);
+    }
+
+    @Override
+    public void d(String source, String message) {
+        e(source, message);
+    }
+
+    @Override
+    public void d(String source, String message, Throwable throwable) {
+        e(source, message, throwable);
+    }
+
+    @Override
+    public void i(String source, String message) {
+        e(source, message);
+    }
+
+    @Override
+    public void i(String source, String message, Throwable throwable) {
+        e(source, message, throwable);
+    }
+
+    @Override
+    public void w(String source, String message) {
+        e(source, message);
+    }
+
+    @Override
+    public void w(String source, String message, Throwable throwable) {
+        e(source, message, throwable);
+    }
+
+    @Override
+    public void e(String source, String message) {
         System.out.println("[" + Thread.currentThread().getName() + "] [" + source + "] - " + message);
     }
 
     @Override
-    public void e(String source, Exception exception) {
-        StackTraceElement[] stackTraceElements = exception.getStackTrace();
+    public void e(String source, String message, Throwable throwable) {
+        StackTraceElement[] stackTraceElements = throwable.getStackTrace();
         StringBuilder stringBuilder = new StringBuilder();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
             stringBuilder.append(stackTraceElement.toString());

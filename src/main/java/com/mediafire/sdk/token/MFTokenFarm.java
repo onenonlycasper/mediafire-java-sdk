@@ -123,7 +123,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     public void returnSessionToken(MFSessionToken sessionToken) {
         MFConfiguration.getStaticMFLogger().v(TAG, "returnSessionToken()");
         if (sessionToken == null) {
-            getNewSessionToken();
+            MFConfiguration.getStaticMFLogger().w(TAG, "received null session token");
             return;
         }
 
@@ -131,10 +131,8 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
             mfSessionTokens.put(sessionToken);
             return;
         } catch (InterruptedException e) { 
-            MFConfiguration.getStaticMFLogger().e(TAG, e);
+            MFConfiguration.getStaticMFLogger().e(TAG, "exception while trying to return a session token", e);
         }
-
-        getNewSessionToken();
     }
 
     @Override
@@ -217,7 +215,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
                 conditionUploadTokenNotExpired.await(1, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
-            MFConfiguration.getStaticMFLogger().e(TAG, e);
+            MFConfiguration.getStaticMFLogger().e(TAG, "exception while trying to borrow an upload action token", e);
         } finally {
             lockBorrowUploadToken.unlock();
         }
@@ -238,7 +236,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
                 conditionImageTokenNotExpired.await(1, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
-            MFConfiguration.getStaticMFLogger().e(TAG, e);
+            MFConfiguration.getStaticMFLogger().e(TAG, "exception while trying to borrow an image action token", e);
         } finally {
             // attach new one to apiRequestObject
             lockBorrowImageToken.unlock();
