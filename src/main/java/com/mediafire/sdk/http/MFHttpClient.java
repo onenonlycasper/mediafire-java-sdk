@@ -117,7 +117,7 @@ public final class MFHttpClient extends MFHttp {
                 MFConfiguration.getStaticMFLogger().v(TAG, "transfer scheme for this request: " + mfRequest.getMfHost().getTransferScheme().toString());
                 connection = url.openConnection();
                 setConnectionParameters(connection, mfRequest);
-                // set ssl context and trust manager
+                // TODO set ssl context and trust manager
                 return (HttpsURLConnection) connection;
             default:
                 throw new IllegalStateException("MFHost.TransferScheme must be HTTP or HTTPS");
