@@ -49,9 +49,8 @@ public class PollProcess extends UploadProcess {
             // get api response.
 
             MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_POLL_UPLOAD, keyValue);
-            MFHttpRunner.RunnerHolder runnerHolder = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
-            MFResponse receivedMFResponse = runnerHolder.getMfResponse();
-            PollResponse response = receivedMFResponse.getResponseObject(PollResponse.class);
+            MFResponse mfResponse = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
+            PollResponse response = mfResponse.getResponseObject(PollResponse.class);
 
             if (response == null) {
                 notifyListenerLostConnection();

@@ -22,7 +22,7 @@ public class MFHttpRunner {
         this.mfHttpClientCleanup = new MFHttpClientCleanup(mfTokenFarmCallback, mfConfiguration);
     }
 
-    public RunnerHolder doRequest(MFRequest mfRequest) {
+    public MFResponse doRequest(MFRequest mfRequest) {
         mfConfiguration.getMfLogger().logMessage(TAG, "doRequest()");
 
         MFResponse mfResponse = null;
@@ -37,25 +37,7 @@ public class MFHttpRunner {
 
         mfHttpClientCleanup.returnToken(mfRequest, mfResponse);
 
-        return new RunnerHolder(mfRequest, mfResponse);
+        return mfResponse;
 
-    }
-
-    public class RunnerHolder {
-        public MFRequest mfRequest;
-        public MFResponse mfResponse;
-
-        public RunnerHolder(MFRequest mfRequest, MFResponse mfResponse) {
-            this.mfRequest = mfRequest;
-            this.mfResponse = mfResponse;
-        }
-
-        public MFRequest getMfRequest() {
-            return mfRequest;
-        }
-
-        public MFResponse getMfResponse() {
-            return mfResponse;
-        }
     }
 }

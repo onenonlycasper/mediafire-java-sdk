@@ -41,9 +41,8 @@ public class InstantProcess extends UploadProcess {
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_INSTANT, keyValue);
-        MFHttpRunner.RunnerHolder runnerHolder = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
-        MFResponse receivedMFResponse = runnerHolder.getMfResponse();
-        InstantResponse response = receivedMFResponse.getResponseObject(InstantResponse.class);
+        MFResponse mfResponse = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
+        InstantResponse response = mfResponse.getResponseObject(InstantResponse.class);
 
         if (response == null) {
             notifyListenerLostConnection();

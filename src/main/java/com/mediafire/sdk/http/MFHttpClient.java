@@ -36,7 +36,7 @@ public final class MFHttpClient extends MFHttp {
             postData(mfRequest, connection);
             mfConfiguration.getMfLogger().logMessage(TAG, "receiving response");
             // receive response from request
-            mfResponse = getResponseFromStream(connection);
+            mfResponse = getResponseFromStream(connection, mfRequest);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -48,7 +48,7 @@ public final class MFHttpClient extends MFHttp {
         return mfResponse;
     }
 
-    private MFResponse getResponseFromStream(URLConnection connection) throws IOException {
+    private MFResponse getResponseFromStream(URLConnection connection, MFRequest mfRequest) throws IOException {
         mfConfiguration.getMfLogger().logMessage(TAG, "getResponseFromStream()");
         int status = ((HttpURLConnection) connection).getResponseCode();
         MFResponse mfResponse = null;
@@ -56,11 +56,11 @@ public final class MFHttpClient extends MFHttp {
         if (status / 100 != 2) {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(((HttpURLConnection) connection).getErrorStream());
             byte[] body = readStream(bufferedInputStream);
-            mfResponse = new MFResponse(status, new Hashtable<String, List<String>>(), body);
+            mfResponse = new MFResponse(status, new Hashtable<String, List<String>>(), body, mfRequest);
         } else {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
             byte[] body = readStream(bufferedInputStream);
-            mfResponse = new MFResponse(status, connection.getHeaderFields(), body);
+            mfResponse = new MFResponse(status, connection.getHeaderFields(), body, mfRequest);
         }
 
         return mfResponse;

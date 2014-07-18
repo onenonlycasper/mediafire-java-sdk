@@ -44,9 +44,8 @@ public class CheckProcess extends UploadProcess {
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
         MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_CHECK, keyValue);
-        MFHttpRunner.RunnerHolder runnerHolder = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
-        MFResponse receivedMFResponse = runnerHolder.getMfResponse();
-        CheckResponse response = receivedMFResponse.getResponseObject(CheckResponse.class);
+        MFResponse mfResponse = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
+        CheckResponse response = mfResponse.getResponseObject(CheckResponse.class);
 
         if (response == null) {
             notifyListenerLostConnection();

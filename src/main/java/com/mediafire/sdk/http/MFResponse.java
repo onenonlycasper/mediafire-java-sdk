@@ -14,15 +14,15 @@ import java.util.Map;
  */
 public final class MFResponse {
     private int status;
-
     private Map<String, List<String>> headers;
-
     private byte[] bodyBytes;
+    private MFRequest mfRequest;
 
-    public MFResponse(int status, Map<String, List<String>> headers, byte[] bodyBytes) {
+    public MFResponse(int status, Map<String, List<String>> headers, byte[] bodyBytes, MFRequest mfRequest) {
         this.status = status;
         this.headers = headers;
         this.bodyBytes = bodyBytes;
+        this.mfRequest = mfRequest;
     }
 
     public int getStatus() {
@@ -49,7 +49,11 @@ public final class MFResponse {
         return new Gson().fromJson(getResponseStringForGson(responseString), responseClass);
     }
 
-    public String getResponseStringForGson(String response) {
+    public MFRequest getOriginMFRequest() {
+        return mfRequest;
+    }
+
+    private String getResponseStringForGson(String response) {
         if (response == null || response.isEmpty()) {
             return null;
         }
