@@ -60,7 +60,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         }
 
         ApiResponse apiResponse = mfResponse.getResponseObject(ApiResponse.class);
-        if (apiResponse.hasError()) {
+        if (apiResponse == null || apiResponse.hasError()) {
             return false;
         }
 
