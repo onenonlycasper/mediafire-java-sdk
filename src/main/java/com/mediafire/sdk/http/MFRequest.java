@@ -29,13 +29,16 @@ public final class MFRequest implements MFRequester {
         this.isQueryPostable = mfRequestBuilder.isQueryPostable;
         this.isTokenRequired = mfRequestBuilder.isTokenRequired;
         this.requestParameters = mfRequestBuilder.requestParameters;
+        this.requestParameters.put("response_format", "json");
         this.headers = mfRequestBuilder.headers;
         this.payload = mfRequestBuilder.payload;
-
-        this.requestParameters.put("response_format", "json");
     }
 
     public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
+        if (requestParameters == null) {
+            requestParameters = new LinkedHashMap<String, String>();
+            requestParameters.put("response_format", "json");
+        }
         this.transferProtocol = mfHost.getTransferProtocol();
         this.host = mfHost.getHost();
         this.uri = mfApi.getUri();
@@ -47,8 +50,10 @@ public final class MFRequest implements MFRequester {
         this.requestParameters = requestParameters;
         this.headers = new LinkedHashMap<String, String>();
         this.payload = new byte[0];
+    }
 
-        this.requestParameters.put("response_format", "json");
+    public MFRequest(MFHost mfHost, MFApi mfApi) {
+        this(mfHost, mfApi, new LinkedHashMap<String, String>());
     }
 
     @Override
