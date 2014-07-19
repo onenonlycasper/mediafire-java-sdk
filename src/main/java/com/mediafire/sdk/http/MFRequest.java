@@ -37,8 +37,10 @@ public final class MFRequest implements MFRequester {
     public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
         if (requestParameters == null) {
             requestParameters = new LinkedHashMap<String, String>();
-            requestParameters.put("response_format", "json");
         }
+
+        requestParameters.put("response_format", "json");
+
         this.transferProtocol = mfHost.getTransferProtocol();
         this.host = mfHost.getHost();
         this.uri = mfApi.getUri();
