@@ -6,46 +6,31 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class MFRequest implements MFRequester {
-    private final MFHost mfHost;
-    private final MFApi mfApi;
+    private MFHost.TransferProtocol transferProtocol;
+    private MFHost.Host host;
+    private String uri;
+    private MFApi.TokenType typeOfTokenToBorrow;
+    private MFApi.TokenType typeOfSignatureToAdd;
+    private MFApi.TokenType typeOfTokenToReturn;
+    private boolean isQueryPostable;
+    private boolean isTokenRequired;
     private final Map<String, String> requestParameters;
     private final Map<String, String> headers;
     private final byte[] payload;
     private MFToken mfToken;
 
-    public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters, Map<String, String> headers, byte[] payload) {
-        if (mfHost == null) {
-            throw new IllegalArgumentException("MFHost cannot be null");
-        }
-        if (mfApi == null) {
-            throw new IllegalArgumentException("MFApi cannot be null");
-        }
-        if (requestParameters == null) {
-            requestParameters = new LinkedHashMap<String, String>();
-        }
-        if (payload == null) {
-            payload = new byte[0];
-        }
-
-        requestParameters.put("response_format", "json");
-
-        this.mfHost = mfHost;
-        this.mfApi = mfApi;
-        this.requestParameters = requestParameters;
-        this.headers = headers;
-        this.payload = payload;
-    }
-
-    public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters, Map<String, String> headers) {
-        this(mfHost, mfApi, requestParameters, headers, new byte[0]);
-    }
-
-    public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
-        this(mfHost, mfApi, requestParameters, new LinkedHashMap<String, String>(), new byte[0]);
-    }
-
-    public MFRequest(MFHost mfHost, MFApi mfApi) {
-        this(mfHost, mfApi, new LinkedHashMap<String, String>(), new LinkedHashMap<String, String>(), new byte[0]);
+    private MFRequest(MFRequestBuilder mfRequestBuilder) {
+        this.transferProtocol = mfRequestBuilder.transferProtocol;
+        this.host = mfRequestBuilder.host;
+        this.uri = mfRequestBuilder.uri;
+        this.typeOfTokenToBorrow = mfRequestBuilder.typeOfTokenToBorrow;
+        this.typeOfSignatureToAdd = mfRequestBuilder.typeOfSignatureToAdd;
+        this.typeOfTokenToReturn = mfRequestBuilder.typeOfTokenToReturn;
+        this.isQueryPostable = mfRequestBuilder.isQueryPostable;
+        this.isTokenRequired = mfRequestBuilder.isTokenRequired;
+        this.requestParameters = mfRequestBuilder.requestParameters;
+        this.headers = mfRequestBuilder.headers;
+        this.payload = mfRequestBuilder.payload;
     }
 
     @Override
@@ -74,42 +59,145 @@ public final class MFRequest implements MFRequester {
     }
 
     @Override
-    public String getHost() {
-        return mfHost.getHost();
+    public MFHost.Host getHost() {
+        return host;
     }
 
     @Override
-    public MFHost.TransferProtocol getTransferProtocol() {
-        return mfHost.getTransferProtocol();
+    public MFHost.TransferProtocol getProtocol() {
+        return transferProtocol;
     }
 
     @Override
     public String getUri() {
-        return mfApi.getUri();
+        return uri;
     }
 
     @Override
     public MFApi.TokenType getTypeOfTokenToBorrow() {
-        return mfApi.getTypeOfTokenToBorrow();
+        return typeOfTokenToBorrow;
     }
 
     @Override
     public MFApi.TokenType getTypeOfSignatureToAdd() {
-        return mfApi.getTypeOfSignatureToAdd();
+        return typeOfSignatureToAdd;
     }
 
     @Override
     public MFApi.TokenType getTypeOfTokenToReturn() {
-        return mfApi.getTypeOfTokenToReturn();
+        return typeOfTokenToReturn;
     }
 
     @Override
     public boolean isQueryPostable() {
-        return mfApi.isQueryPostable();
+        return isQueryPostable;
     }
 
     @Override
     public boolean isTokenRequired() {
-        return mfApi.isTokenRequired();
+        return isTokenRequired;
+    }
+
+    public static class MFRequestBuilder {
+        private MFHost.TransferProtocol transferProtocol;
+        private MFHost.Host host;
+        private String uri;
+        private MFApi.TokenType typeOfTokenToBorrow;
+        private MFApi.TokenType typeOfSignatureToAdd;
+        private MFApi.TokenType typeOfTokenToReturn;
+        private boolean isQueryPostable;
+        private boolean isTokenRequired;
+        private Map<String, String> requestParameters;
+        private Map<String, String> headers;
+        private byte[] payload;
+
+        public MFRequestBuilder(MFHost mfHost, MFApi mfApi) {
+            if (mfHost == null) {
+                throw new IllegalArgumentException("MFHost cannot be null");
+            }
+            this.transferProtocol = mfHost.getTransferProtocol();
+            this.host = mfHost.getHost();
+            this.uri = mfApi.getUri();
+            this.typeOfTokenToBorrow = mfApi.getTypeOfTokenToBorrow();
+            this.typeOfSignatureToAdd = mfApi.getTypeOfSignatureToAdd();
+            this.typeOfTokenToReturn = mfApi.getTypeOfTokenToReturn();
+            this.isQueryPostable = mfApi.isQueryPostable();
+            this.isTokenRequired = mfApi.isTokenRequired();
+        }
+
+        public MFRequestBuilder(MFHost mfHost) {
+            this(mfHost, null);
+        }
+
+        public MFRequestBuilder uri(String uri) {
+            this.uri = uri;
+            return this;
+        }
+
+        public MFRequestBuilder typeOfTokenToBorrow(MFApi.TokenType typeOfTokenToBorrow) {
+            if (typeOfTokenToBorrow == null) {
+                typeOfTokenToBorrow = MFApi.TokenType.NONE;
+            }
+            this.typeOfTokenToBorrow = typeOfTokenToBorrow;
+            return this;
+        }
+
+        public MFRequestBuilder typeOfSignatureToAdd(MFApi.TokenType typeOfSignatureToAdd) {
+            if (typeOfSignatureToAdd == null) {
+                typeOfSignatureToAdd = MFApi.TokenType.NONE;
+            }
+            this.typeOfSignatureToAdd = typeOfSignatureToAdd;
+            return this;
+        }
+
+        public MFRequestBuilder typeOfTokenToReturn(MFApi.TokenType typeOfTokenToReturn) {
+            if (typeOfTokenToReturn == null) {
+                typeOfTokenToReturn = MFApi.TokenType.NONE;
+            }
+            this.typeOfTokenToReturn = typeOfTokenToReturn;
+            return this;
+        }
+
+        public MFRequestBuilder isQueryPostable(boolean isQueryPostable) {
+            this.isQueryPostable = isQueryPostable;
+            return this;
+        }
+
+        public MFRequestBuilder isTokenRequired(boolean isTokenRequired) {
+            this.isTokenRequired = isTokenRequired;
+            return this;
+        }
+
+        public MFRequestBuilder requestParameters(Map<String, String> requestParameters) {
+            if (requestParameters == null) {
+                requestParameters = new LinkedHashMap<String, String>();
+            }
+            this.requestParameters = requestParameters;
+            return this;
+        }
+
+        public MFRequestBuilder headers(Map<String, String> headers) {
+            if (headers == null) {
+                headers = new LinkedHashMap<String, String>();
+            }
+            this.headers = headers;
+            return this;
+        }
+
+        public MFRequestBuilder payload(byte[] payload) {
+            if (payload == null) {
+                payload = new byte[0];
+            }
+            this.payload = payload;
+            return this;
+        }
+
+        public MFRequest build() {
+            if (uri == null) {
+                throw new IllegalArgumentException("uri cannot be null");
+            }
+
+            return new MFRequest(this);
+        }
     }
 }
