@@ -1,6 +1,6 @@
 package com.mediafire.sdk.token;
 
-public abstract class MFActionToken extends MFToken {
+public class MFActionToken extends MFToken {
     private final long expiration;
     private final Type type;
 
@@ -34,6 +34,6 @@ public abstract class MFActionToken extends MFToken {
 
     @Override
     public String toString() {
-        return "MFActionToken [" + type.getValue() + "], expiry [" + expiration + "], token [" + tokenString + "]";
+        return "MFActionToken token [" + tokenString + "], type [" + type.getValue() + "], expiry [" + expiration + "]";
     }
 }

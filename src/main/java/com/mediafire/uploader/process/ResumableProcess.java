@@ -76,7 +76,7 @@ public class ResumableProcess extends UploadProcess {
 
                 printDebugRequestData(headers, parameters);
 
-                MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.UPLOAD_INSTANT);
+                MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.UPLOAD_RESUMABLE);
                 mfRequestBuilder.requestParameters(parameters);
                 mfRequestBuilder.headers(headers);
                 mfRequestBuilder.payload(uploadChunk);
