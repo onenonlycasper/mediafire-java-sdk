@@ -122,7 +122,7 @@ public final class MFHttpClientSetup extends MFHttp {
 
     private void addTokenToRequestParameters(MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().v(TAG, "addTokenToRequestParameters()");
-        if (mfRequester.isTokenRequired()) {
+        if (mfRequester.isTokenRequired() && mfRequester.getToken() != null) {
             MFConfiguration.getStaticMFLogger().v(TAG, "adding token to request parameters (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
             String tokenString = mfRequester.getToken().getTokenString();
             mfRequester.getRequestParameters().put("session_token", tokenString);

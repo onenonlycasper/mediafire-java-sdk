@@ -35,7 +35,7 @@ public enum MFApi {
     USER_UNLINK_TWITTER("/api/1.0/user/unlink_twitter.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     USER_GET_AVATAR("/api/1.0/user/get_avatar.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     USER_SET_AVATAR("/api/1.0/user/set_avatar.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
-    USER_GET_SESSION_TOKEN("/api/1.0/user/get_session_token.php", TokenType.V2, TokenType.NEW, TokenType.NEW, true),
+    USER_GET_SESSION_TOKEN("/api/1.0/user/get_session_token.php", TokenType.NEW, TokenType.NEW, TokenType.NEW, true),
     USER_GET_UPLOAD_TOKEN("/api/1.0/user/get_action_token.php", TokenType.V2, TokenType.V2, TokenType.UPLOAD, true),
     USER_GET_IMAGE_TOKEN("/api/1.0/user/get_action_token.php", TokenType.V2, TokenType.V2, TokenType.IMAGE, true),
     // upload api calls
