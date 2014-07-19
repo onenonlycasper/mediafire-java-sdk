@@ -23,27 +23,40 @@ public final class MFHttpClientCleanup extends MFHttp {
 
         switch (mfRequester.getTypeOfTokenToReturn()) {
             case NEW:
-                MFConfiguration.getStaticMFLogger().v(TAG, "returning session token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ", " + mfRequester.toString() + " )");
+                MFConfiguration.getStaticMFLogger().v(TAG, "returning new session token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ", " + mfRequester.toString() + " )");
                 GetSessionTokenResponse newSessionTokenResponse = mfResponse.getResponseObject(GetSessionTokenResponse.class);
                 MFSessionToken newSessionToken = createNewSessionToken(newSessionTokenResponse);
                 mfTokenFarmCallback.receiveNewSessionToken(newSessionToken);
                 break;
             case V2:
-                MFConfiguration.getStaticMFLogger().v(TAG, "not returning a token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "returning updated session token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ")");
                 ApiResponse apiResponse = mfResponse.getResponseObject(ApiResponse.class);
-                MFSessionToken mfSessionToken = updateSessionToken(apiResponse, mfRequester);
-                mfTokenFarmCallback.returnSessionToken(mfSessionToken);
+                if (apiResponse.hasError() && apiResponse.getError() == 105 || apiResponse.getError() == 127) {
+                    mfTokenFarmCallback.sessionTokenSpoiled((MFSessionToken) mfResponse.getOriginMFRequester().getToken());
+                } else {
+                    MFSessionToken mfSessionToken = updateSessionToken(apiResponse, mfRequester);
+                    mfTokenFarmCallback.returnSessionToken(mfSessionToken);
+                }
                 break;
             case UPLOAD:
-                MFConfiguration.getStaticMFLogger().v(TAG, "returning upload action token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ", " + mfRequester.toString() + " )");
+                MFConfiguration.getStaticMFLogger().v(TAG, "returning new upload action token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ", " + mfRequester.toString() + " )");
                 GetActionTokenResponse uploadActionTokenResponse = mfResponse.getResponseObject(GetActionTokenResponse.class);
-                MFUploadActionToken mfUploadActionToken = createUploadActionToken(uploadActionTokenResponse, mfRequester);
-                mfTokenFarmCallback.receiveNewUploadActionToken(mfUploadActionToken);
+                if (uploadActionTokenResponse.hasError() && uploadActionTokenResponse.getError() == 105 || uploadActionTokenResponse.getError() == 127) {
+                    mfTokenFarmCallback.sessionTokenSpoiled((MFSessionToken) mfResponse.getOriginMFRequester().getToken());
+                } else {
+                    MFUploadActionToken mfUploadActionToken = createUploadActionToken(uploadActionTokenResponse, mfRequester);
+                    mfTokenFarmCallback.receiveNewUploadActionToken(mfUploadActionToken);
+                }
                 break;
             case IMAGE:
-                MFConfiguration.getStaticMFLogger().v(TAG, "returning image action token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ", " + mfRequester.toString() + " )");
+                MFConfiguration.getStaticMFLogger().v(TAG, "returning new image action token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ", " + mfRequester.toString() + " )");
                 GetActionTokenResponse imageActionTokenResponse = mfResponse.getResponseObject(GetActionTokenResponse.class);
-                MFImageActionToken mfImageActionToken = createImageActionToken(imageActionTokenResponse, mfRequester);
+                if (imageActionTokenResponse.hasError() && imageActionTokenResponse.getError() == 105 || imageActionTokenResponse.getError() == 127) {
+                    mfTokenFarmCallback.sessionTokenSpoiled((MFSessionToken) mfResponse.getOriginMFRequester().getToken());
+                } else {
+                    MFImageActionToken mfImageActionToken = createImageActionToken(imageActionTokenResponse, mfRequester);
+                    mfTokenFarmCallback.receiveNewImageActionToken(mfImageActionToken);
+                }
                 break;
             case NONE:
                 // for types NONE

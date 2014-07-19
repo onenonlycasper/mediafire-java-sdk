@@ -4,17 +4,19 @@ package com.mediafire.sdk.token;
  * TODO: doc
  */
 public interface MFTokenFarmCallback {
-    public void returnSessionToken(MFSessionToken sessionToken);
+    public void returnSessionToken(MFSessionToken mfSessionToken);
 
-    public void receiveNewSessionToken(MFSessionToken sessionToken);
+    public void sessionTokenSpoiled(MFSessionToken mfSessionToken);
 
-    public void receiveNewImageActionToken(MFImageActionToken uploadActionToken);
+    public void receiveNewSessionToken(MFSessionToken mfSessionToken);
 
-    public void receiveNewUploadActionToken(MFUploadActionToken uploadActionToken);
+    public void receiveNewImageActionToken(MFImageActionToken mfImageActionToken);
 
-    public MFSessionToken borrowSessionToken();
+    public void receiveNewUploadActionToken(MFUploadActionToken mfUploadActionToken);
 
-    public MFUploadActionToken borrowUploadActionToken();
+    public MFSessionToken borrowMFSessionToken();
 
-    public MFImageActionToken borrowImageActionToken();
+    public MFUploadActionToken borrowMFUploadActionToken();
+
+    public MFImageActionToken borrowMFImageActionToken();
 }

@@ -208,7 +208,7 @@ public class ResumableProcess extends UploadProcess {
         MFConfiguration.getStaticMFLogger().v(TAG, "version control: " + versionControl);
         MFConfiguration.getStaticMFLogger().v(TAG, "upload folder key: " + uploadFolderKey);
 
-        String actionToken = mfTokenFarm.borrowUploadActionToken().getTokenString();
+        String actionToken = mfTokenFarm.borrowMFUploadActionToken().getTokenString();
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("session_token", actionToken);
         parameters.put("action_on_duplicate", actionOnDuplicate);

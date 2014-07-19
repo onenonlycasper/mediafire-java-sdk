@@ -136,17 +136,17 @@ public final class MFHttpClientSetup extends MFHttp {
         switch (mfRequester.getTypeOfTokenToBorrow()) {
             case V2:
                 MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow session token (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
-                MFSessionToken sessionToken = mfTokenFarmCallback.borrowSessionToken();
+                MFSessionToken sessionToken = mfTokenFarmCallback.borrowMFSessionToken();
                 mfRequester.setToken(sessionToken);
                 break;
             case UPLOAD:
                 MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow upload action token (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
-                MFUploadActionToken uploadActionToken = mfTokenFarmCallback.borrowUploadActionToken();
+                MFUploadActionToken uploadActionToken = mfTokenFarmCallback.borrowMFUploadActionToken();
                 mfRequester.setToken(uploadActionToken);
                 break;
             case IMAGE:
                 MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow image action (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
-                MFImageActionToken imageActionToken = mfTokenFarmCallback.borrowImageActionToken();
+                MFImageActionToken imageActionToken = mfTokenFarmCallback.borrowMFImageActionToken();
                 mfRequester.setToken(imageActionToken);
                 break;
             default:
