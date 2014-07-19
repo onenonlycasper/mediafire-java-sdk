@@ -33,6 +33,10 @@ public final class MFRequest implements MFRequester {
         this.payload = mfRequestBuilder.payload;
     }
 
+    public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
+        this(new MFRequestBuilder(mfHost, mfApi).requestParameters(requestParameters));
+    }
+
     @Override
     public Map<String, String> getRequestParameters() {
         return requestParameters;

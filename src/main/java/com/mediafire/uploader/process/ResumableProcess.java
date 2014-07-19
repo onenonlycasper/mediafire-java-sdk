@@ -81,7 +81,7 @@ public class ResumableProcess extends UploadProcess {
                 mfRequestBuilder.headers(headers);
                 mfRequestBuilder.payload(uploadChunk);
                 MFRequest mfRequest = mfRequestBuilder.build();
-                
+
                 MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
                 response = mfResponse.getResponseObject(ResumableResponse.class);
 
