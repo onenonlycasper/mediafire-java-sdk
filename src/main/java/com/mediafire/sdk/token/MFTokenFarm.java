@@ -200,6 +200,10 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         lockBorrowUploadToken.lock();
 
         try {
+            if (needNewActionToken(mfUploadActionToken)) {
+                MFConfiguration.getStaticMFLogger().e(TAG, "fetching new upload token");
+                startThreadForNewUploadActionToken();
+            }
             // wait while we get an image action token, condition is that image
             // action token is null or action token is expired or action token
             // string is null
@@ -221,6 +225,10 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         lockBorrowImageToken.lock();
 
         try {
+            if (needNewActionToken(mfImageActionToken)) {
+                MFConfiguration.getStaticMFLogger().e(TAG, "fetching new action token");
+                startThreadForNewImageActionToken();
+            }
             // wait while we get an image action token, condition is that image
             // action token is null or action token is expired or action token
             // string is null
@@ -249,6 +257,26 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
             @Override
             public void run() {
                 getNewSessionToken();
+            }
+        });
+        thread.start();
+    }
+
+    private void startThreadForNewImageActionToken() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getNewImageActionToken();
+            }
+        });
+        thread.start();
+    }
+
+    private void startThreadForNewUploadActionToken() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getNewUploadActionToken();
             }
         });
         thread.start();
