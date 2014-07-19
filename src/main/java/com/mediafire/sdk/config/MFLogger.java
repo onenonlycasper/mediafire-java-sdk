@@ -1,6 +1,6 @@
 package com.mediafire.sdk.config;
 
-import com.mediafire.sdk.http.MFRequest;
+import com.mediafire.sdk.http.MFRequester;
 import com.mediafire.sdk.http.MFResponse;
 
 /**
@@ -17,6 +17,6 @@ public interface MFLogger {
     public void w(String source, String message, Throwable throwable);
     public void e(String source, String message);
     public void e(String source, String message, Throwable throwable);
-    public void logApiError(String source, MFRequest mfRequest, MFResponse mfResponse);
+    public void logApiError(String source, MFRequester mfRequester, MFResponse mfResponse);
 
 }

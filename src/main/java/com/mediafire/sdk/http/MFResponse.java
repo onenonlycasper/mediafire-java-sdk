@@ -13,13 +13,13 @@ public final class MFResponse {
     private final int status;
     private final Map<String, List<String>> headers;
     private final byte[] bodyBytes;
-    private final MFRequest mfRequest;
+    private final MFRequester mfRequester;
 
-    public MFResponse(int status, Map<String, List<String>> headers, byte[] bodyBytes, MFRequest mfRequest) {
+    public MFResponse(int status, Map<String, List<String>> headers, byte[] bodyBytes, MFRequester mfRequester) {
         this.status = status;
         this.headers = headers;
         this.bodyBytes = bodyBytes;
-        this.mfRequest = mfRequest;
+        this.mfRequester = mfRequester;
     }
 
     public int getStatus() {
@@ -46,8 +46,8 @@ public final class MFResponse {
         return new Gson().fromJson(getResponseStringForGson(responseString), responseClass);
     }
 
-    public MFRequest getOriginMFRequest() {
-        return mfRequest;
+    public MFRequester getOriginMFRequester() {
+        return mfRequester;
     }
 
     private String getResponseStringForGson(String response) {

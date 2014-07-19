@@ -17,20 +17,20 @@ public final class MFHttpRunner {
         this.mfHttpClientCleanup = new MFHttpClientCleanup(mfTokenFarmCallback, mfConfiguration);
     }
 
-    public MFResponse doRequest(MFRequest mfRequest) {
+    public MFResponse doRequest(MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().v(TAG, "doRequest()");
 
         MFResponse mfResponse = null;
         try {
-            mfHttpClientSetup.prepareMFRequestForHttpClient(mfRequest);
-            mfResponse = mfHttpClient.sendRequest(mfRequest);
+            mfHttpClientSetup.prepareMFRequestForHttpClient(mfRequester);
+            mfResponse = mfHttpClient.sendRequest(mfRequester);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
-        MFConfiguration.getStaticMFLogger().logApiError(TAG, mfRequest, mfResponse);
+        MFConfiguration.getStaticMFLogger().logApiError(TAG, mfRequester, mfResponse);
 
-        mfHttpClientCleanup.returnToken(mfRequest, mfResponse);
+        mfHttpClientCleanup.returnToken(mfRequester, mfResponse);
 
         return mfResponse;
     }

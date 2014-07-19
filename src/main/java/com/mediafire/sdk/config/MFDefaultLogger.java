@@ -1,9 +1,6 @@
 package com.mediafire.sdk.config;
 
-import com.mediafire.sdk.http.MFApi;
-import com.mediafire.sdk.http.MFHost;
-import com.mediafire.sdk.http.MFRequest;
-import com.mediafire.sdk.http.MFResponse;
+import com.mediafire.sdk.http.*;
 import com.mediafire.sdk.token.MFToken;
 
 import java.util.List;
@@ -67,34 +64,32 @@ public class MFDefaultLogger implements MFLogger {
     }
 
     @Override
-    public void logApiError(String source, MFRequest mfRequest, MFResponse mfResponse) {
-        System.out.println("[" + Thread.currentThread().getName() + "] [" + source + "] - " + "..." + "\n" + createRequestStringLog(mfRequest) + createResponseStringLog(mfResponse));
+    public void logApiError(String source, MFRequester mfRequester, MFResponse mfResponse) {
+        System.out.println("[" + Thread.currentThread().getName() + "] [" + source + "] - " + "..." + "\n" + createRequestStringLog(mfRequester) + createResponseStringLog(mfResponse));
     }
     
-    private String createRequestStringLog(MFRequest mfRequest) {
-        MFApi mfApi = mfRequest.getMfApi();
-        String apiEnumName = mfApi.toString();
-        boolean queryPostable = mfApi.isQueryPostable();
-        String uri = mfApi.getUri();
-        String tokenTypeEnumName = mfApi.getTokenType().toString();
+    private String createRequestStringLog(MFRequester mfRequester) {
+        String apiEnumName = mfRequester.toString();
+        boolean queryPostable = mfRequester.isQueryPostable();
+        String uri = mfRequester.getUri();
+        String tokenTypeEnumName = mfRequester.getTokenType().toString();
 
-        MFHost mfHost = mfRequest.getMfHost();
-        String hostEnumName = mfHost.toString();
-        String host = mfHost.getHost();
-        String schemeEnumName = mfHost.getTransferScheme().toString();
-        String scheme = mfHost.getTransferScheme().getScheme();
+        String hostEnumName = mfRequester.toString();
+        String host = mfRequester.getHost();
+        String schemeEnumName = mfRequester.getTransferProtocol().toString();
+        String scheme = mfRequester.getTransferProtocol().getScheme();
 
-        Map<String, String> requestHeaders = mfRequest.getHeaders();
+        Map<String, String> requestHeaders = mfRequester.getHeaders();
 
-        Map<String, String> requestParameters = mfRequest.getRequestParameters();
+        Map<String, String> requestParameters = mfRequester.getRequestParameters();
 
-        MFToken mfToken = mfRequest.getToken();
+        MFToken mfToken = mfRequester.getToken();
 
         String tokenString;
         int payloadLength;
         if (mfToken != null) {
             tokenString = mfToken.getTokenString();
-            payloadLength = mfRequest.getPayload().length;
+            payloadLength = mfRequester.getPayload().length;
         } else {
             tokenString = null;
             payloadLength = 0;

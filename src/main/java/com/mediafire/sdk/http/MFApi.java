@@ -71,4 +71,20 @@ public enum MFApi {
     public enum TokenType {
         SESSION_TOKEN_V2, UPLOAD_ACTION_TOKEN, IMAGE_ACTION_TOKEN, NONE, UNIQUE,
     }
+
+    public enum ReturnTokenType {
+        SESSION_TOKEN_V2, NEW_SESSION_TOKEN, UPLOAD_ACTION_TOKEN, IMAGE_ACTION_TOKEN, NONE,
+    }
+
+    public enum SignatureType {
+        SESSION_TOKEN_V2, NEW_SESSION_TOKEN,
+    }
+
+    public enum RequiresSignatureCalculation {
+        YES, NO,
+    }
+
+    public enum BorrowedTokenType {
+
+    }
 }

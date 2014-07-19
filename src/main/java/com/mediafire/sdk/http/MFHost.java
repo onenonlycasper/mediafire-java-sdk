@@ -1,34 +1,34 @@
 package com.mediafire.sdk.http;
 
 public enum MFHost {
-    LIVE_HTTP("www.mediafire.com", TransferScheme.HTTP),
-    LIVE_HTTPS("www.mediafire.com", TransferScheme.HTTPS),
-    DEV_HTTP("dev.mediafire.com", TransferScheme.HTTP),
-    DEV_HTTPS("dev.mediafire.com", TransferScheme.HTTPS);
+    LIVE_HTTP("www.mediafire.com", TransferProtocol.HTTP),
+    LIVE_HTTPS("www.mediafire.com", TransferProtocol.HTTPS),
+    DEV_HTTP("dev.mediafire.com", TransferProtocol.HTTP),
+    DEV_HTTPS("dev.mediafire.com", TransferProtocol.HTTPS);
 
     private final String host;
-    private final TransferScheme transferScheme;
+    private final TransferProtocol transferProtocol;
 
-    private MFHost(String host, TransferScheme transferScheme) {
+    private MFHost(String host, TransferProtocol transferProtocol) {
         this.host = host;
-        this.transferScheme = transferScheme;
+        this.transferProtocol = transferProtocol;
     }
 
     public String getHost() {
         return host;
     }
 
-    public TransferScheme getTransferScheme() {
-        return transferScheme;
+    public TransferProtocol getTransferProtocol() {
+        return transferProtocol;
     }
 
-    public enum TransferScheme {
+    public enum TransferProtocol {
         HTTP("http://"),
         HTTPS("https://");
 
         private final String scheme;
 
-        private TransferScheme(String scheme) {
+        private TransferProtocol(String scheme) {
             this.scheme = scheme;
         }
 

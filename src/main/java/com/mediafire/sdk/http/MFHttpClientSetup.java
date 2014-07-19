@@ -27,17 +27,17 @@ public final class MFHttpClientSetup extends MFHttp {
         this.mfCredentials = mfConfiguration.getMfCredentials();
     }
 
-    public void prepareMFRequestForHttpClient(MFRequest request) throws UnsupportedEncodingException {
+    public void prepareMFRequestForHttpClient(MFRequester mfRequester) throws UnsupportedEncodingException {
         MFConfiguration.getStaticMFLogger().v(TAG, "prepareMFRequestForHttpClient()");
                 // borrow token, if necessary
-        borrowToken(request);
+        borrowToken(mfRequester);
         // add token, if necessary, to request parameters
-        addTokenToRequestParameters(request);
+        addTokenToRequestParameters(mfRequester);
         // add signature, if necessary, to request parameters
-        addSignatureToRequestParameters(request);
+        addSignatureToRequestParameters(mfRequester);
     }
 
-    private void addRequestParametersForNewSessionToken(MFRequest mfRequest) {
+    private void addRequestParametersForNewSessionToken(MFRequester mfRequest) {
         MFConfiguration.getStaticMFLogger().v(TAG, "addRequestParametersForNewSessionToken()");
         MFConfiguration.getStaticMFLogger().v(TAG, "adding user credentials");
         Map<String, String> credentialsMap = mfCredentials.getCredentials();
@@ -46,25 +46,25 @@ public final class MFHttpClientSetup extends MFHttp {
         mfRequest.getRequestParameters().put("application_id", mfConfiguration.getAppId());
     }
 
-    private void addSignatureToRequestParameters(MFRequest request) throws UnsupportedEncodingException {
+    private void addSignatureToRequestParameters(MFRequester mfRequester) throws UnsupportedEncodingException {
         MFConfiguration.getStaticMFLogger().v(TAG, "addSignatureToRequestParameters()");
-        switch (request.getMfApi().getTokenType()) {
+        switch (mfRequester.getTokenType()) {
             case SESSION_TOKEN_V2:
-                MFConfiguration.getStaticMFLogger().v(TAG, "adding session token signature to request (api required: " + request.getMfApi().getTokenType() + ")");
-                String recycledSessionTokenSignature = calculateSignatureForApiRequest(request);
-                request.getRequestParameters().put("signature", recycledSessionTokenSignature);
+                MFConfiguration.getStaticMFLogger().v(TAG, "adding session token signature to request (api required: " + mfRequester.getTokenType() + ")");
+                String recycledSessionTokenSignature = calculateSignatureForApiRequest(mfRequester);
+                mfRequester.getRequestParameters().put("signature", recycledSessionTokenSignature);
                 break;
             case UNIQUE:
-                MFConfiguration.getStaticMFLogger().v(TAG, "adding unique token signature to request (api required: " + request.getMfApi().getTokenType() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "adding unique token signature to request (api required: " + mfRequester.getTokenType() + ")");
                 // add additional request parameters required for this signature
-                addRequestParametersForNewSessionToken(request);
+                addRequestParametersForNewSessionToken(mfRequester);
                 String newSessionTokenSignature = calculateSignatureForNewSessionToken(mfConfiguration, mfCredentials);
-                request.getRequestParameters().put("signature", newSessionTokenSignature);
+                mfRequester.getRequestParameters().put("signature", newSessionTokenSignature);
                 break;
             default:
                 // for types NONE, UPLOAD_ACTION_TOKEN, IMAGE_ACTION_TOKEN
                 // there is no need to attach a signature to the request parameters
-                MFConfiguration.getStaticMFLogger().v(TAG, "not adding signature to request (api required: " + request.getMfApi().getTokenType() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "not adding signature to request (api required: " + mfRequester.getTokenType() + ")");
                 break;
         }
     }
@@ -103,16 +103,16 @@ public final class MFHttpClientSetup extends MFHttp {
         return hashString(hashTarget, SHA1);
     }
 
-    private String calculateSignatureForApiRequest(MFRequest request) throws UnsupportedEncodingException {
+    private String calculateSignatureForApiRequest(MFRequester mfRequester) throws UnsupportedEncodingException {
         MFConfiguration.getStaticMFLogger().v(TAG, "calculateSignatureForApiRequest()");
         // session token secret key + time + uri (concatenated)
-        MFSessionToken sessionToken = (MFSessionToken) request.getToken();
+        MFSessionToken sessionToken = (MFSessionToken) mfRequester.getToken();
         int secretKey = Integer.valueOf(sessionToken.getSecretKey()) % 256;
         String time = sessionToken.getTime();
 
-        String nonUrlEncodedQueryString = makeQueryString(request.getRequestParameters(), false);
+        String nonUrlEncodedQueryString = makeQueryString(mfRequester.getRequestParameters(), false);
         String urlAttachableQueryString = makeUrlAttachableQueryString(nonUrlEncodedQueryString);
-        String baseUri = request.getMfApi().getUri();
+        String baseUri = mfRequester.getUri();
 
         String fullUri = baseUri + urlAttachableQueryString;
 
@@ -120,45 +120,45 @@ public final class MFHttpClientSetup extends MFHttp {
         return hashString(nonUrlEncodedString, MD5);
     }
 
-    private void addTokenToRequestParameters(MFRequest request) {
+    private void addTokenToRequestParameters(MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().v(TAG, "addTokenToRequestParameters()");
-        switch (request.getMfApi().getTokenType()) {
+        switch (mfRequester.getTokenType()) {
             case SESSION_TOKEN_V2:
             case UPLOAD_ACTION_TOKEN:
             case IMAGE_ACTION_TOKEN:
-                MFConfiguration.getStaticMFLogger().v(TAG, "adding token to request parameters (required type: " + request.getMfApi().getTokenType() + ")");
-                String tokenString = request.getToken().getTokenString();
-                request.getRequestParameters().put("session_token", tokenString);
+                MFConfiguration.getStaticMFLogger().v(TAG, "adding token to request parameters (required type: " + mfRequester.getTokenType() + ")");
+                String tokenString = mfRequester.getToken().getTokenString();
+                mfRequester.getRequestParameters().put("session_token", tokenString);
                 break;
             default:
                 // for types NONE, UNIQUE
                 // there is no need to attach a session token to the request parameters
-                MFConfiguration.getStaticMFLogger().v(TAG, "not adding token request parameters (required type: " + request.getMfApi().getTokenType() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "not adding token request parameters (required type: " + mfRequester.getTokenType() + ")");
                 break;
         }
     }
 
-    private void borrowToken(MFRequest request) {
+    private void borrowToken(MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().v(TAG, "borrowToken()");
-        switch (request.getMfApi().getTokenType()) {
+        switch (mfRequester.getTokenType()) {
             case SESSION_TOKEN_V2:
-                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow session token (required type: " + request.getMfApi().getTokenType() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow session token (required type: " + mfRequester.getTokenType() + ")");
                 MFSessionToken sessionToken = mfTokenFarmCallback.borrowSessionToken();
-                request.setToken(sessionToken);
+                mfRequester.setToken(sessionToken);
                 break;
             case UPLOAD_ACTION_TOKEN:
-                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow upload action token (required type: " + request.getMfApi().getTokenType() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow upload action token (required type: " + mfRequester.getTokenType() + ")");
                 MFUploadActionToken uploadActionToken = mfTokenFarmCallback.borrowUploadActionToken();
-                request.setToken(uploadActionToken);
+                mfRequester.setToken(uploadActionToken);
                 break;
             case IMAGE_ACTION_TOKEN:
-                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow image action (required type: " + request.getMfApi().getTokenType() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow image action (required type: " + mfRequester.getTokenType() + ")");
                 MFImageActionToken imageActionToken = mfTokenFarmCallback.borrowImageActionToken();
-                request.setToken(imageActionToken);
+                mfRequester.setToken(imageActionToken);
                 break;
             default:
                 // for type NONE, UNIQUE there is no need to request a token.
-                MFConfiguration.getStaticMFLogger().v(TAG, "no need to borrow token (required type: " + request.getMfApi().getTokenType() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "no need to borrow token (required type: " + mfRequester.getTokenType() + ")");
                 break;
         }
     }

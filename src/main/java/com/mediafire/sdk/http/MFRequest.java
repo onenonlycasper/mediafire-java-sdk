@@ -5,7 +5,7 @@ import com.mediafire.sdk.token.MFToken;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public final class MFRequest {
+public final class MFRequest implements MFRequester {
     private final MFHost mfHost;
     private final MFApi mfApi;
     private final Map<String, String> requestParameters;
@@ -48,31 +48,53 @@ public final class MFRequest {
         this(mfHost, mfApi, new LinkedHashMap<String, String>(), new LinkedHashMap<String, String>(), new byte[0]);
     }
 
-    public MFHost getMfHost() {
-        return mfHost;
-    }
-
-    public MFApi getMfApi() {
-        return mfApi;
-    }
-
+    @Override
     public Map<String, String> getRequestParameters() {
         return requestParameters;
     }
 
+    @Override
     public Map<String, String> getHeaders() {
         return headers;
     }
 
+    @Override
     public byte[] getPayload() {
         return payload;
     }
 
+    @Override
     public MFToken getToken() {
         return mfToken;
     }
 
+    @Override
     public void setToken(MFToken MFToken) {
         this.mfToken = MFToken;
+    }
+
+    @Override
+    public String getHost() {
+        return mfHost.getHost();
+    }
+
+    @Override
+    public MFHost.TransferProtocol getTransferProtocol() {
+        return mfHost.getTransferProtocol();
+    }
+
+    @Override
+    public String getUri() {
+        return mfApi.getUri();
+    }
+
+    @Override
+    public MFApi.TokenType getTokenType() {
+        return mfApi.getTokenType();
+    }
+
+    @Override
+    public boolean isQueryPostable() {
+        return mfApi.isQueryPostable();
     }
 }
