@@ -16,7 +16,7 @@ public class MFActionToken extends MFToken {
         }
 
         // temporary - set max time.
-        expiration = 1440 * 1000 * 60 * 24;
+        expiration = System.currentTimeMillis() + 86400000;
 
         this.expiration = expiration;
     }
