@@ -48,23 +48,23 @@ public final class MFHttpClientSetup extends MFHttp {
 
     private void addSignatureToRequestParameters(MFRequester mfRequester) throws UnsupportedEncodingException {
         MFConfiguration.getStaticMFLogger().v(TAG, "addSignatureToRequestParameters()");
-        switch (mfRequester.getTokenType()) {
-            case SESSION_TOKEN_V2:
-                MFConfiguration.getStaticMFLogger().v(TAG, "adding session token signature to request (api required: " + mfRequester.getTokenType() + ")");
+        switch (mfRequester.getTypeOfSignatureToAdd()) {
+            case V2:
+                MFConfiguration.getStaticMFLogger().v(TAG, "adding session token signature to request (api required: " + mfRequester.getTypeOfTokenToReturn() + ")");
                 String recycledSessionTokenSignature = calculateSignatureForApiRequest(mfRequester);
                 mfRequester.getRequestParameters().put("signature", recycledSessionTokenSignature);
                 break;
-            case UNIQUE:
-                MFConfiguration.getStaticMFLogger().v(TAG, "adding unique token signature to request (api required: " + mfRequester.getTokenType() + ")");
+            case NEW:
+                MFConfiguration.getStaticMFLogger().v(TAG, "adding unique token signature to request (api required: " + mfRequester.getTypeOfTokenToReturn() + ")");
                 // add additional request parameters required for this signature
                 addRequestParametersForNewSessionToken(mfRequester);
                 String newSessionTokenSignature = calculateSignatureForNewSessionToken(mfConfiguration, mfCredentials);
                 mfRequester.getRequestParameters().put("signature", newSessionTokenSignature);
                 break;
             default:
-                // for types NONE, UPLOAD_ACTION_TOKEN, IMAGE_ACTION_TOKEN
+                // for types NONE, UPLOAD, IMAGE
                 // there is no need to attach a signature to the request parameters
-                MFConfiguration.getStaticMFLogger().v(TAG, "not adding signature to request (api required: " + mfRequester.getTokenType() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "not adding signature to request (api required: " + mfRequester.getTypeOfTokenToReturn() + ")");
                 break;
         }
     }
@@ -122,43 +122,36 @@ public final class MFHttpClientSetup extends MFHttp {
 
     private void addTokenToRequestParameters(MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().v(TAG, "addTokenToRequestParameters()");
-        switch (mfRequester.getTokenType()) {
-            case SESSION_TOKEN_V2:
-            case UPLOAD_ACTION_TOKEN:
-            case IMAGE_ACTION_TOKEN:
-                MFConfiguration.getStaticMFLogger().v(TAG, "adding token to request parameters (required type: " + mfRequester.getTokenType() + ")");
-                String tokenString = mfRequester.getToken().getTokenString();
-                mfRequester.getRequestParameters().put("session_token", tokenString);
-                break;
-            default:
-                // for types NONE, UNIQUE
-                // there is no need to attach a session token to the request parameters
-                MFConfiguration.getStaticMFLogger().v(TAG, "not adding token request parameters (required type: " + mfRequester.getTokenType() + ")");
-                break;
+        if (mfRequester.isTokenRequired()) {
+            MFConfiguration.getStaticMFLogger().v(TAG, "adding token to request parameters (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
+            String tokenString = mfRequester.getToken().getTokenString();
+            mfRequester.getRequestParameters().put("session_token", tokenString);
+        } else {
+            MFConfiguration.getStaticMFLogger().v(TAG, "not adding token request parameters (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
         }
     }
 
     private void borrowToken(MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().v(TAG, "borrowToken()");
-        switch (mfRequester.getTokenType()) {
-            case SESSION_TOKEN_V2:
-                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow session token (required type: " + mfRequester.getTokenType() + ")");
+        switch (mfRequester.getTypeOfTokenToBorrow()) {
+            case V2:
+                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow session token (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
                 MFSessionToken sessionToken = mfTokenFarmCallback.borrowSessionToken();
                 mfRequester.setToken(sessionToken);
                 break;
-            case UPLOAD_ACTION_TOKEN:
-                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow upload action token (required type: " + mfRequester.getTokenType() + ")");
+            case UPLOAD:
+                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow upload action token (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
                 MFUploadActionToken uploadActionToken = mfTokenFarmCallback.borrowUploadActionToken();
                 mfRequester.setToken(uploadActionToken);
                 break;
-            case IMAGE_ACTION_TOKEN:
-                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow image action (required type: " + mfRequester.getTokenType() + ")");
+            case IMAGE:
+                MFConfiguration.getStaticMFLogger().v(TAG, "need to borrow image action (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
                 MFImageActionToken imageActionToken = mfTokenFarmCallback.borrowImageActionToken();
                 mfRequester.setToken(imageActionToken);
                 break;
             default:
-                // for type NONE, UNIQUE there is no need to request a token.
-                MFConfiguration.getStaticMFLogger().v(TAG, "no need to borrow token (required type: " + mfRequester.getTokenType() + ")");
+                // for type NONE, NEW there is no need to request a token.
+                MFConfiguration.getStaticMFLogger().v(TAG, "no need to borrow token (required type: " + mfRequester.getTypeOfTokenToReturn() + ")");
                 break;
         }
     }
