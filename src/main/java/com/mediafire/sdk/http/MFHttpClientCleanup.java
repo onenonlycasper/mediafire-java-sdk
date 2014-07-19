@@ -21,39 +21,34 @@ public final class MFHttpClientCleanup extends MFHttp {
     public void returnToken(MFRequester mfRequester, MFResponse mfResponse) {
         MFConfiguration.getStaticMFLogger().v(TAG, "returning token");
 
-        switch (mfRequester.getTokenType()) {
-            case SESSION_TOKEN_V2:
-                MFConfiguration.getStaticMFLogger().v(TAG, "not returning a token (api was " + mfRequester.getTokenType().toString() + ")");
+        switch (mfRequester.getTypeOfTokenToReturn()) {
+            case NEW:
+                MFConfiguration.getStaticMFLogger().v(TAG, "returning session token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ", " + mfRequester.toString() + " )");
+                GetSessionTokenResponse newSessionTokenResponse = mfResponse.getResponseObject(GetSessionTokenResponse.class);
+                MFSessionToken newSessionToken = createNewSessionToken(newSessionTokenResponse);
+                mfTokenFarmCallback.receiveNewSessionToken(newSessionToken);
+                break;
+            case V2:
+                MFConfiguration.getStaticMFLogger().v(TAG, "not returning a token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ")");
                 ApiResponse apiResponse = mfResponse.getResponseObject(ApiResponse.class);
                 MFSessionToken mfSessionToken = updateSessionToken(apiResponse, mfRequester);
                 mfTokenFarmCallback.returnSessionToken(mfSessionToken);
                 break;
-            case UNIQUE:
-                // UNIQUE represents requesting a new session token via /api/user/get_session_token or /api/user/get_action_token
-                if (mfRequester.getUri().equals(MFApi.USER_GET_SESSION_TOKEN.getUri())) {
-                    MFConfiguration.getStaticMFLogger().v(TAG, "returning session token (api was " + mfRequester.getTokenType().toString() + ", " + mfRequester.toString() + " )");
-                    GetSessionTokenResponse newSessionTokenResponse = mfResponse.getResponseObject(GetSessionTokenResponse.class);
-                    MFSessionToken newSessionToken = createNewSessionToken(newSessionTokenResponse);
-                    mfTokenFarmCallback.receiveNewSessionToken(newSessionToken);
-                } else if (mfRequester.getUri().equals(MFApi.USER_GET_ACTION_TOKEN.getUri()) && mfRequester.getToken() instanceof MFImageActionToken) {
-                    MFConfiguration.getStaticMFLogger().v(TAG, "returning image action token (api was " + mfRequester.getTokenType().toString() + ", " + mfRequester.toString() + " )");
-                    GetActionTokenResponse imageActionTokenResponse = mfResponse.getResponseObject(GetActionTokenResponse.class);
-                    MFImageActionToken newActionToken = createImageActionToken(imageActionTokenResponse, mfRequester);
-                    mfTokenFarmCallback.receiveNewImageActionToken(newActionToken);
-                } else if (mfRequester.getUri().equals(MFApi.USER_GET_ACTION_TOKEN.getUri()) && mfRequester.getToken() instanceof MFUploadActionToken) {
-                    MFConfiguration.getStaticMFLogger().v(TAG, "returning upload action token (api was " + mfRequester.getTokenType().toString() + ", " + mfRequester.toString() + " )");
-                    GetActionTokenResponse uploadActionTokenResponse = mfResponse.getResponseObject(GetActionTokenResponse.class);
-                    MFUploadActionToken newActionToken = createUploadActionToken(uploadActionTokenResponse, mfRequester);
-                    mfTokenFarmCallback.receiveNewUploadActionToken(newActionToken);
-                } else {
-                    // don't need to return anything to the token distributor.
-                    MFConfiguration.getStaticMFLogger().v(TAG, "not returning a token (api was " + mfRequester.getTokenType().toString() + ", token was class '" + mfRequester.getToken().getClass().getName() + ")");
-                }
+            case UPLOAD:
+                MFConfiguration.getStaticMFLogger().v(TAG, "returning upload action token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ", " + mfRequester.toString() + " )");
+                GetActionTokenResponse uploadActionTokenResponse = mfResponse.getResponseObject(GetActionTokenResponse.class);
+                MFUploadActionToken mfUploadActionToken = createUploadActionToken(uploadActionTokenResponse, mfRequester);
+                mfTokenFarmCallback.receiveNewUploadActionToken(mfUploadActionToken);
                 break;
-            default:
-                // for types UPLOAD_ACTION_TOKEN, IMAGE_ACTION_TOKEN, NONE
+            case IMAGE:
+                MFConfiguration.getStaticMFLogger().v(TAG, "returning image action token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ", " + mfRequester.toString() + " )");
+                GetActionTokenResponse imageActionTokenResponse = mfResponse.getResponseObject(GetActionTokenResponse.class);
+                MFImageActionToken mfImageActionToken = createImageActionToken(imageActionTokenResponse, mfRequester);
+                break;
+            case NONE:
+                // for types NONE
                 // there is no need to return a token
-                MFConfiguration.getStaticMFLogger().v(TAG, "not returning a token (api was " + mfRequester.getTokenType().toString() + ")");
+                MFConfiguration.getStaticMFLogger().v(TAG, "not returning a token (api was " + mfRequester.getTypeOfTokenToReturn().toString() + ")");
                 break;
         }
     }
