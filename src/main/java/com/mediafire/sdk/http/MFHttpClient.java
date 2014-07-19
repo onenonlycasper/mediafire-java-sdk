@@ -146,14 +146,14 @@ public final class MFHttpClient extends MFHttp {
         }
     }
 
-    private URL makeFullUrl(MFRequester mfRequemfRequestert) throws MalformedURLException, UnsupportedEncodingException {
+    private URL makeFullUrl(MFRequester mfRequester) throws MalformedURLException, UnsupportedEncodingException {
         MFConfiguration.getStaticMFLogger().v(TAG, "makeFullUrl");
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(makeBaseUrl(mfRequemfRequestert));
+        stringBuilder.append(makeBaseUrl(mfRequester));
 
-        if (!mfRequemfRequestert.isQueryPostable()) {
+        if (!mfRequester.isQueryPostable()) {
             MFConfiguration.getStaticMFLogger().v(TAG, "query is not postable. appending query to url");
-            String queryString = makeQueryString(mfRequemfRequestert.getRequestParameters());
+            String queryString = makeQueryString(mfRequester.getRequestParameters());
             queryString = makeUrlAttachableQueryString(queryString);
             stringBuilder.append(queryString);
         }
