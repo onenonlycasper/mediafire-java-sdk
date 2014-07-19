@@ -1,6 +1,9 @@
 package com.mediafire.sdk.token;
 
+import com.mediafire.sdk.config.MFConfiguration;
+
 public final class MFSessionToken extends MFToken {
+    private static final String TAG = MFSessionToken.class.getCanonicalName();
     private final String time;
     private final String secretKey;
     private final String pkey;
@@ -31,10 +34,14 @@ public final class MFSessionToken extends MFToken {
     }
 
     public MFSessionToken getUpdatedSessionToken() {
+        MFConfiguration.getStaticMFLogger().v(TAG, "getUpdatedSessionToken");
+        MFConfiguration.getStaticMFLogger().v(TAG, "original secret key: " + secretKey);
         long newKey = Long.valueOf(secretKey) * 16807;
+        MFConfiguration.getStaticMFLogger().v(TAG, "new secret key: " + newKey);
         newKey = newKey % 2147483647;
+        MFConfiguration.getStaticMFLogger().v(TAG, "new secret key % 256");
         String newSecretKey = String.valueOf(newKey);
-
+        MFConfiguration.getStaticMFLogger().v(TAG, "getUpdatedSessionToken");
         return new MFSessionToken(tokenString, newSecretKey, time, pkey, ekey);
     }
 

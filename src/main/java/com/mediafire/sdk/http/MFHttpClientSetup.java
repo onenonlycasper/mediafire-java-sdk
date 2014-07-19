@@ -107,16 +107,22 @@ public final class MFHttpClientSetup extends MFHttp {
         MFConfiguration.getStaticMFLogger().v(TAG, "calculateSignatureForApiRequest()");
         // session token secret key + time + uri (concatenated)
         MFSessionToken sessionToken = (MFSessionToken) mfRequester.getToken();
+        MFConfiguration.getStaticMFLogger().v(TAG, "original secret key: " + Integer.valueOf(sessionToken.getSecretKey()));
         int secretKey = Integer.valueOf(sessionToken.getSecretKey()) % 256;
+        MFConfiguration.getStaticMFLogger().v(TAG, "secret key % 256: " + secretKey);
         String time = sessionToken.getTime();
-
+        MFConfiguration.getStaticMFLogger().v(TAG, "time stored: " + time);
         String nonUrlEncodedQueryString = makeQueryString(mfRequester.getRequestParameters(), false);
+        MFConfiguration.getStaticMFLogger().v(TAG, "nonUrlEncodedQueryString: " + nonUrlEncodedQueryString);
         String urlAttachableQueryString = makeUrlAttachableQueryString(nonUrlEncodedQueryString);
+        MFConfiguration.getStaticMFLogger().v(TAG, "urlAttachableQueryString: " + nonUrlEncodedQueryString);
         String baseUri = mfRequester.getUri();
-
+        MFConfiguration.getStaticMFLogger().v(TAG, "base uri: " + baseUri);
         String fullUri = baseUri + urlAttachableQueryString;
+        MFConfiguration.getStaticMFLogger().v(TAG, "full uri: " + baseUri);
 
         String nonUrlEncodedString = String.valueOf(secretKey) + time + fullUri;
+        MFConfiguration.getStaticMFLogger().v(TAG, "hashing: " + nonUrlEncodedQueryString);
         return hashString(nonUrlEncodedString, MD5);
     }
 
@@ -158,7 +164,7 @@ public final class MFHttpClientSetup extends MFHttp {
 
     private String hashString(String target, String hashAlgorithm) {
         MFConfiguration.getStaticMFLogger().v(TAG, "hashString()");
-        MFConfiguration.getStaticMFLogger().v(TAG, "hashing to " + hashAlgorithm + " - " + target);
+        MFConfiguration.getStaticMFLogger().v(TAG, hashAlgorithm + " hashing  - " + target);
         String hash;
         try {
             MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
@@ -178,7 +184,7 @@ public final class MFHttpClientSetup extends MFHttp {
             hash = target;
         }
 
-        MFConfiguration.getStaticMFLogger().v(TAG, "hashed to " + hashAlgorithm + " - " + hash);
+        MFConfiguration.getStaticMFLogger().v(TAG, target + " " + hashAlgorithm + " hashed to " + hash);
         return hash;
     }
 }
