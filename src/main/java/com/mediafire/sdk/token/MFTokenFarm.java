@@ -23,10 +23,11 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     private final int maximumSessionTokens;
 
     private final BlockingQueue<MFSessionToken> mfSessionTokens;
-    private MFUploadActionToken mfUploadActionToken;
-    private MFImageActionToken mfImageActionToken;
+    private MFActionToken mfUploadActionToken;
+    private MFActionToken mfImageActionToken;
 
     // borrow token locks
+    private final Object sessionTokenLock = new Object();
     private final Lock lockBorrowImageToken = new ReentrantLock();
     private final Lock lockBorrowUploadToken = new ReentrantLock();
     private final Condition conditionImageTokenNotExpired = lockBorrowImageToken.newCondition();
@@ -53,7 +54,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("token_version", "2");
-        MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.USER_GET_SESSION_TOKEN);
+        MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN);
         mfRequestBuilder.requestParameters(requestParameters);
         MFRequest mfRequest = mfRequestBuilder.build();
         mfHttpRunner.doRequest(mfRequest);
@@ -147,7 +148,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     @Override
-    public void receiveNewImageActionToken(MFImageActionToken mfImageActionToken) {
+    public void receiveNewImageActionToken(MFActionToken mfImageActionToken) {
         MFConfiguration.getStaticMFLogger().v(TAG, "receiveNewImageActionToken()");
 
         if (isActionTokenValid(mfImageActionToken)) {
@@ -159,7 +160,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     @Override
-    public void receiveNewUploadActionToken(MFUploadActionToken mfUploadActionToken) {
+    public void receiveNewUploadActionToken(MFActionToken mfUploadActionToken) {
         MFConfiguration.getStaticMFLogger().v(TAG, "receiveNewUploadActionToken()");
 
         if (isActionTokenValid(mfUploadActionToken)) {
@@ -174,23 +175,26 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     @Override
     public MFSessionToken borrowMFSessionToken() {
         MFConfiguration.getStaticMFLogger().v(TAG, "borrowMFSessionToken()");
-        MFSessionToken sessionToken = null;
-        try {
-            sessionToken = mfSessionTokens.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (mfSessionTokens.remainingCapacity() < minimumSessionTokens) {
-            int numberOfTokensToGet = minimumSessionTokens - mfSessionTokens.remainingCapacity() ;
-            for (int i = 0; i < numberOfTokensToGet; i++) {
-                startThreadForNewSessionToken();
+        MFSessionToken sessionToken;
+        synchronized (sessionTokenLock) {
+            sessionToken = null;
+            try {
+                sessionToken = mfSessionTokens.take();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (mfSessionTokens.remainingCapacity() < minimumSessionTokens) {
+                int numberOfTokensToGet = minimumSessionTokens - mfSessionTokens.remainingCapacity();
+                for (int i = 0; i < numberOfTokensToGet; i++) {
+                    startThreadForNewSessionToken();
+                }
             }
         }
         return sessionToken;
     }
 
     @Override
-    public MFUploadActionToken borrowMFUploadActionToken() {
+    public MFActionToken borrowMFUploadActionToken() {
         MFConfiguration.getStaticMFLogger().v(TAG, "borrowMFUploadActionToken()");
         // lock and fetch new token if necessary
         lockBorrowUploadToken.lock();
@@ -211,7 +215,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     @Override
-    public MFImageActionToken borrowMFImageActionToken() {
+    public MFActionToken borrowMFImageActionToken() {
         MFConfiguration.getStaticMFLogger().v(TAG, "borrowMFImageActionToken()");
         // lock and fetch new token if necessary
         lockBorrowImageToken.lock();

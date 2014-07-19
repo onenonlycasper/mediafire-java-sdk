@@ -17,7 +17,7 @@ public final class MFHttpRunner {
         this.mfHttpClientCleanup = new MFHttpClientCleanup(mfTokenFarmCallback, mfConfiguration);
     }
 
-    public MFResponse doRequest(MFRequester mfRequester) {
+    public MFResponse doRequest(final MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().v(TAG, "doRequest()");
 
         MFResponse mfResponse = null;
@@ -28,9 +28,15 @@ public final class MFHttpRunner {
             e.printStackTrace();
         }
 
-        MFConfiguration.getStaticMFLogger().logApiError(TAG, mfRequester, mfResponse);
+        final MFResponse finalMfResponse = mfResponse;
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mfHttpClientCleanup.returnToken(mfRequester, finalMfResponse);
+            }
+        });
 
-        mfHttpClientCleanup.returnToken(mfRequester, mfResponse);
+        thread.start();
 
         return mfResponse;
     }

@@ -5,7 +5,7 @@ import com.mediafire.sdk.config.MFConfiguration;
 public final class MFSessionToken extends MFToken {
     private static final String TAG = MFSessionToken.class.getCanonicalName();
     private final String time;
-    private final String secretKey;
+    private String secretKey;
     private final String pkey;
     private final String ekey;
 
@@ -33,8 +33,8 @@ public final class MFSessionToken extends MFToken {
         return ekey;
     }
 
-    public MFSessionToken getUpdatedSessionToken() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getUpdatedSessionToken()");
+    public void updateSessionToken() {
+        MFConfiguration.getStaticMFLogger().v(TAG, "updateSessionToken()");
         MFConfiguration.getStaticMFLogger().v(TAG, "original secret key: " + secretKey);
         long newKey = Long.valueOf(secretKey) * 16807;
         MFConfiguration.getStaticMFLogger().v(TAG, "new secret key: " + newKey);
@@ -42,11 +42,11 @@ public final class MFSessionToken extends MFToken {
         MFConfiguration.getStaticMFLogger().v(TAG, "new secret key % 2147483647: " + newKey);
         String newSecretKey = String.valueOf(newKey);
         MFConfiguration.getStaticMFLogger().v(TAG, "string value of new key % 2147483647: " + newKey);
-        return new MFSessionToken(tokenString, newSecretKey, time, pkey, ekey);
+        this.secretKey = newSecretKey;
     }
 
     @Override
     public String toString() {
-        return "MFSessionToken time [" + time + "], secret key [" + secretKey + "], pkey [" + pkey + "], ekey [" + ekey + "], token [" + tokenString + "]";
+        return "MFSessionToken token [" + tokenString + "],  secret key [" + secretKey + "], time [" + time + "],pkey [" + pkey + "], ekey [" + ekey + "]";
     }
 }

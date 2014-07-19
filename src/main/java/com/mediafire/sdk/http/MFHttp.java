@@ -18,16 +18,20 @@ public abstract class MFHttp {
     }
 
     protected final String makeQueryString(Map<String, String> requestParameters, boolean urlEncode) throws UnsupportedEncodingException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "making query string. url encoding: " + urlEncode);
         StringBuilder stringBuilder = new StringBuilder();
+
         for (String key : requestParameters.keySet()) {
             stringBuilder.append("&");
             stringBuilder.append(key);
             stringBuilder.append("=");
-            stringBuilder.append(urlEncodedQueryValue(requestParameters.get(key)));
+            if (urlEncode) {
+                stringBuilder.append(urlEncodedQueryValue(requestParameters.get(key)));
+            } else {
+                stringBuilder.append(requestParameters.get(key));
+            }
+
         }
         String queryString = stringBuilder.toString().substring(1);
-        MFConfiguration.getStaticMFLogger().v(TAG, "made query string - " + queryString);
         return queryString;
     }
 
@@ -36,16 +40,13 @@ public abstract class MFHttp {
     }
 
     protected final String makeUrlAttachableQueryString(String queryString) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "making a url attachable query string");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("?");
         stringBuilder.append(queryString);
-        MFConfiguration.getStaticMFLogger().v(TAG, "made query string - " + stringBuilder.toString());
         return stringBuilder.toString();
     }
 
     protected final String makeBaseUrl(MFRequester mfRequester) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "making a base url");
         String scheme = mfRequester.getProtocol().getScheme();
         String host = mfRequester.getHost().getSubDomainAndHostName();
         String uri = mfRequester.getUri();
@@ -53,7 +54,6 @@ public abstract class MFHttp {
         stringBuilder.append(scheme);
         stringBuilder.append(host);
         stringBuilder.append(uri);
-        MFConfiguration.getStaticMFLogger().v(TAG, "made base url - " + stringBuilder.toString());
         return stringBuilder.toString();
     }
 }

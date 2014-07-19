@@ -10,4 +10,8 @@ public abstract class MFToken {
     public String getTokenString() {
         return tokenString;
     }
+
+    public String toString() {
+        return "MFToken token [" + tokenString + "]";
+    }
 }

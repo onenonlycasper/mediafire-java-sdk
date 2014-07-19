@@ -10,13 +10,13 @@ public interface MFTokenFarmCallback {
 
     public void receiveNewSessionToken(MFSessionToken mfSessionToken);
 
-    public void receiveNewImageActionToken(MFImageActionToken mfImageActionToken);
+    public void receiveNewImageActionToken(MFActionToken mfImageActionToken);
 
-    public void receiveNewUploadActionToken(MFUploadActionToken mfUploadActionToken);
+    public void receiveNewUploadActionToken(MFActionToken mfUploadActionToken);
 
     public MFSessionToken borrowMFSessionToken();
 
-    public MFUploadActionToken borrowMFUploadActionToken();
+    public MFActionToken borrowMFUploadActionToken();
 
-    public MFImageActionToken borrowMFImageActionToken();
+    public MFActionToken borrowMFImageActionToken();
 }
