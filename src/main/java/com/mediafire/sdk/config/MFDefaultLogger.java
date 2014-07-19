@@ -72,7 +72,7 @@ public class MFDefaultLogger implements MFLogger {
         String apiEnumName = mfRequester.toString();
         boolean queryPostable = mfRequester.isQueryPostable();
         String uri = mfRequester.getUri();
-        String tokenTypeEnumName = mfRequester.getTokenType().toString();
+        String tokenTypeEnumName = mfRequester.getTypeOfTokenToReturn().toString();
 
         String hostEnumName = mfRequester.toString();
         String host = mfRequester.getHost();

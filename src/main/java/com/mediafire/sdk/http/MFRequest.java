@@ -89,12 +89,27 @@ public final class MFRequest implements MFRequester {
     }
 
     @Override
-    public MFApi.TokenType getTokenType() {
-        return mfApi.getTokenType();
+    public MFApi.TokenType getTypeOfTokenToBorrow() {
+        return mfApi.getTypeOfTokenToBorrow();
+    }
+
+    @Override
+    public MFApi.TokenType getTypeOfSignatureToAdd() {
+        return mfApi.getTypeOfSignatureToAdd();
+    }
+
+    @Override
+    public MFApi.TokenType getTypeOfTokenToReturn() {
+        return mfApi.getTypeOfTokenToReturn();
     }
 
     @Override
     public boolean isQueryPostable() {
         return mfApi.isQueryPostable();
+    }
+
+    @Override
+    public boolean isTokenRequired() {
+        return mfApi.isTokenRequired();
     }
 }
