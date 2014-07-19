@@ -34,7 +34,17 @@ public final class MFRequest implements MFRequester {
     }
 
     public MFRequest(MFHost mfHost, MFApi mfApi, Map<String, String> requestParameters) {
-        this(new MFRequestBuilder(mfHost, mfApi).requestParameters(requestParameters));
+        this.transferProtocol = mfHost.getTransferProtocol();
+        this.host = mfHost.getHost();
+        this.uri = mfApi.getUri();
+        this.typeOfTokenToBorrow = mfApi.getTypeOfTokenToBorrow();
+        this.typeOfSignatureToAdd = mfApi.getTypeOfSignatureToAdd();
+        this.typeOfTokenToReturn = mfApi.getTypeOfTokenToReturn();
+        this.isQueryPostable = mfApi.isQueryPostable();
+        this.isTokenRequired = mfApi.isTokenRequired();
+        this.requestParameters = requestParameters;
+        this.headers = new LinkedHashMap<String, String>();
+        this.payload = new byte[0];
     }
 
     @Override
@@ -103,17 +113,17 @@ public final class MFRequest implements MFRequester {
     }
 
     public static class MFRequestBuilder {
-        private MFHost.TransferProtocol transferProtocol;
-        private MFHost.Host host;
-        private String uri;
-        private MFApi.TokenType typeOfTokenToBorrow;
-        private MFApi.TokenType typeOfSignatureToAdd;
-        private MFApi.TokenType typeOfTokenToReturn;
+        private MFHost.TransferProtocol transferProtocol = MFHost.TransferProtocol.HTTP;
+        private MFHost.Host host = MFHost.Host.LIVE;
+        private String uri = "/api/system/get_info.php";
+        private MFApi.TokenType typeOfTokenToBorrow = MFApi.TokenType.NONE;
+        private MFApi.TokenType typeOfSignatureToAdd = MFApi.TokenType.NONE;
+        private MFApi.TokenType typeOfTokenToReturn = MFApi.TokenType.NONE;
         private boolean isQueryPostable;
         private boolean isTokenRequired;
-        private Map<String, String> requestParameters;
-        private Map<String, String> headers;
-        private byte[] payload;
+        private Map<String, String> requestParameters = new LinkedHashMap<String, String>();
+        private Map<String, String> headers = new LinkedHashMap<String, String>();
+        private byte[] payload = new byte[0];
 
         public MFRequestBuilder(MFHost mfHost, MFApi mfApi) {
             if (mfHost == null) {
@@ -129,13 +139,13 @@ public final class MFRequest implements MFRequester {
             this.isTokenRequired = mfApi.isTokenRequired();
         }
 
-        public MFRequestBuilder(MFHost mfHost) {
-            this(mfHost, null);
-        }
-
-        public MFRequestBuilder uri(String uri) {
+        public MFRequestBuilder(MFHost mfHost, String uri) {
+            if (mfHost == null) {
+                throw new IllegalArgumentException("MFHost cannot be null");
+            }
+            this.transferProtocol = mfHost.getTransferProtocol();
+            this.host = mfHost.getHost();
             this.uri = uri;
-            return this;
         }
 
         public MFRequestBuilder typeOfTokenToBorrow(MFApi.TokenType typeOfTokenToBorrow) {
