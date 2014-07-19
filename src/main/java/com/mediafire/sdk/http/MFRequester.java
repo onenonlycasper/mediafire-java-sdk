@@ -18,9 +18,9 @@ public interface MFRequester {
 
     public void setToken(MFToken MFToken);
 
-    public String getHost();
+    public MFHost.Host getHost();
 
-    public MFHost.TransferProtocol getTransferProtocol();
+    public MFHost.TransferProtocol getProtocol();
 
     public String getUri();
 

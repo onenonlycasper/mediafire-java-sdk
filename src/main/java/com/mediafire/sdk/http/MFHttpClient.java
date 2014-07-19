@@ -106,14 +106,14 @@ public final class MFHttpClient extends MFHttp {
         URL url = makeFullUrl(mfRequester);
         MFConfiguration.getStaticMFLogger().v(TAG, "opening connection to: " + url.toString());
         URLConnection connection;
-        switch (mfRequester.getTransferProtocol()) {
+        switch (mfRequester.getProtocol()) {
             case HTTP:
-                MFConfiguration.getStaticMFLogger().v(TAG, "transfer scheme for this request: " + mfRequester.getTransferProtocol().toString());
+                MFConfiguration.getStaticMFLogger().v(TAG, "transfer scheme for this request: " + mfRequester.getProtocol().toString());
                 connection = url.openConnection();
                 setConnectionParameters(connection, mfRequester);
                 return (HttpURLConnection) connection;
             case HTTPS:
-                MFConfiguration.getStaticMFLogger().v(TAG, "transfer scheme for this request: " + mfRequester.getTransferProtocol().toString());
+                MFConfiguration.getStaticMFLogger().v(TAG, "transfer scheme for this request: " + mfRequester.getProtocol().toString());
                 connection = url.openConnection();
                 setConnectionParameters(connection, mfRequester);
                 // TODO set ssl context and trust manager

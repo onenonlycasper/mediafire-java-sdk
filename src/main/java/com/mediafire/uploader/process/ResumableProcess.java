@@ -75,7 +75,13 @@ public class ResumableProcess extends UploadProcess {
                 HashMap<String, String> parameters = generateGetParameters();
 
                 printDebugRequestData(headers, parameters);
-                MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_INSTANT, parameters, headers, uploadChunk);
+
+                MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.UPLOAD_INSTANT);
+                mfRequestBuilder.requestParameters(parameters);
+                mfRequestBuilder.headers(headers);
+                mfRequestBuilder.payload(uploadChunk);
+                MFRequest mfRequest = mfRequestBuilder.build();
+                
                 MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
                 response = mfResponse.getResponseObject(ResumableResponse.class);
 

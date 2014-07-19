@@ -35,7 +35,10 @@ public class InstantProcess extends UploadProcess {
 
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
-        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_INSTANT, keyValue);
+        MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.UPLOAD_INSTANT);
+        mfRequestBuilder.requestParameters(keyValue);
+        MFRequest mfRequest = mfRequestBuilder.build();
+
         MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
         InstantResponse response = mfResponse.getResponseObject(InstantResponse.class);
 

@@ -2,7 +2,10 @@ package com.mediafire.uploader.process;
 
 import com.mediafire.sdk.api_responses.upload.PollResponse;
 import com.mediafire.sdk.config.MFConfiguration;
-import com.mediafire.sdk.http.*;
+import com.mediafire.sdk.http.MFApi;
+import com.mediafire.sdk.http.MFHost;
+import com.mediafire.sdk.http.MFRequest;
+import com.mediafire.sdk.http.MFResponse;
 import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
@@ -30,7 +33,9 @@ public class PollProcess extends UploadProcess {
             pollCount++;
             // get api response.
 
-            MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_POLL_UPLOAD, keyValue);
+            MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.UPLOAD_POLL_UPLOAD);
+            mfRequestBuilder.requestParameters(keyValue);
+            MFRequest mfRequest = mfRequestBuilder.build();
             MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
             PollResponse response = mfResponse.getResponseObject(PollResponse.class);
 

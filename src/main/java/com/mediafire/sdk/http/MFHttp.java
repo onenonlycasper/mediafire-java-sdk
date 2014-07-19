@@ -46,8 +46,8 @@ public abstract class MFHttp {
 
     protected final String makeBaseUrl(MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().v(TAG, "making a base url");
-        String scheme = mfRequester.getTransferProtocol().getScheme();
-        String host = mfRequester.getHost();
+        String scheme = mfRequester.getProtocol().getScheme();
+        String host = mfRequester.getHost().getSubDomainAndHostName();
         String uri = mfRequester.getUri();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(scheme);

@@ -75,9 +75,9 @@ public class MFDefaultLogger implements MFLogger {
         String tokenTypeEnumName = mfRequester.getTypeOfTokenToReturn().toString();
 
         String hostEnumName = mfRequester.toString();
-        String host = mfRequester.getHost();
-        String schemeEnumName = mfRequester.getTransferProtocol().toString();
-        String scheme = mfRequester.getTransferProtocol().getScheme();
+        String host = mfRequester.getHost().getSubDomainAndHostName();
+        String schemeEnumName = mfRequester.getProtocol().toString();
+        String scheme = mfRequester.getProtocol().getScheme();
 
         Map<String, String> requestHeaders = mfRequester.getHeaders();
 

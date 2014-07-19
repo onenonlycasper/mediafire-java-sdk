@@ -43,7 +43,9 @@ public class CheckProcess extends UploadProcess {
 
         // generate map with request parameters
         Map<String, String> keyValue = generateRequestParameters(filename);
-        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_CHECK, keyValue);
+        MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.UPLOAD_CHECK);
+        mfRequestBuilder.requestParameters(keyValue);
+        MFRequest mfRequest = mfRequestBuilder.build();
         MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
         CheckResponse response = mfResponse.getResponseObject(CheckResponse.class);
 
