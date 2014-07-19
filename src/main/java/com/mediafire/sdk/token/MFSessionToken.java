@@ -34,14 +34,14 @@ public final class MFSessionToken extends MFToken {
     }
 
     public MFSessionToken getUpdatedSessionToken() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getUpdatedSessionToken");
+        MFConfiguration.getStaticMFLogger().v(TAG, "getUpdatedSessionToken()");
         MFConfiguration.getStaticMFLogger().v(TAG, "original secret key: " + secretKey);
         long newKey = Long.valueOf(secretKey) * 16807;
         MFConfiguration.getStaticMFLogger().v(TAG, "new secret key: " + newKey);
         newKey = newKey % 2147483647;
-        MFConfiguration.getStaticMFLogger().v(TAG, "new secret key % 256");
+        MFConfiguration.getStaticMFLogger().v(TAG, "new secret key % 2147483647: " + newKey);
         String newSecretKey = String.valueOf(newKey);
-        MFConfiguration.getStaticMFLogger().v(TAG, "getUpdatedSessionToken");
+        MFConfiguration.getStaticMFLogger().v(TAG, "string value of new key % 2147483647: " + newKey);
         return new MFSessionToken(tokenString, newSecretKey, time, pkey, ekey);
     }
 
