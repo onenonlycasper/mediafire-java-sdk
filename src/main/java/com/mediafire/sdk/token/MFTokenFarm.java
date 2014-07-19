@@ -76,7 +76,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "image");
-        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
+        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_IMAGE_TOKEN, requestParameters);
         mfHttpRunner.doRequest(mfRequest);
     }
 
@@ -86,7 +86,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
         requestParameters.put("type", "upload");
-        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_ACTION_TOKEN, requestParameters);
+        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.USER_GET_UPLOAD_TOKEN, requestParameters);
         mfHttpRunner.doRequest(mfRequest);
     }
 
