@@ -1,8 +1,10 @@
 package com.mediafire.sdk.token;
 
-import com.mediafire.sdk.api_responses.ApiResponse;
 import com.mediafire.sdk.config.MFConfiguration;
-import com.mediafire.sdk.http.*;
+import com.mediafire.sdk.http.MFApi;
+import com.mediafire.sdk.http.MFHost;
+import com.mediafire.sdk.http.MFHttpRunner;
+import com.mediafire.sdk.http.MFRequest;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -44,21 +46,6 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     public MFConfiguration getMfConfiguration() {
         return mfConfiguration;
-    }
-
-    public boolean canGetSessionToken() {
-        Map<String, String> requestParameters = new LinkedHashMap<String, String>();
-        requestParameters.put("token_version", "2");
-        MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN, requestParameters);
-        MFResponse mfResponse = mfHttpRunner.doRequest(mfRequest);
-
-        if (mfResponse == null) {
-            return false;
-        }
-
-        ApiResponse apiResponse = mfResponse.getResponseObject(ApiResponse.class);
-        return !(apiResponse == null || apiResponse.hasError());
-
     }
 
     private void getNewSessionToken() {
