@@ -86,7 +86,6 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     public void shutdown() {
         MFConfiguration.getStaticMFLogger().v(TAG, "shutdown()");
-
         mfSessionTokens.clear();
         mfUploadActionToken = null;
         mfImageActionToken = null;
@@ -94,17 +93,24 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     public void startup() {
         MFConfiguration.getStaticMFLogger().v(TAG, "startup()");
-
+        // do nothing if credentials aren't stored
+        if (!haveStoredCredentials()) {
+            throw new IllegalStateException("cannot call startup() without credentials");
+        }
+        // get one session token on current thread
+        getNewSessionToken();
+        // get remaining session tokens on another thread
         for (int i = 0; i < mfSessionTokens.remainingCapacity(); i++) {
             MFConfiguration.getStaticMFLogger().v(TAG, "fetching new session token (remaining capacity " + mfSessionTokens.remainingCapacity() + ")");
-            getNewSessionToken();
+            startThreadForNewSessionToken();
         }
-
+        // get an upload action token on current thread
         if (mfUploadActionToken == null || mfUploadActionToken.isExpired()) {
             MFConfiguration.getStaticMFLogger().v(TAG, "fetching upload action token");
             getNewUploadActionToken();
         }
 
+        // get an image action token on current thread
         if (mfImageActionToken == null || mfImageActionToken.isExpired()) {
             MFConfiguration.getStaticMFLogger().v(TAG, "fetching image action token()");
             getNewImageActionToken();
@@ -254,6 +260,10 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         MFConfiguration.getStaticMFLogger().i(TAG, "token expired: " + token.isExpired());
         MFConfiguration.getStaticMFLogger().i(TAG, "token string null: " + (token != null && token.getTokenString() != null));
         return token != null && !token.isExpired() && token.getTokenString() != null;
+    }
+
+    private boolean haveStoredCredentials() {
+        return !mfConfiguration.getMfCredentials().getCredentials().isEmpty();
     }
 
     private void startThreadForNewSessionToken() {
