@@ -76,7 +76,7 @@ public class ResumableProcess extends UploadProcess {
 
                 printDebugRequestData(headers, parameters);
                 MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_INSTANT, parameters, headers, uploadChunk);
-                MFResponse mfResponse = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
+                MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
                 response = mfResponse.getResponseObject(ResumableResponse.class);
 
                 // set poll upload key if possible

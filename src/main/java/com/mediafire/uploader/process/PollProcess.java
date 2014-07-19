@@ -31,7 +31,7 @@ public class PollProcess extends UploadProcess {
             // get api response.
 
             MFRequest mfRequest = new MFRequest(MFHost.LIVE_HTTP, MFApi.UPLOAD_POLL_UPLOAD, keyValue);
-            MFResponse mfResponse = mfTokenFarm.getMfHttpRunner().doRequest(mfRequest);
+            MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
             PollResponse response = mfResponse.getResponseObject(PollResponse.class);
 
             if (response == null) {

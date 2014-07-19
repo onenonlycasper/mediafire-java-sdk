@@ -40,11 +40,11 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         this.mfHttpRunner = new MFHttpRunner(mfConfiguration, this);
     }
 
-    public MFHttpRunner getMfHttpRunner() {
+    public MFHttpRunner getMFHttpRunner() {
         return mfHttpRunner;
     }
 
-    public MFConfiguration getMfConfiguration() {
+    public MFConfiguration getMFConfiguration() {
         return mfConfiguration;
     }
 
