@@ -249,6 +249,10 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     private boolean isActionTokenValid(MFActionToken token) {
+        MFConfiguration.getStaticMFLogger().i(TAG, "isActionTokenValid()");
+        MFConfiguration.getStaticMFLogger().i(TAG, "token null: " + (token == null));
+        MFConfiguration.getStaticMFLogger().i(TAG, "token expired: " + token.isExpired());
+        MFConfiguration.getStaticMFLogger().i(TAG, "token string null: " + (token != null && token.getTokenString() != null));
         return token != null && !token.isExpired() && token.getTokenString() != null;
     }
 

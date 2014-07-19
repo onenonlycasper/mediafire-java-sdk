@@ -7,6 +7,17 @@ public class MFActionToken extends MFToken {
     public MFActionToken(String tokenString, Type type, long expiration) {
         super(tokenString);
         this.type = type;
+        if (expiration > 1440) {
+            expiration = 1440;
+        } else if (expiration < 1) {
+            expiration = 1;
+        } else {
+            // expiration is ok.
+        }
+
+        // temporary - set max time.
+        expiration = 1440 * 1000 * 60 * 24;
+
         this.expiration = expiration;
     }
 
