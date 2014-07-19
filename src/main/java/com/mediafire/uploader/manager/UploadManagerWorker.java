@@ -8,32 +8,27 @@ import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.config.MFLogger;
 import com.mediafire.sdk.token.MFTokenFarm;
-import com.mediafire.uploader.PausableThreadPoolExecutor;
-import com.mediafire.uploader.interfaces.Pausable;
-import com.mediafire.uploader.interfaces.UploadListenerManager;
 import com.mediafire.uploader.process.CheckProcess;
 import com.mediafire.uploader.process.InstantProcess;
 import com.mediafire.uploader.process.PollProcess;
 import com.mediafire.uploader.process.ResumableProcess;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Executor;
 
 /**
  * Created by Chris Najar on 7/8/2014.
  */
-public abstract class UploadManagerWorker implements UploadListenerManager, Pausable {
+public abstract class UploadManagerWorker {
     private static final String TAG = UploadManagerWorker.class.getCanonicalName();
     protected final int MAX_UPLOAD_ATTEMPTS;
     protected final MFTokenFarm mfTokenFarm;
-    protected final PausableThreadPoolExecutor executor;
-    protected final LinkedBlockingQueue<Runnable> workQueue;
+    protected final Executor executor;
     protected MFLogger errorTracker;
 
-    public UploadManagerWorker(MFTokenFarm mfTokenFarm, int maxUploadAttempts, int maxThreadQueue) {
+    public UploadManagerWorker(MFTokenFarm mfTokenFarm, int maxUploadAttempts, Executor executor) {
         this.mfTokenFarm = mfTokenFarm;
-        this.workQueue = new LinkedBlockingQueue<Runnable>();
-        executor = new PausableThreadPoolExecutor(maxThreadQueue, workQueue);
+        this.executor = executor;
         this.MAX_UPLOAD_ATTEMPTS = maxUploadAttempts;
     }
 
@@ -47,13 +42,11 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         this.errorTracker = errorTracker;
     }
 
-    @Override
     public void onStartedUploadProcess(UploadItem uploadItem) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onStartedUploadProcess()");
         notifyUploadListenerStarted(uploadItem);
     }
 
-    @Override
     public void onCheckCompleted(UploadItem uploadItem, CheckResponse checkResponse) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onCheckCompleted()");
         //as a preventable infinite loop measure, an upload item cannot continue after upload/check.php if it has gone through the process 20x
@@ -79,7 +72,6 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         }
     }
 
-    @Override
     public void onProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onProgressUpdate()");
         notifyUploadListenerOnProgressUpdate(uploadItem, chunkNumber, numChunks);
@@ -161,13 +153,11 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         }
     }
 
-    @Override
     public void onInstantCompleted(UploadItem uploadItem, InstantResponse response) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onInstantCompleted()");
         notifyUploadListenerCompleted(uploadItem);
     }
 
-    @Override
     public void onResumableCompleted(UploadItem uploadItem, ResumableResponse response) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onResumableCompleted()");
         if (response != null &&
@@ -181,7 +171,6 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         }
     }
 
-    @Override
     public void onPollCompleted(UploadItem uploadItem, PollResponse pollResponse) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onPollCompleted()");
         // if this method is called then file error and result codes are fine, but we may not have received status 99 so
@@ -200,7 +189,6 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         }
     }
 
-    @Override
     public void onProcessException(UploadItem uploadItem, Exception exception) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onProcessException()");
         MFConfiguration.getStaticMFLogger().v(TAG, "received exception: " + exception);
@@ -210,16 +198,13 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         notifyUploadListenerCancelled(uploadItem);
     }
 
-    @Override
     public void onLostConnection(UploadItem uploadItem) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onLostConnection()");
         notifyUploadListenerCancelled(uploadItem);
         //pause upload manager
-        pause();
         addUploadRequest(uploadItem);
     }
 
-    @Override
     public void onCancelled(UploadItem uploadItem, ApiResponse apiResponse) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onCancelled()");
         notifyUploadListenerCancelled(uploadItem);
@@ -227,23 +212,5 @@ public abstract class UploadManagerWorker implements UploadListenerManager, Paus
         if (apiResponse != null && apiResponse.hasError()) {
             addUploadRequest(uploadItem);
         }
-    }
-
-    /**
-     * Pausable interface
-     */
-    public void pause() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "pause()");
-        executor.pause();
-    }
-
-    public void resume() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "resume()");
-        executor.resume();
-    }
-
-    public boolean isPaused() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "isPaused()");
-        return executor.isPaused();
     }
 }

@@ -6,43 +6,20 @@ import com.mediafire.uploader.interfaces.UploadListener;
 import com.mediafire.uploader.process.CheckProcess;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
 import java.util.logging.Logger;
 
 public class UploadManager extends UploadManagerWorker {
     private static final String TAG = UploadManager.class.getCanonicalName();
     private UploadListener uiListener;
-    private Logger logger;
 
-    public UploadManager(MFTokenFarm mfTokenFarm, int maximumThreadCount, int maximumUploadAttempts) {
-        super(mfTokenFarm, maximumUploadAttempts, maximumUploadAttempts);
+    public UploadManager(MFTokenFarm mfTokenFarm, int maximumUploadAttempts, Executor executor) {
+        super(mfTokenFarm, maximumUploadAttempts, executor);
     }
 
     public void setUploadListener(UploadListener uiListener) {
         MFConfiguration.getStaticMFLogger().v(TAG, "setUploadListener");
         this.uiListener = uiListener;
-    }
-
-    public int getAllItems() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getAllItems()");
-        return workQueue.size() + executor.getActiveCount();
-    }
-
-    public BlockingQueue<Runnable> getAllWaitingRunnables() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getAllWaitingRunnables()");
-        return workQueue;
-    }
-
-    public void clearUploadQueue() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "clearUploadQueue()");
-        boolean isPaused = isPaused();
-        if (!isPaused) {
-            pause();
-        }
-        executor.purge();
-        if (!isPaused) {
-            resume();
-        }
     }
 
     public void addUploadRequest(UploadItem uploadItem) {

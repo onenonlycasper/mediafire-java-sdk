@@ -3,9 +3,12 @@ package com.mediafire.uploader.process;
 import com.mediafire.sdk.api_responses.ApiResponse;
 import com.mediafire.sdk.api_responses.upload.CheckResponse;
 import com.mediafire.sdk.config.MFConfiguration;
-import com.mediafire.sdk.http.*;
+import com.mediafire.sdk.http.MFApi;
+import com.mediafire.sdk.http.MFHost;
+import com.mediafire.sdk.http.MFRequest;
+import com.mediafire.sdk.http.MFResponse;
 import com.mediafire.sdk.token.MFTokenFarm;
-import com.mediafire.uploader.interfaces.UploadListenerManager;
+import com.mediafire.uploader.manager.UploadManagerWorker;
 import com.mediafire.uploader.uploaditem.ResumableBitmap;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
@@ -19,8 +22,8 @@ public class CheckProcess extends UploadProcess {
 
     private static final String TAG = CheckProcess.class.getCanonicalName();
 
-    public CheckProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
-        super(mfTokenFarm, uploadItem, uploadListenerManager);
+    public CheckProcess(MFTokenFarm mfTokenFarm, UploadManagerWorker uploadManagerWorker, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadManagerWorker);
     }
 
     @Override

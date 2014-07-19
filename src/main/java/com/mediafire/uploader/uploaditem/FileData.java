@@ -26,30 +26,23 @@ public class FileData {
     }
 
     public String getFilePath() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getFilePath()");
         return filePath;
     }
 
     public long getFileSize() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getFilePath()");
         return fileSize;
     }
 
     public String getFileHash() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getFilePath()");
         return fileHash;
     }
 
     public void setFileSize() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "setFileSize()");
         File file = new File(getFilePath());
         fileSize = file.length();
-
-        MFConfiguration.getStaticMFLogger().v(TAG, "file size set to " + fileSize);
     }
 
     public void setFileHash() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "setFileHash()");
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;

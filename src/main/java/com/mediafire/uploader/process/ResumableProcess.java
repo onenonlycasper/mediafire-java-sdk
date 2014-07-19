@@ -4,7 +4,7 @@ import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.http.*;
 import com.mediafire.sdk.token.MFTokenFarm;
-import com.mediafire.uploader.interfaces.UploadListenerManager;
+import com.mediafire.uploader.manager.UploadManagerWorker;
 import com.mediafire.uploader.uploaditem.*;
 
 import java.io.*;
@@ -18,8 +18,8 @@ public class ResumableProcess extends UploadProcess {
 
     private static final String TAG = ResumableProcess.class.getCanonicalName();
 
-    public ResumableProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
-        super(mfTokenFarm, uploadItem, uploadListenerManager);
+    public ResumableProcess(MFTokenFarm mfTokenFarm, UploadManagerWorker uploadManagerWorker, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadManagerWorker);
     }
 
     @Override
@@ -153,7 +153,6 @@ public class ResumableProcess extends UploadProcess {
         MFConfiguration.getStaticMFLogger().v(TAG, "shouldCancelUpload()");
         // if API response code OR Upload Response Result code have an error then we need to terminate the process
         if (response.hasError()) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "response has an error # " + response.getError() + ": " + response.getMessage());
             notifyListenerCancelled(response);
             return true;
         }
@@ -162,7 +161,6 @@ public class ResumableProcess extends UploadProcess {
             // let the listeners know we are done with this process (because there was an error in this case)
             if (response.getDoUpload().getResultCode() != ResumableResponse.Result.SUCCESS_FILE_MOVED_TO_ROOT) {
                 // let the listeners know we are done with this process (because there was an error in this case)
-                MFConfiguration.getStaticMFLogger().v(TAG, "cancelling because result code: " + response.getDoUpload().getResultCode().toString());
                 notifyListenerCancelled(response);
                 return true;
             }
@@ -210,9 +208,6 @@ public class ResumableProcess extends UploadProcess {
         String versionControl = uploadOptions.getVersionControl();
         String uploadFolderKey = uploadOptions.getUploadFolderKey();
         String uploadPath = uploadOptions.getUploadPath();
-        MFConfiguration.getStaticMFLogger().v(TAG, "action on duplicate: " + actionOnDuplicate);
-        MFConfiguration.getStaticMFLogger().v(TAG, "version control: " + versionControl);
-        MFConfiguration.getStaticMFLogger().v(TAG, "upload folder key: " + uploadFolderKey);
 
         String actionToken = mfTokenFarm.borrowMFUploadActionToken().getTokenString();
         HashMap<String, String> parameters = new HashMap<String, String>();
@@ -244,7 +239,6 @@ public class ResumableProcess extends UploadProcess {
     }
 
     private boolean shouldSetPollUploadKey(ResumableResponse response) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "shouldSetPollUploadKey()");
         switch (response.getDoUpload().getResultCode()) {
             case NO_ERROR:
             case SUCCESS_FILE_MOVED_TO_ROOT:
@@ -255,7 +249,6 @@ public class ResumableProcess extends UploadProcess {
     }
 
     private int getChunkSize(int chunkNumber, int numChunks, long fileSize, int unitSize) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getChunkSize()");
         int chunkSize;
         if (chunkNumber >= numChunks) {
             chunkSize = 0; // represents bad size
@@ -274,7 +267,6 @@ public class ResumableProcess extends UploadProcess {
 
     private byte[] createUploadChunk(long unitSize, int chunkNumber, BufferedInputStream fileStream) throws IOException {
         MFConfiguration.getStaticMFLogger().v(TAG, "createUploadChunk()");
-        MFConfiguration.getStaticMFLogger().v(TAG, "creating new byte array of size: " + unitSize);
         byte[] readBytes = new byte[(int) unitSize];
         int offset = (int) (unitSize * chunkNumber);
         fileStream.skip(offset);

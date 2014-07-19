@@ -7,7 +7,7 @@ import com.mediafire.sdk.http.MFHost;
 import com.mediafire.sdk.http.MFRequest;
 import com.mediafire.sdk.http.MFResponse;
 import com.mediafire.sdk.token.MFTokenFarm;
-import com.mediafire.uploader.interfaces.UploadListenerManager;
+import com.mediafire.uploader.manager.UploadManagerWorker;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public class PollProcess extends UploadProcess {
     private static final long TIME_BETWEEN_POLLS = 2000;
     private static final int MAX_POLLS = 60;
 
-    public PollProcess(MFTokenFarm mfTokenFarm, UploadListenerManager uploadListenerManager, UploadItem uploadItem) {
+    public PollProcess(MFTokenFarm mfTokenFarm, UploadManagerWorker uploadListenerManager, UploadItem uploadItem) {
         super(mfTokenFarm, uploadItem, uploadListenerManager);
     }
 
@@ -62,15 +62,12 @@ public class PollProcess extends UploadProcess {
 
                     if (response.getDoUpload().getFileErrorCode() != PollResponse.FileError.NO_ERROR) {
                         MFConfiguration.getStaticMFLogger().v(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
-                        MFConfiguration.getStaticMFLogger().v(TAG, "file path: " + uploadItem.getFileData().getFilePath());
-                        MFConfiguration.getStaticMFLogger().v(TAG, "file hash: " + uploadItem.getFileData().getFileHash());
-                        MFConfiguration.getStaticMFLogger().v(TAG, "file size: " + uploadItem.getFileData().getFileSize());
                         notifyListenerCancelled(response);
                         return;
                     }
 
                     if (response.getDoUpload().getStatusCode() == PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY) {
-                        MFConfiguration.getStaticMFLogger().v(TAG, "status code: " + response.getDoUpload().getStatusCode().toString() + " we are done");
+                        MFConfiguration.getStaticMFLogger().v(TAG, "status code: " + response.getDoUpload().getStatusCode().toString());
                         notifyListenerCompleted(response);
                         return;
                     }
