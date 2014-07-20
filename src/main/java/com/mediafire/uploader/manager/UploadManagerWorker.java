@@ -6,7 +6,6 @@ import com.mediafire.sdk.api_responses.upload.InstantResponse;
 import com.mediafire.sdk.api_responses.upload.PollResponse;
 import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.sdk.config.MFConfiguration;
-import com.mediafire.sdk.config.MFLogger;
 import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.uploader.process.CheckProcess;
 import com.mediafire.uploader.process.InstantProcess;
@@ -21,15 +20,25 @@ import java.util.concurrent.Executor;
  */
 public abstract class UploadManagerWorker {
     private static final String TAG = UploadManagerWorker.class.getCanonicalName();
-    protected final int MAX_UPLOAD_ATTEMPTS;
+    protected final int maxUploadAttempts;
     protected final MFTokenFarm mfTokenFarm;
     protected final Executor executor;
-    protected MFLogger errorTracker;
 
     public UploadManagerWorker(MFTokenFarm mfTokenFarm, int maxUploadAttempts, Executor executor) {
+        if (mfTokenFarm == null) {
+            throw new IllegalArgumentException("MFTokenFarm must not be null");
+        }
+
+        if (maxUploadAttempts < 1) {
+            throw new IllegalArgumentException("maxUploadAttempts must be greater than 0");
+        }
+
+        if (executor == null) {
+            throw new IllegalArgumentException("Executor must not be null");
+        }
         this.mfTokenFarm = mfTokenFarm;
         this.executor = executor;
-        this.MAX_UPLOAD_ATTEMPTS = maxUploadAttempts;
+        this.maxUploadAttempts = maxUploadAttempts;
     }
 
     public abstract void addUploadRequest(UploadItem uploadItem);
@@ -37,10 +46,6 @@ public abstract class UploadManagerWorker {
     protected abstract void notifyUploadListenerCompleted(UploadItem uploadItem);
     protected abstract void notifyUploadListenerOnProgressUpdate(UploadItem uploadItem, int chunkNumber, int numChunks);
     protected abstract void notifyUploadListenerCancelled(UploadItem uploadItem);
-
-    public void setErrorTracker(MFLogger errorTracker) {
-        this.errorTracker = errorTracker;
-    }
 
     public void onStartedUploadProcess(UploadItem uploadItem) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onStartedUploadProcess()");
@@ -51,7 +56,7 @@ public abstract class UploadManagerWorker {
         MFConfiguration.getStaticMFLogger().v(TAG, "onCheckCompleted()");
         //as a preventable infinite loop measure, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
-        if (uploadItem.getUploadAttemptCount() > MAX_UPLOAD_ATTEMPTS || uploadItem.isCancelled()) {
+        if (uploadItem.getUploadAttemptCount() > maxUploadAttempts || uploadItem.isCancelled()) {
             notifyUploadListenerCancelled(uploadItem);
             return;
         }
@@ -94,8 +99,7 @@ public abstract class UploadManagerWorker {
     private void hashNotInAccount(UploadItem uploadItem) {
         MFConfiguration.getStaticMFLogger().v(TAG, "hashNotInAccount()");
         InstantProcess process = new InstantProcess(mfTokenFarm, this, uploadItem);
-        Thread thread = new Thread(process);
-        thread.start();
+        executor.execute(process);
     }
 
     private void hashInAccount(UploadItem uploadItem, CheckResponse checkResponse) {
@@ -191,10 +195,7 @@ public abstract class UploadManagerWorker {
 
     public void onProcessException(UploadItem uploadItem, Exception exception) {
         MFConfiguration.getStaticMFLogger().v(TAG, "onProcessException()");
-        MFConfiguration.getStaticMFLogger().v(TAG, "received exception: " + exception);
-        if (errorTracker != null) {
-            errorTracker.e(UploadManagerWorker.class.getCanonicalName(), "exception during upload", exception);
-        }
+        MFConfiguration.getStaticMFLogger().e(TAG, "received exception: " + exception, exception);
         notifyUploadListenerCancelled(uploadItem);
     }
 
