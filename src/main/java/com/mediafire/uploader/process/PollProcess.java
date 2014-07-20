@@ -29,6 +29,7 @@ public class PollProcess extends UploadProcess {
 
         int pollCount = 0;
         do {
+
             // increment counter
             pollCount++;
             // get api response.
@@ -38,6 +39,18 @@ public class PollProcess extends UploadProcess {
             MFRequest mfRequest = mfRequestBuilder.build();
             MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
             PollResponse response = mfResponse.getResponseObject(PollResponse.class);
+
+            if (uploadItem.isCancelled()) {
+                MFConfiguration.getStaticMFLogger().v(TAG, "upload was cancelled for " + uploadItem.getFileName());
+                notifyListenerCancelled(response);
+                return;
+            }
+
+            if (!uploadManagerWorker.haveStoredCredentials()) {
+                MFConfiguration.getStaticMFLogger().v(TAG, "no credentials stored, task cancelling()");
+                uploadItem.cancelUpload();
+                return;
+            }
 
             if (response == null) {
                 notifyListenerLostConnection();

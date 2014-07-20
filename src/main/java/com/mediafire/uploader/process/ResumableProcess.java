@@ -49,7 +49,14 @@ public class ResumableProcess extends UploadProcess {
         ResumableResponse response = null;
         for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {
             if (uploadItem.isCancelled()) {
+                MFConfiguration.getStaticMFLogger().v(TAG, "upload was cancelled for " + uploadItem.getFileName());
                 notifyListenerCancelled(response);
+                return;
+            }
+
+            if (!uploadManagerWorker.haveStoredCredentials()) {
+                MFConfiguration.getStaticMFLogger().v(TAG, "no credentials stored, task cancelling()");
+                uploadItem.cancelUpload();
                 return;
             }
 
