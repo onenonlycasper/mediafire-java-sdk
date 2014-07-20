@@ -38,7 +38,7 @@ public class UploadManager extends UploadManagerWorker {
             return;
         }
 
-        if (uploadItem.getUploadAttemptCount() < MAX_UPLOAD_ATTEMPTS) {
+        if (uploadItem.getUploadAttemptCount() < maxUploadAttempts) {
             CheckProcess process = new CheckProcess(mfTokenFarm, this, uploadItem);
             executor.execute(process);
         }
