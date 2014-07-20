@@ -1,9 +1,9 @@
 package com.mediafire.sdk.token;
 
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.config.MFDefaultHttpProcessor;
 import com.mediafire.sdk.http.MFApi;
 import com.mediafire.sdk.http.MFHost;
-import com.mediafire.sdk.http.MFHttpRunner;
 import com.mediafire.sdk.http.MFRequest;
 
 import java.util.LinkedHashMap;
@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class MFTokenFarm implements MFTokenFarmCallback {
     private static final String TAG = MFTokenFarm.class.getCanonicalName();
     private final MFConfiguration mfConfiguration;
-    private final MFHttpRunner mfHttpRunner;
+    private final MFDefaultHttpProcessor mfDefaultHttpProcessor;
     private final int minimumSessionTokens;
     private final int maximumSessionTokens;
 
@@ -38,11 +38,11 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         this.minimumSessionTokens = mfConfiguration.getMinimumSessionTokens();
         this.maximumSessionTokens = mfConfiguration.getMaximumSessionTokens();
         this.mfSessionTokens = new LinkedBlockingQueue<MFSessionToken>(maximumSessionTokens);
-        this.mfHttpRunner = new MFHttpRunner(mfConfiguration, this);
+        this.mfDefaultHttpProcessor = new MFDefaultHttpProcessor(mfConfiguration, this);
     }
 
-    public MFHttpRunner getMFHttpRunner() {
-        return mfHttpRunner;
+    public MFDefaultHttpProcessor getMFHttpRunner() {
+        return mfDefaultHttpProcessor;
     }
 
     public MFConfiguration getMFConfiguration() {
@@ -57,7 +57,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN);
         mfRequestBuilder.requestParameters(requestParameters);
         MFRequest mfRequest = mfRequestBuilder.build();
-        mfHttpRunner.doRequest(mfRequest);
+        mfDefaultHttpProcessor.doRequest(mfRequest);
     }
 
     private void getNewImageActionToken() {
@@ -69,7 +69,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.USER_GET_IMAGE_TOKEN);
         mfRequestBuilder.requestParameters(requestParameters);
         MFRequest mfRequest = mfRequestBuilder.build();
-        mfHttpRunner.doRequest(mfRequest);
+        mfDefaultHttpProcessor.doRequest(mfRequest);
     }
 
     private void getNewUploadActionToken() {
@@ -81,7 +81,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.USER_GET_UPLOAD_TOKEN);
         mfRequestBuilder.requestParameters(requestParameters);
         MFRequest mfRequest = mfRequestBuilder.build();
-        mfHttpRunner.doRequest(mfRequest);
+        mfDefaultHttpProcessor.doRequest(mfRequest);
     }
 
     public void shutdown() {
