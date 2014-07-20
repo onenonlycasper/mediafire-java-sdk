@@ -115,9 +115,6 @@ public final class MFHttpClient extends MFHttp {
                 setConnectionParameters(connection, mfRequester);
                 return (HttpURLConnection) connection;
             case HTTPS:
-                connection = url.openConnection();
-                setConnectionParameters(connection, mfRequester);
-
                 TrustManager[] trustAllCerts = new TrustManager[] {
                         new X509TrustManager() {
                             public java.security.cert.X509Certificate[] getAcceptedIssuers() { return null; }
@@ -140,6 +137,8 @@ public final class MFHttpClient extends MFHttp {
 
                 // Install the all-trusting host verifier
                 HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+                connection = url.openConnection();
+                setConnectionParameters(connection, mfRequester);
                 return (HttpsURLConnection) connection;
             default:
                 throw new IllegalStateException("MFHost.TransferProtocol must be HTTP or HTTPS");

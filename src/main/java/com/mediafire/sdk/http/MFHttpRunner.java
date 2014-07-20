@@ -26,17 +26,18 @@ public final class MFHttpRunner {
             mfResponse = mfHttpClient.sendRequest(mfRequester);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } finally {
+            final MFResponse finalMfResponse = mfResponse;
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mfHttpClientCleanup.returnToken(mfRequester, finalMfResponse);
+                }
+            });
+
+            thread.start();
         }
 
-        final MFResponse finalMfResponse = mfResponse;
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mfHttpClientCleanup.returnToken(mfRequester, finalMfResponse);
-            }
-        });
-
-        thread.start();
 
         return mfResponse;
     }
