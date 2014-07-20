@@ -7,7 +7,6 @@ import com.mediafire.uploader.process.CheckProcess;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
 import java.util.concurrent.Executor;
-import java.util.logging.Logger;
 
 public class UploadManager extends UploadManagerWorker {
     private static final String TAG = UploadManager.class.getCanonicalName();
