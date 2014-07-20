@@ -214,4 +214,8 @@ public abstract class UploadManagerWorker {
             addUploadRequest(uploadItem);
         }
     }
+
+    public boolean haveStoredCredentials() {
+        return !mfTokenFarm.getMFConfiguration().getMfCredentials().getCredentials().isEmpty();
+    }
 }
