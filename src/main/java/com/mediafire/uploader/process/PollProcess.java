@@ -7,7 +7,7 @@ import com.mediafire.sdk.http.MFHost;
 import com.mediafire.sdk.http.MFRequest;
 import com.mediafire.sdk.http.MFResponse;
 import com.mediafire.sdk.token.MFTokenFarm;
-import com.mediafire.uploader.manager.UploadManagerWorker;
+import com.mediafire.uploader.manager.UploadManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
 import java.util.HashMap;
@@ -17,8 +17,8 @@ public class PollProcess extends UploadProcess {
     private static final long TIME_BETWEEN_POLLS = 2000;
     private static final int MAX_POLLS = 60;
 
-    public PollProcess(MFTokenFarm mfTokenFarm, UploadManagerWorker uploadListenerManager, UploadItem uploadItem) {
-        super(mfTokenFarm, uploadItem, uploadListenerManager);
+    public PollProcess(MFTokenFarm mfTokenFarm, UploadManager uploadManager, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadManager);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PollProcess extends UploadProcess {
                 return;
             }
 
-            if (!uploadManagerWorker.haveStoredCredentials()) {
+            if (!uploadManager.haveStoredCredentials()) {
                 MFConfiguration.getStaticMFLogger().v(TAG, "no credentials stored, task cancelling()");
                 uploadItem.cancelUpload();
                 return;

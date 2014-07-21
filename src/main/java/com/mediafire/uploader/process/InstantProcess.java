@@ -5,7 +5,7 @@ import com.mediafire.sdk.api_responses.upload.InstantResponse;
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.http.*;
 import com.mediafire.sdk.token.MFTokenFarm;
-import com.mediafire.uploader.manager.UploadManagerWorker;
+import com.mediafire.uploader.manager.UploadManager;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
 import java.io.UnsupportedEncodingException;
@@ -16,8 +16,8 @@ import java.util.Map;
 public class InstantProcess extends UploadProcess {
     private static final String TAG = InstantProcess.class.getCanonicalName();
 
-    public InstantProcess(MFTokenFarm mfTokenFarm, UploadManagerWorker uploadListenerManager, UploadItem uploadItem) {
-        super(mfTokenFarm, uploadItem, uploadListenerManager);
+    public InstantProcess(MFTokenFarm mfTokenFarm, UploadManager uploadManager, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadManager);
     }
 
     @Override

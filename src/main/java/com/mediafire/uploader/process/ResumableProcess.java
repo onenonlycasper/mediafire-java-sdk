@@ -4,7 +4,7 @@ import com.mediafire.sdk.api_responses.upload.ResumableResponse;
 import com.mediafire.sdk.config.MFConfiguration;
 import com.mediafire.sdk.http.*;
 import com.mediafire.sdk.token.MFTokenFarm;
-import com.mediafire.uploader.manager.UploadManagerWorker;
+import com.mediafire.uploader.manager.UploadManager;
 import com.mediafire.uploader.uploaditem.*;
 
 import java.io.*;
@@ -18,8 +18,8 @@ public class ResumableProcess extends UploadProcess {
 
     private static final String TAG = ResumableProcess.class.getCanonicalName();
 
-    public ResumableProcess(MFTokenFarm mfTokenFarm, UploadManagerWorker uploadManagerWorker, UploadItem uploadItem) {
-        super(mfTokenFarm, uploadItem, uploadManagerWorker);
+    public ResumableProcess(MFTokenFarm mfTokenFarm, UploadManager uploadManager, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadManager);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ResumableProcess extends UploadProcess {
                 return;
             }
 
-            if (!uploadManagerWorker.haveStoredCredentials()) {
+            if (!uploadManager.haveStoredCredentials()) {
                 MFConfiguration.getStaticMFLogger().v(TAG, "no credentials stored, task cancelling()");
                 uploadItem.cancelUpload();
                 return;

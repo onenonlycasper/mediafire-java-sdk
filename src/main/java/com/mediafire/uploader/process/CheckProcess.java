@@ -8,7 +8,7 @@ import com.mediafire.sdk.http.MFHost;
 import com.mediafire.sdk.http.MFRequest;
 import com.mediafire.sdk.http.MFResponse;
 import com.mediafire.sdk.token.MFTokenFarm;
-import com.mediafire.uploader.manager.UploadManagerWorker;
+import com.mediafire.uploader.manager.UploadManager;
 import com.mediafire.uploader.uploaditem.ResumableBitmap;
 import com.mediafire.uploader.uploaditem.UploadItem;
 
@@ -22,8 +22,8 @@ public class CheckProcess extends UploadProcess {
 
     private static final String TAG = CheckProcess.class.getCanonicalName();
 
-    public CheckProcess(MFTokenFarm mfTokenFarm, UploadManagerWorker uploadManagerWorker, UploadItem uploadItem) {
-        super(mfTokenFarm, uploadItem, uploadManagerWorker);
+    public CheckProcess(MFTokenFarm mfTokenFarm, UploadManager uploadManager, UploadItem uploadItem) {
+        super(mfTokenFarm, uploadItem, uploadManager);
     }
 
     @Override
