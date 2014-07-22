@@ -1,4 +1,4 @@
-package com.mediafire.uploader.uploaditem;
+package com.mediafire.sdk.uploader.uploaditem;
 
 public class MFChunkData {
     private int unitSize;

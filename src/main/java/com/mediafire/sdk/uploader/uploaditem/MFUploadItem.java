@@ -1,4 +1,4 @@
-package com.mediafire.uploader.uploaditem;
+package com.mediafire.sdk.uploader.uploaditem;
 
 import com.mediafire.sdk.config.MFConfiguration;
 

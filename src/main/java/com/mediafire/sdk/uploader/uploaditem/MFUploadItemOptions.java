@@ -1,4 +1,4 @@
-package com.mediafire.uploader.uploaditem;
+package com.mediafire.sdk.uploader.uploaditem;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
