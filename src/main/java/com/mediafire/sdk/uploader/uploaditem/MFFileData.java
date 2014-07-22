@@ -1,4 +1,4 @@
-package com.mediafire.uploader.uploaditem;
+package com.mediafire.sdk.uploader.uploaditem;
 
 import com.mediafire.sdk.config.MFConfiguration;
 
@@ -9,20 +9,17 @@ import java.security.NoSuchAlgorithmException;
 /**
  * file information for an upload item.
  */
-public class FileData {
-    private static final String TAG = FileData.class.getCanonicalName();
+public class MFFileData {
+    private static final String TAG = MFFileData.class.getCanonicalName();
     private final String filePath;
     private long fileSize;
     private String fileHash;
 
-    public FileData(String filePath) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "FileData object created");
+    public MFFileData(String filePath) {
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
         this.filePath = filePath;
-        setFileSize();
-        setFileHash();
     }
 
     public String getFilePath() {
@@ -30,19 +27,26 @@ public class FileData {
     }
 
     public long getFileSize() {
+        if (fileSize == 0) {
+            setFileSize();
+        }
         return fileSize;
     }
 
     public String getFileHash() {
+        if (fileHash == null) {
+            setFileHash();
+        }
         return fileHash;
     }
 
-    public void setFileSize() {
+    private void setFileSize() {
         File file = new File(getFilePath());
         fileSize = file.length();
     }
 
-    public void setFileHash() {
+    @SuppressWarnings("UnusedAssignment")
+    private void setFileHash() {
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;
@@ -90,6 +94,5 @@ public class FileData {
             fileUri = null;
             in = null;
         }
-        MFConfiguration.getStaticMFLogger().v(TAG, "FILE HASH IS SET TO: " + fileHash);
     }
 }

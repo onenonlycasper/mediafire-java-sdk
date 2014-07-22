@@ -20,6 +20,13 @@ public class ResumableResponse extends ApiResponse {
             return Result.fromInt(Integer.parseInt(result));
         }
 
+        public int getResult() {
+            if (result == null || result.isEmpty()) {
+                return -1;
+            }
+            return Integer.parseInt(result);
+        }
+
         public String getPollUploadKey() {
             if (key == null) {
                 return "";

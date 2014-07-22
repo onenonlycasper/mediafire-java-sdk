@@ -1,9 +1,9 @@
 package com.mediafire.sdk.token;
 
 import com.mediafire.sdk.config.MFConfiguration;
+import com.mediafire.sdk.config.MFDefaultHttpProcessor;
 import com.mediafire.sdk.http.MFApi;
 import com.mediafire.sdk.http.MFHost;
-import com.mediafire.sdk.http.MFHttpRunner;
 import com.mediafire.sdk.http.MFRequest;
 
 import java.util.LinkedHashMap;
@@ -18,9 +18,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class MFTokenFarm implements MFTokenFarmCallback {
     private static final String TAG = MFTokenFarm.class.getCanonicalName();
     private final MFConfiguration mfConfiguration;
-    private final MFHttpRunner mfHttpRunner;
+    private final MFDefaultHttpProcessor mfDefaultHttpProcessor;
     private final int minimumSessionTokens;
     private final int maximumSessionTokens;
+    private boolean started;
 
     private final BlockingQueue<MFSessionToken> mfSessionTokens;
     private MFActionToken mfUploadActionToken;
@@ -38,11 +39,11 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         this.minimumSessionTokens = mfConfiguration.getMinimumSessionTokens();
         this.maximumSessionTokens = mfConfiguration.getMaximumSessionTokens();
         this.mfSessionTokens = new LinkedBlockingQueue<MFSessionToken>(maximumSessionTokens);
-        this.mfHttpRunner = new MFHttpRunner(mfConfiguration, this);
+        this.mfDefaultHttpProcessor = new MFDefaultHttpProcessor(mfConfiguration, this);
     }
 
-    public MFHttpRunner getMFHttpRunner() {
-        return mfHttpRunner;
+    public MFDefaultHttpProcessor getMFHttpRunner() {
+        return mfDefaultHttpProcessor;
     }
 
     public MFConfiguration getMFConfiguration() {
@@ -50,18 +51,18 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     private void getNewSessionToken() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getNewSessionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "getNewSessionToken()");
 
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("token_version", "2");
         MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTPS, MFApi.USER_GET_SESSION_TOKEN);
         mfRequestBuilder.requestParameters(requestParameters);
         MFRequest mfRequest = mfRequestBuilder.build();
-        mfHttpRunner.doRequest(mfRequest);
+        mfDefaultHttpProcessor.doRequest(mfRequest);
     }
 
     private void getNewImageActionToken() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getNewImageActionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "getNewImageActionToken()");
 
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
@@ -69,11 +70,11 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.USER_GET_IMAGE_TOKEN);
         mfRequestBuilder.requestParameters(requestParameters);
         MFRequest mfRequest = mfRequestBuilder.build();
-        mfHttpRunner.doRequest(mfRequest);
+        mfDefaultHttpProcessor.doRequest(mfRequest);
     }
 
     private void getNewUploadActionToken() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getNewUploadActionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "getNewUploadActionToken()");
 
         Map<String, String> requestParameters = new LinkedHashMap<String, String>();
         requestParameters.put("lifespan", "1440");
@@ -81,18 +82,24 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.USER_GET_UPLOAD_TOKEN);
         mfRequestBuilder.requestParameters(requestParameters);
         MFRequest mfRequest = mfRequestBuilder.build();
-        mfHttpRunner.doRequest(mfRequest);
+        mfDefaultHttpProcessor.doRequest(mfRequest);
     }
 
     public void shutdown() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "shutdown()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "shutdown()");
+        mfConfiguration.getMfCredentials().clearCredentials();
         mfSessionTokens.clear();
         mfUploadActionToken = null;
         mfImageActionToken = null;
+        started = false;
+    }
+
+    public boolean isStarted() {
+        return started;
     }
 
     public void startup() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "startup()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "startup()");
         // do nothing if credentials aren't stored
         if (!haveStoredCredentials()) {
             throw new IllegalStateException("cannot call startup() without credentials");
@@ -101,25 +108,27 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         getNewSessionToken();
         // get remaining session tokens on another thread
         for (int i = 0; i < mfSessionTokens.remainingCapacity(); i++) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "fetching new session token (remaining capacity " + mfSessionTokens.remainingCapacity() + ")");
+            MFConfiguration.getStaticMFLogger().w(TAG, "fetching new session token (remaining capacity " + mfSessionTokens.remainingCapacity() + ")");
             startThreadForNewSessionToken();
         }
         // get an upload action token on current thread
         if (mfUploadActionToken == null || mfUploadActionToken.isExpired()) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "fetching upload action token");
+            MFConfiguration.getStaticMFLogger().w(TAG, "fetching upload action token");
             getNewUploadActionToken();
         }
 
         // get an image action token on current thread
         if (mfImageActionToken == null || mfImageActionToken.isExpired()) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "fetching image action token()");
+            MFConfiguration.getStaticMFLogger().w(TAG, "fetching image action token()");
             getNewImageActionToken();
         }
+
+        started = true;
     }
 
     @Override
     public void returnSessionToken(MFSessionToken sessionToken) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "returnSessionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "returnSessionToken()");
         if (sessionToken == null) {
             MFConfiguration.getStaticMFLogger().w(TAG, "received null session token");
             return;
@@ -140,47 +149,47 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
 
     @Override
     public void receiveNewSessionToken(MFSessionToken mfSessionToken) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "receiveNewSessionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "receiveNewSessionToken()");
         if (mfSessionToken != null) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "received good session token");
+            MFConfiguration.getStaticMFLogger().w(TAG, "received good session token");
             try {
                 mfSessionTokens.offer(mfSessionToken);
             } catch (IllegalStateException e) {
                 getNewSessionToken();
             }
         } else {
-            MFConfiguration.getStaticMFLogger().v(TAG, "received bad session token, not keeping it");
+            MFConfiguration.getStaticMFLogger().w(TAG, "received bad session token, not keeping it");
         }
     }
 
     @Override
     public void receiveNewImageActionToken(MFActionToken mfImageActionToken) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "receiveNewImageActionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "receiveNewImageActionToken()");
 
         if (isActionTokenValid(mfImageActionToken)) {
             this.mfImageActionToken = mfImageActionToken;
-            MFConfiguration.getStaticMFLogger().v(TAG, "received good image action token");
+            MFConfiguration.getStaticMFLogger().w(TAG, "received good image action token");
         } else {
-            MFConfiguration.getStaticMFLogger().v(TAG, "received bad image action token, not keeping it");
+            MFConfiguration.getStaticMFLogger().w(TAG, "received bad image action token, not keeping it");
         }
     }
 
     @Override
     public void receiveNewUploadActionToken(MFActionToken mfUploadActionToken) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "receiveNewUploadActionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "receiveNewUploadActionToken()");
 
         if (isActionTokenValid(mfUploadActionToken)) {
             this.mfUploadActionToken = mfUploadActionToken;
-            MFConfiguration.getStaticMFLogger().v(TAG, "received good upload action token");
+            MFConfiguration.getStaticMFLogger().w(TAG, "received good upload action token");
         } else {
-            MFConfiguration.getStaticMFLogger().v(TAG, "received bad upload action token, not keeping it");
+            MFConfiguration.getStaticMFLogger().w(TAG, "received bad upload action token, not keeping it");
         }
 
     }
 
     @Override
     public MFSessionToken borrowMFSessionToken() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "borrowMFSessionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "borrowMFSessionToken()");
         MFSessionToken sessionToken;
         synchronized (sessionTokenLock) {
             sessionToken = null;
@@ -196,12 +205,13 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
                 }
             }
         }
+        MFConfiguration.getStaticMFLogger().w(TAG, "loaning MFToken: " + sessionToken.toString());
         return sessionToken;
     }
 
     @Override
     public MFActionToken borrowMFUploadActionToken() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "borrowMFUploadActionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "borrowMFUploadActionToken()");
         // lock and fetch new token if necessary
         lockBorrowUploadToken.lock();
 
@@ -221,12 +231,13 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         } finally {
             lockBorrowUploadToken.unlock();
         }
+        MFConfiguration.getStaticMFLogger().w(TAG, "loaning MFToken: " + mfUploadActionToken.toString());
         return mfUploadActionToken;
     }
 
     @Override
     public MFActionToken borrowMFImageActionToken() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "borrowMFImageActionToken()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "borrowMFImageActionToken()");
         // lock and fetch new token if necessary
         lockBorrowImageToken.lock();
 
@@ -247,6 +258,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
             // attach new one to apiRequestObject
             lockBorrowImageToken.unlock();
         }
+        MFConfiguration.getStaticMFLogger().w(TAG, "loaning MFToken: " + mfImageActionToken.toString());
         return mfImageActionToken;
     }
 
@@ -255,10 +267,10 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     }
 
     private boolean isActionTokenValid(MFActionToken token) {
-        MFConfiguration.getStaticMFLogger().i(TAG, "isActionTokenValid()");
-        MFConfiguration.getStaticMFLogger().i(TAG, "token null: " + (token == null));
-        MFConfiguration.getStaticMFLogger().i(TAG, "token expired: " + token.isExpired());
-        MFConfiguration.getStaticMFLogger().i(TAG, "token string null: " + (token != null && token.getTokenString() != null));
+        MFConfiguration.getStaticMFLogger().w(TAG, "isActionTokenValid()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "token null: " + (token == null));
+        MFConfiguration.getStaticMFLogger().w(TAG, "token expired: " + token.isExpired());
+        MFConfiguration.getStaticMFLogger().w(TAG, "token string null: " + (token == null ? true : token.getTokenString() == null));
         return token != null && !token.isExpired() && token.getTokenString() != null;
     }
 

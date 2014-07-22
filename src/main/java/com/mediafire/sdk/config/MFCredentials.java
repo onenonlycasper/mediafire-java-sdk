@@ -12,5 +12,5 @@ public interface MFCredentials {
 
     public void clearCredentials();
 
-    public MFDefaultCredentials.UserCredentialsType getUserCredentialsType();
+    public MFCredentialsType getUserCredentialsType();
 }
