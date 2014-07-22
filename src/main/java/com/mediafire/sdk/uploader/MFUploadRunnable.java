@@ -24,8 +24,8 @@ import java.util.Map;
 /**
  * Created by Chris Najar on 7/21/2014.
  */
-public class MFUpload implements Runnable {
-    private static final String TAG = MFUpload.class.getCanonicalName();
+public class MFUploadRunnable implements Runnable {
+    private static final String TAG = MFUploadRunnable.class.getCanonicalName();
     private final int maxPolls;
     private final long millisecondsBetweenPolls;
     private final MFTokenFarm mfTokenFarm;
@@ -34,7 +34,7 @@ public class MFUpload implements Runnable {
     private final int maxUploadAttempts;
     private String urlEncodedFileName;
 
-    private MFUpload(Builder builder) {
+    private MFUploadRunnable(Builder builder) {
         this.maxPolls = builder.maxPolls;
         this.millisecondsBetweenPolls = builder.millisecondsBetweenPolls;
         this.mfTokenFarm = builder.mfTokenFarm;
@@ -51,13 +51,13 @@ public class MFUpload implements Runnable {
             tryToUrlEncodeFileName();
             startOrRestartUpload();
         } catch (UnsupportedEncodingException e) {
-            MFConfiguration.getStaticMFLogger().e(TAG, "UnsupportedEncodingException during MFUpload", e);
+            MFConfiguration.getStaticMFLogger().e(TAG, "UnsupportedEncodingException during MFUploadRunnable", e);
             notifyUploadListenerCancelled();
         } catch (NoSuchAlgorithmException e) {
-            MFConfiguration.getStaticMFLogger().e(TAG, "NoSuchAlgorithmException during MFUpload", e);
+            MFConfiguration.getStaticMFLogger().e(TAG, "NoSuchAlgorithmException during MFUploadRunnable", e);
             notifyUploadListenerCancelled();
         } catch (IOException e) {
-            MFConfiguration.getStaticMFLogger().e(TAG, "IOException during MFUpload", e);
+            MFConfiguration.getStaticMFLogger().e(TAG, "IOException during MFUploadRunnable", e);
             notifyUploadListenerCancelled();
         }
     }
@@ -777,8 +777,8 @@ public class MFUpload implements Runnable {
             return this;
         }
 
-        public MFUpload build() {
-            return new MFUpload(this);
+        public MFUploadRunnable build() {
+            return new MFUploadRunnable(this);
         }
     }
 }

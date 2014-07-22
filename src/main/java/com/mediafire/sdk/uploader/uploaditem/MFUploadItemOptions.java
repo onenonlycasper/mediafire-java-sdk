@@ -89,7 +89,7 @@ public class MFUploadItemOptions {
         private String modificationTime;
 
         public Builder() {}
-        
+
         public Builder(MFUploadItemOptions oldOptions) {
             this.resumable = oldOptions.resumable;
             this.actionOnDuplicate = oldOptions.actionOnDuplicate;
