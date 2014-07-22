@@ -189,6 +189,9 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     @Override
     public MFSessionToken borrowMFSessionToken() {
         MFConfiguration.getStaticMFLogger().v(TAG, "borrowMFSessionToken()");
+        if (!isStarted()) {
+            throw new IllegalStateException("startup() must be called prior to borrowing a token");
+        }
         MFSessionToken sessionToken;
         synchronized (sessionTokenLock) {
             sessionToken = null;
@@ -210,6 +213,9 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     @Override
     public MFActionToken borrowMFUploadActionToken() {
         MFConfiguration.getStaticMFLogger().v(TAG, "borrowMFUploadActionToken()");
+        if (!isStarted()) {
+            throw new IllegalStateException("startup() must be called prior to borrowing a token");
+        }
         // lock and fetch new token if necessary
         lockBorrowUploadToken.lock();
 
@@ -235,6 +241,9 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     @Override
     public MFActionToken borrowMFImageActionToken() {
         MFConfiguration.getStaticMFLogger().v(TAG, "borrowMFImageActionToken()");
+        if (!isStarted()) {
+            throw new IllegalStateException("startup() must be called prior to borrowing a token");
+        }
         // lock and fetch new token if necessary
         lockBorrowImageToken.lock();
 

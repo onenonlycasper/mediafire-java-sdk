@@ -192,7 +192,7 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private void doCheckUpload() throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "doUploadProcess()");
+        MFConfiguration.getStaticMFLogger().v(TAG, "doCheckUpload()");
         mfUploadItem.getFileData().setFileSize();
         mfUploadItem.getFileData().setFileHash();
 
@@ -434,13 +434,9 @@ public class MFUploadRunnable implements Runnable {
             if (mfUploadItem.isCancelled()) {
                 pollCount = maxPolls;
             }
-
-            if (pollCount >= maxPolls) {
-                // we exceeded our attempts. inform listener that the upload is cancelled. in this case it is because
-                // we ran out of attempts.
-                startOrRestartUpload();
-            }
         } while (pollCount < maxPolls);
+
+        startOrRestartUpload();
     }
 
     private HashMap<String, String> generatePollRequestParameters() {
@@ -674,6 +670,7 @@ public class MFUploadRunnable implements Runnable {
         if (mfUploadItem.getFileData() == null || mfUploadItem.getFileData().getFilePath() == null || mfUploadItem.getFileData().getFilePath().isEmpty() || mfUploadItem.getFileData().getFileHash().isEmpty() || mfUploadItem.getFileData().getFileSize() == 0) {
             MFConfiguration.getStaticMFLogger().v(TAG, "one or more required parameters are invalid, not adding item to queue");
             notifyUploadListenerCancelled();
+            return;
         }
 
         if (mfUploadItem.getUploadAttemptCount() <= maxUploadAttempts) {
