@@ -345,11 +345,7 @@ public class MFUploadRunnable implements Runnable {
 
                 MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
 
-                if (mfResponse == null) {
-                    startOrRestartUpload();
-                    return;
-                }
-
+                MFConfiguration.getStaticMFLogger().w(TAG, "response string: " + mfResponse.getResponseAsString());
                 response = mfResponse.getResponseObject(ResumableResponse.class);
 
                 // set poll upload key if possible
@@ -500,12 +496,14 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private void printDebugRequestData(Map<String, String> headers, Map<String, String> parameters) {
+        MFConfiguration.getStaticMFLogger().w(TAG, "printDebugRequestData()");
         MFConfiguration.getStaticMFLogger().w(TAG, "headers: " + headers.toString());
         MFConfiguration.getStaticMFLogger().w(TAG, "parameters: " + parameters.toString());
     }
 
     @SuppressWarnings("UnusedParameters")
     private void printDebugCurrentChunk(int chunkNumber, int numChunks, int chunkSize, int unitSize, long fileSize, String chunkHash, byte[] uploadChunk) {
+        MFConfiguration.getStaticMFLogger().w(TAG, "printDebugCurrentChunk()");
         MFConfiguration.getStaticMFLogger().w(TAG, "current thread: " + Thread.currentThread().getName());
         MFConfiguration.getStaticMFLogger().w(TAG, "current chunk: " + chunkNumber);
         MFConfiguration.getStaticMFLogger().w(TAG, "total chunks: " + numChunks);
