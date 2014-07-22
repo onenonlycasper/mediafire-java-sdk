@@ -626,7 +626,7 @@ public class MFUploadRunnable implements Runnable {
         keyValue.put("hash", mfUploadItem.getFileData().getFileHash());
         keyValue.put("size", Long.toString(mfUploadItem.getFileData().getFileSize()));
         keyValue.put("response_format", "json");
-        if (!mfUploadItem.getUploadOptions().getUploadPath().isEmpty()) {
+        if (mfUploadItem.getUploadOptions().getUploadPath() != null && !mfUploadItem.getUploadOptions().getUploadPath().isEmpty()) {
             keyValue.put("path", mfUploadItem.getUploadOptions().getUploadPath());
         } else {
             keyValue.put("folder_key", mfUploadItem.getUploadOptions().getUploadFolderKey());
@@ -645,7 +645,7 @@ public class MFUploadRunnable implements Runnable {
         keyValue.put("size", Long.toString(mfUploadItem.getFileData().getFileSize()));
         keyValue.put("resumable", mfUploadItem.getUploadOptions().getResumable());
         keyValue.put("response_format", "json");
-        if (!mfUploadItem.getUploadOptions().getUploadPath().isEmpty()) {
+        if (mfUploadItem.getUploadOptions().getUploadPath() != null && !mfUploadItem.getUploadOptions().getUploadPath().isEmpty()) {
             keyValue.put("path", mfUploadItem.getUploadOptions().getUploadPath());
         } else {
             keyValue.put("folder_key", mfUploadItem.getUploadOptions().getUploadFolderKey());

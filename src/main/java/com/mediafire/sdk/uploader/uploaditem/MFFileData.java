@@ -16,7 +16,6 @@ public class MFFileData {
     private String fileHash;
 
     public MFFileData(String filePath) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "MFFileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
@@ -91,6 +90,5 @@ public class MFFileData {
             fileUri = null;
             in = null;
         }
-        MFConfiguration.getStaticMFLogger().v(TAG, "FILE HASH IS SET TO: " + fileHash);
     }
 }

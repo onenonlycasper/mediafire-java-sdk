@@ -11,7 +11,7 @@ public class MFUploadItem {
     private int uploadAttemptCount;
     private boolean cancelled;
     private String fileName;
-    private MFUploadItemOptions options;
+    private MFUploadItemOptions mfUploadItemOptions;
     private final MFFileData fileData;
     private MFChunkData mfChunkData;
     private MFResumableBitmap bitmap;
@@ -24,15 +24,15 @@ public class MFUploadItem {
         }
 
         if (mfUploadItemOptions == null) {
-            options = new MFUploadItemOptions.Builder().build();
+            this.mfUploadItemOptions = new MFUploadItemOptions.Builder().build();
         } else {
-            this.options = mfUploadItemOptions;
+            this.mfUploadItemOptions = mfUploadItemOptions;
         }
 
-        if (options.getCustomFileName().isEmpty()) {
+        if (this.mfUploadItemOptions.getCustomFileName() == null || this.mfUploadItemOptions.getCustomFileName().isEmpty()) {
             setFileName(path);
         } else {
-            fileName = options.getCustomFileName();
+            fileName = this.mfUploadItemOptions.getCustomFileName();
         }
 
         //set Object fields so they won't be null
@@ -62,8 +62,8 @@ public class MFUploadItem {
     }
 
     public String getFileName() {
-        if (!options.getCustomFileName().isEmpty()) {
-            fileName = options.getCustomFileName();
+        if (mfUploadItemOptions.getCustomFileName() != null && !mfUploadItemOptions.getCustomFileName().isEmpty()) {
+            fileName = mfUploadItemOptions.getCustomFileName();
         }
         return fileName;
     }
@@ -77,10 +77,10 @@ public class MFUploadItem {
     }
 
     public MFUploadItemOptions getUploadOptions() {
-        if (options == null) {
-            options = new MFUploadItemOptions.Builder().build();
+        if (mfUploadItemOptions == null) {
+            mfUploadItemOptions = new MFUploadItemOptions.Builder().build();
         }
-        return options;
+        return mfUploadItemOptions;
     }
 
     public MFChunkData getChunkData() {
