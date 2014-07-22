@@ -15,10 +15,10 @@ public final class MFDefaultCredentials implements MFCredentials {
     public static final String FACEBOOK_PARAMETER_FB_ACCESS_TOKEN = "fb_access_token";
 
     private Map<String, String> userCredentials = new HashMap<String, String>();
-    private UserCredentialsType userCredentialsType;
+    private MFCredentialsType mfCredentialsType;
 
     public MFDefaultCredentials() {
-        userCredentialsType = UserCredentialsType.UNSET;
+        mfCredentialsType = MFCredentialsType.UNSET;
     }
 
     /**
@@ -32,7 +32,7 @@ public final class MFDefaultCredentials implements MFCredentials {
     public boolean setCredentials(Map<String, String> userCredentials) {
         if (isFacebookCredentials(userCredentials)) {
             this.userCredentials = userCredentials;
-            userCredentialsType = UserCredentialsType.FACEBOOK;
+            mfCredentialsType = MFCredentialsType.FACEBOOK;
             return true;
         }
 
@@ -41,7 +41,7 @@ public final class MFDefaultCredentials implements MFCredentials {
             credentialsMap.put(TWITTER_PARAMETER_TW_OAUTH_TOKEN, userCredentials.get(TWITTER_PARAMETER_TW_OAUTH_TOKEN));
             credentialsMap.put(TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET, userCredentials.get(TWITTER_PARAMETER_TW_OAUTH_TOKEN_SECRET));
             this.userCredentials = credentialsMap;
-            userCredentialsType = UserCredentialsType.TWITTER;
+            mfCredentialsType = MFCredentialsType.TWITTER;
             return true;
         }
 
@@ -50,7 +50,7 @@ public final class MFDefaultCredentials implements MFCredentials {
             credentialsMap.put(MEDIAFIRE_PARAMETER_EMAIL, userCredentials.get(MEDIAFIRE_PARAMETER_EMAIL));
             credentialsMap.put(MEDIAFIRE_PARAMETER_PASSWORD, userCredentials.get(MEDIAFIRE_PARAMETER_PASSWORD));
             this.userCredentials = credentialsMap;
-            userCredentialsType = UserCredentialsType.MEDIAFIRE;
+            mfCredentialsType = MFCredentialsType.MEDIAFIRE;
             return true;
         }
 
@@ -65,12 +65,12 @@ public final class MFDefaultCredentials implements MFCredentials {
     @Override
     public void clearCredentials() {
         userCredentials.clear();
-        userCredentialsType = UserCredentialsType.UNSET;
+        mfCredentialsType = MFCredentialsType.UNSET;
     }
 
     @Override
-    public UserCredentialsType getUserCredentialsType() {
-        return userCredentialsType;
+    public MFCredentialsType getUserCredentialsType() {
+        return mfCredentialsType;
     }
 
     private boolean isFacebookCredentials(Map<String, String> credentials) {
@@ -83,36 +83,5 @@ public final class MFDefaultCredentials implements MFCredentials {
 
     private boolean isMediaFireCredentials(Map<String, String> credentials) {
         return credentials != null && credentials.size() == 2 && credentials.containsKey(MEDIAFIRE_PARAMETER_EMAIL) && credentials.containsKey(MEDIAFIRE_PARAMETER_PASSWORD);
-    }
-
-    public enum UserCredentialsType {
-        FACEBOOK("Facebook"),
-        TWITTER("Twitter"),
-        MEDIAFIRE("MediaFire"),
-        UNSET("N/A");
-
-        private final String value;
-
-        private UserCredentialsType(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public static UserCredentialsType fromString(String value) {
-            if (value == null) {
-                return null;
-            }
-
-            for (UserCredentialsType type : UserCredentialsType.values()) {
-                if (value.equalsIgnoreCase(type.value)) {
-                    return type;
-                }
-            }
-
-            return null;
-        }
     }
 }

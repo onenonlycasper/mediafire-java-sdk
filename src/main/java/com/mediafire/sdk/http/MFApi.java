@@ -28,7 +28,7 @@ public enum MFApi {
     SYSTEM_GET_INFO("/api/1.0/system/get_info.php", TokenType.NONE, TokenType.NONE, TokenType.NONE, true),
     // user api calls
     USER_GET_INFO("/api/1.0/user/get_info.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
-    USER_REGISTER("/api/1.0/user/register.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
+    USER_REGISTER("/api/1.0/user/register.php", TokenType.NONE, TokenType.NONE, TokenType.NONE, true),
     USER_LINK_FACEBOOK("/api/1.0/user/link_facebook.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     USER_LINK_TWITTER("/api/1.0/user/link_twitter.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     USER_UNLINK_FACEBOOK("/api/1.0/user/unlink_facebook.php", TokenType.V2, TokenType.V2, TokenType.V2, true),

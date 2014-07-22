@@ -49,6 +49,7 @@ public class ApiResponse {
         return new_key != null && "yes".equals(new_key);
     }
 
+    // TODO - determine if this enum is needed.
     public enum ResponseCode {
         NO_ERROR(0),
         ERROR_DIRECT_LINK_INTERNAL_ERROR(40),
@@ -202,9 +203,9 @@ public class ApiResponse {
 
         private final int value;
 
-        private static final int ZIP_MAX_FILESIZE_READABLE = 0; //TODO(cnajar): get correct value from rabie
-        private static final int ZIP_MAX_TOTAL_FILESIZE = 0; //TODO(cnajar): get correct value from rabie
-        private static final int ZIP_MAX_FILES = 0; //TODO(cnajar): get correct value from rabie
+        private static final int ZIP_MAX_FILESIZE_READABLE = 0; //TODO: get correct value from rabie
+        private static final int ZIP_MAX_TOTAL_FILESIZE = 0; //TODO: get correct value from rabie
+        private static final int ZIP_MAX_FILES = 0; //TODO: get correct value from rabie
         private static final int MAX_OBJECTS = 6000;
         private static final int FOLDER_DEPTH_LIMIT = 130;
 
