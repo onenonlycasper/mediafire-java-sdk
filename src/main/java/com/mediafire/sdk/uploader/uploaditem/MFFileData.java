@@ -42,6 +42,7 @@ public class MFFileData {
         fileSize = file.length();
     }
 
+    @SuppressWarnings("UnusedAssignment")
     public void setFileHash() {
         File file = new File(filePath);
         FileInputStream fileInputStream;

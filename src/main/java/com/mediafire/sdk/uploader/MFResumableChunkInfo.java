@@ -4,8 +4,8 @@ package com.mediafire.sdk.uploader;
 * Created by  on 7/8/2014.
 */
 class MFResumableChunkInfo {
-    private String chunkHash;
-    private byte[] uploadChunk;
+    private final String chunkHash;
+    private final byte[] uploadChunk;
 
     public MFResumableChunkInfo(String chunkHash, byte[] uploadChunk) {
         this.chunkHash = chunkHash;

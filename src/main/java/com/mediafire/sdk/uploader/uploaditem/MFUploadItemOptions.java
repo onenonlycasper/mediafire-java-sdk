@@ -1,15 +1,15 @@
 package com.mediafire.sdk.uploader.uploaditem;
 
 public class MFUploadItemOptions {
-    private boolean resumable;
-    private String uploadFolderKey;
-    private ActionOnDuplicate actionOnDuplicate;
-    private VersionControl versionControl;
-    private String uploadPath;
-    private String customFileName;
-    private String quickKey;
-    private String modificationTime;
-    private ActionOnInAccount actionOnInAccount;
+    private final boolean resumable;
+    private final String uploadFolderKey;
+    private final ActionOnDuplicate actionOnDuplicate;
+    private final VersionControl versionControl;
+    private final String uploadPath;
+    private final String customFileName;
+    private final String quickKey;
+    private final String modificationTime;
+    private final ActionOnInAccount actionOnInAccount;
 
     private MFUploadItemOptions(Builder builder) {
         this.resumable = builder.resumable;
@@ -24,9 +24,6 @@ public class MFUploadItemOptions {
     }
 
     public String getCustomFileName() {
-        if (customFileName == null) {
-            customFileName = "";
-        }
         return customFileName;
     }
 
@@ -64,10 +61,7 @@ public class MFUploadItemOptions {
     }
 
     public String getUploadPath() {
-        if (this.uploadPath == null) {
-            uploadPath = "";
-        }
-        return this.uploadPath;
+        return uploadPath;
     }
 
     public String getModificationTime() {
@@ -79,10 +73,10 @@ public class MFUploadItemOptions {
     }
 
     public static class Builder {
-        private boolean DEFAULT_RESUMABLE = true;
-        private ActionOnDuplicate DEFAULT_ACTION_ON_DUPLICATE = ActionOnDuplicate.KEEP;
-        private VersionControl DEFAULT_VERSION_CONTROL = VersionControl.NONE;
-        private ActionOnInAccount DEFAULT_ACTION_ON_IN_ACCOUNT = ActionOnInAccount.UPLOAD_ALWAYS;
+        private final boolean DEFAULT_RESUMABLE = true;
+        private final ActionOnDuplicate DEFAULT_ACTION_ON_DUPLICATE = ActionOnDuplicate.KEEP;
+        private final VersionControl DEFAULT_VERSION_CONTROL = VersionControl.NONE;
+        private final ActionOnInAccount DEFAULT_ACTION_ON_IN_ACCOUNT = ActionOnInAccount.UPLOAD_ALWAYS;
 
         private boolean resumable = DEFAULT_RESUMABLE;
         private ActionOnDuplicate actionOnDuplicate = DEFAULT_ACTION_ON_DUPLICATE;
@@ -94,7 +88,19 @@ public class MFUploadItemOptions {
         private String quickKey;
         private String modificationTime;
 
-        public Builder() { }
+        public Builder() {}
+        
+        public Builder(MFUploadItemOptions oldOptions) {
+            this.resumable = oldOptions.resumable;
+            this.actionOnDuplicate = oldOptions.actionOnDuplicate;
+            this.versionControl = oldOptions.versionControl;
+            this.actionOnInAccount = oldOptions.actionOnInAccount;
+            this.uploadFolderKey = oldOptions.uploadFolderKey;
+            this.uploadPath = oldOptions.uploadPath;
+            this.customFileName = oldOptions.customFileName;
+            this.quickKey = oldOptions.quickKey;
+            this.modificationTime = oldOptions.modificationTime;
+        }
 
         public Builder resumable(boolean resumable) {
             this.resumable = resumable;

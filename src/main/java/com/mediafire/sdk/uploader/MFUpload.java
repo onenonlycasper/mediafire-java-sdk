@@ -727,8 +727,8 @@ public class MFUpload implements Runnable {
         private int maxPolls = DEFAULT_MAX_POLLS;
         private long millisecondsBetweenPolls = DEFAULT_MILLISECONDS_BETWEEN_POLLS;
         private int maxUploadAttempts = DEFAULT_MAX_UPLOAD_ATTEMPTS;
-        private MFTokenFarm mfTokenFarm;
-        private MFUploadItem mfUploadItem;
+        private final MFTokenFarm mfTokenFarm;
+        private final MFUploadItem mfUploadItem;
         private MFUploadListener mfUploadListener;
 
         public Builder(MFTokenFarm mfTokenFarm, MFUploadItem mfUploadItem) {
