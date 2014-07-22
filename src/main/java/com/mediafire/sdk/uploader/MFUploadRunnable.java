@@ -14,7 +14,6 @@ import com.mediafire.sdk.token.MFTokenFarm;
 import com.mediafire.sdk.uploader.uploaditem.*;
 
 import java.io.*;
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
@@ -79,15 +78,68 @@ public class MFUploadRunnable implements Runnable {
 
         if (checkResponse.getStorageLimitExceeded()) {
             MFConfiguration.getStaticMFLogger().w(TAG, "storage limit is exceeded");
-            storageLimitExceeded();
+            MFConfiguration.getStaticMFLogger().w(TAG, "storageLimitExceeded()");
+            notifyUploadListenerCancelled();
         } else if (checkResponse.getResumableUpload().areAllUnitsReady() && !mfUploadItem.getPollUploadKey().isEmpty()) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "all units are ready and poll upload key is not empty");
             // all units are ready and we have the poll upload key. start polling.
             doInstantUpload();
         } else {
             if (checkResponse.doesHashExists()) { //hash does exist for the file
-                hashExists(checkResponse);
-            } else { // hash does not exist. call resumable.
-                hashDoesNotExist(checkResponse);
+                MFConfiguration.getStaticMFLogger().w(TAG, "hashExists()");
+                if (!checkResponse.isInAccount()) { // hash which exists is not in the account
+                    MFConfiguration.getStaticMFLogger().w(TAG, "hashNotInAccount()");
+                    doInstantUpload();
+                } else { // hash exists and is in the account
+                    MFConfiguration.getStaticMFLogger().w(TAG, "hashInAccount()");
+                    boolean inFolder = checkResponse.isInFolder();
+                    MFConfiguration.getStaticMFLogger().w(TAG, "ActionOnInAccount: " + mfUploadItem.getUploadOptions().getActionOnInAccount().toString());
+                    switch (mfUploadItem.getUploadOptions().getActionOnInAccount()) {
+                        case UPLOAD_ALWAYS:
+                            MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
+                            doInstantUpload();
+                            break;
+                        case UPLOAD_IF_NOT_IN_FOLDER:
+                            MFConfiguration.getStaticMFLogger().w(TAG, "uploading if not in folder.");
+                            if (!inFolder) {
+                                MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
+                                doInstantUpload();
+                            } else {
+                                MFConfiguration.getStaticMFLogger().w(TAG, "already in folder, not uploading...");
+                                notifyUploadListenerCompleted();
+                            }
+                            break;
+                        case DO_NOT_UPLOAD:
+                        default:
+                            MFConfiguration.getStaticMFLogger().w(TAG, "not uploading...");
+                            notifyUploadListenerCancelled();
+                            break;
+                    }
+                }
+            } else {
+            // hash does not exist. call resumable.
+                MFConfiguration.getStaticMFLogger().w(TAG, "hash does not exist");
+                if (checkResponse.getResumableUpload().getUnitSize() == 0) {
+                    MFConfiguration.getStaticMFLogger().w(TAG, "unit size received from unit_size was 0. cancelling");
+                    notifyUploadListenerCancelled();
+                    return;
+                }
+
+                if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
+                    MFConfiguration.getStaticMFLogger().w(TAG, "number of units received from number_of_units was 0. cancelling");
+                    notifyUploadListenerCancelled();
+                    return;
+                }
+
+                if (checkResponse.getResumableUpload().areAllUnitsReady() && !mfUploadItem.getPollUploadKey().isEmpty()) {
+                    MFConfiguration.getStaticMFLogger().w(TAG, "all units ready and have a poll upload key");
+                    // all units are ready and we have the poll upload key. start polling.
+                    doPollUpload();
+                } else {
+                    MFConfiguration.getStaticMFLogger().w(TAG, "all units not ready or do not have poll upload key");
+                    // either we don't have the poll upload key or all units are not ready
+                    doResumableUpload();
+                }
             }
         }
     }
@@ -118,77 +170,6 @@ public class MFUploadRunnable implements Runnable {
         if (pollStatusCode != PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResponse.Result.SUCCESS && pollFileErrorCode == PollResponse.FileError.NO_ERROR) {
             MFConfiguration.getStaticMFLogger().w(TAG, "status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
             startOrRestartUpload();
-        }
-    }
-
-    private void storageLimitExceeded() {
-        MFConfiguration.getStaticMFLogger().w(TAG, "storageLimitExceeded()");
-        notifyUploadListenerCancelled();
-    }
-
-    private void hashExists(CheckResponse checkResponse) {
-        MFConfiguration.getStaticMFLogger().w(TAG, "hashExists()");
-        if (!checkResponse.isInAccount()) { // hash which exists is not in the account
-            hashNotInAccount();
-        } else { // hash exists and is in the account
-            hashInAccount(checkResponse);
-        }
-    }
-
-    private void hashNotInAccount() {
-        MFConfiguration.getStaticMFLogger().w(TAG, "hashNotInAccount()");
-        doInstantUpload();
-    }
-
-    private void hashInAccount(CheckResponse checkResponse) {
-        MFConfiguration.getStaticMFLogger().w(TAG, "hashInAccount()");
-        boolean inFolder = checkResponse.isInFolder();
-        MFConfiguration.getStaticMFLogger().w(TAG, "ActionOnInAccount: " + mfUploadItem.getUploadOptions().getActionOnInAccount().toString());
-        switch (mfUploadItem.getUploadOptions().getActionOnInAccount()) {
-            case UPLOAD_ALWAYS:
-                MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
-                doInstantUpload();
-                break;
-            case UPLOAD_IF_NOT_IN_FOLDER:
-                MFConfiguration.getStaticMFLogger().w(TAG, "uploading if not in folder.");
-                if (!inFolder) {
-                    MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
-                    doInstantUpload();
-                } else {
-                    MFConfiguration.getStaticMFLogger().w(TAG, "already in folder, not uploading...");
-                    notifyUploadListenerCompleted();
-                }
-                break;
-            case DO_NOT_UPLOAD:
-            default:
-                MFConfiguration.getStaticMFLogger().w(TAG, "not uploading...");
-                notifyUploadListenerCancelled();
-                break;
-        }
-    }
-
-    private void hashDoesNotExist(CheckResponse checkResponse) throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().w(TAG, "hashDoesNotExist()");
-        if (checkResponse.getResumableUpload().getUnitSize() == 0) {
-            MFConfiguration.getStaticMFLogger().w(TAG, "unit size received from unit_size was 0. cancelling");
-            notifyUploadListenerCancelled();
-            return;
-        }
-
-        if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
-            MFConfiguration.getStaticMFLogger().w(TAG, "number of units received from number_of_units was 0. cancelling");
-            notifyUploadListenerCancelled();
-            return;
-        }
-
-        if (checkResponse.getResumableUpload().areAllUnitsReady() && !mfUploadItem.getPollUploadKey().isEmpty()) {
-            MFConfiguration.getStaticMFLogger().w(TAG, "all units ready and have a poll upload key");
-            // all units are ready and we have the poll upload key. start polling.
-            doPollUpload();
-        } else {
-            MFConfiguration.getStaticMFLogger().w(TAG, "all units not ready or do not have poll upload key");
-            // either we don't have the poll upload key or all units are not ready
-            doResumableUpload();
         }
     }
 
@@ -249,18 +230,9 @@ public class MFUploadRunnable implements Runnable {
             mfUploadItem.cancelUpload();
             return;
         }
-        // url encode the filename
-        String filename;
-        try {
-            filename = URLEncoder.encode(mfUploadItem.getFileName(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            MFConfiguration.getStaticMFLogger().w(TAG, "Exception: " + e);
-            notifyUploadListenerCancelled();
-            return;
-        }
 
         // generate map with request parameters
-        Map<String, String> keyValue = generateInstantUploadRequestParameters(filename);
+        Map<String, String> keyValue = generateInstantUploadRequestParameters();
         MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.UPLOAD_INSTANT);
         mfRequestBuilder.requestParameters(keyValue);
         MFRequest mfRequest = mfRequestBuilder.build();
@@ -659,11 +631,11 @@ public class MFUploadRunnable implements Runnable {
         return sb.toString();
     }
 
-    private Map<String, String> generateInstantUploadRequestParameters(String filename) {
+    private Map<String, String> generateInstantUploadRequestParameters() {
         MFConfiguration.getStaticMFLogger().w(TAG, "generateInstantUploadRequestParameters()");
         // generate map with request parameters
         Map<String, String> keyValue = new LinkedHashMap<String, String>();
-        keyValue.put("filename", filename);
+        keyValue.put("filename", utf8EncodedFileName);
         keyValue.put("hash", mfUploadItem.getFileData().getFileHash());
         keyValue.put("size", Long.toString(mfUploadItem.getFileData().getFileSize()));
         keyValue.put("response_format", "json");

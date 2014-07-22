@@ -78,11 +78,11 @@ public final class MFHttpClient extends MFHttp {
         byte[] payload = null;
         if (mfRequester.isQueryPostable()) {
             String stringPayload = makeQueryString(mfRequester.getRequestParameters());
-            MFConfiguration.getStaticMFLogger().w(TAG, "query is postable.");
+            MFConfiguration.getStaticMFLogger().w(TAG, "query will be payload");
             payload = stringPayload.getBytes();
             connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         } else if (mfRequester.getPayload() != null) {
-            MFConfiguration.getStaticMFLogger().w(TAG, "query is not postable.");
+            MFConfiguration.getStaticMFLogger().w(TAG, "query has byte payload");
             payload = mfRequester.getPayload();
             connection.addRequestProperty("Content-Type", "application/octet-stream");
         }
