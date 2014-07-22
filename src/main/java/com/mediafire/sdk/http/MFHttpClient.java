@@ -81,6 +81,7 @@ public final class MFHttpClient extends MFHttp {
             MFConfiguration.getStaticMFLogger().w(TAG, "query is postable. query payload as string: " + stringPayload);
             payload = stringPayload.getBytes();
         } else if (mfRequester.getPayload() != null) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "query is not postable. payload is byte array size: " + payload);
             payload = mfRequester.getPayload();
         }
 
