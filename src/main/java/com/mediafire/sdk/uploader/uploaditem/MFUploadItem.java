@@ -24,7 +24,7 @@ public class MFUploadItem {
         }
 
         if (mfUploadItemOptions == null) {
-            options = new MFUploadItemOptions();
+            options = new MFUploadItemOptions.Builder().build();
         } else {
             this.options = mfUploadItemOptions;
         }
@@ -78,7 +78,7 @@ public class MFUploadItem {
 
     public MFUploadItemOptions getUploadOptions() {
         if (options == null) {
-            options = new MFUploadItemOptions();
+            options = new MFUploadItemOptions.Builder().build();
         }
         return options;
     }

@@ -1,28 +1,26 @@
 package com.mediafire.sdk.uploader.uploaditem;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class MFUploadItemOptions {
-    private final boolean resumable;
+    private boolean resumable;
     private String uploadFolderKey;
-    private String actionOnDuplicate;
-    private String versionControl;
+    private ActionOnDuplicate actionOnDuplicate;
+    private VersionControl versionControl;
     private String uploadPath;
     private String customFileName;
     private String quickKey;
     private String modificationTime;
     private ActionOnInAccount actionOnInAccount;
 
-    public MFUploadItemOptions(boolean resumable) {
-        this.resumable = resumable;
-    }
-
-    public MFUploadItemOptions() {
-        this(true);
+    private MFUploadItemOptions(Builder builder) {
+        this.resumable = builder.resumable;
+        this.uploadFolderKey = builder.uploadFolderKey;
+        this.actionOnDuplicate = builder.actionOnDuplicate;
+        this.versionControl = builder.versionControl;
+        this.uploadPath = builder.uploadPath;
+        this.customFileName = builder.customFileName;
+        this.quickKey = builder.quickKey;
+        this.modificationTime = builder.modificationTime;
+        this.actionOnInAccount = builder.actionOnInAccount;
     }
 
     public String getCustomFileName() {
@@ -32,46 +30,29 @@ public class MFUploadItemOptions {
         return customFileName;
     }
 
-    public void setCustomFileName(String customFileName) {
-        if (customFileName == null) {
-            customFileName = "";
-        }
-        this.customFileName = customFileName;
-    }
-
     public ActionOnInAccount getActionOnInAccount() {
         if (actionOnInAccount == null) {
-            actionOnInAccount = ActionOnInAccount.DO_NOT_UPLOAD;
+            return null;
         }
         return actionOnInAccount;
     }
 
-    public void setActionOnInAccount(ActionOnInAccount actionOnInAccount) {
-        if (actionOnInAccount == null) {
-            actionOnInAccount = ActionOnInAccount.DO_NOT_UPLOAD;
-        }
-        this.actionOnInAccount = actionOnInAccount;
-    }
-
     public String getUploadFolderKey() {
-        if (uploadFolderKey == null) {
-            uploadFolderKey = "";
-        }
         return uploadFolderKey;
     }
 
     public String getActionOnDuplicate() {
         if (actionOnDuplicate == null) {
-            setActionOnDuplicate(ActionOnDuplicate.KEEP);
+            return null;
         }
-        return actionOnDuplicate;
+        return actionOnDuplicate.getValue();
     }
 
     public String getVersionControl() {
         if (versionControl == null) {
-            setVersionControl(VersionControl.KEEP_REVISION);
+            return null;
         }
-        return versionControl;
+        return versionControl.getValue();
     }
 
     public String getResumable() {
@@ -89,90 +70,142 @@ public class MFUploadItemOptions {
         return this.uploadPath;
     }
 
-    public void setUploadFolderKey(String uploadFolderKey) {
-        if (uploadFolderKey == null) {
-            uploadFolderKey = "";
-        }
-        this.uploadFolderKey = uploadFolderKey;
-    }
-
-    public void setUploadPath(String path) {
-        if (path != null) {
-            this.uploadPath = path;
-        }
-    }
-
-    private void setVersionControl(VersionControl control) {
-        switch (control) {
-            case CREATE_PATCHES:
-                versionControl = "create_patches";
-                break;
-            case KEEP_REVISION:
-                versionControl = "keep_revision";
-                break;
-            case NONE:
-                versionControl = "none";
-                break;
-            default:
-                versionControl = "create_patches";
-                break;
-        }
-    }
-
     public String getModificationTime() {
         return modificationTime;
-    }
-
-    public void setQuickKey(String quickKey) {
-        this.quickKey = quickKey;
     }
 
     public String getQuickKey() {
         return quickKey;
     }
 
-    public void setModificationTime(String modificationTime) {
-        String timeString;
-        if (modificationTime == null || modificationTime.isEmpty()) {
-            timeString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US).format(new Date());
-        } else {
-            timeString = modificationTime;
+    public static class Builder {
+        private boolean DEFAULT_RESUMABLE = true;
+        private ActionOnDuplicate DEFAULT_ACTION_ON_DUPLICATE = ActionOnDuplicate.KEEP;
+        private VersionControl DEFAULT_VERSION_CONTROL = VersionControl.NONE;
+        private ActionOnInAccount DEFAULT_ACTION_ON_IN_ACCOUNT = ActionOnInAccount.UPLOAD_ALWAYS;
+
+        private boolean resumable = DEFAULT_RESUMABLE;
+        private ActionOnDuplicate actionOnDuplicate = DEFAULT_ACTION_ON_DUPLICATE;
+        private VersionControl versionControl = DEFAULT_VERSION_CONTROL;
+        private ActionOnInAccount actionOnInAccount = DEFAULT_ACTION_ON_IN_ACCOUNT;
+        private String uploadFolderKey;
+        private String uploadPath;
+        private String customFileName;
+        private String quickKey;
+        private String modificationTime;
+
+        public Builder() { }
+
+        public Builder resumable(boolean resumable) {
+            this.resumable = resumable;
+            return this;
         }
 
-        try {
-            this.modificationTime = URLEncoder.encode(timeString, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("UTF-8 encoding not available");
+        public Builder uploadFolderKey(String uploadFolderKey) {
+            if (uploadFolderKey == null) {
+                throw new IllegalArgumentException("uploadFolderKey cannot be passed as a null value");
+            }
+            this.uploadFolderKey = uploadFolderKey;
+            return this;
+        }
+
+        public Builder actionOnDuplicate(ActionOnDuplicate actionOnDuplicate) {
+            if (actionOnDuplicate == null) {
+                throw new IllegalArgumentException("ActionOnDuplicate cannot be passed as a null value");
+            }
+            this.actionOnDuplicate = actionOnDuplicate;
+            return this;
+        }
+
+        public Builder actionOnInAccount(ActionOnInAccount actionOnInAccount) {
+            if (actionOnInAccount == null) {
+                throw new IllegalArgumentException("ActionOnInAccount cannot be passed as a null value");
+            }
+            this.actionOnInAccount = actionOnInAccount;
+            return this;
+        }
+
+        public Builder versionControl(VersionControl versionControl) {
+            if (versionControl == null) {
+                throw new IllegalArgumentException("VersionControl cannot be passed as a null value");
+            }
+            this.versionControl = versionControl;
+            return this;
+        }
+
+        public Builder uploadPath(String uploadPath) {
+            if (uploadPath == null) {
+                throw new IllegalArgumentException("uploadPath cannot be passed as a null value");
+            }
+            this.uploadPath = uploadPath;
+            return this;
+        }
+
+        public Builder customFileName(String customFileName) {
+            if (customFileName == null) {
+                throw new IllegalArgumentException("customFileName cannot be passed as a null value");
+            }
+            this.customFileName = customFileName;
+            return this;
+        }
+
+        public Builder quickKey(String quickKey) {
+            if (quickKey == null) {
+                throw new IllegalArgumentException("quickKey cannot be passed as a null value");
+            }
+            this.quickKey = quickKey;
+            return this;
+        }
+
+        public Builder modificationTime(String modificationTime) {
+            if (modificationTime == null) {
+                throw new IllegalArgumentException("modificationTime cannot be passed as a null value");
+            }
+
+            this.modificationTime = modificationTime;
+            return this;
+        }
+
+        public MFUploadItemOptions build() {
+            return new MFUploadItemOptions(this);
         }
     }
 
-    public void setActionOnDuplicate(ActionOnDuplicate actionOnDuplicate) {
-        switch (actionOnDuplicate) {
-            case KEEP:
-                this.actionOnDuplicate = "keep";
-                break;
-            case REPLACE:
-                this.actionOnDuplicate = "replace";
-                break;
-            case SKIP:
-                this.actionOnDuplicate = "skip";
-                break;
-            default:
-                this.actionOnDuplicate = "keep";
-                break;
-        }
-    }
+    public enum ActionOnDuplicate {
+        KEEP("keep"),
+        SKIP("skip"),
+        REPLACE("replace");
 
-     public enum ActionOnDuplicate {
-        KEEP, SKIP, REPLACE
+        private final String value;
+
+        private ActionOnDuplicate(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 
     public enum ActionOnInAccount {
-        UPLOAD_ALWAYS, UPLOAD_IF_NOT_IN_FOLDER, DO_NOT_UPLOAD
+        UPLOAD_ALWAYS,
+        UPLOAD_IF_NOT_IN_FOLDER,
+        DO_NOT_UPLOAD,
     }
 
     public enum VersionControl {
-        CREATE_PATCHES, KEEP_REVISION, NONE
+        CREATE_PATCHES("create_patches"),
+        KEEP_REVISION("keep_revision"),
+        NONE("none");
+
+        private final String value;
+
+        private VersionControl(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 }
