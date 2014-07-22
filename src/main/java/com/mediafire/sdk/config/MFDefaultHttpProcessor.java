@@ -19,26 +19,30 @@ public final class MFDefaultHttpProcessor implements MFHttpProcessor {
 
     @Override
     public MFResponse doRequest(final MFRequester mfRequester) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "doRequest()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "doRequest()");
 
         MFResponse mfResponse = null;
         try {
             mfHttpClientSetup.prepareMFRequestForHttpClient(mfRequester);
             mfResponse = mfHttpClient.sendRequest(mfRequester);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } finally {
             final MFResponse finalMfResponse = mfResponse;
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    mfHttpClientCleanup.returnToken(mfRequester, finalMfResponse);
+                    try {
+                        mfHttpClientCleanup.returnToken(mfRequester, finalMfResponse);
+                    } catch (MFHttpException e) {
+                        MFConfiguration.getStaticMFLogger().e(TAG, e.getMessage(), e);
+                    }
                 }
             });
 
             thread.start();
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        } catch (MFHttpException e) {
+            return null;
         }
-
 
         return mfResponse;
     }

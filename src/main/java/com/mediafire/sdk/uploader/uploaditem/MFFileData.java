@@ -20,8 +20,6 @@ public class MFFileData {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }
         this.filePath = filePath;
-        setFileSize();
-        setFileHash();
     }
 
     public String getFilePath() {
@@ -29,20 +27,26 @@ public class MFFileData {
     }
 
     public long getFileSize() {
+        if (fileSize == 0) {
+            setFileSize();
+        }
         return fileSize;
     }
 
     public String getFileHash() {
+        if (fileHash == null) {
+            setFileHash();
+        }
         return fileHash;
     }
 
-    public void setFileSize() {
+    private void setFileSize() {
         File file = new File(getFilePath());
         fileSize = file.length();
     }
 
     @SuppressWarnings("UnusedAssignment")
-    public void setFileHash() {
+    private void setFileHash() {
         File file = new File(filePath);
         FileInputStream fileInputStream;
         BufferedInputStream fileUri;

@@ -17,7 +17,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class MFUploadRunnable implements Runnable {
     private final MFUploadItem mfUploadItem;
     private final MFUploadListener mfUploadListener;
     private final int maxUploadAttempts;
-    private String urlEncodedFileName;
+    private String utf8EncodedFileName;
 
     private MFUploadRunnable(Builder builder) {
         this.maxPolls = builder.maxPolls;
@@ -45,10 +45,11 @@ public class MFUploadRunnable implements Runnable {
 
     @Override
     public void run() {
+        MFConfiguration.getStaticMFLogger().w(TAG, "run()");
         notifyUploadListenerStarted();
 
         try {
-            tryToUrlEncodeFileName();
+            encodeFileNameUTF8();
             startOrRestartUpload();
         } catch (UnsupportedEncodingException e) {
             MFConfiguration.getStaticMFLogger().e(TAG, "UnsupportedEncodingException during MFUploadRunnable", e);
@@ -62,13 +63,13 @@ public class MFUploadRunnable implements Runnable {
         }
     }
 
-    private void tryToUrlEncodeFileName() throws UnsupportedEncodingException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "tryToUrlEncodeFileName");
-        urlEncodedFileName = URLEncoder.encode(mfUploadItem.getFileName(), "UTF-8");
+    private void encodeFileNameUTF8() throws UnsupportedEncodingException {
+        MFConfiguration.getStaticMFLogger().w(TAG, "encodeFileNameUTF8");
+        utf8EncodedFileName = new String(mfUploadItem.getFileName().getBytes("UTF-8"), "UTF-8");
     }
 
     private void checkUploadFinished(MFUploadItem mfUploadItem, CheckResponse checkResponse) throws NoSuchAlgorithmException, IOException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "checkUploadFinished()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "checkUploadFinished()");
         //as a preventable infinite loop measure, an upload item cannot continue after upload/check.php if it has gone through the process 20x
         //20x is high, but it should never happen and will allow for more information gathering.
         if (mfUploadItem.getUploadAttemptCount() > maxUploadAttempts || mfUploadItem.isCancelled()) {
@@ -77,7 +78,7 @@ public class MFUploadRunnable implements Runnable {
         }
 
         if (checkResponse.getStorageLimitExceeded()) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "storage limit is exceeded");
+            MFConfiguration.getStaticMFLogger().w(TAG, "storage limit is exceeded");
             storageLimitExceeded();
         } else if (checkResponse.getResumableUpload().areAllUnitsReady() && !mfUploadItem.getPollUploadKey().isEmpty()) {
             // all units are ready and we have the poll upload key. start polling.
@@ -92,12 +93,12 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private void instantUploadFinished() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "instantUploadFinished()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "instantUploadFinished()");
         notifyUploadListenerCompleted();
     }
 
     private void resumableUploadFinished(ResumableResponse response) throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "resumableUploadFinished()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "resumableUploadFinished()");
         if (response != null && response.getResumableUpload().areAllUnitsReady() && !response.getDoUpload().getPollUploadKey().isEmpty()) {
             doPollUpload();
         } else {
@@ -106,7 +107,7 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private void pollUploadFinished(PollResponse pollResponse) throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "pollUploadFinished()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "pollUploadFinished()");
         // if this method is called then file error and result codes are fine, but we may not have received status 99 so
         // check status code and then possibly send item to the backlog queue.
         PollResponse.DoUpload doUpload = pollResponse.getDoUpload();
@@ -115,18 +116,18 @@ public class MFUploadRunnable implements Runnable {
         PollResponse.FileError pollFileErrorCode = doUpload.getFileErrorCode();
 
         if (pollStatusCode != PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResponse.Result.SUCCESS && pollFileErrorCode == PollResponse.FileError.NO_ERROR) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
+            MFConfiguration.getStaticMFLogger().w(TAG, "status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
             startOrRestartUpload();
         }
     }
 
     private void storageLimitExceeded() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "storageLimitExceeded()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "storageLimitExceeded()");
         notifyUploadListenerCancelled();
     }
 
     private void hashExists(CheckResponse checkResponse) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "hashExists()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "hashExists()");
         if (!checkResponse.isInAccount()) { // hash which exists is not in the account
             hashNotInAccount();
         } else { // hash exists and is in the account
@@ -135,67 +136,75 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private void hashNotInAccount() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "hashNotInAccount()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "hashNotInAccount()");
         doInstantUpload();
     }
 
     private void hashInAccount(CheckResponse checkResponse) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "hashInAccount()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "hashInAccount()");
         boolean inFolder = checkResponse.isInFolder();
-        MFConfiguration.getStaticMFLogger().v(TAG, "ActionOnInAccount: " + mfUploadItem.getUploadOptions().getActionOnInAccount().toString());
+        MFConfiguration.getStaticMFLogger().w(TAG, "ActionOnInAccount: " + mfUploadItem.getUploadOptions().getActionOnInAccount().toString());
         switch (mfUploadItem.getUploadOptions().getActionOnInAccount()) {
             case UPLOAD_ALWAYS:
-                MFConfiguration.getStaticMFLogger().v(TAG, "uploading...");
+                MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
                 doInstantUpload();
                 break;
             case UPLOAD_IF_NOT_IN_FOLDER:
-                MFConfiguration.getStaticMFLogger().v(TAG, "uploading if not in folder.");
+                MFConfiguration.getStaticMFLogger().w(TAG, "uploading if not in folder.");
                 if (!inFolder) {
-                    MFConfiguration.getStaticMFLogger().v(TAG, "uploading...");
+                    MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
                     doInstantUpload();
                 } else {
-                    MFConfiguration.getStaticMFLogger().v(TAG, "already in folder, not uploading...");
+                    MFConfiguration.getStaticMFLogger().w(TAG, "already in folder, not uploading...");
                     notifyUploadListenerCompleted();
                 }
                 break;
             case DO_NOT_UPLOAD:
             default:
-                MFConfiguration.getStaticMFLogger().v(TAG, "not uploading...");
+                MFConfiguration.getStaticMFLogger().w(TAG, "not uploading...");
                 notifyUploadListenerCancelled();
                 break;
         }
     }
 
     private void hashDoesNotExist(CheckResponse checkResponse) throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "hashDoesNotExist()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "hashDoesNotExist()");
         if (checkResponse.getResumableUpload().getUnitSize() == 0) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "unit size received from unit_size was 0. cancelling");
+            MFConfiguration.getStaticMFLogger().w(TAG, "unit size received from unit_size was 0. cancelling");
             notifyUploadListenerCancelled();
             return;
         }
 
         if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "number of units received from number_of_units was 0. cancelling");
+            MFConfiguration.getStaticMFLogger().w(TAG, "number of units received from number_of_units was 0. cancelling");
             notifyUploadListenerCancelled();
             return;
         }
 
         if (checkResponse.getResumableUpload().areAllUnitsReady() && !mfUploadItem.getPollUploadKey().isEmpty()) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "all units ready and have a poll upload key");
+            MFConfiguration.getStaticMFLogger().w(TAG, "all units ready and have a poll upload key");
             // all units are ready and we have the poll upload key. start polling.
             doPollUpload();
         } else {
-            MFConfiguration.getStaticMFLogger().v(TAG, "all units not ready or do not have poll upload key");
+            MFConfiguration.getStaticMFLogger().w(TAG, "all units not ready or do not have poll upload key");
             // either we don't have the poll upload key or all units are not ready
             doResumableUpload();
         }
     }
 
     private void doCheckUpload() throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "doCheckUpload()");
-        mfUploadItem.getFileData().setFileSize();
-        mfUploadItem.getFileData().setFileHash();
+        MFConfiguration.getStaticMFLogger().w(TAG, "doCheckUpload()");
+        if (mfUploadItem.isCancelled()) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "upload was cancelled for " + mfUploadItem.getFileName());
+            notifyUploadListenerCancelled();
+            return;
+        }
 
+        if (!haveStoredCredentials()) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "no credentials stored, task cancelling()");
+            mfUploadItem.cancelUpload();
+            return;
+        }
         // generate map with request parameters
         Map<String, String> keyValue = generateCheckUploadRequestParameters();
         MFRequest.MFRequestBuilder mfRequestBuilder = new MFRequest.MFRequestBuilder(MFHost.LIVE_HTTP, MFApi.UPLOAD_CHECK);
@@ -221,20 +230,31 @@ public class MFUploadRunnable implements Runnable {
         List<Integer> words = response.getResumableUpload().getBitmap().getWords();
         MFResumableBitmap bitmap = new MFResumableBitmap(count, words);
         mfUploadItem.setBitmap(bitmap);
-        MFConfiguration.getStaticMFLogger().v(TAG, mfUploadItem.getFileData().getFilePath() + " upload item bitmap: " + mfUploadItem.getBitmap().getCount() + " count, " + mfUploadItem.getBitmap().getWords().toString() + " words.");
+        MFConfiguration.getStaticMFLogger().w(TAG, mfUploadItem.getFileData().getFilePath() + " upload item bitmap: " + mfUploadItem.getBitmap().getCount() + " count, " + mfUploadItem.getBitmap().getWords().toString() + " words.");
 
         // notify listeners that check has completed
         checkUploadFinished(mfUploadItem, response);
     }
 
     private void doInstantUpload() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "doInstantUpload()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "doInstantUpload()");
+        if (mfUploadItem.isCancelled()) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "upload was cancelled for " + mfUploadItem.getFileName());
+            notifyUploadListenerCancelled();
+            return;
+        }
+
+        if (!haveStoredCredentials()) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "no credentials stored, task cancelling()");
+            mfUploadItem.cancelUpload();
+            return;
+        }
         // url encode the filename
         String filename;
         try {
             filename = URLEncoder.encode(mfUploadItem.getFileName(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "Exception: " + e);
+            MFConfiguration.getStaticMFLogger().w(TAG, "Exception: " + e);
             notifyUploadListenerCancelled();
             return;
         }
@@ -267,7 +287,7 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private void doResumableUpload() throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "doResumableUpload()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "doResumableUpload()");
 
         //get file size. this will be used for chunks.
         MFFileData fileData = mfUploadItem.getFileData();
@@ -283,13 +303,13 @@ public class MFUploadRunnable implements Runnable {
         ResumableResponse response = null;
         for (int chunkNumber = 0; chunkNumber < numChunks; chunkNumber++) {
             if (mfUploadItem.isCancelled()) {
-                MFConfiguration.getStaticMFLogger().v(TAG, "upload was cancelled for " + mfUploadItem.getFileName());
+                MFConfiguration.getStaticMFLogger().w(TAG, "upload was cancelled for " + mfUploadItem.getFileName());
                 notifyUploadListenerCancelled();
                 return;
             }
 
             if (!haveStoredCredentials()) {
-                MFConfiguration.getStaticMFLogger().v(TAG, "no credentials stored, task cancelling()");
+                MFConfiguration.getStaticMFLogger().w(TAG, "no credentials stored, task cancelling()");
                 mfUploadItem.cancelUpload();
                 return;
             }
@@ -311,9 +331,9 @@ public class MFUploadRunnable implements Runnable {
                 printDebugCurrentChunk(chunkNumber, numChunks, chunkSize, unitSize, fileSize, chunkHash, uploadChunk);
 
                 // generate the post headers
-                HashMap<String, String> headers = generatePostHeaders(urlEncodedFileName, fileSize, chunkNumber, chunkHash, chunkSize);
+                Map<String, String> headers = generatePostHeaders(utf8EncodedFileName, fileSize, chunkNumber, chunkHash, chunkSize);
                 // generate the get parameters
-                HashMap<String, String> parameters = generateResumableRequestParameters();
+                Map<String, String> parameters = generateResumableRequestParameters();
 
                 printDebugRequestData(headers, parameters);
 
@@ -324,6 +344,12 @@ public class MFUploadRunnable implements Runnable {
                 MFRequest mfRequest = mfRequestBuilder.build();
 
                 MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
+
+                if (mfResponse == null) {
+                    startOrRestartUpload();
+                    return;
+                }
+
                 response = mfResponse.getResponseObject(ResumableResponse.class);
 
                 // set poll upload key if possible
@@ -341,7 +367,7 @@ public class MFUploadRunnable implements Runnable {
                 List<Integer> words = response.getResumableUpload().getBitmap().getWords();
                 MFResumableBitmap bitmap = new MFResumableBitmap(count, words);
                 mfUploadItem.setBitmap(bitmap);
-                MFConfiguration.getStaticMFLogger().v(TAG, "(" + mfUploadItem.getFileData().getFilePath() + ") upload item bitmap: " + mfUploadItem.getBitmap().getCount() + " count, (" + mfUploadItem.getBitmap().getWords().toString() + ") words.");
+                MFConfiguration.getStaticMFLogger().w(TAG, "(" + mfUploadItem.getFileData().getFilePath() + ") upload item bitmap: " + mfUploadItem.getBitmap().getCount() + " count, (" + mfUploadItem.getBitmap().getWords().toString() + ") words.");
 
                 clearReferences(chunkSize, chunkHash, uploadChunk, headers, parameters);
             }
@@ -354,13 +380,24 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private void doPollUpload() throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "doPollUpload()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "doPollUpload()");
+        if (mfUploadItem.isCancelled()) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "upload was cancelled for " + mfUploadItem.getFileName());
+            notifyUploadListenerCancelled();
+            return;
+        }
+
         //generate our request string
-        HashMap<String, String> keyValue = generatePollRequestParameters();
+        Map<String, String> keyValue = generatePollRequestParameters();
 
         int pollCount = 0;
         do {
 
+            if (!haveStoredCredentials()) {
+                MFConfiguration.getStaticMFLogger().w(TAG, "no credentials stored, task cancelling()");
+                mfUploadItem.cancelUpload();
+                return;
+            }
             // increment counter
             pollCount++;
             // get api response.
@@ -369,16 +406,22 @@ public class MFUploadRunnable implements Runnable {
             mfRequestBuilder.requestParameters(keyValue);
             MFRequest mfRequest = mfRequestBuilder.build();
             MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
+
+            if (mfResponse == null) {
+                startOrRestartUpload();
+                return;
+            }
+
             PollResponse response = mfResponse.getResponseObject(PollResponse.class);
 
             if (mfUploadItem.isCancelled()) {
-                MFConfiguration.getStaticMFLogger().v(TAG, "upload was cancelled for " + mfUploadItem.getFileName());
+                MFConfiguration.getStaticMFLogger().w(TAG, "upload was cancelled for " + mfUploadItem.getFileName());
                 notifyUploadListenerCancelled();
                 return;
             }
 
             if (!haveStoredCredentials()) {
-                MFConfiguration.getStaticMFLogger().v(TAG, "no credentials stored, task cancelling()");
+                MFConfiguration.getStaticMFLogger().w(TAG, "no credentials stored, task cancelling()");
                 mfUploadItem.cancelUpload();
                 return;
             }
@@ -388,7 +431,7 @@ public class MFUploadRunnable implements Runnable {
                 return;
             }
 
-            MFConfiguration.getStaticMFLogger().v(TAG, "received error code: " + response.getErrorCode());
+            MFConfiguration.getStaticMFLogger().w(TAG, "received error code: " + response.getErrorCode());
             //check to see if we need to call pollUploadCompleted or loop again
             switch (response.getErrorCode()) {
                 case NO_ERROR:
@@ -399,19 +442,19 @@ public class MFUploadRunnable implements Runnable {
                     //      second  -   fileerror code no error? yes, carry on old chap!. no, cancel upload because error.
                     //      third   -   status code 99 (no more requests)? yes, done. no, continue.
                     if (response.getDoUpload().getResultCode() != PollResponse.Result.SUCCESS) {
-                        MFConfiguration.getStaticMFLogger().v(TAG, "result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
+                        MFConfiguration.getStaticMFLogger().w(TAG, "result code: " + response.getDoUpload().getResultCode().toString() + " need to cancel");
                         notifyUploadListenerCancelled();
                         return;
                     }
 
                     if (response.getDoUpload().getFileErrorCode() != PollResponse.FileError.NO_ERROR) {
-                        MFConfiguration.getStaticMFLogger().v(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
+                        MFConfiguration.getStaticMFLogger().w(TAG, "result code: " + response.getDoUpload().getFileErrorCode().toString() + " need to cancel");
                         notifyUploadListenerCancelled();
                         return;
                     }
 
                     if (response.getDoUpload().getStatusCode() == PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY) {
-                        MFConfiguration.getStaticMFLogger().v(TAG, "status code: " + response.getDoUpload().getStatusCode().toString());
+                        MFConfiguration.getStaticMFLogger().w(TAG, "status code: " + response.getDoUpload().getStatusCode().toString());
                         pollUploadFinished(response);
                         return;
                     }
@@ -426,7 +469,7 @@ public class MFUploadRunnable implements Runnable {
             try {
                 Thread.sleep(millisecondsBetweenPolls);
             } catch (InterruptedException e) {
-                MFConfiguration.getStaticMFLogger().v(TAG, "Exception: " + e);
+                MFConfiguration.getStaticMFLogger().w(TAG, "Exception: " + e);
                 notifyUploadListenerCancelled();
                 return;
             }
@@ -439,16 +482,16 @@ public class MFUploadRunnable implements Runnable {
         startOrRestartUpload();
     }
 
-    private HashMap<String, String> generatePollRequestParameters() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "generatePollRequestParameters()");
-        HashMap<String, String> keyValue = new HashMap<String, String>();
+    private Map<String, String> generatePollRequestParameters() {
+        MFConfiguration.getStaticMFLogger().w(TAG, "generatePollRequestParameters()");
+        LinkedHashMap<String, String> keyValue = new LinkedHashMap<String, String>();
         keyValue.put("key", mfUploadItem.getPollUploadKey());
         keyValue.put("response_format", "json");
         return keyValue;
     }
 
     @SuppressWarnings({"ParameterCanBeLocal", "UnusedParameters", "UnusedAssignment"})
-    private void clearReferences(int chunkSize, String chunkHash, byte[] uploadChunk, HashMap<String, String> headers, HashMap<String, String> parameters) {
+    private void clearReferences(int chunkSize, String chunkHash, byte[] uploadChunk, Map<String, String> headers, Map<String, String> parameters) {
         chunkSize = 0;
         chunkHash = null;
         uploadChunk = null;
@@ -456,25 +499,25 @@ public class MFUploadRunnable implements Runnable {
         parameters = null;
     }
 
-    private void printDebugRequestData(HashMap<String, String> headers, HashMap<String, String> parameters) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "headers: " + headers.toString());
-        MFConfiguration.getStaticMFLogger().v(TAG, "parameters: " + parameters.toString());
+    private void printDebugRequestData(Map<String, String> headers, Map<String, String> parameters) {
+        MFConfiguration.getStaticMFLogger().w(TAG, "headers: " + headers.toString());
+        MFConfiguration.getStaticMFLogger().w(TAG, "parameters: " + parameters.toString());
     }
 
     @SuppressWarnings("UnusedParameters")
     private void printDebugCurrentChunk(int chunkNumber, int numChunks, int chunkSize, int unitSize, long fileSize, String chunkHash, byte[] uploadChunk) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "current thread: " + Thread.currentThread().getName());
-        MFConfiguration.getStaticMFLogger().v(TAG, "current chunk: " + chunkNumber);
-        MFConfiguration.getStaticMFLogger().v(TAG, "total chunks: " + numChunks);
-        MFConfiguration.getStaticMFLogger().v(TAG, "current chunk size: " + chunkSize);
-        MFConfiguration.getStaticMFLogger().v(TAG, "normal chunk size: " + unitSize);
-        MFConfiguration.getStaticMFLogger().v(TAG, "total file size: " + fileSize);
-        MFConfiguration.getStaticMFLogger().v(TAG, "current chunk hash: " + chunkHash);
-        MFConfiguration.getStaticMFLogger().v(TAG, "upload chunk ");
+        MFConfiguration.getStaticMFLogger().w(TAG, "current thread: " + Thread.currentThread().getName());
+        MFConfiguration.getStaticMFLogger().w(TAG, "current chunk: " + chunkNumber);
+        MFConfiguration.getStaticMFLogger().w(TAG, "total chunks: " + numChunks);
+        MFConfiguration.getStaticMFLogger().w(TAG, "current chunk size: " + chunkSize);
+        MFConfiguration.getStaticMFLogger().w(TAG, "normal chunk size: " + unitSize);
+        MFConfiguration.getStaticMFLogger().w(TAG, "total file size: " + fileSize);
+        MFConfiguration.getStaticMFLogger().w(TAG, "current chunk hash: " + chunkHash);
+        MFConfiguration.getStaticMFLogger().w(TAG, "upload chunk ");
     }
 
     private boolean shouldCancelUpload(ResumableResponse response) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "shouldCancelUpload()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "shouldCancelUpload()");
         // if API response code OR Upload Response Result code have an error then we need to terminate the process
         if (response.hasError()) {
             return true;
@@ -490,7 +533,7 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private MFResumableChunkInfo createResumableChunkInfo(int unitSize, int chunkNumber) throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "createResumableChunkInfo");
+        MFConfiguration.getStaticMFLogger().w(TAG, "createResumableChunkInfo");
         MFResumableChunkInfo mfResumableChunkInfo;
         // generate the chunk
         FileInputStream fis;
@@ -507,8 +550,8 @@ public class MFUploadRunnable implements Runnable {
         return mfResumableChunkInfo;
     }
 
-    private HashMap<String, String> generateResumableRequestParameters() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "generateResumableRequestParameters()");
+    private Map<String, String> generateResumableRequestParameters() {
+        MFConfiguration.getStaticMFLogger().w(TAG, "generateResumableRequestParameters()");
         // get upload options. these will be passed as request parameters
         MFUploadItemOptions mfUploadItemOptions = mfUploadItem.getUploadOptions();
         String actionOnDuplicate = mfUploadItemOptions.getActionOnDuplicate();
@@ -517,12 +560,12 @@ public class MFUploadRunnable implements Runnable {
         String uploadPath = mfUploadItemOptions.getUploadPath();
 
         String actionToken = mfTokenFarm.borrowMFUploadActionToken().getTokenString();
-        HashMap<String, String> parameters = new HashMap<String, String>();
+        LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
         parameters.put("session_token", actionToken);
         parameters.put("action_on_duplicate", actionOnDuplicate);
         parameters.put("response_format", "json");
         parameters.put("version_control", versionControl);
-        if (!uploadPath.isEmpty()) {
+        if (uploadPath != null && !uploadPath.isEmpty()) {
             parameters.put("path", uploadPath);
         } else {
             parameters.put("folder_key", uploadFolderKey);
@@ -531,9 +574,9 @@ public class MFUploadRunnable implements Runnable {
         return parameters;
     }
 
-    private HashMap<String, String> generatePostHeaders(String encodedShortFileName, long fileSize, int chunkNumber, String chunkHash, int chunkSize) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "generatePostHeaders()");
-        HashMap<String, String> headers = new HashMap<String, String>();
+    private Map<String, String> generatePostHeaders(String encodedShortFileName, long fileSize, int chunkNumber, String chunkHash, int chunkSize) {
+        MFConfiguration.getStaticMFLogger().w(TAG, "generatePostHeaders()");
+        LinkedHashMap<String, String> headers = new LinkedHashMap<String, String>();
         // these headers are related to the entire file
         headers.put("x-filename", encodedShortFileName);
         headers.put("x-filesize", String.valueOf(fileSize));
@@ -546,7 +589,7 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private boolean shouldSetPollUploadKey(ResumableResponse response) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "shouldSetPollUploadKey()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "shouldSetPollUploadKey()");
         switch (response.getDoUpload().getResultCode()) {
             case NO_ERROR:
             case SUCCESS_FILE_MOVED_TO_ROOT:
@@ -557,7 +600,7 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private int getChunkSize(int chunkNumber, int numChunks, long fileSize, int unitSize) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getChunkSize()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "getChunkSize()");
         int chunkSize;
         if (chunkNumber >= numChunks) {
             chunkSize = 0; // represents bad size
@@ -576,7 +619,7 @@ public class MFUploadRunnable implements Runnable {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private byte[] createUploadChunk(long unitSize, int chunkNumber, BufferedInputStream fileStream) throws IOException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "createUploadChunk()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "createUploadChunk()");
         byte[] readBytes = new byte[(int) unitSize];
         int offset = (int) (unitSize * chunkNumber);
         fileStream.skip(offset);
@@ -591,7 +634,7 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private String getSHA256(byte[] chunkData) throws NoSuchAlgorithmException, IOException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "getSHA256()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "getSHA256()");
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         //test code
         InputStream in = new ByteArrayInputStream(chunkData, 0, chunkData.length);
@@ -608,7 +651,7 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private String convertHashBytesToString(byte[] hashBytes) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "convertHashBytesToString()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "convertHashBytesToString()");
         StringBuilder sb = new StringBuilder();
         for (byte hashByte : hashBytes) {
             String tempString = Integer.toHexString((hashByte & 0xFF) | 0x100).substring(1, 3);
@@ -619,9 +662,9 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private Map<String, String> generateInstantUploadRequestParameters(String filename) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "generateInstantUploadRequestParameters()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "generateInstantUploadRequestParameters()");
         // generate map with request parameters
-        Map<String, String> keyValue = new HashMap<String, String>();
+        Map<String, String> keyValue = new LinkedHashMap<String, String>();
         keyValue.put("filename", filename);
         keyValue.put("hash", mfUploadItem.getFileData().getFileHash());
         keyValue.put("size", Long.toString(mfUploadItem.getFileData().getFileSize()));
@@ -637,10 +680,10 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private Map<String, String> generateCheckUploadRequestParameters() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "generateCheckUploadRequestParameters()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "generateCheckUploadRequestParameters()");
         // generate map with request parameters
-        Map<String, String> keyValue = new HashMap<String, String>();
-        keyValue.put("filename", urlEncodedFileName);
+        Map<String, String> keyValue = new LinkedHashMap<String, String>();
+        keyValue.put("filename", utf8EncodedFileName);
         keyValue.put("hash", mfUploadItem.getFileData().getFileHash());
         keyValue.put("size", Long.toString(mfUploadItem.getFileData().getFileSize()));
         keyValue.put("resumable", mfUploadItem.getUploadOptions().getResumable());
@@ -654,21 +697,21 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private boolean haveStoredCredentials() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "haveStoredCredentials()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "haveStoredCredentials()");
         return !mfTokenFarm.getMFConfiguration().getMfCredentials().getCredentials().isEmpty();
     }
 
     private void startOrRestartUpload() throws IOException, NoSuchAlgorithmException {
-        MFConfiguration.getStaticMFLogger().v(TAG, "startOrRestartUpload()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "startOrRestartUpload()");
         //don't add the item to the backlog queue if it is null or the path is null
         if (mfUploadItem == null) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "one or more required parameters are invalid, not adding item to queue");
+            MFConfiguration.getStaticMFLogger().w(TAG, "one or more required parameters are invalid, not adding item to queue");
             notifyUploadListenerCancelled();
             return;
         }
 
         if (mfUploadItem.getFileData() == null || mfUploadItem.getFileData().getFilePath() == null || mfUploadItem.getFileData().getFilePath().isEmpty() || mfUploadItem.getFileData().getFileHash().isEmpty() || mfUploadItem.getFileData().getFileSize() == 0) {
-            MFConfiguration.getStaticMFLogger().v(TAG, "one or more required parameters are invalid, not adding item to queue");
+            MFConfiguration.getStaticMFLogger().w(TAG, "one or more required parameters are invalid, not adding item to queue");
             notifyUploadListenerCancelled();
             return;
         }
@@ -681,21 +724,21 @@ public class MFUploadRunnable implements Runnable {
     }
 
     private void notifyUploadListenerStarted() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "notifyUploadListenerStarted()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "notifyUploadListenerStarted()");
         if (mfUploadListener != null) {
             mfUploadListener.onStarted(mfUploadItem);
         }
     }
 
     private void notifyUploadListenerCompleted() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "notifyUploadListenerCompleted()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "notifyUploadListenerCompleted()");
         if (mfUploadListener != null) {
             mfUploadListener.onCompleted(mfUploadItem);
         }
     }
 
     private void notifyUploadListenerOnProgressUpdate(int totalChunks) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "notifyUploadListenerOnProgressUpdate()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "notifyUploadListenerOnProgressUpdate()");
         if (mfUploadListener != null) {
             // give number of chunks/numChunks for onProgressUpdate
             int numUploaded = 0;
@@ -704,13 +747,13 @@ public class MFUploadRunnable implements Runnable {
                     numUploaded++;
                 }
             }
-            MFConfiguration.getStaticMFLogger().v(TAG, numUploaded + "/" + totalChunks + " chunks uploaded");
+            MFConfiguration.getStaticMFLogger().w(TAG, numUploaded + "/" + totalChunks + " chunks uploaded");
             mfUploadListener.onProgressUpdate(mfUploadItem, numUploaded, totalChunks);
         }
     }
 
     private void notifyUploadListenerCancelled() {
-        MFConfiguration.getStaticMFLogger().v(TAG, "notifyUploadListenerCancelled()");
+        MFConfiguration.getStaticMFLogger().w(TAG, "notifyUploadListenerCancelled()");
         if (mfUploadListener != null) {
             mfUploadListener.onCancelled(mfUploadItem);
         }
