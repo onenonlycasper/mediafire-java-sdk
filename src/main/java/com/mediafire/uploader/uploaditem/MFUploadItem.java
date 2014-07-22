@@ -6,27 +6,27 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-public class UploadItem {
-    private static final String TAG = UploadItem.class.getCanonicalName();
+public class MFUploadItem {
+    private static final String TAG = MFUploadItem.class.getCanonicalName();
     private int uploadAttemptCount;
     private boolean cancelled;
     private String fileName;
-    private UploadOptions options;
-    private final FileData fileData;
-    private ChunkData chunkData;
-    private ResumableBitmap bitmap;
+    private MFUploadItemOptions options;
+    private final MFFileData fileData;
+    private MFChunkData mfChunkData;
+    private MFResumableBitmap bitmap;
     private String pollUploadKey;
 
 
-    public UploadItem(String path, UploadOptions uploadOptions) {
+    public MFUploadItem(String path, MFUploadItemOptions mfUploadItemOptions) {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
 
-        if (uploadOptions == null) {
-            options = new UploadOptions();
+        if (mfUploadItemOptions == null) {
+            options = new MFUploadItemOptions();
         } else {
-            this.options = uploadOptions;
+            this.options = mfUploadItemOptions;
         }
 
         if (options.getCustomFileName().isEmpty()) {
@@ -36,15 +36,14 @@ public class UploadItem {
         }
 
         //set Object fields so they won't be null
-        fileData = new FileData(path);
+        fileData = new MFFileData(path);
         pollUploadKey = "";
-        chunkData = new ChunkData();
-        bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
+        mfChunkData = new MFChunkData();
+        bitmap = new MFResumableBitmap(0, new ArrayList<Integer>());
         uploadAttemptCount = 0;
     }
 
-
-    public UploadItem(String path) {
+    public MFUploadItem(String path) {
         this(path, null);
     }
 
@@ -69,7 +68,7 @@ public class UploadItem {
         return fileName;
     }
 
-    public FileData getFileData() {
+    public MFFileData getFileData() {
         return fileData;
     }
 
@@ -77,29 +76,29 @@ public class UploadItem {
         return pollUploadKey;
     }
 
-    public UploadOptions getUploadOptions() {
+    public MFUploadItemOptions getUploadOptions() {
         if (options == null) {
-            options = new UploadOptions();
+            options = new MFUploadItemOptions();
         }
         return options;
     }
 
-    public ChunkData getChunkData() {
-        if (chunkData == null) {
-            chunkData = new ChunkData();
+    public MFChunkData getChunkData() {
+        if (mfChunkData == null) {
+            mfChunkData = new MFChunkData();
         }
-        return chunkData;
+        return mfChunkData;
     }
 
-    public ResumableBitmap getBitmap() {
+    public MFResumableBitmap getBitmap() {
         if (bitmap == null) {
             MFConfiguration.getStaticMFLogger().v(TAG, "  resumable bitmap reference lost");
-            bitmap = new ResumableBitmap(0, new ArrayList<Integer>());
+            bitmap = new MFResumableBitmap(0, new ArrayList<Integer>());
         }
         return bitmap;
     }
 
-    public void setBitmap(ResumableBitmap bitmap) {
+    public void setBitmap(MFResumableBitmap bitmap) {
         this.bitmap = bitmap;
     }
 
@@ -127,12 +126,12 @@ public class UploadItem {
             return false;
         }
 
-        if (!fileData.getFilePath().equals(((UploadItem) object).fileData.getFilePath())) {
+        if (!fileData.getFilePath().equals(((MFUploadItem) object).fileData.getFilePath())) {
             return false;
         }
 
-        if (fileData.getFileHash() != null && ((UploadItem) object).fileData.getFileHash() != null) {
-            if (!fileData.getFileHash().equals(((UploadItem) object).fileData.getFileHash())) {
+        if (fileData.getFileHash() != null && ((MFUploadItem) object).fileData.getFileHash() != null) {
+            if (!fileData.getFileHash().equals(((MFUploadItem) object).fileData.getFileHash())) {
                 return false;
             }
         }

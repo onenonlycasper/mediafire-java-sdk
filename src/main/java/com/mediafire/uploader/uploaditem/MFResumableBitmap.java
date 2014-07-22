@@ -3,12 +3,12 @@ package com.mediafire.uploader.uploaditem;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ResumableBitmap {
+public class MFResumableBitmap {
     private final int count;
     private final List<Integer> words;
     private final List<Boolean> uploadUnits;
 
-    public ResumableBitmap(int count, List<Integer> words) {
+    public MFResumableBitmap(int count, List<Integer> words) {
         this.count = count;
         this.words = words;
         uploadUnits = decodeBitmap(count, words);

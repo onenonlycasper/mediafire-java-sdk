@@ -9,14 +9,14 @@ import java.security.NoSuchAlgorithmException;
 /**
  * file information for an upload item.
  */
-public class FileData {
-    private static final String TAG = FileData.class.getCanonicalName();
+public class MFFileData {
+    private static final String TAG = MFFileData.class.getCanonicalName();
     private final String filePath;
     private long fileSize;
     private String fileHash;
 
-    public FileData(String filePath) {
-        MFConfiguration.getStaticMFLogger().v(TAG, "FileData object created");
+    public MFFileData(String filePath) {
+        MFConfiguration.getStaticMFLogger().v(TAG, "MFFileData object created");
         if (filePath == null) {
             throw new IllegalArgumentException("invalid filePath (cannot be null)");
         }

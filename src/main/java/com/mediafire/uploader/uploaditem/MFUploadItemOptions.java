@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class UploadOptions {
+public class MFUploadItemOptions {
     private final boolean resumable;
     private String uploadFolderKey;
     private String actionOnDuplicate;
@@ -17,11 +17,11 @@ public class UploadOptions {
     private String modificationTime;
     private ActionOnInAccount actionOnInAccount;
 
-    public UploadOptions(boolean resumable) {
+    public MFUploadItemOptions(boolean resumable) {
         this.resumable = resumable;
     }
 
-    public UploadOptions() {
+    public MFUploadItemOptions() {
         this(true);
     }
 

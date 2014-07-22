@@ -1,10 +1,10 @@
 package com.mediafire.uploader.uploaditem;
 
-public class ChunkData {
+public class MFChunkData {
     private int unitSize;
     private int numberOfUnits;
 
-    public ChunkData() {
+    public MFChunkData() {
         unitSize = 0;
         numberOfUnits = 0;
     }
