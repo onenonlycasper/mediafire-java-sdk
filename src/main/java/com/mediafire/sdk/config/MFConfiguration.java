@@ -68,17 +68,28 @@ public final class MFConfiguration {
         private int maximumSessionTokens = DEFAULT_MAXIMUM_SESSION_TOKENS;
         private MFLogger mfLogger = DEFAULT_MF_LOGGER;
         private MFCredentials mfCredentials = DEFAULT_MF_CREDENTIALS;
+        private String apiKey;
         private final String appId;
-        private final String apiKey;
 
-        public MFConfigurationBuilder(String appId, String apiKey) {
+        public MFConfigurationBuilder(String appId) {
+            if (appId == null) {
+                throw new IllegalArgumentException("app id cannot be null");
+            }
             this.appId = appId;
+        }
+
+        public MFConfigurationBuilder apiKey(String apiKey) {
+            if (apiKey == null) {
+                throw new IllegalArgumentException("apiKey cannot be null");
+            }
             this.apiKey = apiKey;
+            return this;
+
         }
 
         public MFConfigurationBuilder httpReadTimeout(int httpReadTimeout) {
             if (httpReadTimeout < 0) {
-                throw new IllegalStateException("http read timeout must not be negative");
+                throw new IllegalArgumentException("http read timeout must not be negative");
             }
             this.httpReadTimeout = httpReadTimeout;
             return this;
@@ -86,7 +97,7 @@ public final class MFConfiguration {
 
         public MFConfigurationBuilder httpConnectionTimeout(int httpConnectionTimeout) {
             if (httpConnectionTimeout < 0) {
-                throw new IllegalStateException("http connection timeout must not be negative");
+                throw new IllegalArgumentException("http connection timeout must not be negative");
             }
             this.httpConnectionTimeout = httpConnectionTimeout;
             return this;
@@ -94,7 +105,7 @@ public final class MFConfiguration {
 
         public MFConfigurationBuilder mfLogger(MFLogger mfLogger) {
             if (mfLogger == null) {
-                throw new IllegalStateException("MFLogger cannot be null");
+                throw new IllegalArgumentException("MFLogger cannot be null");
             }
             this.mfLogger = mfLogger;
             return this;
@@ -102,7 +113,7 @@ public final class MFConfiguration {
 
         public MFConfigurationBuilder mfCredentials(MFCredentials mfCredentials) {
             if (mfCredentials == null) {
-                throw new IllegalStateException("MFCredentials cannot be null");
+                throw new IllegalArgumentException("MFCredentials cannot be null");
             }
             this.mfCredentials = mfCredentials;
             return this;
@@ -110,7 +121,7 @@ public final class MFConfiguration {
 
         public MFConfigurationBuilder minimumSessionTokens(int minimumSessionTokens) {
             if (minimumSessionTokens < 1) {
-                throw new IllegalStateException("minimumSessionTokens session tokens must be greater than 0");
+                throw new IllegalArgumentException("minimumSessionTokens session tokens must be greater than 0");
             }
             this.minimumSessionTokens = minimumSessionTokens;
             return this;
@@ -118,20 +129,13 @@ public final class MFConfiguration {
 
         public MFConfigurationBuilder maximumSessionTokens(int maximumSessionTokens) {
             if (maximumSessionTokens < 1) {
-                throw new IllegalStateException("maximum session tokens must be greater than 0");
+                throw new IllegalArgumentException("maximum session tokens must be greater than 0");
             }
             this.maximumSessionTokens = maximumSessionTokens;
             return this;
         }
 
         public MFConfiguration build() {
-            if (appId == null) {
-                throw new IllegalStateException("app id cannot be null");
-            }
-
-            if (apiKey == null) {
-                throw new IllegalStateException("api key cannot be null");
-            }
             return new MFConfiguration(this);
         }
     }
