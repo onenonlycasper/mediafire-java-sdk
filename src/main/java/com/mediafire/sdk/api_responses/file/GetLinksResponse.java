@@ -58,15 +58,21 @@ public class GetLinksResponse extends ApiResponse {
 
         private OneTime one_time;
 
-        private class OneTime {
+        public class OneTime {
             private String download;
             private String view;
 
             public String getOneTimeDownloadLink() {
+                if (download == null) {
+                    download = "";
+                }
                 return download;
             }
 
             public String getOneTimeViewLink() {
+                if (view == null) {
+                    view = "";
+                }
                 return view;
             }
         }
