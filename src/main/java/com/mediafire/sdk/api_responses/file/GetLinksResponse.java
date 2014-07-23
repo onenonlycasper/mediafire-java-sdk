@@ -40,17 +40,65 @@ public class GetLinksResponse extends ApiResponse {
     public class Link {
         private String quickkey;
         private String view;
-        private String edit;
-        private String error;
 
+        private String listen;
+
+        private String edit;
+        private String edit_error_message;
+
+        private String streaming_error_message;
+        private String streaming_error;
+
+        private String direct_download;
         private String direct_download_error_message;
         private String direct_download_error;
-        private String one_time_download_error_message;
-        private String edit_error_message;
-        private String one_time_download;
-        private String normal_download;
-        private String direct_download;
 
+        private String one_time_download_error_message;
+        private String normal_download;
+
+        private OneTime one_time;
+
+        private class OneTime {
+            private String download;
+            private String view;
+
+            public String getOneTimeDownloadLink() {
+                return download;
+            }
+
+            public String getOneTimeViewLink() {
+                return view;
+            }
+        }
+
+        public OneTime getOneTimeLinks() {
+            if (one_time == null) {
+                one_time = new OneTime();
+            }
+            return one_time;
+        }
+
+        public String getListenLink() {
+            if (listen == null) {
+                listen = "";
+            }
+            return listen;
+        }
+
+        public int getStreamingError() {
+            if (streaming_error == null) {
+                streaming_error = "";
+            }
+            return Integer.valueOf(streaming_error);
+        }
+
+        public String getStreamingErrorMessage() {
+            if (streaming_error_message == null) {
+                streaming_error_message = "";
+            }
+
+            return streaming_error_message;
+        }
 
         public String getEditErrorMessage() {
             if (this.edit_error_message == null) {
@@ -114,20 +162,5 @@ public class GetLinksResponse extends ApiResponse {
             }
             return this.edit;
         }
-
-        public String getOneTimeDownloadLink() {
-            if (this.one_time_download == null) {
-                this.one_time_download = "";
-            }
-            return this.one_time_download;
-        }
-
-        public String getError() {
-            if (this.error == null) {
-                this.error = "";
-            }
-            return this.error;
-        }
-
     }
 }
