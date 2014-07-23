@@ -95,8 +95,7 @@ public final class MFHttpClientSetup extends MFHttp {
 
         String appId = mfConfiguration.getAppId();
         String apiKey = mfConfiguration.getApiKey();
-
-        String hashTarget = userInfoPortionOfHashTarget + appId + apiKey;
+        String hashTarget = apiKey != null ? userInfoPortionOfHashTarget + appId + apiKey : userInfoPortionOfHashTarget + appId;
 
         return hashString(hashTarget, SHA1);
     }
