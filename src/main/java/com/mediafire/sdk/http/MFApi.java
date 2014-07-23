@@ -12,7 +12,7 @@ public enum MFApi {
     FILE_MOVE("/api/1.0/file/move.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     FILE_UPDATE("/api/1.0/file/update.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     FILE_GET_INFO("/api/file/get_info.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
-    FILE_GET_LINKS("/api/1.0/file/get_links.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
+    FILE_GET_LINKS("/api/1.1/file/get_links.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     // folder api calls
     FOLDER_COPY("/api/1.0/folder/copy.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     FOLDER_CREATE("/api/1.0/folder/create.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
