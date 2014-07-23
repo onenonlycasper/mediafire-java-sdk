@@ -96,6 +96,10 @@ public final class MFHttpClientSetup extends MFHttp {
         String appId = mfConfiguration.getAppId();
         String apiKey = mfConfiguration.getApiKey();
 
+        // apiKey is not required, but may be passed into the MFConfiguration object
+        // Note: If the app does not have the "Require Secret Key" option checked,
+        // then the API key may be omitted from the signature.
+        // However, this should only be done when sufficient domain and/or network restrictions are in place.
         String hashTarget;
         if (apiKey == null) {
             hashTarget = userInfoPortionOfHashTarget + appId;
