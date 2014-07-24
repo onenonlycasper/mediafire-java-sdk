@@ -746,10 +746,6 @@ public class MFUploadRunnable implements Runnable {
                 throw new IllegalArgumentException("MFTokenFarm cannot be null");
             }
 
-            if (!mfTokenFarm.isStarted()) {
-                throw new IllegalStateException("MFTokenFarm must be started via startup()");
-            }
-
             if (mfUploadItem == null) {
                 throw new IllegalArgumentException("MFUploadItem cannot be null");
             }
