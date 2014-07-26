@@ -21,7 +21,6 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
     private final MFDefaultHttpProcessor mfDefaultHttpProcessor;
     private final int minimumSessionTokens;
     private final int maximumSessionTokens;
-    private boolean started;
 
     private final BlockingQueue<MFSessionToken> mfSessionTokens;
     private MFActionToken mfUploadActionToken;
@@ -91,11 +90,6 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         mfSessionTokens.clear();
         mfUploadActionToken = null;
         mfImageActionToken = null;
-        started = false;
-    }
-
-    public boolean isStarted() {
-        return started;
     }
 
     public void startup() {
@@ -122,8 +116,6 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
             MFConfiguration.getStaticMFLogger().w(TAG, "fetching image action token()");
             getNewImageActionToken();
         }
-
-        started = true;
     }
 
     @Override
@@ -194,6 +186,10 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         synchronized (sessionTokenLock) {
             sessionToken = null;
             try {
+                MFConfiguration.getStaticMFLogger().w(TAG, "session token queue size: " + mfSessionTokens.size());
+                if (mfSessionTokens.size() == 0 && haveStoredCredentials()) {
+                    getNewSessionToken();
+                }
                 sessionToken = mfSessionTokens.take();
             } catch (InterruptedException e) {
                 e.printStackTrace();
