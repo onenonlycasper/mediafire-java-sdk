@@ -65,7 +65,11 @@ public final class MFHttpClientCleanup extends MFHttp {
             case NONE:
                 // for types NONE
                 // there is no need to return a token
-                MFConfiguration.getStaticMFLogger().w(TAG, "not returning a token for request: " + mfRequester.getUri() + mfRequester.getRequestParameters().toString());
+                if (!mfRequester.getUri().contains("get_session_token")) {
+                    MFConfiguration.getStaticMFLogger().w(TAG, "not returning a token for request: " + mfRequester.getUri() + mfRequester.getRequestParameters().toString());
+                } else {
+                    MFConfiguration.getStaticMFLogger().w(TAG, "not returning a token for request: " + mfRequester.getUri());
+                }
                 break;
         }
     }
