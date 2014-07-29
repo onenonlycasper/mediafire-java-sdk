@@ -12,7 +12,7 @@ public enum MFApi {
     FILE_MOVE("/api/1.0/file/move.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     FILE_UPDATE("/api/1.0/file/update.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     FILE_GET_INFO("/api/file/get_info.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
-    FILE_GET_LINKS("/api/1.0/file/get_links.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
+    FILE_GET_LINKS("/api/1.1/file/get_links.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     // folder api calls
     FOLDER_COPY("/api/1.0/folder/copy.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
     FOLDER_CREATE("/api/1.0/folder/create.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
@@ -39,9 +39,9 @@ public enum MFApi {
     USER_GET_UPLOAD_TOKEN("/api/1.0/user/get_action_token.php", TokenType.V2, TokenType.V2, TokenType.UPLOAD, true),
     USER_GET_IMAGE_TOKEN("/api/1.0/user/get_action_token.php", TokenType.V2, TokenType.V2, TokenType.IMAGE, true),
     // upload api calls
-    UPLOAD_CHECK("/api/1.0/upload/check.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
+    UPLOAD_CHECK("/api/1.0/upload/check.php", TokenType.UPLOAD, TokenType.NONE, TokenType.NONE, true),
     UPLOAD_INSTANT("/api/1.0/upload/instant.php", TokenType.UPLOAD, TokenType.NONE, TokenType.NONE, true),
-    UPLOAD_POLL_UPLOAD("/api/1.0/upload/poll_upload.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
+    UPLOAD_POLL_UPLOAD("/api/1.0/upload/poll_upload.php", TokenType.NONE, TokenType.NONE, TokenType.NONE, true),
     UPLOAD_RESUMABLE("/api/upload/resumable.php", TokenType.UPLOAD, TokenType.NONE, TokenType.NONE, false),
     // device api calls
     DEVICE_GET_CHANGES("/api/1.0/device/get_changes.php", TokenType.V2, TokenType.V2, TokenType.V2, true),
