@@ -182,9 +182,19 @@ public class MFUploadRunnable implements Runnable {
         PollResponse.Result pollResultCode = doUpload.getResultCode();
         PollResponse.FileError pollFileErrorCode = doUpload.getFileErrorCode();
 
-        if (pollStatusCode != PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResponse.Result.SUCCESS && pollFileErrorCode == PollResponse.FileError.NO_ERROR) {
-            MFConfiguration.getStaticMFLogger().w(TAG, "status code: " + pollResponse.getDoUpload().getStatusCode().toString() + " need to try again");
+        MFConfiguration.getStaticMFLogger().w(TAG, "status code: " + pollStatusCode.toString());
+        MFConfiguration.getStaticMFLogger().w(TAG, "result code: " + pollResultCode.toString());
+        MFConfiguration.getStaticMFLogger().w(TAG, "file error code: " + pollFileErrorCode.toString());
+
+        if (pollStatusCode == PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResponse.Result.SUCCESS && pollFileErrorCode == PollResponse.FileError.NO_ERROR) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "done polling");
+            notifyUploadListenerCompleted();
+        } else if (pollStatusCode != PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY && pollResultCode == PollResponse.Result.SUCCESS && pollFileErrorCode == PollResponse.FileError.NO_ERROR) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "still waiting for status code " + PollResponse.Status.NO_MORE_REQUESTS_FOR_THIS_KEY + ", but was " + pollStatusCode.toString() + " so restarting upload");
             startOrRestartUpload();
+        } else {
+            MFConfiguration.getStaticMFLogger().w(TAG, "cancelling upload");
+            notifyUploadListenerCancelled();
         }
     }
 
