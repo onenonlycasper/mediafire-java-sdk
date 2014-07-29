@@ -69,78 +69,93 @@ public class MFUploadRunnable implements Runnable {
 
     private void checkUploadFinished(MFUploadItem mfUploadItem, CheckResponse checkResponse) throws NoSuchAlgorithmException, IOException {
         MFConfiguration.getStaticMFLogger().w(TAG, "checkUploadFinished()");
-        //as a preventable infinite loop measure, an upload item cannot continue after upload/check.php if it has gone through the process 20x
-        //20x is high, but it should never happen and will allow for more information gathering.
-        if (mfUploadItem.getUploadAttemptCount() > maxUploadAttempts || mfUploadItem.isCancelled()) {
+        if (checkResponse == null) {
             notifyUploadListenerCancelled();
             return;
         }
 
+        //as a preventable infinite loop measure, an upload item cannot continue after upload/check.php if it has gone through the process 20x
+        //20x is high, but it should never happen and will allow for more information gathering.
         if (checkResponse.getStorageLimitExceeded()) {
             MFConfiguration.getStaticMFLogger().w(TAG, "storage limit is exceeded");
-            MFConfiguration.getStaticMFLogger().w(TAG, "storageLimitExceeded()");
             notifyUploadListenerCancelled();
         } else if (checkResponse.getResumableUpload().areAllUnitsReady() && !mfUploadItem.getPollUploadKey().isEmpty()) {
             MFConfiguration.getStaticMFLogger().w(TAG, "all units are ready and poll upload key is not empty");
             // all units are ready and we have the poll upload key. start polling.
-            doInstantUpload();
+            doPollUpload();
         } else {
             if (checkResponse.doesHashExists()) { //hash does exist for the file
-                MFConfiguration.getStaticMFLogger().w(TAG, "hashExists()");
-                if (!checkResponse.isInAccount()) { // hash which exists is not in the account
-                    MFConfiguration.getStaticMFLogger().w(TAG, "hashNotInAccount()");
-                    doInstantUpload();
-                } else { // hash exists and is in the account
-                    MFConfiguration.getStaticMFLogger().w(TAG, "hashInAccount()");
-                    boolean inFolder = checkResponse.isInFolder();
-                    MFConfiguration.getStaticMFLogger().w(TAG, "ActionOnInAccount: " + mfUploadItem.getUploadOptions().getActionOnInAccount().toString());
-                    switch (mfUploadItem.getUploadOptions().getActionOnInAccount()) {
-                        case UPLOAD_ALWAYS:
-                            MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
-                            doInstantUpload();
-                            break;
-                        case UPLOAD_IF_NOT_IN_FOLDER:
-                            MFConfiguration.getStaticMFLogger().w(TAG, "uploading if not in folder.");
-                            if (!inFolder) {
-                                MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
-                                doInstantUpload();
-                            } else {
-                                MFConfiguration.getStaticMFLogger().w(TAG, "already in folder, not uploading...");
-                                notifyUploadListenerCompleted();
-                            }
-                            break;
-                        case DO_NOT_UPLOAD:
-                        default:
-                            MFConfiguration.getStaticMFLogger().w(TAG, "not uploading...");
-                            notifyUploadListenerCancelled();
-                            break;
-                    }
-                }
+                hashExistsInCloud(checkResponse);
             } else {
-            // hash does not exist. call resumable.
-                MFConfiguration.getStaticMFLogger().w(TAG, "hash does not exist");
-                if (checkResponse.getResumableUpload().getUnitSize() == 0) {
-                    MFConfiguration.getStaticMFLogger().w(TAG, "unit size received from unit_size was 0. cancelling");
-                    notifyUploadListenerCancelled();
-                    return;
-                }
-
-                if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
-                    MFConfiguration.getStaticMFLogger().w(TAG, "number of units received from number_of_units was 0. cancelling");
-                    notifyUploadListenerCancelled();
-                    return;
-                }
-
-                if (checkResponse.getResumableUpload().areAllUnitsReady() && !mfUploadItem.getPollUploadKey().isEmpty()) {
-                    MFConfiguration.getStaticMFLogger().w(TAG, "all units ready and have a poll upload key");
-                    // all units are ready and we have the poll upload key. start polling.
-                    doPollUpload();
-                } else {
-                    MFConfiguration.getStaticMFLogger().w(TAG, "all units not ready or do not have poll upload key");
-                    // either we don't have the poll upload key or all units are not ready
-                    doResumableUpload();
-                }
+                hashDoesNotExistInCloud(checkResponse);
             }
+        }
+    }
+
+    private void hashExistsInCloud(CheckResponse checkResponse) {
+        MFConfiguration.getStaticMFLogger().w(TAG, "hash exists");
+        if (!checkResponse.isInAccount()) { // hash which exists is not in the account
+            hashExistsButDoesNotExistInAccount();
+        } else { // hash exists and is in the account
+            hashExistsInAccount(checkResponse);
+        }
+    }
+
+    private void hashExistsInAccount(CheckResponse checkResponse) {
+        MFConfiguration.getStaticMFLogger().w(TAG, "hash is in account");
+        boolean inFolder = checkResponse.isInFolder();
+        MFConfiguration.getStaticMFLogger().w(TAG, "ActionOnInAccount: " + mfUploadItem.getUploadOptions().getActionOnInAccount().toString());
+        switch (mfUploadItem.getUploadOptions().getActionOnInAccount()) {
+            case UPLOAD_ALWAYS:
+                MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
+                doInstantUpload();
+                break;
+            case UPLOAD_IF_NOT_IN_FOLDER:
+                MFConfiguration.getStaticMFLogger().w(TAG, "uploading if not in folder.");
+                if (!inFolder) {
+                    MFConfiguration.getStaticMFLogger().w(TAG, "uploading...");
+                    doInstantUpload();
+                } else {
+                    MFConfiguration.getStaticMFLogger().w(TAG, "already in folder, not uploading...");
+                    notifyUploadListenerCompleted();
+                }
+                break;
+            case DO_NOT_UPLOAD:
+            default:
+                MFConfiguration.getStaticMFLogger().w(TAG, "not uploading...");
+                notifyUploadListenerCancelled();
+                break;
+        }
+    }
+
+    private void hashExistsButDoesNotExistInAccount() {
+        MFConfiguration.getStaticMFLogger().w(TAG, "hash is not in account");
+        doInstantUpload();
+    }
+
+    private void hashDoesNotExistInCloud(CheckResponse checkResponse) throws IOException, NoSuchAlgorithmException {
+        // hash does not exist. call resumable.
+        MFConfiguration.getStaticMFLogger().w(TAG, "hash does not exist");
+        if (checkResponse.getResumableUpload().getUnitSize() == 0) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "unit size received from unit_size was 0. cancelling");
+            notifyUploadListenerCancelled();
+            return;
+        }
+
+        if (checkResponse.getResumableUpload().getNumberOfUnits() == 0) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "number of units received from number_of_units was 0. cancelling");
+            notifyUploadListenerCancelled();
+            return;
+        }
+
+        if (checkResponse.getResumableUpload().areAllUnitsReady() && !mfUploadItem.getPollUploadKey().isEmpty()) {
+            MFConfiguration.getStaticMFLogger().w(TAG, "all units ready and have a poll upload key");
+            // all units are ready and we have the poll upload key. start polling.
+            doPollUpload();
+        } else {
+            MFConfiguration.getStaticMFLogger().w(TAG, "all units not ready or do not have poll upload key");
+            // either we don't have the poll upload key or all units are not ready
+            doResumableUpload();
         }
     }
 
@@ -192,6 +207,11 @@ public class MFUploadRunnable implements Runnable {
         mfRequestBuilder.requestParameters(keyValue);
         MFRequest mfRequest = mfRequestBuilder.build();
         MFResponse mfResponse = mfTokenFarm.getMFHttpRunner().doRequest(mfRequest);
+        if (mfResponse == null) {
+            notifyUploadListenerCancelled();
+            return;
+        }
+
         CheckResponse response = mfResponse.getResponseObject(CheckResponse.class);
 
         if (response == null) {
@@ -673,6 +693,11 @@ public class MFUploadRunnable implements Runnable {
 
     private void startOrRestartUpload() throws IOException, NoSuchAlgorithmException {
         MFConfiguration.getStaticMFLogger().w(TAG, "startOrRestartUpload()");
+        // don't start upload if cancelled or attempts > maxUploadAttempts
+        if (mfUploadItem.getUploadAttemptCount() > maxUploadAttempts || mfUploadItem.isCancelled()) {
+            notifyUploadListenerCancelled();
+            return;
+        }
         //don't add the item to the backlog queue if it is null or the path is null
         if (mfUploadItem == null) {
             MFConfiguration.getStaticMFLogger().w(TAG, "one or more required parameters are invalid, not adding item to queue");
