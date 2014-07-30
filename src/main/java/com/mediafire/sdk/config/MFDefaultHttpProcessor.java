@@ -19,7 +19,7 @@ public final class MFDefaultHttpProcessor implements MFHttpProcessor {
 
     @Override
     public MFResponse doRequest(final MFRequester mfRequester) {
-        MFConfiguration.getStaticMFLogger().w(TAG, "doRequest()");
+        MFConfiguration.getStaticMFLogger().d(TAG, "doRequest()");
 
         MFResponse mfResponse = null;
         try {
