@@ -369,6 +369,7 @@ public class MFUploadRunnable implements Runnable {
 
                 clearReferences(chunkSize, chunkHash, uploadChunk, headers, parameters);
             }
+
             notifyUploadListenerOnProgressUpdate(numChunks);
 
         } // end loop
@@ -462,6 +463,8 @@ public class MFUploadRunnable implements Runnable {
                     notifyUploadListenerCancelled();
                     return;
             }
+
+            notifyUploadListenerOnPolling(response.getDoUpload().getDescription());
 
             //wait before next api call
             try {
@@ -754,6 +757,13 @@ public class MFUploadRunnable implements Runnable {
             }
             MFConfiguration.getStaticMFLogger().w(TAG, numUploaded + "/" + totalChunks + " chunks uploaded");
             mfUploadListener.onProgressUpdate(mfUploadItem, numUploaded, totalChunks);
+        }
+    }
+
+    private void notifyUploadListenerOnPolling(String message) {
+        MFConfiguration.getStaticMFLogger().w(TAG, "notifyUploadListenerOnPolling()");
+        if (mfUploadListener != null) {
+            mfUploadListener.onPolling(mfUploadItem, message);
         }
     }
 
