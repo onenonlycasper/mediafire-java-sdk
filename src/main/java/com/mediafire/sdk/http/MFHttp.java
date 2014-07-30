@@ -18,7 +18,7 @@ public abstract class MFHttp {
     }
 
     protected final String makeQueryString(Map<String, String> requestParameters, boolean urlEncode) throws UnsupportedEncodingException {
-        MFConfiguration.getStaticMFLogger().w(TAG, "makeQueryString(encode=" + urlEncode + ")");
+        MFConfiguration.getStaticMFLogger().d(TAG, "makeQueryString(encode=" + urlEncode + ")");
         StringBuilder stringBuilder = new StringBuilder();
 
         for (String key : requestParameters.keySet()) {
@@ -44,7 +44,7 @@ public abstract class MFHttp {
     }
 
     protected final String makeUrlAttachableQueryString(String queryString) {
-        MFConfiguration.getStaticMFLogger().w(TAG, "makeUrlAttachableQueryString()");
+        MFConfiguration.getStaticMFLogger().d(TAG, "makeUrlAttachableQueryString()");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("?");
         stringBuilder.append(queryString);
@@ -52,7 +52,7 @@ public abstract class MFHttp {
     }
 
     protected final String makeBaseUrl(MFRequester mfRequester) {
-        MFConfiguration.getStaticMFLogger().w(TAG, "makeBaseUrl()");
+        MFConfiguration.getStaticMFLogger().d(TAG, "makeBaseUrl()");
         String scheme = mfRequester.getProtocol().getScheme();
         String host = mfRequester.getHost().getSubDomainAndHostName();
         String uri = mfRequester.getUri();
