@@ -123,7 +123,7 @@ public class MFUploadRunnable implements Runnable {
             case DO_NOT_UPLOAD:
             default:
                 MFConfiguration.getStaticMFLogger().w(TAG, "not uploading...");
-                notifyUploadListenerCancelled();
+                notifyUploadListenerCompleted();
                 break;
         }
     }
