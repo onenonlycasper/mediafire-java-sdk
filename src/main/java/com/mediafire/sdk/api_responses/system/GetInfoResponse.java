@@ -1,11 +1,7 @@
 package com.mediafire.sdk.api_responses.system;
 
-
 import com.mediafire.sdk.api_responses.ApiResponse;
 
-/**
- * api response class used by Gson for the /api/system/get_info.php call.
- */
 public class GetInfoResponse extends ApiResponse {
 
     private TermsOfService terms_of_service;
@@ -15,9 +11,6 @@ public class GetInfoResponse extends ApiResponse {
         return terms_of_service;
     }
 
-    /**
-     * Terms of Service portion of the response.
-     */
     public class TermsOfService {
         private String terms;
         private String date;

@@ -34,9 +34,6 @@ public class GetLinksResponse extends ApiResponse {
         return links;
     }
 
-    /**
-     * class representing a link.
-     */
     public class Link {
         private String quickkey;
         private String view;
