@@ -10,6 +10,10 @@ public final class MFConfiguration {
     private final MFCredentials mfCredentials;
     private static MFLogger staticMFLogger;
 
+    /**
+     * Constructor to create an MFConfiguration instance.
+     * @param mfConfigurationBuilder - builder pattern object.
+     */
     private MFConfiguration(MFConfigurationBuilder mfConfigurationBuilder) {
         this.httpReadTimeout = mfConfigurationBuilder.httpReadTimeout;
         this.httpConnectionTimeout = mfConfigurationBuilder.httpConnectionTimeout;

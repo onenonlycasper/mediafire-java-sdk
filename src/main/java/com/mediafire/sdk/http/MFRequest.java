@@ -159,6 +159,11 @@ public final class MFRequest implements MFRequester {
             this.uri = uri;
         }
 
+        /**
+         * sets the type of Token to borrow for the request.
+         * @param typeOfTokenToBorrow - the MFApi.TokenType to borrow.
+         * @return static MFRequestBuilder object to allow chaining calls.
+         */
         public MFRequestBuilder typeOfTokenToBorrow(MFApi.TokenType typeOfTokenToBorrow) {
             if (typeOfTokenToBorrow == null) {
                 typeOfTokenToBorrow = MFApi.TokenType.NONE;
@@ -167,6 +172,11 @@ public final class MFRequest implements MFRequester {
             return this;
         }
 
+        /**
+         * sets the type of signature to add to the request.
+         * @param typeOfSignatureToAdd - the MFApi.TokenType of signature to calculate.
+         * @return static MFRequestBuilder object to allow chaining calls.
+         */
         public MFRequestBuilder typeOfSignatureToAdd(MFApi.TokenType typeOfSignatureToAdd) {
             if (typeOfSignatureToAdd == null) {
                 typeOfSignatureToAdd = MFApi.TokenType.NONE;
@@ -175,6 +185,11 @@ public final class MFRequest implements MFRequester {
             return this;
         }
 
+        /**
+         * sets the type of Token to return for the request.
+         * @param typeOfTokenToReturn - the MFApi.TokenType to return.
+         * @return static MFRequestBuilder object to allow chaining calls.
+         */
         public MFRequestBuilder typeOfTokenToReturn(MFApi.TokenType typeOfTokenToReturn) {
             if (typeOfTokenToReturn == null) {
                 typeOfTokenToReturn = MFApi.TokenType.NONE;
@@ -183,16 +198,31 @@ public final class MFRequest implements MFRequester {
             return this;
         }
 
+        /**
+         * sets whether the query portion (request parameters) of the request is able to use POST.
+         * @param isQueryPostable - true if query allows for use of POST, false if GET is used.
+         * @return static MFRequestBuilder object to allow chaining calls.
+         */
         public MFRequestBuilder isQueryPostable(boolean isQueryPostable) {
             this.isQueryPostable = isQueryPostable;
             return this;
         }
 
+        /**
+         * sets whether a Token is required for this request.
+         * @param isTokenRequired - true if a Token is required for the request, false if it is not.
+         * @return static MFRequestBuilder object to allow chaining calls.
+         */
         public MFRequestBuilder isTokenRequired(boolean isTokenRequired) {
             this.isTokenRequired = isTokenRequired;
             return this;
         }
 
+        /**
+         * sets the request parameters that should be used for this request.
+         * @param requestParameters - the Map of request parameters to use.
+         * @return static MFRequestBuilder object to allow chaining calls.
+         */
         public MFRequestBuilder requestParameters(Map<String, String> requestParameters) {
             if (requestParameters == null) {
                 requestParameters = new LinkedHashMap<String, String>();
@@ -201,6 +231,11 @@ public final class MFRequest implements MFRequester {
             return this;
         }
 
+        /**
+         * sets the headers to use for this request.
+         * @param headers - the Map of request parameters to use.
+         * @return static MFRequestBuilder object to allow chaining calls.
+         */
         public MFRequestBuilder headers(Map<String, String> headers) {
             if (headers == null) {
                 headers = new LinkedHashMap<String, String>();
@@ -209,6 +244,11 @@ public final class MFRequest implements MFRequester {
             return this;
         }
 
+        /**
+         * sets byte array payload to POST.
+         * @param payload - the byte array to POST.
+         * @return static MFRequestBuilder object to allow chaining calls.
+         */
         public MFRequestBuilder payload(byte[] payload) {
             if (payload == null) {
                 payload = new byte[0];
@@ -217,6 +257,10 @@ public final class MFRequest implements MFRequester {
             return this;
         }
 
+        /**
+         * constructs a new MFRequest object using the values chained via method calls.
+         * @return a new MFRequest object.
+         */
         public MFRequest build() {
             if (uri == null) {
                 throw new IllegalArgumentException("uri cannot be null");

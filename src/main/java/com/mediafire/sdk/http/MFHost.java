@@ -14,10 +14,18 @@ public enum MFHost {
         this.transferProtocol = transferProtocol;
     }
 
+    /**
+     * gets the Host to use for the request.
+     * @return the Host.
+     */
     public Host getHost() {
         return host;
     }
 
+    /**
+     * gets the TransferProtocol to use for the request.
+     * @return the TransferProtocol to use for the request.
+     */
     public TransferProtocol getTransferProtocol() {
         return transferProtocol;
     }
@@ -32,6 +40,10 @@ public enum MFHost {
             this.scheme = scheme;
         }
 
+        /**
+         * gets the scheme for a TransferProtocol which should be used for a request.
+         * @return String value representing the TransferProtocol to use.
+         */
         public String getScheme() {
             return scheme;
         }
@@ -47,6 +59,10 @@ public enum MFHost {
             this.host = host;
         }
 
+        /**
+         * gets the subdomain and the host name for a request.
+         * @return a String value containing the subdomain and host to be used for a request.
+         */
         public String getSubDomainAndHostName() {
             return host;
         }
