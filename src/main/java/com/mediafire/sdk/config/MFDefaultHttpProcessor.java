@@ -26,7 +26,7 @@ public final class MFDefaultHttpProcessor implements MFHttpProcessor {
     public MFResponse doRequest(final MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().d(TAG, "doRequest()");
 
-        MFResponse mfResponse = null;
+        MFResponse mfResponse;
         try {
             mfHttpClientSetup.prepareMFRequestForHttpClient(mfRequester);
             mfResponse = mfHttpClient.sendRequest(mfRequester);

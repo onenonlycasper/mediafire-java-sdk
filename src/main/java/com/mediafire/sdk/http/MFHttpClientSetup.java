@@ -20,12 +20,26 @@ public final class MFHttpClientSetup extends MFHttp {
     private final MFTokenFarmCallback mfTokenFarmCallback;
     private final MFCredentials mfCredentials;
 
+    /**
+     * Constructor to help set up an http request to mediafire.
+     * @param mfTokenFarmCallback - callback used to borrow Tokens
+     * @param mfConfiguration - the configuration used by the MFTokenFarm.
+     */
     public MFHttpClientSetup(MFTokenFarmCallback mfTokenFarmCallback, MFConfiguration mfConfiguration) {
         super(mfConfiguration);
         this.mfTokenFarmCallback = mfTokenFarmCallback;
         this.mfCredentials = mfConfiguration.getMfCredentials();
     }
 
+    /**
+     * prepares an MFRequester for making a request by:
+     * borrowing a Token if needed,
+     * adding the Token to the request if needed,
+     * and calculating a signature if needed.
+     * @param mfRequester - the MFRequester.
+     * @throws UnsupportedEncodingException  - if UTF-8 encoding is not available.
+     * @throws MFHttpException - if credentials are not set.
+     */
     public void prepareMFRequestForHttpClient(MFRequester mfRequester) throws UnsupportedEncodingException, MFHttpException {
         MFConfiguration.getStaticMFLogger().d(TAG, "prepareMFRequestForHttpClient()");
         // borrow token, if necessary

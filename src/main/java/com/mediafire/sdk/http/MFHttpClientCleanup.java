@@ -17,6 +17,13 @@ public final class MFHttpClientCleanup extends MFHttp {
         this.mfTokenFarmCallback = mfTokenFarmCallback;
     }
 
+    /**
+     * returns a session token to the MFTokenFarmCallback.
+     * @param mfRequester - the MFRequester.
+     * @param mfResponse - the MFResponse
+     * @throws MFHttpException - if the api response for creating a session token has an error, then MFHttpException
+     * is thrown.
+     */
     public void returnToken(MFRequester mfRequester, MFResponse mfResponse) throws MFHttpException {
         MFConfiguration.getStaticMFLogger().d(TAG, "returnToken(type: " + mfRequester.getTypeOfTokenToReturn().toString() + ")");
         if (mfResponse == null || mfResponse.getResponseObject(ApiResponse.class) == null) {
@@ -74,7 +81,7 @@ public final class MFHttpClientCleanup extends MFHttp {
         }
     }
 
-    public MFActionToken createActionToken(MFActionToken.Type type, GetActionTokenResponse getActionTokenResponse, MFRequester mfRequester) {
+    private MFActionToken createActionToken(MFActionToken.Type type, GetActionTokenResponse getActionTokenResponse, MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().d(TAG, "createActionToken()");
         if (getActionTokenResponse == null) {
             MFConfiguration.getStaticMFLogger().v(TAG, "response was null, returning null");
@@ -98,7 +105,7 @@ public final class MFHttpClientCleanup extends MFHttp {
         return actionToken;
     }
 
-    public MFSessionToken createNewSessionToken(GetSessionTokenResponse getSessionTokenResponse) throws MFHttpException {
+    private MFSessionToken createNewSessionToken(GetSessionTokenResponse getSessionTokenResponse) throws MFHttpException {
         MFConfiguration.getStaticMFLogger().d(TAG, "createNewSessionToken()");
         if (getSessionTokenResponse == null) {
             MFConfiguration.getStaticMFLogger().v(TAG, "response was null, returning null");

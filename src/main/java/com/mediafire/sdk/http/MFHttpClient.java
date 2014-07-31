@@ -25,6 +25,11 @@ public final class MFHttpClient extends MFHttp {
         this.connectionTimeout = mfConfiguration.getHttpConnectionTimeout();
     }
 
+    /**
+     * creates a URLConnection, posts data if possible, and receives a response.
+     * @param mfRequester - the MFRequester to use.
+     * @return an MFResponse object.
+     */
     public MFResponse sendRequest(MFRequester mfRequester) {
         MFConfiguration.getStaticMFLogger().d(TAG, "sendRequest()");
         URLConnection connection = null;
