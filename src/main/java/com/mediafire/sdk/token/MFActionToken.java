@@ -21,10 +21,18 @@ public class MFActionToken extends MFToken {
         this.expiration = expiration;
     }
 
+    /**
+     * determines if this action token is expired.
+     * @return - true if expired, false otherwise.
+     */
     public boolean isExpired() {
         return (System.currentTimeMillis() + 3600000) >= expiration;
     }
 
+    /**
+     * gets the type of this Token.
+     * @return the type of this token (image or upload).
+     */
     public String getType() {
         return type.getValue();
     }

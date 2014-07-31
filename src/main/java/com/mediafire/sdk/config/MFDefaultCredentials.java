@@ -17,17 +17,14 @@ public final class MFDefaultCredentials implements MFCredentials {
     private Map<String, String> userCredentials = new HashMap<String, String>();
     private MFCredentialsType mfCredentialsType;
 
+    /**
+     * A default MFCredentials implementation.
+     * This constructor sets the MFCredentialsType to UNSET.
+     */
     public MFDefaultCredentials() {
         mfCredentialsType = MFCredentialsType.UNSET;
     }
 
-    /**
-     * attempts to add user credentials.
-     *
-     * @param userCredentials - a map of user credentials based on the following:
-     *
-     * @return - true if credentials are stored, false if not.
-     */
     @Override
     public boolean setCredentials(Map<String, String> userCredentials) {
         if (isFacebookCredentials(userCredentials)) {

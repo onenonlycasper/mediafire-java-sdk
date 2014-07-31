@@ -1,17 +1,10 @@
 package com.mediafire.sdk.api_responses.device;
 
-
 import com.mediafire.sdk.api_responses.ApiResponse;
 
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Class representing api/device/get_changes.php response.
- *
- * @author
- *         {"response":{"action":"device\/get_changes","updated":{"files":[],"folders":[]},"deleted":{"files":[],"folders":[]},"device_revision":"15260","changes_list_block":"500","result":"Success","new_key":"yes","current_api_version":"2.14"}}
- */
 public class GetChangesResponse extends ApiResponse {
     private ChangedItems updated;
     private ChangedItems deleted;
@@ -50,9 +43,6 @@ public class GetChangesResponse extends ApiResponse {
         return deleted;
     }
 
-    /**
-     * class representing a collection of files and folders which have been changed.
-     */
     public class ChangedItems {
         private List<File> files;
         private List<Folder> folders;
@@ -72,9 +62,6 @@ public class GetChangesResponse extends ApiResponse {
         }
     }
 
-    /**
-     * class representing a file that has been changed.
-     */
     public class File {
         private String quickkey;
         private String revision;
@@ -144,9 +131,6 @@ public class GetChangesResponse extends ApiResponse {
         }
     }
 
-    /**
-     * class representing a folder that has been changed.
-     */
     public class Folder {
         private String folderkey;
         private String revision;

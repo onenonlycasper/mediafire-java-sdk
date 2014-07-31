@@ -3,9 +3,6 @@ package com.mediafire.sdk.api_responses.user;
 
 import com.mediafire.sdk.api_responses.ApiResponse;
 
-/**
- * Stores a response from user/get_info.
- */
 public class GetInfoResponse extends ApiResponse {
 
     private UserInfo user_info;
@@ -17,9 +14,6 @@ public class GetInfoResponse extends ApiResponse {
         return user_info;
     }
 
-    /**
-     * Holds the user information returned from get_info.
-     */
     public class UserInfo {
         private String first_name;
         private String last_name;
@@ -160,9 +154,6 @@ public class GetInfoResponse extends ApiResponse {
         }
     }
 
-    /**
-     * Holds the facebook information returned from get_info.
-     */
     public class FacebookInfo {
         private String facebook_id;
         private String date_created;
@@ -254,9 +245,6 @@ public class GetInfoResponse extends ApiResponse {
         }
     }
 
-    /**
-     * Holds the twitter information returned from get_info.
-     */
     public class TwitterInfo {
         private String twitter_id;
         private String date_created;

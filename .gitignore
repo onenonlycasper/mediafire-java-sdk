@@ -3,4 +3,5 @@ out/
 .idea/tasks.xml
 .gradle/
 build/
-.idea/libraries/
+.idea
+src/test

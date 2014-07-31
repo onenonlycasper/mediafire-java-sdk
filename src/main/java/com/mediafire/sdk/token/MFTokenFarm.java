@@ -84,6 +84,9 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         mfDefaultHttpProcessor.doRequest(mfRequest);
     }
 
+    /**
+     * clears user credentials, clears session tokens, and nulls the action tokens.
+     */
     public void shutdown() {
         MFConfiguration.getStaticMFLogger().d(TAG, "shutdown()");
         mfConfiguration.getMfCredentials().clearCredentials();
@@ -92,6 +95,9 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
         mfImageActionToken = null;
     }
 
+    /**
+     * fetches session tokens and action tokens.
+     */
     public void startup() {
         MFConfiguration.getStaticMFLogger().d(TAG, "startup()");
         // do nothing if credentials aren't stored

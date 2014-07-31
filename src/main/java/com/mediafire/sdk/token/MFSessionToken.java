@@ -17,22 +17,41 @@ public final class MFSessionToken extends MFToken {
         this.ekey = ekey;
     }
 
+    /**
+     * gets the time value for this Token.
+     * @return the time value for this Token.
+     */
     public String getTime() {
         return time;
     }
 
+    /**
+     * gets the secret key for this Token.
+     * @return the secret key value for this Token.
+     */
     public String getSecretKey() {
         return secretKey;
     }
 
+    /**
+     * gets the pkey value for this Token.
+     * @return the pkey for this Token
+     */
     public String getPkey() {
         return pkey;
     }
 
+    /**
+     * gets the ekey value for this Token.
+     * @return the ekey for this Token.
+     */
     public String getEkey() {
         return ekey;
     }
 
+    /**
+     * updates a session token using MediaFire calculation.
+     */
     public void updateSessionToken() {
         MFConfiguration.getStaticMFLogger().v(TAG, "updateSessionToken()");
         MFConfiguration.getStaticMFLogger().v(TAG, "original secret key: " + secretKey);
