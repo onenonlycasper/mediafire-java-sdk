@@ -786,6 +786,11 @@ public class MFUploadRunnable implements Runnable {
         private final MFUploadItem mfUploadItem;
         private MFUploadListener mfUploadListener;
 
+        /**
+         * Constructor used to create an MFUploadRunnable.
+         * @param mfTokenFarm - an MFTokenFarm to use.
+         * @param mfUploadItem - an MFUploadItem to use.
+         */
         public Builder(MFTokenFarm mfTokenFarm, MFUploadItem mfUploadItem) {
             if (mfTokenFarm == null) {
                 throw new IllegalArgumentException("MFTokenFarm cannot be null");
@@ -799,6 +804,11 @@ public class MFUploadRunnable implements Runnable {
             this.mfUploadItem = mfUploadItem;
         }
 
+        /**
+         * sets the max poll attempts for the upload.
+         * @param maxPolls the max poll attempts.
+         * @return a static MFUploadRunnable.Builder object to allow chaining calls.
+         */
         public Builder maxPolls(int maxPolls) {
             if (maxPolls < 1) {
                 throw new IllegalArgumentException("max polls cannot be less than 0");
@@ -807,6 +817,11 @@ public class MFUploadRunnable implements Runnable {
             return this;
         }
 
+        /**
+         * sets milliseconds between poll calls.
+         * @param millisecondsBetweenPolls milliseconds between polls.
+         * @return a static MFUploadRunnable.Builder object to allow chaining calls.
+         */
         public Builder millisecondsBetweenPolls(long millisecondsBetweenPolls) {
             if (millisecondsBetweenPolls < 0) {
                 throw new IllegalArgumentException("time between polls cannot be less than 0");
@@ -815,6 +830,11 @@ public class MFUploadRunnable implements Runnable {
             return this;
         }
 
+        /**
+         * sets the max attempts to try to upload the file.
+         * @param maxUploadAttempts the max upload attempts.
+         * @return a static MFUploadRunnable.Builder object to allow chaining calls.
+         */
         public Builder maxUploadAttempts(int maxUploadAttempts) {
             if (maxUploadAttempts < 1) {
                 throw new IllegalArgumentException("max upload attempts cannot be less than 1");
@@ -823,11 +843,20 @@ public class MFUploadRunnable implements Runnable {
             return this;
         }
 
+        /**
+         * sets the MFUploadListener used for callbacks.
+         * @param mfUploadListener the MFUploadListener implementation.
+         * @return a static MFUploadRunnable.Builder object to allow chaining calls.
+         */
         public Builder uploadListener(MFUploadListener mfUploadListener) {
             this.mfUploadListener = mfUploadListener;
             return this;
         }
 
+        /**
+         * constructs a new MFUploadRunnable.
+         * @return a new MFUploadRunnable.
+         */
         public MFUploadRunnable build() {
             return new MFUploadRunnable(this);
         }
