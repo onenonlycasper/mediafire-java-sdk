@@ -11,6 +11,11 @@ public final class MFDefaultHttpProcessor implements MFHttpProcessor {
     private final MFHttpClient mfHttpClient;
     private final MFHttpClientCleanup mfHttpClientCleanup;
 
+    /**
+     * Implementation of MFHttpProcessor. This constructor requires an MFConfiguration and MFTokenFarmCallback
+     * @param mfConfiguration
+     * @param mfTokenFarmCallback
+     */
     public MFDefaultHttpProcessor(MFConfiguration mfConfiguration, MFTokenFarmCallback mfTokenFarmCallback) {
         this.mfHttpClientSetup = new MFHttpClientSetup(mfTokenFarmCallback, mfConfiguration);
         this.mfHttpClient = new MFHttpClient(mfConfiguration);
