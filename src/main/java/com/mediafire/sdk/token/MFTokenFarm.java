@@ -235,7 +235,7 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
             lockBorrowUploadToken.unlock();
         }
         MFConfiguration.getStaticMFLogger().v(TAG, "loaning MFToken: " + mfUploadActionToken.toString());
-        return mfUploadActionToken;
+        return new MFActionToken(mfUploadActionToken);
     }
 
     @Override
@@ -262,7 +262,17 @@ public final class MFTokenFarm implements MFTokenFarmCallback {
             lockBorrowImageToken.unlock();
         }
         MFConfiguration.getStaticMFLogger().v(TAG, "loaning MFToken: " + mfImageActionToken.toString());
-        return mfImageActionToken;
+        return new MFActionToken(mfImageActionToken);
+    }
+
+    @Override
+    public void actionTokenSpoiled() {
+        lockBorrowImageToken.lock();
+        lockBorrowUploadToken.lock();
+        mfImageActionToken = null;
+        mfUploadActionToken = null;
+        lockBorrowImageToken.unlock();
+        lockBorrowUploadToken.unlock();
     }
 
     private boolean needNewActionToken(MFActionToken token) {
