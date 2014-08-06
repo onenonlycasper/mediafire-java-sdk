@@ -48,4 +48,10 @@ public interface MFTokenFarmCallback {
      * @return a MFActionToken
      */
     public MFActionToken borrowMFImageActionToken();
+
+    /**
+     * called when an action token used causes an error 105 ("The supplied Session Token is expired or invalid")
+     * this should trigger getting a new action token.
+     */
+    public void actionTokenSpoiled();
 }

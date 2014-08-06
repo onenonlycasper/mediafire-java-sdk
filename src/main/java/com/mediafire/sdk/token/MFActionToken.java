@@ -22,6 +22,16 @@ public class MFActionToken extends MFToken {
     }
 
     /**
+     * copy constructor.
+     * @param mfUploadActionToken
+     */
+    public MFActionToken(MFActionToken mfUploadActionToken) {
+        super(mfUploadActionToken.getTokenString());
+        type = mfUploadActionToken.type;
+        expiration = mfUploadActionToken.expiration;
+    }
+
+    /**
      * determines if this action token is expired.
      * @return - true if expired, false otherwise.
      */
